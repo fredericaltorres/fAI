@@ -21,6 +21,25 @@ namespace fAI.Tests
             Assert.True(models.data[0].Created < DateTime.Now);
         }
 
+        [Fact()]
+        public void ThisIsATest()
+        {
+            var p = new Prompt_GPT_35_Turbo 
+            { 
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ role = "user", content ="Say this is a test!" }
+                }
+            };
+            var gpt = new GPT();  
+            var response = gpt.ExecutePrompt(p);
+            if(response.Success)
+            {
+                var a = response.Text;
+            }
+
+        }
+
         const string ReferenceEnglishSentence = "Hello world.";
 
         [Fact()]

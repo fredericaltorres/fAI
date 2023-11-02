@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace fAI
@@ -10,6 +11,7 @@ namespace fAI
         public int index { get; set; }
         public object logprobs { get; set; }
         public string finish_reason { get; set; }
+        public List<GPTMessage> message { get; set; }
     }
 
     public class ChatGPTResponse
@@ -24,10 +26,24 @@ namespace fAI
         public int created { get; set; }
         public string model { get; set; }
         public List<ChatGPTTranslationResponseChoice> choices { get; set; }
+        public List<GPTMessage> message { get; set; }
+
         public Usage usage { get; set; }
 
         public static ChatGPTResponse FromJson(string json) => JsonConvert.DeserializeObject<ChatGPTResponse>(json);
-        public string Text => choices.Count > 0 ? choices[0].text.Trim() : null;
+        public string Text {
+            get
+            {
+                if (choices.Count > 0) 
+                {
+                    if (!string.IsNullOrEmpty(choices[0]?.text?.Trim()))
+                        return choices[0].text.Trim();
+                    if (choices[0].message != null && choices[0].message.Count > 0)
+                        return choices[0].message.Last().content;
+                }
+                return null;
+            }
+        }
 
         // https://platform.openai.com/docs/api-reference/completions/object
         public bool Success => choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(choices[0].finish_reason);
