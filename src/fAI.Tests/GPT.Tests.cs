@@ -21,21 +21,43 @@ namespace fAI.Tests
             Assert.True(models.data[0].Created < DateTime.Now);
         }
 
+
         [Fact()]
-        public void ThisIsATest()
+        public void Complettion_Chat_Hello()
+        {
+            var p = new Prompt_GPT_35_Turbo
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a helpful assistant." },
+                    new GPTMessage{ Role =  MessageRole.user, Content = "Hello!" }
+                },
+                Url = "https://api.openai.com/v1/chat/completions"
+            };
+            var gpt = new GPT();
+            var response = gpt.CompletionCreate(p);
+            Assert.True(response.Success);
+            Assert.Equal("Hello! How can I assist you today?", response.Text);
+
+            p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
+            response = gpt.CompletionCreate(p);
+            Assert.True(response.Text.Contains("I don't have access to real-time information"));
+        }
+
+        [Fact()]
+        public void Completion_ThisIsATest()
         {
             var p = new Prompt_GPT_35_Turbo 
             { 
                 Messages = new List<GPTMessage>()
                 {
-                    new GPTMessage{ role = "user", content = "Say this is a test!" }
+                    new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
                 }
             };
             var gpt = new GPT();  
-            var response = gpt.ExecutePrompt(p);
+            var response = gpt.CompletionCreate(p);
             Assert.True(response.Success);
             Assert.Equal("This is a test!", response.Text);
-
         }
 
         const string ReferenceEnglishSentence = "Hello world.";

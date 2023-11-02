@@ -36,7 +36,20 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public ChatGPTResponse ExecutePrompt(GPTPrompt p)
+        public ChatGPTResponse CompletionCreate(GPTPrompt p)
+        {
+            var response = InitWebClient().POST(p.Url, p.GetPostBody());
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                var r = ChatGPTResponse.FromJson(response.Text);
+                return r;
+            }
+            else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
+        }
+
+
+        public ChatGPTResponse ChatCompletionCreate(GPTPrompt p)
         {
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             if (response.Success)
@@ -58,7 +71,7 @@ namespace fAI
                 Temperature = 0.2,
             };
 
-            return ExecutePrompt(prompt).Text.Trim();
+            return CompletionCreate(prompt).Text.Trim();
         }
 
         public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
@@ -68,7 +81,7 @@ namespace fAI
                 Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
             };
 
-            return ExecutePrompt(prompt).Text;
+            return CompletionCreate(prompt).Text.Trim();
         }
         
         private ModernWebClient InitWebClient()

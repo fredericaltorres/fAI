@@ -1,12 +1,23 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 
 namespace fAI
 {
+    public enum MessageRole  {
+        system,
+        user, 
+        assistant, 
+        function
+    }
     public class GPTMessage
     {
-        public string role { get; set; }
-        public string content { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "role")]
+        public MessageRole Role { get; set; }
+
+        [JsonProperty(PropertyName = "content")]
+        public string Content { get; set; }
     }
 
     public class GPTPrompt

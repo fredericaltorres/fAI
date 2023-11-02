@@ -21,34 +21,45 @@ namespace fAI
 
         public static List<string> ChatGPTSuccessfullReasons = new List<string> { NEED_MORE_TOKENS_RETURN_CODE, FULL_SUCCEES_RETURN_CODE };
 
-        public string id { get; set; }
-        public string @object { get; set; }
-        public int created { get; set; }
-        public string model { get; set; }
-        public List<ChatGPTTranslationResponseChoice> choices { get; set; }
-        public List<GPTMessage> message { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
 
-        public Usage usage { get; set; }
+        [JsonProperty(PropertyName = "object")]
+        public string @Object { get; set; }
+
+        public int created { get; set; }
+
+        [JsonProperty(PropertyName = "model")]
+        public string Model { get; set; }
+
+        [JsonProperty(PropertyName = "choices")]
+        public List<ChatGPTTranslationResponseChoice> Choices { get; set; }
+
+        [JsonProperty(PropertyName = "message")]
+        public List<GPTMessage> Message { get; set; }
+
+        [JsonProperty(PropertyName = "usage")]
+        public Usage Usage { get; set; }
 
         public static ChatGPTResponse FromJson(string json) => JsonConvert.DeserializeObject<ChatGPTResponse>(json);
         public string Text {
             get
             {
-                if (choices.Count > 0) 
+                if (Choices.Count > 0) 
                 {
-                    if (!string.IsNullOrEmpty(choices[0]?.text?.Trim()))
-                        return choices[0].text.Trim();
-                    if (choices[0].message != null)
-                        return choices[0].message.content;
+                    if (!string.IsNullOrEmpty(Choices[0]?.text?.Trim()))
+                        return Choices[0].text.Trim();
+                    if (Choices[0].message != null)
+                        return Choices[0].message.Content;
                 }
                 return null;
             }
         }
 
         // https://platform.openai.com/docs/api-reference/completions/object
-        public bool Success => choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(choices[0].finish_reason);
+        public bool Success => Choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(Choices[0].finish_reason);
 
-        public bool NeedMoreToken => choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(NEED_MORE_TOKENS_RETURN_CODE);
+        public bool NeedMoreToken => Choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(NEED_MORE_TOKENS_RETURN_CODE);
 
         public string ErrorMessage => "Error"; // TODO: Implement
 
