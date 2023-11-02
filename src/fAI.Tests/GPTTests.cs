@@ -12,6 +12,15 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class GPTTests
     {
+        [Fact()]
+        public void GetModels()
+        {
+            var gpt = new GPT();
+            var models = gpt.GetModels();
+            Assert.True(models.data.Count > 0);
+            Assert.True(models.data[0].Created < DateTime.Now);
+        }
+
         const string ReferenceEnglishSentence = "Hello world.";
 
         [Fact()]

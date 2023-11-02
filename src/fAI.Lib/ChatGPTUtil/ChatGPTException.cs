@@ -1,10 +1,6 @@
 ﻿using System;
 
-//
-//               E X P E R I M E N T A L
-//
-
-namespace Brainshark.Cognitive.Library.ChatGPT
+namespace fAI
 {
     internal class ChatGPTException : Exception
     {

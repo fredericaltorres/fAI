@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-//
-//               E X P E R I M E N T A L
-//
-
-namespace Brainshark.Cognitive.Library.ChatGPT
+namespace fAI
 {
     public class ChatGPTTranslationResponseChoice
     {
