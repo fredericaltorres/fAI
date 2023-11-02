@@ -36,26 +36,27 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public ChatGPTResponse CompletionCreate(GPTPrompt p)
+        public CompletionResponse CompletionCreate(GPTPrompt p)
         {
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
-                var r = ChatGPTResponse.FromJson(response.Text);
+                var r = CompletionResponse.FromJson(response.Text);
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
         }
 
 
-        public ChatGPTResponse ChatCompletionCreate(GPTPrompt p)
+        // https://platform.openai.com/docs/guides/gpt
+        public CompletionResponse ChatCompletionCreate(GPTPrompt p)
         {
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
-                var r = ChatGPTResponse.FromJson(response.Text);
+                var r = CompletionResponse.FromJson(response.Text);
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);

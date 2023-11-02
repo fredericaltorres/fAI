@@ -36,7 +36,7 @@ namespace fAI
 
         public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
 
-        public ChatGPTResponse Response { get; set; } = new ChatGPTResponse();
+        public CompletionResponse Response { get; set; } = new CompletionResponse();
 
         public bool Success => Response.Success;
 

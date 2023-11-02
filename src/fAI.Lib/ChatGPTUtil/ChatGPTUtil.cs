@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-    public class ChatGPTTranslationResponseChoice
+    public class CompletionChoiceResponse
     {
         public string text { get; set; }
         public int index { get; set; }
@@ -14,7 +14,7 @@ namespace fAI
         public GPTMessage message { get; set; }
     }
 
-    public class ChatGPTResponse
+    public class CompletionResponse
     {
         private const string NEED_MORE_TOKENS_RETURN_CODE = "length";
         private const string FULL_SUCCEES_RETURN_CODE = "stop";
@@ -32,16 +32,21 @@ namespace fAI
         [JsonProperty(PropertyName = "model")]
         public string Model { get; set; }
 
+
+        // https://platform.openai.com/docs/api-reference/completions/get-completion
+
         [JsonProperty(PropertyName = "choices")]
-        public List<ChatGPTTranslationResponseChoice> Choices { get; set; }
+        public List<CompletionChoiceResponse> Choices { get; set; }
 
         [JsonProperty(PropertyName = "message")]
         public List<GPTMessage> Message { get; set; }
 
+
+
         [JsonProperty(PropertyName = "usage")]
         public Usage Usage { get; set; }
 
-        public static ChatGPTResponse FromJson(string json) => JsonConvert.DeserializeObject<ChatGPTResponse>(json);
+        public static CompletionResponse FromJson(string json) => JsonConvert.DeserializeObject<CompletionResponse>(json);
         public string Text {
             get
             {

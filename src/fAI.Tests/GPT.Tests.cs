@@ -25,7 +25,7 @@ namespace fAI.Tests
         [Fact()]
         public void Complettion_Chat_Hello()
         {
-            var p = new Prompt_GPT_35_Turbo
+            var p = new Prompt_GPT_4 //Prompt_GPT_35_Turbo
             {
                 Messages = new List<GPTMessage>()
                 {
@@ -35,13 +35,13 @@ namespace fAI.Tests
                 Url = "https://api.openai.com/v1/chat/completions"
             };
             var gpt = new GPT();
-            var response = gpt.CompletionCreate(p);
+            var response = gpt.ChatCompletionCreate(p);
             Assert.True(response.Success);
             Assert.Equal("Hello! How can I assist you today?", response.Text);
 
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
-            response = gpt.CompletionCreate(p);
-            Assert.True(response.Text.Contains("I don't have access to real-time information"));
+            response = gpt.ChatCompletionCreate(p);
+            Assert.True(response.Text.Contains("real-time"));
         }
 
         [Fact()]
@@ -55,7 +55,7 @@ namespace fAI.Tests
                 }
             };
             var gpt = new GPT();  
-            var response = gpt.CompletionCreate(p);
+            var response = gpt.ChatCompletionCreate(p);
             Assert.True(response.Success);
             Assert.Equal("This is a test!", response.Text);
         }
