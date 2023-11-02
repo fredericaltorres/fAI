@@ -28,15 +28,13 @@ namespace fAI.Tests
             { 
                 Messages = new List<GPTMessage>()
                 {
-                    new GPTMessage{ role = "user", content ="Say this is a test!" }
+                    new GPTMessage{ role = "user", content = "Say this is a test!" }
                 }
             };
             var gpt = new GPT();  
             var response = gpt.ExecutePrompt(p);
-            if(response.Success)
-            {
-                var a = response.Text;
-            }
+            Assert.True(response.Success);
+            Assert.Equal("This is a test!", response.Text);
 
         }
 

@@ -11,7 +11,7 @@ namespace fAI
         public int index { get; set; }
         public object logprobs { get; set; }
         public string finish_reason { get; set; }
-        public List<GPTMessage> message { get; set; }
+        public GPTMessage message { get; set; }
     }
 
     public class ChatGPTResponse
@@ -38,8 +38,8 @@ namespace fAI
                 {
                     if (!string.IsNullOrEmpty(choices[0]?.text?.Trim()))
                         return choices[0].text.Trim();
-                    if (choices[0].message != null && choices[0].message.Count > 0)
-                        return choices[0].message.Last().content;
+                    if (choices[0].message != null)
+                        return choices[0].message.content;
                 }
                 return null;
             }
