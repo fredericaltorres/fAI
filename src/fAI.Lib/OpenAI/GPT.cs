@@ -55,9 +55,10 @@ namespace fAI
                 Text = text,
                 PrePrompt = "Summarize the following text: \n===\n",
                 PostPrompt = "\n===\nSummary:\n",
+                Temperature = 0.2,
             };
 
-            return ExecutePrompt(prompt).Text;
+            return ExecutePrompt(prompt).Text.Trim();
         }
 
         public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
