@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Brainshark.Cognitive.Library.ChatGPT;
+using System.Net.Http.Headers;
 
 namespace fAI
 {
@@ -29,71 +30,112 @@ namespace fAI
         const string _chatGptTranslationUrl = "https://api.openai.com/v1/completions";
         private const string _chatGptTranslationModel = "gpt-3.5-turbo-instruct";
 
-        // const string _chatGptSummarizationUrl = "https://api.openai.com/v1/engines/davinci-codex/completions"; 404
-                                                 
-        const string _chatGptSummarizationUrl   = "https://api.openai.com/v1/engines/davinci-003/completions";
-        // const string _chatGptSummarizationUrl = "https://api.openai.com/v1/engines/davinci/completions";
 
-        private const string _chatGptSummarizationModel = "text-davinci-003";
+        //const string _chatGptSummarizationUrl   = "https://api.openai.com/v1/engines/davinci-003/completions";
+        //const string _chatGptSummarizationModel = "text-davinci-003";
+
+        const string _chatGptSummarizationUrl = _chatGptTranslationUrl;
+        const string _chatGptSummarizationModel = _chatGptTranslationModel;
 
         const string _chatGptPromptUrl = "https://api.openai.com/v1/engines/davinci-codex/completions";
 
         // Azure.AI.OpenAI.
         // https://github.com/Azure-Samples/openai-dotnet-samples
 
-        public string Prompt(string text)
+
+
+        public class GPTPrompt
+        {
+            public string Url { get; set; }
+            public string Text { get; set; }
+            public string PrePrompt { get; set; }
+            public string PostPrompt { get; set; }
+            public string Prompt { get; set; }
+            public string Model { get; set; }
+            public int MaxTokens { get; set; } = 4000;
+            public int NewTokens { get; set; } = 500;
+            public int Temperature { get; set; } = 0;
+
+            public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
+
+            public ChatGPTResponse Response { get; set; } = new ChatGPTResponse();
+
+            public bool Success => Response.Success;
+
+            public string Answer => string.IsNullOrEmpty(Response.Text) ? null : Response.Text.Trim();
+            public string Error => Response.ErrorMessage;
+
+            public string GetPostBody() 
+            {
+                return JsonConvert.SerializeObject(new
+                {
+                    model = Model,
+                    prompt = FullPrompt,
+                    max_tokens = MaxTokens,
+                    temperature = Temperature
+                });
+           }
+        }
+
+        public class Prompt_GPT_35_TurboInstruct : GPTPrompt
+        {
+            public Prompt_GPT_35_TurboInstruct() : base ()
+            {
+                Model = "gpt-3.5-turbo-instruct";
+                Url = "https://api.openai.com/v1/completions";
+                MaxTokens = 2000;
+                NewTokens = 400;
+                Temperature = 0;
+            }
+        }
+
+        public GPTPrompt Prompt(GPTPrompt p)
         {
             var webClient = InitWebClient();
-            string prompt = text;
-            int maxTokens = CountWords(text) * 3;
+
+            // For a translation we allow for max token usable by the model 3 times the number of words in the text
             var body = new
             {
-                model = _chatGptPromptUrl,
-                max_tokens = maxTokens,
-                temperature = 0
+                model =  p.Model,
+                prompt = p.Prompt,
+                max_tokens = p.MaxTokens,
+                temperature = p.Temperature
             };
-            var response = webClient.POST(_chatGptSummarizationUrl, JsonConvert.SerializeObject(body));
-
+            var response = webClient.POST(_chatGptSummarizationUrl, p.GetPostBody()  /*JsonConvert.SerializeObject(body)*/);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
-                var chatGPTResponse = ChatGPTResponse.FromJson(response.Text);
-                if (chatGPTResponse.Success)
-                    return chatGPTResponse.TranslatedText;
-                else
-                    throw new ChatGPTException(chatGPTResponse.ErrorMessage);
+                p.Response = ChatGPTResponse.FromJson(response.Text);
+                return p;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
         }
 
         public  string Summarize(string text, TranslationLanguages sourceLangague) 
         {
-            const string PRE_PROMPT = "Summarize the following text: \n===\n";
-            const string POST_PROMPT = "\n===\nSummary:\n";
-            const int MAX_TOKENS = 4000;
-            const int MAX_NEW_TOKENS = 500;
-
-            var webClient = InitWebClient();
-            string prompt = $"{PRE_PROMPT}{text}{POST_PROMPT}";
-
-            // For a translation we allow for max token usable by the model 3 times the number of words in the text
-            var body = new
+            var prompt = new Prompt_GPT_35_TurboInstruct 
             {
-                model = _chatGptSummarizationModel,
-                prompt = prompt,
-                max_tokens = MAX_NEW_TOKENS,
-                temperature = 0
+                Text = text,
+                PrePrompt = "Summarize the following text: \n===\n",
+                PostPrompt = "\n===\nSummary:\n",
             };
-            var response = webClient.POST(_chatGptSummarizationUrl, JsonConvert.SerializeObject(body));
 
+            //var body = new
+            //{
+            //    model = prompt.Model,
+            //    prompt = prompt.FullPrompt,
+            //    max_tokens = prompt.MaxTokens,
+            //    temperature = prompt.Temperature
+            //};
+            var response = InitWebClient().POST(prompt.Url, prompt.GetPostBody() /*JsonConvert.SerializeObject(body)*/);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
-                var chatGPTResponse = ChatGPTResponse.FromJson(response.Text);
-                if (chatGPTResponse.Success)
-                    return chatGPTResponse.TranslatedText;
+                prompt.Response = ChatGPTResponse.FromJson(response.Text);
+                if (prompt.Success)
+                    return prompt.Answer;
                 else
-                    throw new ChatGPTException(chatGPTResponse.ErrorMessage);
+                    throw new ChatGPTException(prompt.Error);
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
         }
@@ -129,7 +171,7 @@ namespace fAI
                 response.SetText(response.Buffer, response.ContenType);
                 var chatGPTResponse = ChatGPTResponse.FromJson(response.Text);
                 if (chatGPTResponse.Success)
-                    return chatGPTResponse.TranslatedText;
+                    return chatGPTResponse.Text;
                 else
                     throw new ChatGPTException(chatGPTResponse.ErrorMessage);
             }

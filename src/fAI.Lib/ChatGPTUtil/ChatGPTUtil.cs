@@ -31,7 +31,7 @@ namespace Brainshark.Cognitive.Library.ChatGPT
         public Usage usage { get; set; }
 
         public static ChatGPTResponse FromJson(string json) => JsonConvert.DeserializeObject<ChatGPTResponse>(json);
-        public string TranslatedText => choices.Count > 0 ? choices[0].text.Trim() : null;
+        public string Text => choices.Count > 0 ? choices[0].text.Trim() : null;
 
         // https://platform.openai.com/docs/api-reference/completions/object
         public bool Success => choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(choices[0].finish_reason);

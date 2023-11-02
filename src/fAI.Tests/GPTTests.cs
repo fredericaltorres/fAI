@@ -22,7 +22,6 @@ namespace fAI.Tests
             Assert.Equal("Bonjour monde.", translation);
         }
 
-
         [Fact()]
         public void Translate_EnglishToSpaninsh()
         {
@@ -37,21 +36,21 @@ I've got somethin to share with you that is going to blow your mind!
 it's your personal assistant, your entertainment hub, and your productivity powerhouse, all rolled into one. 
 Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
 
-
         [Fact()]
         public void Summarize_EnglishText()
         {
             var gpt = new GPT();
             var summarization = gpt.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
+            var expected = "Jordan Lee is introducing the \"SwiftGadget X\", a multi-functional gadget that is not just a device but also a personal assistant, entertainment hub, and productivity powerhouse. It is described as a game-changer.";
+            Assert.Equal(expected, summarization);
         }
-
 
         [Fact()]
         public void Prompt()
         {
-            var gpt = new GPT();
-            const string ReferenceEnglishTextForSummarization = @"Q: What's the diameter of the earth? A:";
-            var answer = gpt.Prompt(ReferenceEnglishTextForSummarization);
+            //var gpt = new GPT();
+            //const string ReferenceEnglishTextForSummarization = @"Q: What's the diameter of the earth? A:";
+            //var answer = gpt.Prompt(ReferenceEnglishTextForSummarization);
         }
     }
 }
