@@ -21,8 +21,6 @@ namespace fAI.Tests
             Assert.True(models.data[0].Created < DateTime.Now);
         }
 
-
-
         [Fact()]
         public void Completion_Chat_AnalyseLogError()
         {
