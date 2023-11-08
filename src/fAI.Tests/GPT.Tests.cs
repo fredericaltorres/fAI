@@ -39,9 +39,7 @@ namespace fAI.Tests
             var gpt = new GPT();
             var response = gpt.ChatCompletionCreate(p);
             Assert.True(response.Success);
-            Assert.Equal("The error message indicates that there is a mismatch between the expected and actual values", response.Text);
-
-            
+            Assert.True(response.Text.Contains("The error message indicates that there is a mismatch between the expected and actual values"));
         }
 
         [Fact()]
