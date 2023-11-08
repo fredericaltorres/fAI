@@ -22,6 +22,28 @@ namespace fAI.Tests
         }
 
 
+
+        [Fact()]
+        public void Completion_Chat_AnalyseLogError()
+        {
+            const string error_log = @"[2023-11-07T23:53:14.260Z] 2023/11/07 06:53:10.995 PM | [ERROR]Verify .Folder.Description expected:#regex (@PresentationFile@)|(@AuthorUsername@) actual:IntegrationTesting_Converters_Cheetah_Company_06 objectType:Category - AssertDetails:regex:'(WordDocument_UniqueAzureStorageEncryption.docx)|(IntegrationTesting_Converters_Cheetah_Company_06_Admin)', value:'IntegrationTesting_Converters_Cheetah_Company_06'";
+            var p = new Prompt_GPT_4 //Prompt_GPT_35_Turbo
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a helpful and experienced software developer." },
+                    new GPTMessage{ Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
+                },
+                Url = "https://api.openai.com/v1/chat/completions"
+            };
+            var gpt = new GPT();
+            var response = gpt.ChatCompletionCreate(p);
+            Assert.True(response.Success);
+            Assert.Equal("The error message indicates that there is a mismatch between the expected and actual values", response.Text);
+
+            
+        }
+
         [Fact()]
         public void Complettion_Chat_Hello()
         {

@@ -23,12 +23,11 @@ namespace fAI
             return words.Length;
         }
 
-
-        const string OPEN_AI_MODEL = "https://api.openai.com/v1/models";
+        const string OpenAi_ModelUrl = "https://api.openai.com/v1/models";
 
         public Models GetModels()
         {
-            var response = InitWebClient().GET(OPEN_AI_MODEL);
+            var response = InitWebClient().GET(OpenAi_ModelUrl);
             if(response.Success)
             {
                 return Models.FromJSON(response.Text);
