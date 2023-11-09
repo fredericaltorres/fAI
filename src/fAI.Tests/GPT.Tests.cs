@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using fAI;
 using Xunit;
+using static fAI.GPT;
 
 namespace fAI.Tests
 {
@@ -21,10 +22,26 @@ namespace fAI.Tests
             Assert.True(models.data[0].Created < DateTime.Now);
         }
 
+        const string error_log = @"[2023-11-07T23:53:14.260Z] 2023/11/07 06:53:10.995 PM | [ERROR]Verify .Folder.Description expected:#regex (@PresentationFile@)|(@AuthorUsername@) actual:IntegrationTesting_Converters_Cheetah_Company_06 objectType:Category - AssertDetails:regex:'(WordDocument_UniqueAzureStorageEncryption.docx)|(IntegrationTesting_Converters_Cheetah_Company_06_Admin)', value:'IntegrationTesting_Converters_Cheetah_Company_06'";
+        const string info_success_log = @"2023-11-06 22:31:30.680|BrainRequin|Core|1.0.1.0|INFO|FTORRES-DL5560|msg=CEF:0|BrainRequin|Core|0|Message|Message|Info|msg=[SUCCEEDED 265493281, 10.0s] Deleting pid:533300675, type:HARD-DELETE, Method: Presentation.Delete(), ProcessId: 36336; ProcessName: BrainRequin.IntegrationTesting.Converters.Console; MachineName: FTORRES-DL5560; UserName: ftorres;";
+
+        [Fact()]
+        public void IsThis_AnLogError_No()
+        {
+            var r = new GPT().IsThis("As a software developer", "is this an error message", info_success_log);
+            Assert.Equal(GPT_YesNoResponse.No, r);
+        }
+
+        [Fact()]
+        public void IsThis_AnLogError_Yes()
+        {
+            var r = new GPT().IsThis("As a software developer", "is this an error message", error_log);
+            Assert.Equal(GPT_YesNoResponse.Yes, r);
+        }
+
         [Fact()]
         public void Completion_Chat_AnalyseLogError()
         {
-            const string error_log = @"[2023-11-07T23:53:14.260Z] 2023/11/07 06:53:10.995 PM | [ERROR]Verify .Folder.Description expected:#regex (@PresentationFile@)|(@AuthorUsername@) actual:IntegrationTesting_Converters_Cheetah_Company_06 objectType:Category - AssertDetails:regex:'(WordDocument_UniqueAzureStorageEncryption.docx)|(IntegrationTesting_Converters_Cheetah_Company_06_Admin)', value:'IntegrationTesting_Converters_Cheetah_Company_06'";
             var prompt = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage>()
@@ -34,11 +51,13 @@ namespace fAI.Tests
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var gpt = new GPT();
-            var response = gpt.ChatCompletionCreate(prompt);
+            var response = new GPT().ChatCompletionCreate(prompt);
             Assert.True(response.Success);
             Assert.True(response.Text.Contains("The error message indicates that there is a mismatch between the expected and actual values"));
-            Assert.True(response.BlogPost.Contains("Model:"));
+
+            var blogPost = response.BlogPost;
+            Assert.True(blogPost.Contains("Model:"));
+            Assert.True(blogPost.Contains("Execution:"));
         }
 
         [Fact()]
@@ -53,13 +72,12 @@ namespace fAI.Tests
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var gpt = new GPT();
-            var response = gpt.ChatCompletionCreate(p);
+            var response = new GPT().ChatCompletionCreate(p);
             Assert.True(response.Success);
             Assert.Equal("Hello! How can I assist you today?", response.Text);
 
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
-            response = gpt.ChatCompletionCreate(p);
+            response = new GPT().ChatCompletionCreate(p);
             Assert.True(response.Text.Contains("real-time"));
         }
 
@@ -73,8 +91,7 @@ namespace fAI.Tests
                     new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
                 }
             };
-            var gpt = new GPT();  
-            var response = gpt.ChatCompletionCreate(p);
+            var response = new GPT().ChatCompletionCreate(p);
             Assert.True(response.Success);
             Assert.Equal("This is a test!", response.Text);
         }

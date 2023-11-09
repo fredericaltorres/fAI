@@ -46,7 +46,7 @@ namespace fAI
 
         public bool Success => Response.Success;
 
-        public string Answer => string.IsNullOrEmpty(Response.Text) ? null : Response.Text.Trim();
+        public string Answer => (this.Response!= null && string.IsNullOrEmpty(this.Response.Text)) ? null : Response.Text.Trim();
         public string Error => Response.ErrorMessage;
 
         public string GetPostBody()

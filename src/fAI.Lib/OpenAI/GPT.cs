@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace fAI
 {
     public partial class GPT  
     {
-        private int _timeout = 60 * 6;
+        private int _timeout = 60 * 3;
 
         string _chatGPTKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         string _chatGPTOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
@@ -51,12 +53,15 @@ namespace fAI
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse ChatCompletionCreate(GPTPrompt p)
         {
+            var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
+            sw.Stop();
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var r = CompletionResponse.FromJson(response.Text);
                 r.GPTPrompt = p;
+                r.Sw = sw;
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
@@ -73,6 +78,38 @@ namespace fAI
             };
 
             return CompletionCreate(prompt).Text.Trim();
+        }
+
+        public enum GPT_YesNoResponse
+        {
+            Yes,
+            No,
+            Unknown
+        }
+
+        public GPT_YesNoResponse IsThis(string systemContent, string yesNoQuestion, string dataText, string forceAnswerToYesNo = ", answer only with yes or no?")
+        {
+            var prompt = new Prompt_GPT_4
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = systemContent },
+                    new GPTMessage{ Role =  MessageRole.user, Content = $"{yesNoQuestion}{forceAnswerToYesNo}{Environment.NewLine}{dataText}" }
+                },
+                Url = "https://api.openai.com/v1/chat/completions"
+            };
+            var response = this.ChatCompletionCreate(prompt);
+            if (response.Success)
+            {
+                if(response.Text.ToLowerInvariant().Contains(GPT_YesNoResponse.Yes.ToString().ToLower()))
+                    return GPT_YesNoResponse.Yes;
+                if (response.Text.ToLowerInvariant().Contains(GPT_YesNoResponse.No.ToString().ToLower()))
+                    return GPT_YesNoResponse.No;
+                return GPT_YesNoResponse.Unknown;
+            }
+               
+            else 
+                throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
         public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)

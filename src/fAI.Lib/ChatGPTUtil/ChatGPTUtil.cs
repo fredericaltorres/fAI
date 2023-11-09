@@ -23,6 +23,7 @@ namespace fAI
         public static List<string> ChatGPTSuccessfullReasons = new List<string> { NEED_MORE_TOKENS_RETURN_CODE, FULL_SUCCEES_RETURN_CODE };
 
         public GPTPrompt GPTPrompt { get; set; }
+        public System.Diagnostics.Stopwatch Sw { get; set; }
 
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
@@ -67,12 +68,16 @@ namespace fAI
             {
                 var sb = new StringBuilder(1024);
 
-                sb.AppendLine($"Model: {this.GPTPrompt.Model}");
+                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Sw.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
 
                 var messages =  string.Join(Environment.NewLine, this.GPTPrompt.Messages);
-                sb.AppendLine($"Message: {messages}");
+                sb.AppendLine($"Messages: {messages}").AppendLine();
+
+                sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 
                 sb.AppendLine($"Answer: {this.Text}");
+
+                sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 
                 return sb.ToString();
             }
