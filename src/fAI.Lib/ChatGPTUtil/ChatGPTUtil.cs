@@ -70,12 +70,12 @@ namespace fAI
 
                 sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Sw.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
 
-                var messages =  string.Join(Environment.NewLine, this.GPTPrompt.Messages);
-                sb.AppendLine($"Messages: {messages}").AppendLine();
+                var messages = string.Join(Environment.NewLine, this.GPTPrompt.Messages);
+                sb.AppendLine($"Messages:").AppendLine(messages);
 
                 sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 
-                sb.AppendLine($"Answer: {this.Text}");
+                sb.AppendLine($"Answer:").AppendLine(this.Text);
 
                 sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 

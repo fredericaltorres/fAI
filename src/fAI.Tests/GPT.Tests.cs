@@ -42,12 +42,10 @@ namespace fAI.Tests
         [Fact()]
         public void Completion_Chat_AnalyseLogError()
         {
-            var prompt = new Prompt_GPT_4
-            {
-                Messages = new List<GPTMessage>()
-                {
-                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a helpful and experienced software developer." },
-                    new GPTMessage{ Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
+            var prompt = new Prompt_GPT_4 {
+                Messages = new List<GPTMessage> {
+                    new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced software developer."      },
+                    new GPTMessage { Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
