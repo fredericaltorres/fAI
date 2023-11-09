@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 
 namespace fAI
 {
@@ -21,6 +22,8 @@ namespace fAI
 
         public static List<string> ChatGPTSuccessfullReasons = new List<string> { NEED_MORE_TOKENS_RETURN_CODE, FULL_SUCCEES_RETURN_CODE };
 
+        public GPTPrompt GPTPrompt { get; set; }
+
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
@@ -32,7 +35,6 @@ namespace fAI
         [JsonProperty(PropertyName = "model")]
         public string Model { get; set; }
 
-
         // https://platform.openai.com/docs/api-reference/completions/get-completion
 
         [JsonProperty(PropertyName = "choices")]
@@ -40,8 +42,6 @@ namespace fAI
 
         [JsonProperty(PropertyName = "message")]
         public List<GPTMessage> Message { get; set; }
-
-
 
         [JsonProperty(PropertyName = "usage")]
         public Usage Usage { get; set; }
@@ -58,6 +58,23 @@ namespace fAI
                         return Choices[0].message.Content;
                 }
                 return null;
+            }
+        }
+
+        public string BlogPost
+        {
+            get
+            {
+                var sb = new StringBuilder(1024);
+
+                sb.AppendLine($"Model: {this.GPTPrompt.Model}");
+
+                var messages =  string.Join(Environment.NewLine, this.GPTPrompt.Messages);
+                sb.AppendLine($"Message: {messages}");
+
+                sb.AppendLine($"Answer: {this.Text}");
+
+                return sb.ToString();
             }
         }
 

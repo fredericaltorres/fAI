@@ -18,6 +18,12 @@ namespace fAI
 
         [JsonProperty(PropertyName = "content")]
         public string Content { get; set; }
+
+
+        public override string ToString()
+        {
+            return $"Role:{this.Role}, Content:{this.Content}";
+        }
     }
 
     public class GPTPrompt

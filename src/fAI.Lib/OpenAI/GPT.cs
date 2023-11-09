@@ -56,6 +56,7 @@ namespace fAI
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var r = CompletionResponse.FromJson(response.Text);
+                r.GPTPrompt = p;
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
