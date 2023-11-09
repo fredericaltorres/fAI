@@ -107,7 +107,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        public void Translate_EnglishToSpaninsh()
+        public void Translate_EnglishToSpanish()
         {
             var gpt = new GPT();
             var translation = gpt.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);

@@ -6,13 +6,15 @@ namespace fAI
 {
     public partial class GPT  
     {
-        private int _timeout = 60 * 3;
+        private int _timeout = 60 * 2;
 
         string _chatGPTKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         string _chatGPTOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
-        public GPT()
+        public GPT(int timeOut = -1)
         {
+            if(timeOut > 0)
+                _timeout = timeOut;
         }
 
         private static int CountWords(string str)
@@ -48,7 +50,6 @@ namespace fAI
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
         }
-
 
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse ChatCompletionCreate(GPTPrompt p)
