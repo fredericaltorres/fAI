@@ -8,13 +8,19 @@ namespace fAI
     {
         private int _timeout = 60 * 2;
 
-        string _chatGPTKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        string _chatGPTOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
+        string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
-        public GPT(int timeOut = -1)
+        public GPT(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             if(timeOut > 0)
                 _timeout = timeOut;
+
+            if (openAiKey != null)
+                _openAiKey = openAiKey;
+
+            if(openAiOrg != null)
+                _openAiOrg = openAiOrg;
         }
 
         private static int CountWords(string str)
@@ -126,8 +132,8 @@ namespace fAI
         private ModernWebClient InitWebClient()
         {
             var mc = new ModernWebClient(_timeout);
-            mc.AddHeader("Authorization", $"Bearer {_chatGPTKey}")
-              .AddHeader("OpenAI-Organization", _chatGPTOrg)
+            mc.AddHeader("Authorization", $"Bearer {_openAiKey}")
+              .AddHeader("OpenAI-Organization", _openAiOrg)
               .AddHeader("Content-Type", "application/json")
               .AddHeader("Accept", "application/json");
             return mc;
