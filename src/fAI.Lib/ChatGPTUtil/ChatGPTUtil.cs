@@ -56,7 +56,7 @@ namespace fAI
                     if (!string.IsNullOrEmpty(Choices[0]?.text?.Trim()))
                         return Choices[0].text.Trim();
                     if (Choices[0].message != null)
-                        return Choices[0].message.Content;
+                        return Choices[0].message.Content.Replace("\n\n", Environment.NewLine);
                 }
                 return null;
             }

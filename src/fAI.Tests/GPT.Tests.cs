@@ -63,7 +63,7 @@ namespace fAI.Tests
         [Fact()]
         public void Complettion_Chat_Hello()
         {
-            var p = new Prompt_GPT_4 //Prompt_GPT_35_Turbo
+            var p = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage>()
                 {
