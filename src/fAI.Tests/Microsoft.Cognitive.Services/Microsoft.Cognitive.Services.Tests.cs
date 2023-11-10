@@ -47,11 +47,11 @@ I'm crying";
         {
             var mcs = new MicrosoftCognitiveServices();
             var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
-            var sttResult = mcs.ExecuteSTT(mp3FileName).GetAwaiter().GetResult();
-            Assert.True(sttResult.Succeeded);
-            Assert.Equal(STT_EnglishTest01_Result, sttResult.Text.ToString().Trim());
 
-            // C:\DVT\fAI\src\fAI.Tests\TestFiles\TestFile.01.48Khz.mp3
+            var sttResult = mcs.ExecuteSTT(mp3FileName).GetAwaiter().GetResult();
+
+            Assert.True(sttResult.Succeeded);
+            Assert.Equal(STT_EnglishTest01_Result, sttResult.Text);
         }
     }
 }

@@ -53,18 +53,21 @@ namespace fAI
             return audioConfig;
         }
 
+
         public class ConversionToText
         {
-            public StringBuilder Text;
-            public StringBuilder Error;
-            public bool Succeeded => Error.Length == 0;
+            internal StringBuilder _text;
+            internal StringBuilder _error;
+            public bool Succeeded => _error.Length == 0;
+            public string Text  => _text.ToString().Trim();
+            public string Error => _error.ToString();
         }
 
         public async Task<ConversionToText> ExecuteSTT(string audioFileName)
         {
             var sbText = new StringBuilder(1024);
             var sbError = new StringBuilder(1024);
-            var r = new ConversionToText { Text = sbText, Error = sbError };
+            var r = new ConversionToText { _text = sbText, _error = sbError };
             var shouldDeleteFile = false;
             var extension = Path.GetExtension(audioFileName).ToLowerInvariant();
             if (extension == ".mp3")
@@ -116,7 +119,7 @@ namespace fAI
             }
             catch (Exception ex)
             {
-                r.Error.Append(ex.ToString());
+                r._error.Append(ex.ToString());
             }
             finally
             {
