@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CognitiveServices.Speech">
+      <Version>1.33.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
@@ -49,7 +53,8 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GPT.Tests.cs" />
+    <Compile Include="Microsoft.Cognitive.Services\Microsoft.Cognitive.Services.Tests.cs" />
+    <Compile Include="OpenAI\GPT.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -58,7 +63,19 @@
       <Name>fAI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.core.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.codec.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
+    <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>::: copy "$(ProjectDir)\MS.DLL\*.*" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
