@@ -55,6 +55,35 @@ namespace fAI
         }
 
 
+        public static string ConvertMp3ToWav(string mp3FileName, string wavFileName = null)
+        {
+            if (wavFileName == null)
+                wavFileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".wav");
+
+            DeleteFile(wavFileName);
+
+            using (var reader = new Mp3FileReader(mp3FileName))
+            {
+                WaveFileWriter.CreateWaveFile(wavFileName, reader);
+            }
+            return wavFileName;
+        }
+
+        public static string ConvertWavToMP3(string wavFileName, string mp3FileName = null)
+        {
+            if (mp3FileName == null)
+                mp3FileName = wavFileName.Replace(".wav", ".mp3");
+
+            DeleteFile(mp3FileName);
+
+            using (var reader = new WaveFileReader(wavFileName))
+            {
+                MediaFoundationEncoder.EncodeToMp3(reader, mp3FileName, 44000);
+            }
+            return mp3FileName;
+        }
+
+
         public static MP3Info GetMp3Info(string fileName)
         {
             var ext = Path.GetExtension(fileName).ToLower();

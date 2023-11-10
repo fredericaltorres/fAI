@@ -74,6 +74,9 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+    <Content Include="TestFiles\TestFile.01.48Khz.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

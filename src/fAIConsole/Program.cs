@@ -21,7 +21,7 @@ I'm crying";
             var mcs = new MicrosoftCognitiveServices();
             var voiceId = "en-US-DavisNeural";
             var mp3FileName = Path.Combine(Path.GetTempPath(), "mp3.mp3");
-            mcs.CreateAudioFile(EnglishTest01, voiceId, mp3FileName);
+            mcs.ExecuteTTS(EnglishTest01, voiceId, mp3FileName);
         }
     }
 }
