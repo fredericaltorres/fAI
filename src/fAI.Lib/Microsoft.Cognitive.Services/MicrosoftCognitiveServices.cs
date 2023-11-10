@@ -1,6 +1,7 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System;
+using System.IO;
 
 namespace fAI
 {
@@ -16,10 +17,10 @@ namespace fAI
         }
     }
 
-    public enum AudioType
+    public enum AudioFileType
     {
-        WAV,
-        MP3
+        Wav,
+        Mp3
     }
 
     public class MicrosoftCognitiveServices
@@ -31,29 +32,30 @@ namespace fAI
 
         public MicrosoftCognitiveServices(string key = null, string region = "eastus")
         {
-            if(_key != null)
+            if(key != null)
                 _key = key;
 
-            if(_region != null)
-                _region = region;
+            if(region != null)
+               _region = region;
 
             _config = SpeechConfig.FromSubscription(_key, _region);
         }
 
-        private AudioConfig GetAudioConfiguration(string fileName, AudioType audioType)
+        private AudioConfig GetAudioConfiguration(string fileName, AudioFileType audioType)
         {
             var audioConfig = AudioConfig.FromWavFileOutput(fileName);
-            if (audioType == AudioType.MP3)
+            if (audioType == AudioFileType.Mp3)
                 _config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Audio48Khz96KBitRateMonoMp3); 
             else
                 _config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff44100Hz16BitMonoPcm);
             return audioConfig;
         }
 
-        public  void CreateAudioFile(string text, string voiceName, string fileName)
+        public  void CreateAudioFile(string text, string voiceName, string filename)
         {
             var ssml = GetSSML(text, voiceName);
-            __createAudioFileSSML(ssml, voiceName, fileName);
+            var audioFileType = Path.GetExtension(filename).ToLower() == ".mp3" ? AudioFileType.Mp3 : AudioFileType.Wav;  
+            __createAudioFileSSML(ssml, voiceName, filename, audioFileType);
         }
 
         private static string GetSSML(string text, string voiceName)
@@ -63,9 +65,9 @@ namespace fAI
                     </speak>";
         }
 
-        private void __createAudioFileSSML(string ssml, string voiceName, string fileName)
+        private void __createAudioFileSSML(string ssml, string voiceName, string fileName, AudioFileType audioFileType)
         {
-            var audioType = AudioType.MP3;
+            var audioType = AudioFileType.Mp3;
 
             _config.SpeechSynthesisLanguage = "en-us";
             _config.SpeechSynthesisVoiceName = voiceName;
@@ -76,7 +78,7 @@ namespace fAI
 
             using (var synthetizer = new SpeechSynthesizer(_config, audioConfig))
             {
-                SpeechSynthesisResult r = synthetizer.SpeakTextAsync(ssml).GetAwaiter().GetResult();
+                SpeechSynthesisResult r = synthetizer.SpeakSsmlAsync(ssml).GetAwaiter().GetResult();
                 if (r.Reason != ResultReason.SynthesizingAudioCompleted)
                     throw new TextToSpeechProviderException($"Error generating audio from text: {r.Reason}");
             }

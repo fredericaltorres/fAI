@@ -5,7 +5,6 @@ using System.Linq;
 using System;
 using fAI;
 using Xunit;
-using static fAI.GPT;
 
 namespace fAI.Tests
 {
@@ -13,19 +12,27 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class MicrosoftCognitiveServicesTests
     {
-        [Fact()]
-        public void GetModels()
-        {
-            var text = @"I am he as you are he as you are me
-And we are all together
+        const string EnglishTest01 = @"I am he as you are he as you are me
+And we are all together.
 See how they run like pigs from a gun
-See how they fly
+See how they fly.
 I'm crying";
+
+        [Fact()]
+        public void CreateAudioFile()
+        {
             var mcs = new MicrosoftCognitiveServices();
-            var voiceId = "en-US-DavisNeural";
+            var voiceId = "en-GB-LibbyNeural";
             var mp3FileName = Path.Combine(Path.GetTempPath(), "mp3.mp3");
-            mcs.CreateAudioFile(text, voiceId, mp3FileName);
-          
+
+            mcs.CreateAudioFile(EnglishTest01, voiceId, mp3FileName);
+
+            Assert.True(File.Exists(mp3FileName));
+            var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
+            Assert.True(mp3Info.DurationAsDouble > 3);
+            Assert.Equal(48000, mp3Info.SampleRate);
+            Assert.Equal(16, mp3Info.BitsPerSample);
+            AudioUtil.DeleteFile(mp3FileName);
         }
     }
 }
