@@ -14,7 +14,7 @@ namespace fAI
 
         public string GetVoiceDefinitionDisplayName()
         {
-            return $"{this.DisplayName}, {this.Gender}, {this.LocaleName}, {this.ShortName}";
+            return $"{this.DisplayName}, {this.Gender}, {this.LocaleName}";
         }
 
         public override string ToString()

@@ -143,7 +143,7 @@ namespace fAI
             {
                 SpeechSynthesisResult r = synthetizer.SpeakSsmlAsync(ssml).GetAwaiter().GetResult();
                 if (r.Reason != ResultReason.SynthesizingAudioCompleted)
-                    throw new TextToSpeechProviderException($"Error generating audio from text: {r.Reason}");
+                    throw new TextToSpeechProviderException($"Error generating audio from SSML, Reason:{r.Reason}, ssml:{ssml}");
             }
         }
 
