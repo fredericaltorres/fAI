@@ -1,29 +1,14 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace fAI
 {
-    internal class TextToSpeechProviderException : Exception
-    {
-        public TextToSpeechProviderException(string message)
-            : base(message)
-        {
-        }
-        public TextToSpeechProviderException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-    }
-
-    public enum AudioFileType
-    {
-        Wav,
-        Mp3
-    }
 
     public class MicrosoftCognitiveServices
     {
@@ -54,7 +39,7 @@ namespace fAI
         }
 
 
-        public class ConversionToText
+        public class STTResult
         {
             internal StringBuilder _text;
             internal StringBuilder _error;
@@ -63,11 +48,11 @@ namespace fAI
             public string Error => _error.ToString();
         }
 
-        public async Task<ConversionToText> ExecuteSTT(string audioFileName)
+        public async Task<STTResult> ExecuteSTT(string audioFileName)
         {
             var sbText = new StringBuilder(1024);
             var sbError = new StringBuilder(1024);
-            var r = new ConversionToText { _text = sbText, _error = sbError };
+            var r = new STTResult { _text = sbText, _error = sbError };
             var shouldDeleteFile = false;
             var extension = Path.GetExtension(audioFileName).ToLowerInvariant();
             if (extension == ".mp3")
@@ -160,6 +145,51 @@ namespace fAI
                 if (r.Reason != ResultReason.SynthesizingAudioCompleted)
                     throw new TextToSpeechProviderException($"Error generating audio from text: {r.Reason}");
             }
+        }
+
+        const string DEFAULT_LANG   = "en";
+        const string DEFAULT_LOCAL  = "en-US";
+
+        static VoiceDefinitions _voiceDefinitionsCached;
+        static Languages        _languagesCached;
+
+        public Languages Languages
+        {
+            get
+            {
+                if (_languagesCached == null)
+                    _languagesCached = Languages.Load();
+
+                return _languagesCached;
+            }
+        }
+
+        /// <summary>
+        /// https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech?tabs=streaming
+        /// </summary>
+        /// <returns></returns>
+        public VoiceDefinitions GetListOfVoices()
+        {
+            if(_voiceDefinitionsCached == null)
+                _voiceDefinitionsCached = new VoiceDefinitions().Load(this._key, this._region);
+
+            return _voiceDefinitionsCached;
+        }
+
+        public VoiceDefinitions GetListOfVoicesByLanguage(string language)
+        {
+            var voices2 = new VoiceDefinitions();
+            foreach (var v in GetListOfVoices())
+            {
+                if(v.Locale.StartsWith($"{language}-"))
+                    voices2.Add(v);
+            }
+            return voices2;
+
+            //var voiceList = GetListOfVoices().Where(q => languages.Any(p => q.Locale.Contains(p))).ToList();
+            //var voices = new VoiceDefinitions();
+            //voices.Set(voiceList);
+            //return voices;
         }
 
         public bool RemoveFile(string fileName)

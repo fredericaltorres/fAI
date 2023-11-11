@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using DynamicSugar;
 using fAI;
 using Xunit;
 using static fAI.AudioUtil;
+using static fAI.MicrosoftCognitiveServices;
 
 namespace fAI.Tests
 {
@@ -52,6 +54,33 @@ I'm crying";
 
             Assert.True(sttResult.Succeeded);
             Assert.Equal(STT_EnglishTest01_Result, sttResult.Text);
+        }
+
+        [Fact()]
+        public void GetListOfVoices()
+        {
+            var mcs = new MicrosoftCognitiveServices();
+            var voices = mcs.GetListOfVoices();
+            Assert.True(voices.Count > 500);
+        }
+
+        [Fact()]
+        public void Languages_Load()
+        {
+            var mcs = new MicrosoftCognitiveServices();
+            Assert.True(mcs.Languages.Count > 180);
+
+            var englishLanguage = mcs.Languages.FirstOrDefault(l => l.Name == "English");
+            Assert.NotNull(englishLanguage);
+
+            var frenchLanguage = mcs.Languages.FirstOrDefault(l => l.Name == "French");
+            Assert.NotNull(frenchLanguage);
+
+            var englishVoices = mcs.GetListOfVoicesByLanguage(englishLanguage.Code);
+            Assert.True(englishVoices.Count >= 96);
+
+            var frenchVoices = mcs.GetListOfVoicesByLanguage(frenchLanguage.Code);
+            Assert.True(frenchVoices.Count >= 29);
         }
     }
 }
