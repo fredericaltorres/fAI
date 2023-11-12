@@ -111,7 +111,37 @@ bb bb bb.
 aa aa aa.
 bb bb bb.
 cc cc cc.
-zz zz zz zz";
+zz zz zz zz
+";
+            Assert.Equal(expectedBlogPost, formattedBogPost);
+        }
+
+
+        [Fact()]
+        public void FormatChatGPTAnswerForTextDisplay_BulletPoint()
+        {
+            var blogPost = @"
+Answer:
+aa aa aa.
+aa aa aa. bb bb bb.
+1. point A. Point A-1 continuation. Point A-2 continuation
+2. point B. Point B-1 continuation. Point B-2 continuation
+End of text
+";
+            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+
+            var expectedBlogPost = @"Answer:
+aa aa aa.
+aa aa aa.
+bb bb bb.
+1. point A.
+   Point A-1 continuation.
+   Point A-2 continuation
+2. point B.
+   Point B-1 continuation.
+   Point B-2 continuation
+End of text
+";
             Assert.Equal(expectedBlogPost, formattedBogPost);
         }
 

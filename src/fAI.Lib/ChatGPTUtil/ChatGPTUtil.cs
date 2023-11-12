@@ -128,7 +128,7 @@ namespace fAI
                 x++;
             }
 
-            blogPost = string.Join(Environment.NewLine, newLines);
+            blogPost = string.Join(Environment.NewLine, newLines) + Environment.NewLine;
             return blogPost;
         }
 
