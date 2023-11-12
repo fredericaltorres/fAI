@@ -6,7 +6,7 @@ namespace fAI
 {
     public partial class GPT  
     {
-        private int _timeout = 60 * 3;
+        private int _timeout = 60 * 4;
 
         string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
