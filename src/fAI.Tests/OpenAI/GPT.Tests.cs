@@ -39,6 +39,37 @@ namespace fAI.Tests
             Assert.Equal(GPT_YesNoResponse.Yes, r);
         }
 
+
+        [Fact()]
+        public void Completion_Chat_QuestionAboutPastSchedule()
+        {
+            var prompt = new Prompt_GPT_4
+            {
+                Messages = new List<GPTMessage> 
+                {
+                    new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful assistant." },
+                    new GPTMessage { Role =  MessageRole.user, Content = $"08/02/2021 15:00 Meeting with Eric." },
+                    new GPTMessage { Role =  MessageRole.user, Content = $"09/01/2021 15:00 Meeting with Eric." },
+                    new GPTMessage { Role =  MessageRole.user, Content = $"09/10/2021 10:00 Take the dog to the vet." },
+                    new GPTMessage { Role =  MessageRole.user, Content = $"09/20/2021 15:00 Meeting with Rick and John" },
+                }
+                // Url = "https://api.openai.com/v1/chat/completions"
+            };
+            var response = new GPT().ChatCompletionCreate(prompt);
+            Assert.True(response.Success);
+            Assert.True(response.Text.Contains(""));
+
+            var blogPost = response.BlogPost;
+
+            prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "When was the last time I talked with Eric?" });
+            response = new GPT().ChatCompletionCreate(prompt);
+            Assert.True(Regex.IsMatch(response.Text, @"Eric.*09\/01\/2021 at 15:00"));
+
+            prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to on 09/10/2021?" });
+            response = new GPT().ChatCompletionCreate(prompt);
+            Assert.True(Regex.IsMatch(response.Text, @"dog.*vet.*10:00"));
+        }
+
         [Fact()]
         public void Completion_Chat_AnalyseLogError()
         {
