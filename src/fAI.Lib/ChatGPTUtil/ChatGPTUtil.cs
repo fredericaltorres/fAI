@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using DynamicSugar;
 
 namespace fAI
 {
@@ -61,6 +62,77 @@ namespace fAI
                 return null;
             }
         }
+
+        public static string FormatChatGPTAnswerForTextDisplay(string blogPost)
+        {
+            var isBulletPointLineRegEx = new System.Text.RegularExpressions.Regex(@"^(\d\. \*\*)|(\d\. )|(- \*\*)|(- `)");
+
+            var isBulletPointLine = new Func<string, bool>((line) => {
+
+                return isBulletPointLineRegEx.IsMatch(line);
+            });
+
+            var isDigitBulletPointLineRegEx = new System.Text.RegularExpressions.Regex(@"^(\d\. )");
+
+            var isDigitBulletPointLine = new Func<string, bool>((line) => {
+
+                return isDigitBulletPointLineRegEx.IsMatch(line);
+            });
+            /*
+                 if the line start line this: 1. **Timestamp**: The event occurred ...
+                 we do nothing
+                 else
+                 we need to replace the dot by a new line to have a better display
+             */
+
+            ; // ChatGPT return \n instead of \r\n, todo fix it in the API fAI
+            blogPost = blogPost.Replace(Environment.NewLine, "`r`n")
+                               .Replace("\n", Environment.NewLine)
+                               .Replace("`r`n", Environment.NewLine);
+
+            var lines = blogPost.SplitByCRLF().TrimEnd();
+            var newLines = new List<string>();
+            var x = 0;
+            const string DotTag = ". ";
+            const string IndentTag = "   ";
+            var charMarker = (char)1;
+            while (x < lines.Count)
+            {
+                var currentLine = lines[x];
+                var nextLine = x + 1 < lines.Count ? lines[x + 1] : null;
+
+                if (currentLine.Contains(DotTag) && !isBulletPointLine(currentLine))
+                {
+                    currentLine = currentLine.Replace(DotTag, DotTag + Environment.NewLine);
+                    var currentLines = currentLine.SplitByCRLF().TrimEnd();
+                    newLines.AddRange(currentLines);
+                }
+                else if (currentLine.Contains(DotTag) && isBulletPointLine(currentLine))
+                {
+                    var hasDigitBulletPoint = isDigitBulletPointLine(currentLine);
+                    if (hasDigitBulletPoint) // If the line start with 1., we need to ignore the first dot
+                    {
+                        var xx = currentLine.IndexOf(".");
+                        currentLine = currentLine.ReplaceChar(xx, charMarker);
+                    }
+
+                    currentLine = currentLine.Replace(DotTag, DotTag + Environment.NewLine);
+                    currentLine = currentLine.Replace(charMarker, '.'); // Replace back the first dot, from 1.
+                    var currentLines = currentLine.SplitByCRLF().TrimEnd();
+                    newLines.AddRange(currentLines.Indent(IndentTag, skipFirstOne: true));
+                }
+                else
+                {
+                    newLines.Add(currentLine);
+                }
+                x++;
+            }
+
+            blogPost = string.Join(Environment.NewLine, newLines);
+            return blogPost;
+        }
+
+
 
         public string BlogPost
         {

@@ -6,6 +6,7 @@ using System;
 using fAI;
 using Xunit;
 using static fAI.GPT;
+using System.Runtime.InteropServices;
 
 namespace fAI.Tests
 {
@@ -87,6 +88,31 @@ namespace fAI.Tests
             var blogPost = response.BlogPost;
             Assert.True(blogPost.Contains("Model:"));
             Assert.True(blogPost.Contains("Execution:"));
+
+            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+        }
+
+        [Fact()]
+        public void FormatChatGPTAnswerForTextDisplay_MultiPhraseOnSameLine()
+        {
+            var blogPost = @"
+Answer:
+aa aa aa. 
+aa aa aa. bb bb bb.
+aa aa aa. bb bb bb. cc cc cc.
+zz zz zz zz
+";
+            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+
+            var expectedBlogPost = @"Answer:
+aa aa aa.
+aa aa aa.
+bb bb bb.
+aa aa aa.
+bb bb bb.
+cc cc cc.
+zz zz zz zz";
+            Assert.Equal(expectedBlogPost, formattedBogPost);
         }
 
         [Fact()]
