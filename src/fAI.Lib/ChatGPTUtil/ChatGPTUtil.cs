@@ -133,6 +133,18 @@ namespace fAI
         }
 
 
+        public string Answer
+        {
+            get
+            {
+                var sb = new StringBuilder(1024);
+
+                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Sw.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
+                sb.AppendLine($"Answer:").AppendLine(this.Text);
+
+                return sb.ToString();
+            }
+        }
 
         public string BlogPost
         {

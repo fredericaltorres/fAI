@@ -54,21 +54,20 @@ namespace fAI.Tests
                     new GPTMessage { Role =  MessageRole.user, Content = $"09/10/2021 10:00 Take the dog to the vet." },
                     new GPTMessage { Role =  MessageRole.user, Content = $"09/20/2021 15:00 Meeting with Rick and John" },
                 }
-                // Url = "https://api.openai.com/v1/chat/completions"
             };
             var response = new GPT().ChatCompletionCreate(prompt);
             Assert.True(response.Success);
-            Assert.True(response.Text.Contains(""));
+            Assert.Contains("", response.Text);
 
             var blogPost = response.BlogPost;
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "When was the last time I talked with Eric?" });
             response = new GPT().ChatCompletionCreate(prompt);
-            Assert.True(Regex.IsMatch(response.Text, @"Eric.*09\/01\/2021 at 15:00"));
+            Assert.Matches(@"Eric.*09\/01\/2021 at 15:00", response.Text);
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to on 09/10/2021?" });
             response = new GPT().ChatCompletionCreate(prompt);
-            Assert.True(Regex.IsMatch(response.Text, @"dog.*vet.*10:00"));
+            Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
 
         [Fact()]
@@ -86,8 +85,11 @@ namespace fAI.Tests
             Assert.True(response.Text.Contains("The error message indicates that there is a mismatch between the expected and actual values"));
 
             var blogPost = response.BlogPost;
-            Assert.True(blogPost.Contains("Model:"));
-            Assert.True(blogPost.Contains("Execution:"));
+            Assert.Contains("Model:", blogPost);
+            Assert.Contains("Execution:", blogPost);
+
+            var answer = response.Answer;
+            Assert.Contains("Answer:", blogPost);
 
             var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
         }
