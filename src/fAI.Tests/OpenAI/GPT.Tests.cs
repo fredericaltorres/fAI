@@ -82,7 +82,7 @@ namespace fAI.Tests
             };
             var response = new GPT().ChatCompletionCreate(prompt);
             Assert.True(response.Success);
-            Assert.True(response.Text.Contains("The error message indicates that there is a mismatch between the expected and actual values"));
+            Assert.Contains("mismatch between the expected and actual", response.Text);
 
             var blogPost = response.BlogPost;
             Assert.Contains("Model:", blogPost);

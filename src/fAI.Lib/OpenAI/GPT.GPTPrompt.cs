@@ -40,9 +40,15 @@ namespace fAI
         public int MaxTokens { get; set; } = 4000;
         public int NewTokens { get; set; } = 500;
 
+        const double DEFAULT_TEMPERATURE = 0.1;
 
-        const double DEFAULT_TEMPERATURE = 0.2;
-
+        /*
+            Low Temperature (Close to 0): At low temperatures, the model's responses are more deterministic and less random. This means it will choose the most likely next word or phrase based on its training. The responses tend to be more conservative and less varied. If you set the temperature very low, the model might repeat more predictable or common phrases.
+            High Temperature (Closer to 1): At higher temperatures, the model introduces more randomness into its choices. This can lead to more creative, diverse, and sometimes unexpected responses. It's more likely to produce unique or less common outputs, but there's also a higher chance of nonsensical or irrelevant responses.
+            Temperature Range: The temperature usually ranges from 0 to 1. A temperature of 0 means the model will always choose the most likely next word, while a temperature of 1 allows for maximum randomness in word selection.
+            Use Cases: Lower temperatures are typically used when you want more accurate, reliable, and coherent responses. Higher temperatures are used when you want the model to generate more creative, diverse, or less obvious outputs.
+            Balance: Finding the right temperature often involves balancing between creativity and coherence. A moderate temperature value (like 0.7) is a common choice for a mix of reliability and inventiveness in responses.
+        */
         public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
 
         public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
