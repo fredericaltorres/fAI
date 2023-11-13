@@ -1,5 +1,6 @@
 ﻿namespace fAI
 {
+    
     public class Prompt_GPT_35_TurboInstruct : GPTPrompt
     {
         public Prompt_GPT_35_TurboInstruct() : base()
@@ -8,7 +9,6 @@
             Url = "https://api.openai.com/v1/completions";
             MaxTokens = 2000;
             NewTokens = 400;
-            Temperature = 0;
         }
     }
 
@@ -20,7 +20,6 @@
             Url = "https://api.openai.com/v1/chat/completions";
             MaxTokens = 2000;
             NewTokens = 400;
-            Temperature = 0;
         }
     }
 
@@ -33,7 +32,6 @@
 
             MaxTokens = 2000;
             NewTokens = 400;
-            Temperature = 0;
         }
     }
 }

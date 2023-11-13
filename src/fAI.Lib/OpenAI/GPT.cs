@@ -81,7 +81,6 @@ namespace fAI
                 Text = text,
                 PrePrompt = "Summarize the following text: \n===\n",
                 PostPrompt = "\n===\nSummary:\n",
-                Temperature = 0.2,
             };
 
             return CompletionCreate(prompt).Text.Trim();

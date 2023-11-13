@@ -28,6 +28,7 @@ namespace fAI
 
     public class GPTPrompt
     {
+        
         public string Url { get; set; }
         public string Text { get; set; }
 
@@ -38,7 +39,11 @@ namespace fAI
         public string Model { get; set; }
         public int MaxTokens { get; set; } = 4000;
         public int NewTokens { get; set; } = 500;
-        public double Temperature { get; set; } = 0;
+
+
+        const double DEFAULT_TEMPERATURE = 0.2;
+
+        public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
 
         public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
 

@@ -188,8 +188,17 @@ End of text
         [Fact()]
         public void Translate_EnglishToFrench()
         {
+            var text = @"
+Frederic Torres was born in 1964 in the town of aix-en-provence in France.
+Frederic has a brother thierry born in 1966 and a sister Nathalie born in 1968.
+Frederic's mother firstname was simone.
+Frederic's step sister firstname was patricia.
+simone father's name was leon.
+simone mother's name was Marie-Louise
+Frederic 4 daugthers marie, emma, alice and lea.
+";
             var gpt = new GPT();
-            var translation = gpt.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            var translation = gpt.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
             Assert.Equal("Bonjour monde.", translation);
         }
 
