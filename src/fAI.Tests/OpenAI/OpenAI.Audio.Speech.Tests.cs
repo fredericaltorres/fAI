@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using fAI;
 using Xunit;
-using static fAI.GPT;
+using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 
 namespace fAI.Tests
@@ -20,6 +20,11 @@ namespace fAI.Tests
             const string input = @"Maybe I'm amazed at the way you pulled me out of time. Hung me on a line.";
             var client = new OpenAI();
             var mp3FileName = client.Audio.Speech.Create(input, OpenAISpeech.Voices.echo);
+
+            var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
+            Assert.True(mp3Info.DurationAsDouble > 3);
+
+            AudioUtil.DeleteFile(mp3FileName);
         }
     }
 }

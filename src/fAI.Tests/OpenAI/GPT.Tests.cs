@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using fAI;
 using Xunit;
-using static fAI.GPT;
+using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 
 namespace fAI.Tests
@@ -17,8 +17,8 @@ namespace fAI.Tests
         [Fact()]
         public void GetModels()
         {
-            var gpt = new GPT();
-            var models = gpt.GetModels();
+            var client = new OpenAI();
+            var models = client.Completions.GetModels();
             Assert.True(models.data.Count > 0);
             Assert.True(models.data[0].Created < DateTime.Now);
         }
@@ -29,14 +29,16 @@ namespace fAI.Tests
         [Fact()]
         public void IsThis_AnLogError_No()
         {
-            var r = new GPT().IsThis("As a software developer", "is this an error message", info_success_log);
+            var client = new OpenAI();
+            var r = client.Completions.IsThis("As a software developer", "is this an error message", info_success_log);
             Assert.Equal(GPT_YesNoResponse.No, r);
         }
 
         [Fact()]
         public void IsThis_AnLogError_Yes()
         {
-            var r = new GPT().IsThis("As a software developer", "is this an error message", error_log);
+            var client = new OpenAI();
+            var r = client.Completions.IsThis("As a software developer", "is this an error message", error_log);
             Assert.Equal(GPT_YesNoResponse.Yes, r);
         }
 
@@ -44,6 +46,7 @@ namespace fAI.Tests
         [Fact()]
         public void Completion_Chat_QuestionAboutPastSchedule()
         {
+            var client = new OpenAI();
             var prompt = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage> 
@@ -55,24 +58,25 @@ namespace fAI.Tests
                     new GPTMessage { Role =  MessageRole.user, Content = $"09/20/2021 15:00 Meeting with Rick and John" },
                 }
             };
-            var response = new GPT().ChatCompletionCreate(prompt);
+            var response = client.Completions.Create2(prompt);
             Assert.True(response.Success);
             Assert.Contains("", response.Text);
 
             var blogPost = response.BlogPost;
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "When was the last time I talked with Eric?" });
-            response = new GPT().ChatCompletionCreate(prompt);
+            response = client.Completions.Create2(prompt);
             Assert.Matches(@"Eric.*09\/01\/2021 at 15:00", response.Text);
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to on 09/10/2021?" });
-            response = new GPT().ChatCompletionCreate(prompt);
+            response = client.Completions.Create2(prompt);
             Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
 
         [Fact()]
         public void Completion_Chat_AnalyseLogError()
         {
+            var client = new OpenAI();
             var prompt = new Prompt_GPT_4 {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced software developer."      },
@@ -80,7 +84,7 @@ namespace fAI.Tests
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var response = new GPT().ChatCompletionCreate(prompt);
+            var response = client.Completions.Create2(prompt);
             Assert.True(response.Success);
             Assert.Contains("mismatch between the expected and actual", response.Text);
 
@@ -150,6 +154,7 @@ End of text
         [Fact()]
         public void Complettion_Chat_Hello()
         {
+            var client = new OpenAI();
             var p = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage>()
@@ -159,18 +164,19 @@ End of text
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var response = new GPT().ChatCompletionCreate(p);
+            var response = client.Completions.Create2(p);
             Assert.True(response.Success);
             Assert.Equal("Hello! How can I assist you today?", response.Text);
 
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
-            response = new GPT().ChatCompletionCreate(p);
+            response = client.Completions.Create2(p);
             Assert.True(response.Text.Contains("real-time"));
         }
 
         [Fact()]
         public void Completion_JsonMode()
         {
+            var client = new OpenAI();
             var p = new Prompt_GPT_35_Turbo_JsonMode
             {
                 Messages = new List<GPTMessage>()
@@ -179,7 +185,7 @@ End of text
                     new GPTMessage{ Role =  MessageRole.user, Content = "Who won the world series in 2020?" }
                 }
             };
-            var response = new GPT().ChatCompletionCreate(p);
+            var response = client.Completions.Create2(p);
             Assert.True(response.Success);
             var a = response.JsonObject["winner"];
             Assert.Equal("Los Angeles Dodgers", a);
@@ -189,6 +195,7 @@ End of text
         [Fact()]
         public void Completion_ThisIsATest()
         {
+            var client = new OpenAI();
             var p = new Prompt_GPT_35_Turbo 
             { 
                 Messages = new List<GPTMessage>()
@@ -196,7 +203,7 @@ End of text
                     new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
                 }
             };
-            var response = new GPT().ChatCompletionCreate(p);
+            var response = client.Completions.Create2(p);
             Assert.True(response.Success);
             Assert.Equal("This is a test!", response.Text);
         }
@@ -206,16 +213,16 @@ End of text
         [Fact()]
         public void Translate_EnglishToFrench()
         {
-            var gpt = new GPT();
-            var translation = gpt.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            var client = new OpenAI();
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
             Assert.Equal("Bonjour monde.", translation);
         }
 
         [Fact()]
         public void Translate_EnglishToSpanish()
         {
-            var gpt = new GPT();
-            var translation = gpt.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);
+            var client = new OpenAI();
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);
             Assert.Equal("'Hola mundo.'", translation);
         }
 
@@ -228,8 +235,8 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         [Fact()]
         public void Summarize_EnglishText()
         {
-            var gpt = new GPT();
-            var summarization = gpt.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
+            var client = new OpenAI();
+            var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
             Assert.NotEqual(null, summarization);
         }
