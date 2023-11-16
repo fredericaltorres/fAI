@@ -1,26 +1,107 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading;
 
 namespace fAI
 {
-    public partial class GPT  
+    public class OpenAI
+    {
+        public OpenAIAudio Audio { get; private set; } = new OpenAIAudio();
+    }
+
+    /// <summary>
+    /// https://platform.openai.com/docs/guides/text-to-speech
+    /// </summary>
+    public class  OpenAIAudio
+    {
+        public OpenAISpeech Speech { get; private set; } = new OpenAISpeech();
+    }
+
+
+    public class OpenAISpeech : OpenAIHttpBase
+    {
+        const string __url = "https://api.openai.com/v1/audio/speech";
+
+        public enum Voices
+        {
+            alloy,
+            echo,
+            fable,
+            onyx,
+            nova,
+            shimmer
+        }
+        public OpenAISpeech(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
+        {
+        }
+
+        private string GetPayLoad(string text, Voices voice, string model)
+        {
+            return JsonConvert.SerializeObject(new {
+                model = model,
+                input = text,
+                voice =  voice.ToString()
+            });
+        }
+
+        public string Create(string input, Voices voice, string model = "tts-1")
+        {
+            var wc = InitWebClient();
+            var response = wc.POST(__url, GetPayLoad(input, voice, model));
+            if (response.Success)
+            {
+                var ext = wc.GetResponseImageExtension();
+                var tmpMp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
+                File.WriteAllBytes(tmpMp3FileName, response.Buffer);
+                return tmpMp3FileName;
+            }
+            else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
+        }
+    }
+
+    public class OpenAIHttpBase
     {
         private int _timeout = 60 * 4;
 
-        string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
+        protected string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        protected string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
-        public GPT(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public OpenAIHttpBase(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
-            if(timeOut > 0)
+            if (timeOut > 0)
                 _timeout = timeOut;
 
             if (openAiKey != null)
                 _openAiKey = openAiKey;
 
-            if(openAiOrg != null)
+            if (openAiOrg != null)
                 _openAiOrg = openAiOrg;
+        }
+
+        protected ModernWebClient InitWebClient()
+        {
+            var mc = new ModernWebClient(_timeout);
+            mc.AddHeader("Authorization", $"Bearer {_openAiKey}")
+              .AddHeader("OpenAI-Organization", _openAiOrg)
+              .AddHeader("Content-Type", "application/json")
+              .AddHeader("Accept", "application/json");
+            return mc;
+        }
+    }
+
+    /*
+        https://platform.openai.com/docs/api-reference/completions
+        https://platform.openai.com/docs/api-reference/chat
+     */
+    public partial class GPT  : OpenAIHttpBase
+    {
+        public GPT(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
+        {
         }
 
         private static int CountWords(string str)
@@ -60,6 +141,9 @@ namespace fAI
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse ChatCompletionCreate(GPTPrompt p)
         {
+            #if DEBUG
+                Thread.Sleep(550); // to avoid rate limiting by OpenAI
+            #endif
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             sw.Stop();
@@ -126,16 +210,6 @@ namespace fAI
             };
 
             return CompletionCreate(prompt).Text.Trim();
-        }
-        
-        private ModernWebClient InitWebClient()
-        {
-            var mc = new ModernWebClient(_timeout);
-            mc.AddHeader("Authorization", $"Bearer {_openAiKey}")
-              .AddHeader("OpenAI-Organization", _openAiOrg)
-              .AddHeader("Content-Type", "application/json")
-              .AddHeader("Accept", "application/json");
-            return mc;
         }
     }
 }

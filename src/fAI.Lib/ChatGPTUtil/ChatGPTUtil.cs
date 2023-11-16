@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using DynamicSugar;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace fAI
 {
@@ -49,6 +51,15 @@ namespace fAI
         public Usage Usage { get; set; }
 
         public static CompletionResponse FromJson(string json) => JsonConvert.DeserializeObject<CompletionResponse>(json);
+
+        public JObject JsonObject
+        {
+            get
+            {
+                return JObject.Parse(this.Text);
+            }
+        }
+
         public string Text {
             get
             {

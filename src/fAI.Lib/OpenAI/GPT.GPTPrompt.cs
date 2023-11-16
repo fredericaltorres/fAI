@@ -28,7 +28,8 @@ namespace fAI
 
     public class GPTPrompt
     {
-        
+
+        public ResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }
         public string Text { get; set; }
 
@@ -69,7 +70,8 @@ namespace fAI
                     model = Model,
                     messages = Messages,
                     max_tokens = MaxTokens,
-                    temperature = Temperature
+                    temperature = Temperature,
+                    response_format = response_format,
                 });
             }
             else

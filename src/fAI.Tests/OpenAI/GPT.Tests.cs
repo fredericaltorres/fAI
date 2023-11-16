@@ -169,6 +169,24 @@ End of text
         }
 
         [Fact()]
+        public void Completion_JsonMode()
+        {
+            var p = new Prompt_GPT_35_Turbo_JsonMode
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a helpful assistant designed to output JSON." },
+                    new GPTMessage{ Role =  MessageRole.user, Content = "Who won the world series in 2020?" }
+                }
+            };
+            var response = new GPT().ChatCompletionCreate(p);
+            Assert.True(response.Success);
+            var a = response.JsonObject["winner"];
+            Assert.Equal("Los Angeles Dodgers", a);
+            
+        }
+
+        [Fact()]
         public void Completion_ThisIsATest()
         {
             var p = new Prompt_GPT_35_Turbo 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-    class ModernWebClient : WebClient
+    public class ModernWebClient : WebClient
     {
         int _timeOut { get; set; } = 30 * 1000;
 
@@ -105,6 +105,11 @@ namespace fAI
                 r.SetException(ex);
             }
             return r;
+        }
+        public string GetResponseImageExtension()
+        {
+            var parts = GetResponseContentType().Split('/');
+            return parts[1];
         }
     }
 }

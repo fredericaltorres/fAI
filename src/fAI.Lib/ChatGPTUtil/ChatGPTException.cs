@@ -13,6 +13,18 @@ namespace fAI
         {
         }
     }
+
+    internal class OpenAIAudioSpeechException : Exception
+    {
+        public OpenAIAudioSpeechException(string message)
+            : base(message)
+        {
+        }
+        public OpenAIAudioSpeechException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
 }
 
 
