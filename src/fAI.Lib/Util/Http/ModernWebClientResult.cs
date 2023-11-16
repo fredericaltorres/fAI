@@ -19,6 +19,13 @@ namespace fAI
         }
 
 
+        public void SetException(string errorMessage)
+        {
+            if (_stopwatch.IsRunning)
+                _stopwatch.Stop();
+            this.Exception = new Exception(errorMessage);
+        }
+
         public void SetException(Exception ex)
         {
             if (_stopwatch.IsRunning)

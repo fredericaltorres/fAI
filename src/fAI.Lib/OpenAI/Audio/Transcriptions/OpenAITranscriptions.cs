@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Cache;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
@@ -13,16 +14,20 @@ namespace fAI
         {
         }
 
-        public string Create(string audioFile, string model = "whisper-1")
+        public string Create(string audioFile, string model = "whisper-1", string responseFormat = "text")
         {
             var wc = InitWebClient();
             using (var fileStream = File.OpenRead(audioFile))
             {
-                var properties = new Dictionary<string, string>() 
+                var properties = new Dictionary<string, string>()
                 {
                      ["model"] = model,
+                     ["response_format"] = responseFormat,
                 };
-                var response = wc.POST(__url, fileStream, properties);
+                var response = wc.POST(__url, fileStream, properties, streamName: "file");
+                if(base.IsError(response.Text))
+                    response.SetException(base.GetError(response.Text).ToString());
+
                 if (response.Success)
                 {
                     response.SetText(response.Buffer, response.ContenType);

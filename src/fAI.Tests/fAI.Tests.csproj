@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Microsoft.Cognitive.Services\Microsoft.Cognitive.Services.Tests.cs" />
+    <Compile Include="OpenAI\OpenAI.Audio.Transcriptions.Tests.cs" />
     <Compile Include="OpenAI\OpenAI.Audio.Speech.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Chat.cs" />
     <Compile Include="OpenAI\TestBeforeAfter.cs" />

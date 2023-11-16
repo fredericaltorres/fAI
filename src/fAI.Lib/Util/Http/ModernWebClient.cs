@@ -66,16 +66,21 @@ namespace fAI
             return r;
         }
 
-        public ModernWebClientResult POST(string url, FileStream fileStream, Dictionary<string, string> options = null)
+        public ModernWebClientResult POST(string url, FileStream fileStream, Dictionary<string, string> options = null, string streamName = "media")
         {
             var r = new ModernWebClientResult();
             using (HttpClient httpClient = new HttpClient())
             {
-                foreach(var header in this.Headers.AllKeys)
-                    httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
+                foreach (var header in this.Headers.AllKeys)
+                {
+                    if (header.ToLowerInvariant() != "content-type")
+                    {
+                        httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
+                    } 
+                }
 
                 var content = new MultipartFormDataContent();
-                content.Add(new StreamContent(fileStream), "media", "media"); // https://github.com/kbridbur/revai-node-sdk/blob/develop/src/api-client.ts
+                content.Add(new StreamContent(fileStream), streamName, streamName); // https://github.com/kbridbur/revai-node-sdk/blob/develop/src/api-client.ts
 
                 if (options != null)
                     foreach (var option in options)
