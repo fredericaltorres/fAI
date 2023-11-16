@@ -45,9 +45,6 @@ namespace fAI
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create2(GPTPrompt p)
         {
-            #if DEBUG
-                Thread.Sleep(550); // to avoid rate limiting by OpenAI
-            #endif
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             sw.Stop();
