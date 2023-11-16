@@ -7,14 +7,18 @@ using fAI;
 using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace fAI.Tests
 {
+
+    
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAiComplettionsChat
     {
         [Fact()]
+        [TestBeforeAfter]
         public void GetModels()
         {
             var client = new OpenAI();
@@ -27,6 +31,7 @@ namespace fAI.Tests
         const string info_success_log = @"2023-11-06 22:31:30.680|BrainRequin|Core|1.0.1.0|INFO|FTORRES-DL5560|msg=CEF:0|BrainRequin|Core|0|Message|Message|Info|msg=[SUCCEEDED 265493281, 10.0s] Deleting pid:533300675, type:HARD-DELETE, Method: Presentation.Delete(), ProcessId: 36336; ProcessName: BrainRequin.IntegrationTesting.Converters.Console; MachineName: FTORRES-DL5560; UserName: ftorres;";
 
         [Fact()]
+        [TestBeforeAfter]
         public void IsThis_AnLogError_No()
         {
             var client = new OpenAI();
@@ -35,6 +40,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void IsThis_AnLogError_Yes()
         {
             var client = new OpenAI();
@@ -42,8 +48,8 @@ namespace fAI.Tests
             Assert.Equal(GPT_YesNoResponse.Yes, r);
         }
 
-
         [Fact()]
+        [TestBeforeAfter]
         public void Completion_Chat_QuestionAboutPastSchedule()
         {
             var client = new OpenAI();
@@ -73,7 +79,9 @@ namespace fAI.Tests
             Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
 
+
         [Fact()]
+        [TestBeforeAfter]
         public void Completion_Chat_AnalyseLogError()
         {
             var client = new OpenAI();
@@ -99,6 +107,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void FormatChatGPTAnswerForTextDisplay_MultiPhraseOnSameLine()
         {
             var blogPost = @"
@@ -152,6 +161,7 @@ End of text
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void Complettion_Chat_Hello()
         {
             var client = new OpenAI();
@@ -174,6 +184,7 @@ End of text
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void Completion_JsonMode()
         {
             var client = new OpenAI();
@@ -193,9 +204,9 @@ End of text
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void Completion_ThisIsATest()
         {
-            SlowDown();
             var client = new OpenAI();
             var p = new Prompt_GPT_35_Turbo 
             { 
@@ -212,18 +223,18 @@ End of text
         const string ReferenceEnglishSentence = "Hello world.";
 
         [Fact()]
+        [TestBeforeAfter]
         public void Translate_EnglishToFrench()
         {
-            SlowDown();
             var client = new OpenAI();
             var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
             Assert.Equal("Bonjour monde.", translation);
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void Translate_EnglishToSpanish()
         {
-            SlowDown();
             var client = new OpenAI();
             var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);
             Assert.Equal("'Hola mundo.'", translation);
@@ -236,9 +247,9 @@ it's your personal assistant, your entertainment hub, and your productivity powe
 Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
 
         [Fact()]
+        [TestBeforeAfter]
         public void Summarize_EnglishText()
         {
-            SlowDown();
             var client = new OpenAI();
             var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
@@ -246,17 +257,12 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         }
 
         [Fact()]
+        [TestBeforeAfter]
         public void Prompt()
         {
             //var gpt = new GPT();
             //const string ReferenceEnglishTextForSummarization = @"Q: What's the diameter of the earth? A:";
             //var answer = gpt.Prompt(ReferenceEnglishTextForSummarization);
         }
-
-        private void SlowDown()
-        {
-            System.Threading.Thread.Sleep(1000);
-        }
-
     }
 }

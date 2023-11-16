@@ -62,6 +62,7 @@
     <Compile Include="Microsoft.Cognitive.Services\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\OpenAI.Audio.Speech.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Chat.cs" />
+    <Compile Include="OpenAI\TestBeforeAfter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
