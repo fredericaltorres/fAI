@@ -30,17 +30,17 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public CompletionResponse Create(GPTPrompt p)
-        {
-            var response = InitWebClient().POST(p.Url, p.GetPostBody());
-            if (response.Success)
-            {
-                response.SetText(response.Buffer, response.ContenType);
-                var r = CompletionResponse.FromJson(response.Text);
-                return r;
-            }
-            else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
-        }
+        //public CompletionResponse Create(GPTPrompt p)
+        //{
+        //    var response = InitWebClient().POST(p.Url, p.GetPostBody());
+        //    if (response.Success)
+        //    {
+        //        response.SetText(response.Buffer, response.ContenType);
+        //        var r = CompletionResponse.FromJson(response.Text);
+        //        return r;
+        //    }
+        //    else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
+        //}
 
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create2(GPTPrompt p)
@@ -68,7 +68,7 @@ namespace fAI
                 PostPrompt = "\n===\nSummary:\n",
             };
 
-            return Create(prompt).Text.Trim();
+            return Create2(prompt).Text.Trim();
         }
 
         public enum GPT_YesNoResponse
@@ -110,7 +110,7 @@ namespace fAI
                 Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
             };
 
-            return Create(prompt).Text.Trim();
+            return Create2(prompt).Text.Trim();
         }
     }
 }

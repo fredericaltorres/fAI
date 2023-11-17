@@ -10,13 +10,17 @@ namespace fAI
     {
         const string __url = "https://api.openai.com/v1/audio/transcriptions";
 
-        public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
+        public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) 
         {
+            //OpenAIHttpBase._openAiOrg = openAiOrg;
+            //OpenAIHttpBase._openAiKey = openAiKey;
+            //OpenAIHttpBase._timeout = timeOut;
         }
 
+        // https://github.com/sandrohanea/whisper.net/tree/0d1f691b3679c4eb2d97dcebafda1dc1d8439215
         public string Create(string audioFile, string model = "whisper-1", string responseFormat = "text")
         {
-            var wc = InitWebClient();
+            var wc = InitWebClient(addJsonContentType: false);
             using (var fileStream = File.OpenRead(audioFile))
             {
                 var properties = new Dictionary<string, string>()

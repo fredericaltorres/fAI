@@ -9,6 +9,21 @@ using Newtonsoft.Json.Linq;
 
 namespace fAI
 {
+    internal class JsonUtils
+    {
+        public static T FromJSON<T>(string json)
+        {
+            try
+            {
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (System.Exception ex)
+            {
+                throw new System.ApplicationException($"Cannot deserialize json error:{ex.Message}, json:{json}", ex);
+            }
+        }
+    }
+
     public class CompletionChoiceResponse
     {
         public string text { get; set; }
@@ -50,7 +65,7 @@ namespace fAI
         [JsonProperty(PropertyName = "usage")]
         public Usage Usage { get; set; }
 
-        public static CompletionResponse FromJson(string json) => JsonConvert.DeserializeObject<CompletionResponse>(json);
+        public static CompletionResponse FromJson(string json) => JsonUtils.FromJSON<CompletionResponse>(json);
 
         public JObject JsonObject
         {

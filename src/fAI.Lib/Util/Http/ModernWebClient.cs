@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.IO;
 using System.Collections.Generic;
+using NAudio.MediaFoundation;
 
 namespace fAI
 {
@@ -68,6 +69,7 @@ namespace fAI
 
         public ModernWebClientResult POST(string url, FileStream fileStream, Dictionary<string, string> options = null, string streamName = "media")
         {
+            //MediaType mediaType = new MediaType("audio/mpeg");
             var r = new ModernWebClientResult();
             using (HttpClient httpClient = new HttpClient())
             {
@@ -80,11 +82,17 @@ namespace fAI
                 }
 
                 var content = new MultipartFormDataContent();
-                content.Add(new StreamContent(fileStream), streamName, streamName); // https://github.com/kbridbur/revai-node-sdk/blob/develop/src/api-client.ts
+                content.Add(new StreamContent(fileStream), streamName, streamName);
 
                 if (options != null)
+                {
                     foreach (var option in options)
+                    {
+                        //content.Add(new StringContent(option.Value, System.Text.Encoding.UTF8, "application/json"), option.Key, option.Key);
                         content.Add(new StringContent(option.Value), option.Key, option.Key);
+                    }
+                }
+                
 
                 using (HttpResponseMessage response = httpClient.PostAsync(url, content).GetAwaiter().GetResult())
                 {
@@ -118,3 +126,4 @@ namespace fAI
         }
     }
 }
+

@@ -17,18 +17,18 @@ namespace fAI
 
         public static OpenAIHttpError FromJson(string text)
         {
-            try
-            {
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<OpenAIHttpError>(text);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            return JsonUtils.FromJSON<OpenAIHttpError>(text);
         }
         public static bool IsHttpError(string text)
         {
-            return FromJson(text) != null;
+            try
+            {
+                return FromJson(text) != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public override string ToString()
@@ -39,10 +39,9 @@ namespace fAI
 
     public class OpenAIHttpBase
     {
-        private int _timeout = 60 * 4;
-
-        protected string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        protected string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
+        public static int _timeout = 60 * 4;
+        public static string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        public static string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
         public OpenAIHttpBase(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
@@ -56,13 +55,15 @@ namespace fAI
                 _openAiOrg = openAiOrg;
         }
 
-        protected ModernWebClient InitWebClient()
+        protected ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
             var mc = new ModernWebClient(_timeout);
             mc.AddHeader("Authorization", $"Bearer {_openAiKey}")
-              .AddHeader("OpenAI-Organization", _openAiOrg)
-              .AddHeader("Content-Type", "application/json")
-              .AddHeader("Accept", "application/json");
+              .AddHeader("OpenAI-Organization", _openAiOrg);
+
+            if (addJsonContentType)
+                mc.AddHeader("Content-Type", "application/json")
+                  .AddHeader("Accept", "application/json");
             return mc;
         }
 

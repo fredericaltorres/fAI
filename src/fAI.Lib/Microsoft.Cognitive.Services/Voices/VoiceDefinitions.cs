@@ -29,7 +29,7 @@ namespace fAI
 
         public static VoiceDefinitions FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<VoiceDefinitions>(json);
+            return JsonUtils.FromJSON<VoiceDefinitions>(json);
         }
 
         public VoiceDefinitions Load(string subscriptionKey, string region)

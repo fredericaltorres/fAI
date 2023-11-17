@@ -12,7 +12,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAIAudioSpeechTests
+    public class OpenAIAudioTextToSpeech
     {
         [Fact()]
         public void SpeechToText()
