@@ -10,7 +10,7 @@ namespace fAI.Tests
     {
         public override void Before(MethodInfo methodUnderTest)
         {
-            System.Threading.Thread.Sleep(1000*4);
+            System.Threading.Thread.Sleep(1000*6);
         }
 
         public override void After(MethodInfo methodUnderTest)
