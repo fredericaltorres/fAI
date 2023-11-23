@@ -10,11 +10,21 @@ namespace fAI
     {
         const string __url = "https://api.openai.com/v1/audio/transcriptions";
 
-        public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) 
+        public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             //OpenAIHttpBase._openAiOrg = openAiOrg;
             //OpenAIHttpBase._openAiKey = openAiKey;
             //OpenAIHttpBase._timeout = timeOut;
+        }
+
+        public class OpenAITranscriptionsResponse
+        {
+            public string Text { get; set; }
+
+            public static OpenAITranscriptionsResponse FromJson(string text)
+            {
+                return JsonUtils.FromJSON<OpenAITranscriptionsResponse>(text);
+            }
         }
 
         // https://github.com/sandrohanea/whisper.net/tree/0d1f691b3679c4eb2d97dcebafda1dc1d8439215
@@ -26,18 +36,19 @@ namespace fAI
                 var properties = new Dictionary<string, string>()
                 {
                      ["model"] = model,
-                     ["response_format"] = responseFormat,
+                     // ["response_format"] = responseFormat,
                 };
-                var response = wc.POST(__url, fileStream, properties, streamName: "file");
-                if(base.IsError(response.Text))
-                    response.SetException(base.GetError(response.Text).ToString());
-
+                var response = wc.POST(__url, audioFile, properties);
                 if (response.Success)
                 {
-                    response.SetText(response.Buffer, response.ContenType);
-                    return response.Text;
+                    return OpenAITranscriptionsResponse.FromJson(response.Text).Text;
                 }
-                else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
+                else
+                {
+                    if (base.IsError(response.Text))
+                        response.SetException(base.GetError(response.Text).ToString());
+                    throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
+                }
             }
         }
     }

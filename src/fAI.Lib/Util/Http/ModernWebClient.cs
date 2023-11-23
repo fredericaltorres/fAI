@@ -67,40 +67,42 @@ namespace fAI
             return r;
         }
 
-        public ModernWebClientResult POST(string url, FileStream fileStream, Dictionary<string, string> options = null, string streamName = "media")
+        public ModernWebClientResult POST(string url, string fileName, Dictionary<string, string> options = null, string streamName = "file"/*"media"*/)
         {
-            //MediaType mediaType = new MediaType("audio/mpeg");
-            var r = new ModernWebClientResult();
-            using (HttpClient httpClient = new HttpClient())
+            using (var fileStream = File.OpenRead(fileName))
             {
-                foreach (var header in this.Headers.AllKeys)
+                var r = new ModernWebClientResult();
+                using (HttpClient httpClient = new HttpClient())
                 {
-                    if (header.ToLowerInvariant() != "content-type")
-                    {
-                        httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
-                    } 
-                }
+                    foreach (var header in this.Headers.AllKeys)
+                        if (header.ToLowerInvariant() != "content-type")
+                            httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
 
-                var content = new MultipartFormDataContent();
-                content.Add(new StreamContent(fileStream), streamName, streamName);
+                    //var ret = new HttpRequestMessage
+                    //{
+                    //    Method = HttpMethod.Post
+                    //};
 
-                if (options != null)
-                {
-                    foreach (var option in options)
+                    var multiPartcontent = new MultipartFormDataContent("----MyGreatBoundary");
+                    multiPartcontent.Add(new StreamContent(fileStream), streamName, Path.GetFileName(fileName));
+                    //ret.Content = multiPartcontent;
+
+                    if (options != null)
                     {
-                        //content.Add(new StringContent(option.Value, System.Text.Encoding.UTF8, "application/json"), option.Key, option.Key);
-                        content.Add(new StringContent(option.Value), option.Key, option.Key);
+                        foreach (var option in options)
+                        {
+                            multiPartcontent.Add(new StringContent(option.Value), option.Key);
+                        }
+                    }
+
+                    using (HttpResponseMessage response = httpClient.PostAsync(url, multiPartcontent).GetAwaiter().GetResult())
+                    {
+                        string responseString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        r.SetText(responseString, "application/json");
                     }
                 }
-                
-
-                using (HttpResponseMessage response = httpClient.PostAsync(url, content).GetAwaiter().GetResult())
-                {
-                    string responseString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    r.SetText(responseString, "application/json");
-                }
+                return r;
             }
-            return r;
         }
 
         public ModernWebClientResult POST(string url, string body)
