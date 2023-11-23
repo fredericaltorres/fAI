@@ -6,15 +6,15 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
+    /// <summary>
+    /// https://platform.openai.com/docs/guides/speech-to-text
+    /// </summary>
     public class OpenAITranscriptions : OpenAIHttpBase
     {
         const string __url = "https://api.openai.com/v1/audio/transcriptions";
 
         public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
-            //OpenAIHttpBase._openAiOrg = openAiOrg;
-            //OpenAIHttpBase._openAiKey = openAiKey;
-            //OpenAIHttpBase._timeout = timeOut;
         }
 
         public class OpenAITranscriptionsResponse

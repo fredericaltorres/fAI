@@ -33,7 +33,8 @@ namespace fAI
         public GPTMessage message { get; set; }
     }
 
-    public class CompletionResponse
+
+    public class CompletionResponse  : BaseHttpResponse
     {
         private const string NEED_MORE_TOKENS_RETURN_CODE = "length";
         private const string FULL_SUCCEES_RETURN_CODE = "stop";
@@ -41,7 +42,6 @@ namespace fAI
         public static List<string> ChatGPTSuccessfullReasons = new List<string> { NEED_MORE_TOKENS_RETURN_CODE, FULL_SUCCEES_RETURN_CODE };
 
         public GPTPrompt GPTPrompt { get; set; }
-        public System.Diagnostics.Stopwatch Sw { get; set; }
 
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
@@ -165,7 +165,7 @@ namespace fAI
             {
                 var sb = new StringBuilder(1024);
 
-                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Sw.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
+                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Stopwatch.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
                 sb.AppendLine($"Answer:").AppendLine(this.Text);
 
                 return sb.ToString();
@@ -178,7 +178,7 @@ namespace fAI
             {
                 var sb = new StringBuilder(1024);
 
-                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Sw.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
+                sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Stopwatch.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
 
                 var messages = string.Join(Environment.NewLine, this.GPTPrompt.Messages);
                 sb.AppendLine($"Messages:").AppendLine(messages);

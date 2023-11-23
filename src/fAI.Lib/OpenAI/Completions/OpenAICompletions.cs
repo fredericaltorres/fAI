@@ -7,11 +7,7 @@ using System.Threading;
 
 namespace fAI
 {
-    /*
-        https://platform.openai.com/docs/api-reference/completions
-        https://platform.openai.com/docs/api-reference/chat
-        https://platform.openai.com/docs/quickstart?context=python
-     */
+
     public partial class OpenAICompletions  : OpenAIHttpBase
     {
         public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
@@ -30,20 +26,8 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        //public CompletionResponse Create(GPTPrompt p)
-        //{
-        //    var response = InitWebClient().POST(p.Url, p.GetPostBody());
-        //    if (response.Success)
-        //    {
-        //        response.SetText(response.Buffer, response.ContenType);
-        //        var r = CompletionResponse.FromJson(response.Text);
-        //        return r;
-        //    }
-        //    else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
-        //}
-
         // https://platform.openai.com/docs/guides/gpt
-        public CompletionResponse Create2(GPTPrompt p)
+        public CompletionResponse Create(GPTPrompt p)
         {
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
@@ -53,7 +37,7 @@ namespace fAI
                 response.SetText(response.Buffer, response.ContenType);
                 var r = CompletionResponse.FromJson(response.Text);
                 r.GPTPrompt = p;
-                r.Sw = sw;
+                r.Stopwatch = sw;
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
@@ -68,7 +52,7 @@ namespace fAI
                 PostPrompt = "\n===\nSummary:\n",
             };
 
-            return Create2(prompt).Text.Trim();
+            return Create(prompt).Text.Trim();
         }
 
         public enum GPT_YesNoResponse
@@ -89,7 +73,7 @@ namespace fAI
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var response = this.Create2(prompt);
+            var response = this.Create(prompt);
             if (response.Success)
             {
                 if(response.Text.ToLowerInvariant().Contains(GPT_YesNoResponse.Yes.ToString().ToLower()))
@@ -110,7 +94,7 @@ namespace fAI
                 Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
             };
 
-            return Create2(prompt).Text.Trim();
+            return Create(prompt).Text.Trim();
         }
     }
 }

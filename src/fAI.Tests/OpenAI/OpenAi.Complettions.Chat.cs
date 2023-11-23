@@ -64,18 +64,18 @@ namespace fAI.Tests
                     new GPTMessage { Role =  MessageRole.user, Content = $"09/20/2021 15:00 Meeting with Rick and John" },
                 }
             };
-            var response = client.Completions.Create2(prompt);
+            var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
             Assert.Contains("", response.Text);
 
             var blogPost = response.BlogPost;
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "When was the last time I talked with Eric?" });
-            response = client.Completions.Create2(prompt);
+            response = client.Completions.Create(prompt);
             Assert.Matches(@"Eric.*09\/01\/2021 at 15:00", response.Text);
 
             prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to on 09/10/2021?" });
-            response = client.Completions.Create2(prompt);
+            response = client.Completions.Create(prompt);
             Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
 
@@ -92,7 +92,7 @@ namespace fAI.Tests
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var response = client.Completions.Create2(prompt);
+            var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
             Assert.Contains("mismatch between the expected and actual", response.Text);
 
@@ -174,12 +174,12 @@ End of text
                 },
                 Url = "https://api.openai.com/v1/chat/completions"
             };
-            var response = client.Completions.Create2(p);
+            var response = client.Completions.Create(p);
             Assert.True(response.Success);
             Assert.Equal("Hello! How can I assist you today?", response.Text);
 
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
-            response = client.Completions.Create2(p);
+            response = client.Completions.Create(p);
             Assert.True(response.Text.Contains("real-time"));
         }
 
@@ -196,7 +196,7 @@ End of text
                     new GPTMessage{ Role =  MessageRole.user, Content = "Who won the world series in 2020?" }
                 }
             };
-            var response = client.Completions.Create2(p);
+            var response = client.Completions.Create(p);
             Assert.True(response.Success);
             var a = response.JsonObject["winner"];
             Assert.Equal("Los Angeles Dodgers", a);
@@ -215,7 +215,7 @@ End of text
                     new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
                 }
             };
-            var response = client.Completions.Create2(p);
+            var response = client.Completions.Create(p);
             Assert.True(response.Success);
             Assert.Equal("This is a test!", response.Text);
         }

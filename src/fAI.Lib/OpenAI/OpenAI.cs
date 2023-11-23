@@ -21,13 +21,14 @@ namespace fAI
         }
 
         OpenAIAudio _audio = null;
-
         public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio());
 
 
         public OpenAICompletions _completions = null;
-
         public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions());
+
+        public OpenAIEmbeddings _embeddings = null;
+        public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());
     }
 }
 
