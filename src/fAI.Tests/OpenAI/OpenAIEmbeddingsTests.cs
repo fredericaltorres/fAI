@@ -24,7 +24,7 @@ namespace fAI.Tests
             Assert.Single(r.Data);
             Assert.Equal("embedding", r.Data[0].Object);
             Assert.Equal(0, r.Data[0].Index);
-            Assert.Equal(44, r.Data[0].Embedding.Count);
+            Assert.Equal(r.Data[0].EmbeddingMaxValue, r.Data[0].Embedding.Count);
             Assert.Equal(37, r.Usage.PromptTokens);
             Assert.Equal(37, r.Usage.TotalTokens);
         }

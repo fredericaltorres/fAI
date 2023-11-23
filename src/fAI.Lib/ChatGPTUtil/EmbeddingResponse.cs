@@ -14,6 +14,9 @@ namespace fAI
 
         [JsonProperty(PropertyName = "embedding")]
         public List<double> Embedding { get; set; }
+
+        public readonly int EmbeddingMaxValue = 1536;
+
     }
 
   
