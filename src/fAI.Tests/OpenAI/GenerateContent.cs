@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
@@ -12,32 +11,7 @@ using System.ComponentModel;
 
 namespace fAI.Tests
 {
-    public class GeneratedDocument 
-    {
-        public string Title { get; set; }
-        public string Summary { get; set; }
-        public string LocalImage { get; set; }
-    }
-
-    public class GeneratedDocuments : List<GeneratedDocument>
-    {
-        public GeneratedDocument Add(string title)
-        {
-            var d = new GeneratedDocument { Title = title };
-            this.Add(d);
-            return d;
-        }
-
-        public string ToJson()
-        {
-            return fAI.JsonUtils.ToJSON(this);
-        }
-
-        public void Save(string fileName)
-        {
-            File.WriteAllText(fileName, ToJson());
-        }
-    }
+  
 
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
