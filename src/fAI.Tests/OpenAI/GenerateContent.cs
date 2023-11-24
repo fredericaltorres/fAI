@@ -1,14 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System;
-using fAI;
 using Xunit;
-using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
 using static fAI.OpenAIImage;
-using System.ComponentModel;
-using fAI.Util.Strings;
+using DynamicSugar;
+using static DynamicSugar.ExtensionMethods_Format;
 
 namespace fAI.Tests
 {
@@ -23,12 +17,12 @@ namespace fAI.Tests
             ["The Hunchback of Notre-Dame"] = "\"The Hunchback of Notre-Dame\" is a tragic tale set in 15th century Paris",
             ["Ninety-Three"] = "",
             ["The Man Who Laughs"] = "",
-            ["The Toilers of the Sea"] = "",
-            ["The Last Day of a Condemned Man"] = "",
-            ["Bug-Jargal"] = "",
-            ["Hans of Iceland"] = "",
-            ["Les Châtiments"] = "",
-            ["Les Contemplations"] = "",
+            //["The Toilers of the Sea"] = "",
+            //["The Last Day of a Condemned Man"] = "",
+            //["Bug-Jargal"] = "",
+            //["Hans of Iceland"] = "",
+            //["Les Châtiments"] = "",
+            //["Les Contemplations"] = "",
         };
 
         // https://platform.openai.com/tokenizer
@@ -36,6 +30,8 @@ namespace fAI.Tests
         public void Generate_Document()
         {
             var generatedDocuments = new GeneratedDocuments();
+            generatedDocuments.Title = "Victor Hugo's MasterPieces";
+            generatedDocuments.Description = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
 
             var client = new OpenAI();
             foreach (var book in Books.Keys)
@@ -46,8 +42,8 @@ namespace fAI.Tests
                 {
                     Messages = new List<GPTMessage> {
                         new GPTMessage { Role =  MessageRole.system, Content = "As French literature expert."},
-                        new GPTMessage { Role =  MessageRole.user  , Content = StringUtil.RemoveMultiLineComment(
-                               $@"Summarize in 10 lines the book from French author Victor Hugo, ""{book}"".") 
+                        new GPTMessage { Role =  MessageRole.user  , Content = 
+                               $@"Summarize in 10 lines the book from French author Victor Hugo, ""{book}""." 
                         }
                     }
                 };
@@ -58,7 +54,7 @@ namespace fAI.Tests
                 if(response.Success)
                 {
                     generatedDocument.Summary = response.Text;
-                    var imagePrompt = StringUtil.RemoveMultiLineComment($@"
+                    var imagePrompt = $@"
 As French literature expert and people expert.
 Generate an image inspired by Victor Hugo's classic novel, '{book}'.
 [MORE_DALLE_PROMPT]
@@ -71,7 +67,7 @@ About the image to be generated:
 - Artistic Style: Impressionism.
 - Color Scheme: Vincent Van Gogh color palette.
 */
-- Level of Detail: High.");
+- Level of Detail: High.".RemoveComment(StringComment.C);
 
                     // Avoid our content policy from openAI, about image generation.
                     var useBookSummaryInDallePrompt = string.IsNullOrEmpty(Books[book]);
@@ -90,7 +86,7 @@ About the image to be generated:
                     }
                 }
             }
-            generatedDocuments.Save(@"c:\a\VictorHugo.Documents.json");
+            generatedDocuments.Save(@"c:\temp\VictorHugo.Documents.json");
         }
     }
 }

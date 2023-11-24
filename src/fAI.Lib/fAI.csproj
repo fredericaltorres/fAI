@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicSugarStandard" Version="1.0.2" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.4" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.33.0" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

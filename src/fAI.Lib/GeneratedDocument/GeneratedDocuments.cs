@@ -18,6 +18,9 @@ namespace fAI
 
     public class GeneratedDocuments : List<GeneratedDocument>
     {
+        public string Title { get; set; }
+        public string Description { get; set; }
+
         public GeneratedDocument Add(string title)
         {
             var d = new GeneratedDocument { Title = title };

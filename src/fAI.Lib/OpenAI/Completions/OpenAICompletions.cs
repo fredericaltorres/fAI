@@ -7,7 +7,6 @@ using System.Threading;
 
 namespace fAI
 {
-
     public partial class OpenAICompletions  : OpenAIHttpBase
     {
         public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
@@ -29,6 +28,8 @@ namespace fAI
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create(GPTPrompt p)
         {
+            OpenAI.Trace(new { prompt = p }, this);
+
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             sw.Stop();
@@ -40,7 +41,10 @@ namespace fAI
                 r.Stopwatch = sw;
                 return r;
             }
-            else throw new ChatGPTException($"{nameof(Translate)}() failed - {response.Exception.Message}", response.Exception);
+            else
+            {
+                return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
+            }
         }
 
         public string Summarize(string text, TranslationLanguages sourceLangague) 

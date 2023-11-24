@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System.Drawing;
 using System.IO;
+using System.Net.Cache;
 
 namespace fAI
 {
@@ -31,6 +33,8 @@ namespace fAI
 
         public string Create(string input, Voices voice, string model = "tts-1")
         {
+            OpenAI.Trace(new { input, voice, model }, this);
+
             var wc = InitWebClient();
             var response = wc.POST(__url, GetPayLoad(input, voice, model));
             if (response.Success)

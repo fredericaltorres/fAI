@@ -30,6 +30,8 @@ namespace fAI
         // https://github.com/sandrohanea/whisper.net/tree/0d1f691b3679c4eb2d97dcebafda1dc1d8439215
         public string Create(string audioFile, string model = "whisper-1", string responseFormat = "text")
         {
+            OpenAI.Trace(new { audioFile, model, responseFormat}, this);
+
             var wc = InitWebClient(addJsonContentType: false);
             using (var fileStream = File.OpenRead(audioFile))
             {

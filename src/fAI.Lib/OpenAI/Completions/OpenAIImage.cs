@@ -24,6 +24,8 @@ namespace fAI
         // https://platform.openai.com/docs/api-reference/images/create
         public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, OpenAIImageSize size = OpenAIImageSize._1024x1024)
         {
+            OpenAI.Trace(new { prompt, model, size }, this);
+
             var sw = Stopwatch.StartNew();
             var body = new { prompt, model, n=imageCount, size= size.ToString().Replace("_","") };
             var response = InitWebClient().POST(__url, JsonConvert.SerializeObject(body));
