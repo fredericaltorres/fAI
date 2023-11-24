@@ -6,9 +6,9 @@ namespace fAI
 {
     public class JsonUtils
     {
-        public static string ToJSON(object o)
+        public static string ToJSON(object o, Formatting formatting = Formatting.Indented)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(o, Formatting.Indented);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(o, formatting);
         }
 
         public static T FromJSON<T>(string json)

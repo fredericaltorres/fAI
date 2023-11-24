@@ -33,9 +33,9 @@ I'm crying";
         public static Dictionary<string, string> Books = new Dictionary<string, string>()
         {
             ["Les Misérables"] = "",
-            ["The Hunchback of Notre-Dame"] = "\"The Hunchback of Notre-Dame\" is a tragic tale set in 15th century Paris",
-            ["Ninety-Three"] = "",
-            ["The Man Who Laughs"] = "",
+            //["The Hunchback of Notre-Dame"] = "\"The Hunchback of Notre-Dame\" is a tragic tale set in 15th century Paris",
+            //["Ninety-Three"] = "",
+            //["The Man Who Laughs"] = "",
             //["The Toilers of the Sea"] = "",
             //["The Last Day of a Condemned Man"] = "",
             //["Bug-Jargal"] = "",
@@ -47,8 +47,19 @@ I'm crying";
         public static void Generate_Document()
         {
             var generatedDocuments = new GeneratedDocuments();
-            generatedDocuments.Title = "Victor Hugo's MasterPieces";
-            generatedDocuments.Description = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
+
+            //generatedDocuments.Properties.Title = "Victor Hugo's MasterPieces";
+            //generatedDocuments.Properties.Description = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
+            //var d = generatedDocuments.Add("Les Misérables");
+            //d.Summary = "aaa";
+            //d.LocalImage = @"c:\a\a.json";
+            //generatedDocuments.Save(@"c:\temp\VictorHugo.Documents.json");
+            //var GD2 = GeneratedDocuments.Load(@"c:\temp\VictorHugo.Documents.json");
+            //var pp = GD2.Properties;
+
+
+            OpenAI.TraceOn = true;
+            OpenAI.Trace($"Generating document about {generatedDocuments.Properties.Title}", new { });
 
             var client = new OpenAI();
             foreach (var book in Books.Keys)

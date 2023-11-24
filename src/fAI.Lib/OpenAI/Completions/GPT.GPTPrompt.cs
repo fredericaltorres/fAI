@@ -64,6 +64,13 @@ namespace fAI
 
         public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
 
+        public override string ToString()
+        {
+            if(!string.IsNullOrEmpty(this.Text))
+                return this.FullPrompt;
+            return string.Join("\r\n", this.Messages);
+        }
+
         public CompletionResponse Response { get; set; } = new CompletionResponse();
 
         public bool Success => Response.Success;
