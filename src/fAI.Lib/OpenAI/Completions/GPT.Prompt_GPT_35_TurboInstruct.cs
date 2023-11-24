@@ -48,6 +48,7 @@
         {
             Model = "gpt-4";
             Url = "https://api.openai.com/v1/chat/completions";
+                   
 
             MaxTokens = 2000;
             NewTokens = 400;
