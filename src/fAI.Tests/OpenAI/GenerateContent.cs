@@ -11,12 +11,11 @@ using System.ComponentModel;
 
 namespace fAI.Tests
 {
-  
-
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class GenerateContentTests
     {
+        // Victor Hugo's MasterPieces
         public List<string> Books = new List<string>()
         {
             "Les Misérables",
@@ -49,15 +48,25 @@ namespace fAI.Tests
                     }
                 };
                 var response = client.Completions.Create(prompt);
+
                 if(response.Success)
                 {
                     generatedDocument.Summary = response.Text;
                     var imagePrompt = $@"
 As French literature expert and people expert.
 Generate an image inspired by Victor Hugo's classic novel, '{book}'.
-The image should depict three typical characters, each with distinct characteristics. 
+Also used the following book's summary as a prompt:
+{generatedDocument.Summary}
+
+The image should depict 3 characters related to the location of the book, Paris, France.
+The image should be a painting, not a photograph.
+
+About the image to be generated:
+- Artistic Style: Impressionism.
+- Color Scheme: Vincent Van Gogh color palette.
+- Level of Detail: High.
             ";
-                    var r = client.Image.Generate(imagePrompt, size: OpenAIImageSize._1792x1024);
+                    var r = client.Image.Generate(imagePrompt, size: OpenAIImageSize._1024x1024);
 
                     generatedDocument.LocalImage = r.DownloadImageLocally()[0];
                 }
