@@ -67,17 +67,16 @@ About the image to be generated:
         // Victor Hugo's MasterPieces
         public static Dictionary<string, string> Books = new Dictionary<string, string>()
         {
-            ["Les Misérables"]                  = "",
-            ["The Hunchback of Notre-Dame"]     = TheHunchbackOfNotreDame_Summary_Sanitized,
-            ["Ninety-Three"]                    = "",
-            ["The Man Who Laughs"]              = "",
-            ["Bug-Jargal"]                      = BugJargal_Summary_Sanitized,
-            ["The Toilers of the Sea"]          = "",
-            ["The Last Day of a Condemned Man"] = "",
-            
-            ["Hans of Iceland"]                 = "",
-            ["Les Châtiments"]                  = "",
-            ["Les Contemplations"]              = "",
+            ["Les Misérables"                   ] = "",
+            ["The Hunchback of Notre-Dame"      ] = TheHunchbackOfNotreDame_Summary_Sanitized,
+            ["Ninety-Three"                     ] = "",
+            ["The Man Who Laughs"               ] = "",
+            ["Bug-Jargal"                       ] = BugJargal_Summary_Sanitized,
+            ["The Toilers of the Sea"           ] = "",
+            ["The Last Day of a Condemned Man"  ] = "",
+            ["Hans of Iceland"                  ] = "",
+            ["Les Châtiments"                   ] = "",
+            ["Les Contemplations"               ] = "",
         };
 
         public static void Generate_Document()
@@ -142,6 +141,7 @@ About the image to be generated:
                 }
             }
             generatedDocuments.Save(@"c:\temp\VictorHugo.Documents.json");
+            OpenAI.Trace($"Done", new {});
         }
     }
 }
