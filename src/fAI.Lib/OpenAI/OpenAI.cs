@@ -44,7 +44,13 @@ namespace fAI
         public static string Trace(string message, object This, [CallerMemberName] string methodName = "")
         {
             if (TraceOn)
-                Console.WriteLine($"[{DateTime.Now}][{This.GetType().Name}.{methodName}()]{message}");
+            {
+                var className = This.GetType().Name + ".";
+                if (className.StartsWith("<"))
+                    className = "";
+
+                Console.WriteLine($"[{DateTime.Now}][{className}{methodName}()]{message}");
+            }
 
             return message;
         }
