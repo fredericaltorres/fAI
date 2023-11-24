@@ -35,7 +35,13 @@ namespace fAI
                 r.Stopwatch = sw;
                 return r;
             }
-            else throw new ChatGPTException($"{nameof(Generate)}() failed - {response.Exception.Message}", response.Exception);
+            else
+            {
+                return new ImageResponse
+                {
+                    Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception)
+                };
+            }
         }
     }
 }

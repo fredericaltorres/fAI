@@ -32,6 +32,8 @@ namespace fAI
     public class BaseHttpResponse
     {
         public Stopwatch Stopwatch { get; set; }
+        public System.Exception Exception { get; set; }
+        public bool Success => Exception == null;
     }
 
     public class EmbeddingResponse : BaseHttpResponse

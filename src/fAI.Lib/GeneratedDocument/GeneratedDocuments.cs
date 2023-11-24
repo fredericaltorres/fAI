@@ -8,7 +8,13 @@ namespace fAI
         public string Title { get; set; }
         public string Summary { get; set; }
         public string LocalImage { get; set; }
+
+        public string _summaryPrompt { get; set; }
+        public string _imagePrompt { get; set; }
     }
+
+
+
 
     public class GeneratedDocuments : List<GeneratedDocument>
     {

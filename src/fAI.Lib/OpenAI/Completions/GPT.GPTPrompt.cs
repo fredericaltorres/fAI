@@ -28,12 +28,22 @@ namespace fAI
 
     public class GPTPrompt
     {
-
         public ResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }
         public string Text { get; set; }
 
         public List<GPTMessage> Messages { get; set; } 
+
+
+        public string GetPromptString()
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach(var message in Messages)
+            {
+                sb.AppendLine($"{message.Role}: {message.Content}");
+            }
+            return sb.ToString();
+        }
 
         public string PrePrompt { get; set; }
         public string PostPrompt { get; set; }
