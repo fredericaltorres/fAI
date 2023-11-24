@@ -74,7 +74,7 @@ About the image to be generated:
 - Level of Detail: High.");
 
                     // Avoid our content policy from openAI, about image generation.
-                    var useBookSummaryInDallePrompt = !string.IsNullOrEmpty(Books[book]);
+                    var useBookSummaryInDallePrompt = string.IsNullOrEmpty(Books[book]);
                     if(useBookSummaryInDallePrompt)
                         imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", $@"Also used the following book's summary as a prompt:\r\n{generatedDocument.Summary}\r\n");
                     else
