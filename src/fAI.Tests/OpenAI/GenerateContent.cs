@@ -71,23 +71,23 @@ namespace fAI.Tests
                 {
                     Messages = new List<GPTMessage> {
                         new GPTMessage { Role =  MessageRole.system, Content = "As French literature expert."},
-                        new GPTMessage { Role =  MessageRole.user, Content = $@"Summarize in 10 lines the book from French author Victor Hugo, ""{book}""." }
+                        new GPTMessage { Role =  MessageRole.user  , Content = $@"Summarize in 10 lines the book from French author Victor Hugo, ""{book}""." }
                     }
                 };
                 var response = client.Completions.Create(prompt);
                 if(response.Success)
                 {
                     generatedDocument.Summary = response.Text;
-
-                    var imagePrompt = @"Generate an image inspired by Victor Hugo's classic novel, 'Les Misérables'.
-                The image should depict three characters, each with distinct characteristics. 
+                    var imagePrompt = $@"
+As French literature expert and people expert.
+Generate an image inspired by Victor Hugo's classic novel, '{book}'.
+The image should depict three typical characters, each with distinct characteristics. 
             ";
                     var r = client.Image.Generate(imagePrompt, size: OpenAIImageSize._1792x1024);
 
                     generatedDocument.LocalImage = r.DownloadImageLocally()[0];
                 }
             }
-
             generatedDocuments.Save(@"c:\a\VictorHugo.Documents.json");
         }
     }
