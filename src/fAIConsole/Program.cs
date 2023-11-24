@@ -28,16 +28,18 @@ I'm crying";
             //var mp3FileName = Path.Combine(Path.GetTempPath(), "mp3.mp3");
             //mcs.ExecuteTTS(EnglishTest01, voiceId, mp3FileName);
         }
-
+        // It ends tragically with Esmeralda's execution, Frollo's death, and Quasimodo's disappearance, symbolizing the end of an era.
+        // The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral, who is ridiculed and shunned due to his appearance. 
+        // The novel explores themes of love, and societal rejection.
+        // However, Esmeralda is also desired by Archdeacon Frollo, Quasimodo's adoptive father, and Captain Phoebus.
+        // He falls in love with a beautiful gypsy dancer, Esmeralda, who shows him kindness.
         const string TheHunchbackOfNotreDame_Summary_Sanitized = @"As French literature expert and people expert.
 Generate an image inspired by Victor Hugo's classic novel, 'The Hunchback of Notre-Dame'.
 Also used the following book's summary as a prompt:
 ""The Hunchback of Notre-Dame"" is a tragic tale set in 15th century Paris. 
-The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral, who is ridiculed and shunned due to his appearance. 
-He falls in love with a beautiful gypsy dancer, Esmeralda, who shows him kindness. 
-However, Esmeralda is also desired by Archdeacon Frollo, Quasimodo's adoptive father, and Captain Phoebus. 
-The novel explores themes of love, lust, and societal rejection. 
-It ends tragically with Esmeralda's execution, Frollo's death, and Quasimodo's disappearance, symbolizing the end of an era.
+The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral. 
+He falls in love with a beautiful dancer, Esmeralda, who shows him kindness.
+However, Esmeralda is also desired by Archdeacon Frollo, Quasimodo's adoptive father, and Captain Phoebus.
 
 The image should depict 3 characters from France only and from the era of the novel.
 The image should be a painting, not a photograph.

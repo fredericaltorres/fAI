@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace fAI
@@ -22,6 +23,7 @@ namespace fAI
                 OpenAIHttpBase. _openAiOrg = openAiOrg;
         }
 
+        
         OpenAIAudio _audio = null;
         public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio());
 
@@ -36,6 +38,19 @@ namespace fAI
 
         public static bool TraceOn { get; set; } = false;
 
+        public const string DefaultLogFileName = @"c:\temp\fAI.log";
+        public static string LogFileName = null;
+
+        private static void TraceToFile(string message)
+        {
+            if(LogFileName == null)
+                LogFileName = Environment.GetEnvironmentVariable("OPENAI_LOG_FILE");
+            if (LogFileName == null)
+                LogFileName = DefaultLogFileName;
+
+            File.AppendAllText(LogFileName, message.Replace(Environment.NewLine,"`r`n") + Environment.NewLine);
+        }
+
         public static string TraceError(string message, object This, [CallerMemberName] string methodName = "")
         {
             return Trace($"[ERROR]{message}", This, methodName);
@@ -49,7 +64,9 @@ namespace fAI
                 if (className.StartsWith("<"))
                     className = "";
 
-                Console.WriteLine($"[{DateTime.Now}][{className}{methodName}()]{message}");
+                var m = $"[{DateTime.Now}][{className}{methodName}()]{message}";
+                Console.WriteLine(m);
+                TraceToFile(m);
             }
 
             return message;
