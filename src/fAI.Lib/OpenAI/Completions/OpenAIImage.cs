@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using NAudio.SoundFont;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace fAI
@@ -11,10 +12,20 @@ namespace fAI
 
         const string __url = "https://api.openai.com/v1/images/generations";
 
-        public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, string size = "1024x1024")
+        public enum OpenAIImageSize  
+        { 
+            _256x256,
+            _512x512,
+            _1024x1024,
+            _1792x1024,
+            _1024x1792
+        }
+
+        // https://platform.openai.com/docs/api-reference/images/create
+        public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, OpenAIImageSize size = OpenAIImageSize._1024x1024)
         {
             var sw = Stopwatch.StartNew();
-            var body = new { prompt, model, n=imageCount, size };
+            var body = new { prompt, model, n=imageCount, size= size.ToString().Replace("_","") };
             var response = InitWebClient().POST(__url, JsonConvert.SerializeObject(body));
             sw.Stop();
             if (response.Success)

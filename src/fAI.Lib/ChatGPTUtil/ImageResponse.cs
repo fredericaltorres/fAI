@@ -33,7 +33,7 @@ namespace fAI
                 var uri = new Uri(d.url);
                 r.Add(DownloadImage(uri));
             }
-            return r
+            return r;
         }
 
         private string DownloadImage(Uri uri)

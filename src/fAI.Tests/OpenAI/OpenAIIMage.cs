@@ -7,6 +7,7 @@ using fAI;
 using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
+using static fAI.OpenAIImage;
 
 namespace fAI.Tests
 {
@@ -26,8 +27,10 @@ Their expressions should reflect the nuances of the complex relationships
 they share in the story.
 ";
             var client = new OpenAI();
-            var r = client.Image.Generate(prompt, imageCount: 2);
+            var r = client.Image.Generate(prompt, size :  OpenAIImageSize._1792x1024);
             var pngFileNames = r.DownloadImageLocally();
+            Assert.True(pngFileNames.Count == 1);
+            Assert.True(File.Exists(pngFileNames[0]));
         }
     }
 }
