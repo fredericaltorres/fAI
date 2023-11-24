@@ -53,4 +53,7 @@ namespace fAI
             return JsonUtils.FromJSON<EmbeddingResponse>(text);
         }
     }
+
+   
+
 }

@@ -29,6 +29,9 @@ namespace fAI
 
         public OpenAIEmbeddings _embeddings = null;
         public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());
+
+        public OpenAIImage _image = null;
+        public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
     }
 }
 
