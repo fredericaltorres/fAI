@@ -39,23 +39,23 @@ It also highlights the brutality of slavery and the courage of those who fought 
         // Victor Hugo's MasterPieces
         public static Dictionary<string, string> Books = new Dictionary<string, string>()
         {
-            ["Les Misérables"                   ] = "",
-            ["The Hunchback of Notre-Dame"      ] = TheHunchbackOfNotreDame_Summary_Sanitized,
-            ["Ninety-Three"                     ] = "",
-            ["The Man Who Laughs"               ] = "",
-            ["Bug-Jargal"                       ] = BugJargal_Summary_Sanitized,
-            ["The Toilers of the Sea"           ] = "",
-            ["The Last Day of a Condemned Man"  ] = "",
-            ["Hans of Iceland"                  ] = "",
-            ["Les Châtiments"                   ] = "",
-            ["Les Contemplations"               ] = "",
+            ["Les Misérables"] = "",
+            ["The Hunchback of Notre-Dame"] = TheHunchbackOfNotreDame_Summary_Sanitized,
+            ["Ninety-Three"] = "",
+            ["The Man Who Laughs"] = "",
+            ["Bug-Jargal"] = BugJargal_Summary_Sanitized,
+            ["The Toilers of the Sea"] = "",
+            ["The Last Day of a Condemned Man"] = "",
+            ["Hans of Iceland"] = "",
+            ["Les Châtiments"] = "",
+            ["Les Contemplations"] = "",
         };
 
         public static void Generate_Document()
         {
             var generatedDocuments = new GeneratedDocuments();
-            generatedDocuments.Properties.Title         = "Victor Hugo's MasterPieces";
-            generatedDocuments.Properties.Description   = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
+            generatedDocuments.Properties.Title = "Victor Hugo's MasterPieces";
+            generatedDocuments.Properties.Description = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
             OpenAI.TraceOn = true;
             OpenAI.Trace($"Generating document about {generatedDocuments.Properties.Title}", new { });
 
@@ -113,7 +113,13 @@ About the image to be generated:
                 }
             }
             generatedDocuments.Save(@"c:\temp\VictorHugo.Documents.json");
-            OpenAI.Trace($"Done", new {});
+            OpenAI.Trace($"Done", new { });
+        }
+
+
+        public static void Generate_HtmlWebSite()
+        {
+            var generatedDocuments = GeneratedDocuments.Load(@".\VictorHugoPresentation\VictorHugo.Documents.json");
         }
     }
 }
