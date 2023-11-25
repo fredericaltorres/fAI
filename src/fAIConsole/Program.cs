@@ -17,7 +17,8 @@ namespace fAIConsole
 
         static void Main(string[] args)
         {
-            Generate_Document();
+            // Generate_Document();
+            Generate_HtmlWebSite();
         }
 
         const string TheHunchbackOfNotreDame_Summary_Sanitized = @"
@@ -120,6 +121,8 @@ About the image to be generated:
         public static void Generate_HtmlWebSite()
         {
             var generatedDocuments = GeneratedDocuments.Load(@".\VictorHugoPresentation\VictorHugo.Documents.json");
+            var templateGenerator = new StaticHtmlTemplateGenerator();
+            templateGenerator.GenerateFile(generatedDocuments, @"C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\VictorHugo.Documents.3.html");
         }
     }
 }
