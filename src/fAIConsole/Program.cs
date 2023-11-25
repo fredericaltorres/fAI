@@ -14,25 +14,12 @@ namespace fAIConsole
 {
     internal class Program
     {
-        const string EnglishTest01 = @"I am he as you are he as you are me
-And we are all together.
-See how they run like pigs from a gun
-See how they fly.
-I'm crying";
 
         static void Main(string[] args)
         {
             Generate_Document();
-            //var mcs = new MicrosoftCognitiveServices();
-            //var voiceId = "en-US-DavisNeural";
-            //var mp3FileName = Path.Combine(Path.GetTempPath(), "mp3.mp3");
-            //mcs.ExecuteTTS(EnglishTest01, voiceId, mp3FileName);
         }
-        // It ends tragically with Esmeralda's execution, Frollo's death, and Quasimodo's disappearance, symbolizing the end of an era.
-        // The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral, who is ridiculed and shunned due to his appearance. 
-        // The novel explores themes of love, and societal rejection.
-        // However, Esmeralda is also desired by Archdeacon Frollo, Quasimodo's adoptive father, and Captain Phoebus.
-        // He falls in love with a beautiful gypsy dancer, Esmeralda, who shows him kindness.
+
         const string TheHunchbackOfNotreDame_Summary_Sanitized = @"
 ""The Hunchback of Notre-Dame"" is a tragic tale set in 15th century Paris. 
 The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral. 
@@ -52,12 +39,11 @@ It also highlights the brutality of slavery and the courage of those who fought 
         // Victor Hugo's MasterPieces
         public static Dictionary<string, string> Books = new Dictionary<string, string>()
         {
-            ["Bug-Jargal"] = BugJargal_Summary_Sanitized,
             ["Les Misérables"                   ] = "",
             ["The Hunchback of Notre-Dame"      ] = TheHunchbackOfNotreDame_Summary_Sanitized,
             ["Ninety-Three"                     ] = "",
             ["The Man Who Laughs"               ] = "",
-            //["Bug-Jargal"                       ] = BugJargal_Summary_Sanitized,
+            ["Bug-Jargal"                       ] = BugJargal_Summary_Sanitized,
             ["The Toilers of the Sea"           ] = "",
             ["The Last Day of a Condemned Man"  ] = "",
             ["Hans of Iceland"                  ] = "",

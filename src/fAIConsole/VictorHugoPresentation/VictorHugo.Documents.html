@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VictorHugo.Documents.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="victor-hugos-masterpieces">Victor Hugo's MasterPieces</h1>
+<p>The 10 most popular books written by Victor Hugo.</p>
+<ul>
+<li>Book summary was generated by OpenAI GPT 4.</li>
+<li>Images were generated by OpenAI DALL-E.</li>
+</ul>
+<h2 id="les-mis%C3%A9rables">Les Misérables</h2>
+<p>&quot;Les Misérables&quot; is a monumental novel by Victor Hugo, set in early 19th-century France. It tells the story of Jean Valjean, a former convict who spends his life seeking redemption for his past crimes. His journey intertwines with the lives of characters like Fantine, a destitute single mother; Cosette, her innocent daughter; and Javert, a relentless police inspector. The narrative explores themes of social injustice, morality, and love. Amid the backdrop of significant historical events, such as the Battle of Waterloo and the 1832 Paris Uprising, Hugo presents a profound critique of French society's treatment of the poor and marginalized.</p>
+<img src="images\img-IugEsyoUpsVfUCLbWlHwd1Da.png" alt="alt text" width="256" height="256">
+<h2 id="the-hunchback-of-notre-dame">The Hunchback of Notre-Dame</h2>
+<p>&quot;The Hunchback of Notre-Dame&quot; is a tragic tale set in 15th century Paris. The story revolves around Quasimodo, a hunchbacked bell-ringer of Notre-Dame Cathedral, who is deeply in love with a beautiful gypsy girl, Esmeralda. However, Esmeralda is falsely accused of attempted murder and is sentenced to death. Quasimodo tries to save her, but fails. The cruel and jealous Archdeacon Frollo, who is also infatuated with Esmeralda, pushes Quasimodo from the cathedral's tower in a fit of rage. The story ends with the tragic death of all main characters, symbolizing the harsh reality of life.</p>
+<img src="images\img-WWs73PmjDTEWp3d2xWz0lSZc.png" alt="alt text" width="256" height="256">
+<h2 id="ninety-three">Ninety-Three</h2>
+<p>&quot;Ninety-Three is a historical novel by Victor Hugo set in the year 1793 during the French Revolution. The story revolves around the conflict between the republicans and royalists of the French Revolution. It features three main characters: Gauvain, a republican soldier who questions the violence of the revolution; Cimourdain, a former priest turned revolutionary who believes in the absolute righteousness of the revolution; and Lantenac, a nobleman who fights for the old regime. The novel explores themes of war, revolution, and the clash of ideals. It ends tragically with the execution of Gauvain, symbolizing the self-destructive nature of extremism.</p>
+<img src="images\img-5IrHioHauMXNpu7nrJOjjeMD.png" alt="alt text" width="256" height="256">
+<h2 id="the-man-who-laughs">The Man Who Laughs</h2>
+<p>&quot;The Man Who Laughs&quot; is a tragic novel by Victor Hugo, set in 17th-century England. The protagonist, Gwynplaine, is disfigured as a child to appear perpetually laughing. He is abandoned and finds a blind baby girl, Dea, whom he rescues. They join a travelling show where Gwynplaine's disfigurement draws crowds. Despite his grotesque appearance, Dea falls in love with him. Gwynplaine's noble lineage is discovered, and he's offered a life of luxury, but it would mean leaving Dea. Torn between love and societal acceptance, Gwynplaine rejects the aristocracy, but the shock kills Dea. Grief-stricken, Gwynplaine drowns himself, choosing death over a life without Dea.</p>
+<img src="images\img-8xCTzawVUI2q4GMjeWBUQghE.png" alt="alt text" width="256" height="256">
+<h2 id="bug-jargal">Bug-Jargal</h2>
+<p>&quot;Bug-Jargal&quot; is a historical novel by Victor Hugo set during a slave revolt in Santo Domingo. The protagonist, a French military officer named Leopold d'Auverney, recounts his experiences during the rebellion. He befriends a noble African slave, Bug-Jargal, who saves him multiple times. The novel explores themes of racial inequality, colonialism, and the brutality of slavery. It also delves into the complexities of human relationships, particularly friendship and love. The story ends tragically with Bug-Jargal's death, symbolizing the ultimate sacrifice for freedom.</p>
+<img src="images\img-RscvprPSPEaMOLd8JiXfm3sq.png" alt="alt text" width="256" height="256">
+<h2 id="the-toilers-of-the-sea">The Toilers of the Sea</h2>
+<p>&quot;The Toilers of the Sea&quot; is a captivating novel by Victor Hugo that revolves around the life of a fisherman, Gilliatt, who is in love with a beautiful woman, Deruchette. The story is set in the Channel Islands and explores themes of love, bravery, and sacrifice. Gilliatt embarks on a dangerous mission to salvage the engine of a wrecked ship to win Deruchette's hand in marriage. He battles monstrous sea creatures and harsh weather conditions, showcasing his courage and determination. However, despite his heroic efforts, he faces a tragic end as Deruchette marries another man, leading Gilliatt to die of a broken heart.</p>
+<img src="images\img-ebe6eSevUjXCAQforwbC38cq.png" alt="alt text" width="256" height="256">
+<h2 id="the-last-day-of-a-condemned-man">The Last Day of a Condemned Man</h2>
+<p>&quot;The Last Day of a Condemned Man&quot; is a profound exploration of the human psyche under the shadow of the death penalty. The protagonist, an unnamed man, is sentenced to death and the narrative unfolds as a diary of his final days. He grapples with fear, despair, and the cruel anticipation of his impending execution. He reflects on his life, his separation from his young daughter, and the inhumanity of capital punishment. The novel is a powerful critique of the death penalty, highlighting its psychological torment and questioning its moral justification. Hugo's poignant narrative is a plea for empathy and a call for justice reform.</p>
+<img src="images\img-eqGoLSqJmrU3cU2MZsTGgH6n.png" alt="alt text" width="256" height="256">
+<h2 id="hans-of-iceland">Hans of Iceland</h2>
+<p>&quot;Hans of Iceland&quot; is Victor Hugo's first novel, set in 17th century Norway. The story revolves around the protagonist, Hans, a misanthropic and monstrous hermit who lives in the wilderness. He falls in love with a beautiful woman, Ordener Guldenlew, who is betrothed to a nobleman. The plot thickens as Hans gets entangled in political conspiracies, involving the Danish king and Norwegian rebels. Despite his monstrous exterior, Hans displays profound humanity and love. The novel explores themes of love, power, and the dichotomy of man versus nature. It ends tragically with Hans' death, symbolizing the destructive power of unrequited love and societal rejection.</p>
+<img src="images\img-DDWLUJzCSgF6QsMYHBK1b3Rn.png" alt="alt text" width="256" height="256">
+<h2 id="les-ch%C3%A2timents">Les Châtiments</h2>
+<p>&quot;Les Châtiments&quot; is a collection of poems by Victor Hugo, written in exile after Napoleon III's coup d'état in 1851. The book is a vehement critique of the political regime, using powerful and evocative imagery to depict the corruption and tyranny of the emperor. Hugo's poems oscillate between anger, despair, and hope for a better future. The work is divided into seven books, each representing different stages of the political situation. Despite its dark themes, &quot;Les Châtiments&quot; is also a testament to Hugo's belief in the resilience of humanity and the ultimate triumph of freedom over oppression.&quot;</p>
+<img src="images\img-NmPCyuyQjFmAE34xTFNGdCTo.png" alt="alt text" width="256" height="256">
+<h2 id="les-contemplations">Les Contemplations</h2>
+<p>&quot;Les Contemplations&quot; is a collection of poetry by Victor Hugo, reflecting on his personal life and the nature of existence. The book is divided into two parts: 'Autrefois' and 'Aujourd'hui', representing the past and the present. The first part reminisces about his youthful happiness, love for his wife, and joy in his children. The second part is a stark contrast, dealing with his daughter's tragic death, his exile, and his disillusionment with life. Throughout, Hugo explores themes of love, loss, nature, and the spiritual journey of life, using vivid imagery and emotive language. His poems oscillate between despair and hope, ultimately affirming the redemptive power of love and art.</p>
+<img src="images\img-aq8PgF6GdC11P5dHDNMorRum.png" alt="alt text" width="256" height="256">
+
+</body>
+</html>
