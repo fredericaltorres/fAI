@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="audio\audio.md">
+    <None Include="VictorHugoPresentation\audio\audio.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -102,6 +102,36 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="VictorHugoPresentation\audio\img-5IrHioHauMXNpu7nrJOjjeMD.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-8xCTzawVUI2q4GMjeWBUQghE.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-aq8PgF6GdC11P5dHDNMorRum.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-DDWLUJzCSgF6QsMYHBK1b3Rn.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-ebe6eSevUjXCAQforwbC38cq.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-eqGoLSqJmrU3cU2MZsTGgH6n.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-IugEsyoUpsVfUCLbWlHwd1Da.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-NmPCyuyQjFmAE34xTFNGdCTo.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-RscvprPSPEaMOLd8JiXfm3sq.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VictorHugoPresentation\audio\img-WWs73PmjDTEWp3d2xWz0lSZc.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="images\DynamicSugar2.Logo.jpg" />
     <Content Include="VictorHugoPresentation\images\img-5IrHioHauMXNpu7nrJOjjeMD.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -133,6 +163,7 @@
     <Content Include="VictorHugoPresentation\images\img-WWs73PmjDTEWp3d2xWz0lSZc.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="VictorHugoPresentation\VictorHugo.Documents.3.html" />
     <None Include="VictorHugoPresentation\readme.md" />
   </ItemGroup>
   <ItemGroup />

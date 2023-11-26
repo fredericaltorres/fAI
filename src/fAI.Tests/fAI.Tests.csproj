@@ -74,6 +74,10 @@
       <Project>{cf5fef6e-d407-4f9f-a409-501d176fa62d}</Project>
       <Name>fAI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\fAI.Microsoft\fAI.Microsoft.csproj">
+      <Project>{eeabe513-2907-42f4-aed5-0703e14ff676}</Project>
+      <Name>fAI.Microsoft</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.core.dll" />
