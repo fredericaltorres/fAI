@@ -59,7 +59,8 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Microsoft.Cognitive.Services\Microsoft.Cognitive.Services.Tests.cs" />
+    <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.SearchTests.cs" />
+    <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\OpenAIIMage.cs" />
     <Compile Include="OpenAI\OpenAIEmbeddingsTests.cs" />
