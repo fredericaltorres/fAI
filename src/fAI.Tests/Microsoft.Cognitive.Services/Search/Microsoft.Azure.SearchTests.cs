@@ -128,7 +128,7 @@ namespace fAI.Tests
         {
             var azureSearch = new AzureSearch(serviceName);
             azureSearch.DeleteIndexIfExists(indexName);
-            azureSearch.CreateIndex(indexName, typeof(CityAI), DS.List("City"));
+            azureSearch.CreateIndex(indexName, typeof(CityAI), new List<string>()); //DS.List("City")
             var cities = CityAI.FromJson(citiesJson);
             azureSearch.UploadDocuments(indexName, cities);
             Console.WriteLine("Waiting for indexing...\n");

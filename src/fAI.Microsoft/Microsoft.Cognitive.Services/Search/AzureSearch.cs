@@ -27,10 +27,10 @@ namespace fAI.Microsoft.Search
         [SimpleField(IsKey = true, IsFilterable = true, IsSortable = true, IsFacetable = true)]
         public string ID { get; set; }
 
-        [SearchableField(AnalyzerName = LexicalAnalyzerName.Values.EnLucene, IsFilterable = true, IsSortable = true)]
+        [SearchableField(AnalyzerName = LexicalAnalyzerName.Values.EnLucene, IsFilterable = true, IsSortable = true, IsFacetable = true)]
         public string City { get; set; }
 
-        [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
+        [SearchableField(AnalyzerName = LexicalAnalyzerName.Values.EnLucene, IsFilterable = true, IsSortable = true, IsFacetable = true)]
         public string Country { get; set; }
 
         public static List<CityAI> FromJson(string json)
@@ -66,15 +66,25 @@ namespace fAI.Microsoft.Search
         }
         public void CreateIndex(string indexName, Type rootObjectType, List<string> searchSuggester)
         {
-            FieldBuilder fieldBuilder = new FieldBuilder();
-            var searchFields = fieldBuilder.Build(rootObjectType);
+            try
+            {
+                FieldBuilder fieldBuilder = new FieldBuilder();
+                var searchFields = fieldBuilder.Build(rootObjectType);
 
-            var definition = new SearchIndex(indexName, searchFields);
+                var definition = new SearchIndex(indexName, searchFields);
 
-            var suggester = new SearchSuggester("sg", searchSuggester.ToArray());
-            definition.Suggesters.Add(suggester);
+                if (searchSuggester != null && searchSuggester.Count > 0)
+                {
+                    var suggester = new SearchSuggester("sg", searchSuggester.ToArray());
+                    definition.Suggesters.Add(suggester);
+                }
 
-            adminClient.CreateOrUpdateIndex(definition);
+                adminClient.CreateOrUpdateIndex(definition);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         public void UploadDocuments(string indexName, List<CityAI> documents)
         {
