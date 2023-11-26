@@ -122,7 +122,7 @@ About the image to be generated:
         {
             var generatedDocuments = GeneratedDocuments.Load(@".\VictorHugoPresentation\VictorHugo.Documents.json");
             var templateGenerator = new StaticHtmlTemplateGenerator();
-            templateGenerator.GenerateFile(generatedDocuments, @"C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\VictorHugo.Documents.3.html");
+            templateGenerator.GenerateFile(generatedDocuments, @"C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\VictorHugo.Documents.3.html", OpenAISpeech.Voices.onyx);
         }
     }
 }

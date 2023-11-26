@@ -31,7 +31,7 @@ namespace fAI
             });
         }
 
-        public string Create(string input, Voices voice, string model = "tts-1")
+        public string Create(string input, Voices voice, string mp3FileName = null, string model = "tts-1")
         {
             OpenAI.Trace(new { input, voice, model }, this);
 
@@ -40,9 +40,11 @@ namespace fAI
             if (response.Success)
             {
                 var ext = wc.GetResponseImageExtension();
-                var tmpMp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
-                File.WriteAllBytes(tmpMp3FileName, response.Buffer);
-                return tmpMp3FileName;
+                if (mp3FileName == null)
+                    mp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
+
+                File.WriteAllBytes(mp3FileName, response.Buffer);
+                return mp3FileName;
             }
             else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }

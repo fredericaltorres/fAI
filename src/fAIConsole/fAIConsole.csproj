@@ -86,6 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="audio\audio.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="VictorHugoPresentation\VictorHugo.Documents.md" />
     <None Include="VictorHugoPresentation\VictorHugo.Documents.json">

@@ -1,15 +1,21 @@
-﻿<h2 id="{{Title}}__{{LocalImage}}">{{Title}}</h2>
+﻿<h2 id="{{Title}}__{{Id}}">{{Title}}</h2>
 <div class="container">
     <div class="document_text">
         <p>
             {{Summary}}
         </p>
-        <p style="font-size: 12px">
-            GPT 4 Prompt:<br />{{_summaryPrompt}}
-        </p>
-        <p style="font-size: 12px">
-            DALL-E Prompt:<br />{{_imagePrompt}}
-        </p>
+
+        <audio controls>
+            <source src="audio\{{Id}}.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+    <p style="font-size: 12px">
+        GPT 4 Prompt:<br />{{_summaryPrompt}}
+    </p>
+    <p style="font-size: 12px">
+        DALL-E Prompt:<br />{{_imagePrompt}}
+    </p>
     </div>
     <div class="document_image">
         <img src="images\{{LocalImage}}" alt="alt text" width="256" height="256">

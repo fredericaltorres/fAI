@@ -23,7 +23,7 @@ namespace fAI
 
         public override string GenerateTemplate(GeneratedDocumentDetail gdd)
         {
-            var s = base.Template(DocumentTemplate, new { gdd.Title, gdd.Summary, gdd.LocalImage, gdd._summaryPrompt, gdd._imagePrompt });
+            var s = base.Template(DocumentTemplate, new { gdd.Title, gdd.Summary, gdd.LocalImage, gdd._summaryPrompt, gdd._imagePrompt, gdd.Id   });
             s = s.Replace(@"\r\n", "<BR />");
             return s;
         }
