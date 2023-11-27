@@ -136,11 +136,25 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        public void Search()
+        public void Search_CityInTheUSA()
         {
             var azureSearch = new AzureSearch(serviceName);
-            var result = azureSearch.SearchDocuments(indexName, "USA");
-            Assert.Equal(7, result.Count);
+            var whereClause = "Country eq 'USA'";
+            var orderBy = "City desc";
+            var results = azureSearch.SearchDocuments<CityAI>(indexName, whereClause, orderBy);
+            Assert.Equal(16, results.Count);
+            results.ForEach(r => Assert.Equal("USA", r.Country));
+        }
+        [Fact()]
+        public void Search_CityInTheBelgium()
+        {
+            var azureSearch = new AzureSearch(serviceName);
+            var whereClause = "Country eq 'Belgium'";
+            var orderBy = "City desc";
+            var results = azureSearch.SearchDocuments<CityAI>(indexName, whereClause, orderBy);
+            Assert.Equal(1, results.Count);
+            results.ForEach(r => Assert.Equal("Belgium", r.Country));
+            results.ForEach(r => Assert.Equal("Brussels", r.City));
         }
     }
-}
+}  

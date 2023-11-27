@@ -7,6 +7,9 @@ using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents;
 using Newtonsoft.Json;
 using Azure.Search.Documents.Models;
+using DynamicSugar;
+using System.Linq;
+using System.Collections;
 
 namespace fAI.Microsoft.Search
 {
@@ -105,27 +108,43 @@ namespace fAI.Microsoft.Search
             }
         }
 
-        public List<CityAI> SearchDocuments(string indexName, string country)
+        /*
+{
+  "search": "*",
+  "filter": "Country eq 'USA'"
+}
+{
+  "SearchFields" : [ "Tags" ],
+  "search": "pool"
+
+}
+        */
+
+        public List<T> SearchDocuments<T>(string indexName, string filterWhereClause, string orderBy) where T : new()
         {
             var srchclient = new SearchClient(serviceEndpoint, indexName, credential);
             var options = new SearchOptions()
             {
-                Filter = $@"(Country eq '{country}')",
-                OrderBy = { "City desc" }
+                Filter = filterWhereClause,
+                OrderBy = { orderBy }
             };
 
-            options.Select.Add("ID");
-            options.Select.Add("City");
-            options.Select.Add("Country");
+            //options.Select.Add("ID");
+            //options.Select.Add("City");
+            //options.Select.Add("Country");
+            var props = ReflectionHelper.GetDictionary(new T()).Keys.ToList();
+            foreach(var p in props)
+                options.Select.Add(p);
 
-            var response = srchclient.Search<CityAI>("hotels", options);
+            var searchText = "*";
+            SearchResults<T> response = srchclient.Search<T>(searchText, options);
             return GetDocuments(response);
         }
 
-        private static List<CityAI> GetDocuments(SearchResults<CityAI> searchResults)
+        private static List<T> GetDocuments<T>(SearchResults<T> searchResults)
         {
-            var r = new List<CityAI>(); 
-            foreach (SearchResult<CityAI> result in searchResults.GetResults())
+            var r = new List<T>(); 
+            foreach (SearchResult<T> result in searchResults.GetResults())
                 r.Add(result.Document);
 
             return r;
