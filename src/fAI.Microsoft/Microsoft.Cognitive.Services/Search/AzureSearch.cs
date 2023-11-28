@@ -13,43 +13,19 @@ using System.Collections;
 
 namespace fAI.Microsoft.Search
 {
-    public partial class PresentationAI
-    {
-        [SimpleField(IsKey = true, IsFilterable = true)]
-        public string PresentationId { get; set; }
-
-        [SearchableField(IsSortable = true)]
-        public string Title { get; set; }
-
-        [SearchableField(IsSortable = true)]
-        public string Description { get; set; }
-    }
-
-    public partial class CityAI
-    {
-        [SimpleField(IsKey = true, IsFilterable = true, IsSortable = true, IsFacetable = true)]
-        public string ID { get; set; }
-
-        [SearchableField(AnalyzerName = LexicalAnalyzerName.Values.EnLucene, IsFilterable = true, IsSortable = true, IsFacetable = true)]
-        public string City { get; set; }
-
-        [SearchableField(AnalyzerName = LexicalAnalyzerName.Values.EnLucene, IsFilterable = true, IsSortable = true, IsFacetable = true)]
-        public string Country { get; set; }
-
-        public static List<CityAI> FromJson(string json)
-        {
-            return JsonUtils.FromJSON<List<CityAI>>(json);
-        }
-    }
-
+    // Announcing Vector Search in Azure Cognitive Search Public Preview (https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-vector-search-in-azure-cognitive-search-public/ba-p/3872868)
+    // All About Vectors, Search, and Function Calling in Azure OpenAI - Labor Day Special (https://www.youtube.com/watch?v=XyFeL5C2Hb0)
+    // Vector search in Azure AI Search (https://learn.microsoft.com/en-us/azure/search/vector-search-overview)
+    // Use ChatGPT On Your Own Large Data (https://www.youtube.com/watch?v=RcdqdWEYw2A)
+    // Use Open AI (ChatGPT) On Your Own Large Data -Part 1 (https://www.youtube.com/watch?v=eNKu307k59g)
+    // Open AI Embeddings in Azure Vector Database of Cognitive Search (https://www.youtube.com/watch?v=Re4fLSKi43A)
     // https://github.com/Azure-Samples/azure-search-dotnet-samples
     // See example azure-search-dotnet-samples\quickstart\v11\AzureSearchQuickstart-v11\Hotel.cs
     public class AzureSearch
     {
         // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/fAI/providers/Microsoft.Search/searchServices/fai-search/indexes
         string _serviceName ;
-        string apiKey = Environment.GetEnvironmentVariable("MICROSOFT_AZURE_SEARCH_KEY");
-        
+        string apiKey = Environment.GetEnvironmentVariable("MICROSOFT_AZURE_SEARCH_KEY"); // Freds key
 
         Uri serviceEndpoint;
         AzureKeyCredential credential;
