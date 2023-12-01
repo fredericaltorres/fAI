@@ -14,10 +14,10 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class MicrosoftAzureSearchTests
+    public class MicrosoftAzureSearchCityAITests
     {
         const string serviceName = "fai-search";
-        const string indexName = "fred-presentation-test-index";
+        const string indexName = "fred-city-test-index";
 
         [Fact()]
         public void Create_Upload()

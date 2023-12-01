@@ -43,6 +43,12 @@ namespace fAI.Microsoft.Search
             adminClient.GetIndexNames();
             adminClient.DeleteIndex(indexName);
         }
+
+        public void CreateIndex(SearchIndex searchIndex) 
+        {
+            adminClient.CreateOrUpdateIndex(searchIndex);
+        }
+        
         public void CreateIndex(string indexName, Type rootObjectType, List<string> searchSuggester)
         {
             try

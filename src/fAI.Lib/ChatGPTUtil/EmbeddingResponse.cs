@@ -13,7 +13,7 @@ namespace fAI
         public int Index { get; set; }
 
         [JsonProperty(PropertyName = "embedding")]
-        public List<double> Embedding { get; set; }
+        public List<float> Embedding { get; set; }
 
         public readonly int EmbeddingMaxValue = 1536;
 
