@@ -12,15 +12,18 @@ using static fAI.OpenAIImage;
 
 namespace fAIConsole
 {
-    internal class Program
+    public class AuthorData
     {
+        public string Name;
+        public string Title;
+        public string Description;
+        public string Country;
 
-        static void Main(string[] args)
-        {
-            // Generate_Document();
-            Generate_HtmlWebSite();
-        }
+        public Dictionary<string, string> Books = new Dictionary<string, string>();
+    }
 
+    public class VictorHugo: AuthorData
+    {
         const string TheHunchbackOfNotreDame_Summary_Sanitized = @"
 ""The Hunchback of Notre-Dame"" is a tragic tale set in 15th century Paris. 
 The story revolves around Quasimodo, a bell-ringer of Notre-Dame Cathedral. 
@@ -37,39 +40,83 @@ The novel explores themes of inequality, friendship, and the struggle for freedo
 It also highlights the brutality of slavery and the courage of those who fought against it. 
 ";
 
-        // Victor Hugo's MasterPieces
-        public static Dictionary<string, string> Books = new Dictionary<string, string>()
+        public VictorHugo()
         {
-            ["Les Misérables"] = "",
-            ["The Hunchback of Notre-Dame"] = TheHunchbackOfNotreDame_Summary_Sanitized,
-            ["Ninety-Three"] = "",
-            ["The Man Who Laughs"] = "",
-            ["Bug-Jargal"] = BugJargal_Summary_Sanitized,
-            ["The Toilers of the Sea"] = "",
-            ["The Last Day of a Condemned Man"] = "",
-            ["Hans of Iceland"] = "",
-            ["Les Châtiments"] = "",
-            ["Les Contemplations"] = "",
-        };
+            this.Name = "Victor Hugo";
+            this.Title = $"{this.Name}'s MasterPieces";
+            this.Description = $"Generate a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
+            this.Country = "France";
 
-        public static void Generate_Document()
+            Books = new Dictionary<string, string>()
+            {
+                ["Les Misérables"] = "",
+                ["The Hunchback of Notre-Dame"] = TheHunchbackOfNotreDame_Summary_Sanitized,
+                ["Ninety-Three"] = "",
+                ["The Man Who Laughs"] = "",
+                ["Bug-Jargal"] = BugJargal_Summary_Sanitized,
+                ["The Toilers of the Sea"] = "",
+                ["The Last Day of a Condemned Man"] = "",
+                ["Hans of Iceland"] = "",
+                ["Les Châtiments"] = "",
+                ["Les Contemplations"] = "",
+            };
+        }
+    }
+
+    public class FyodorDostoevsky : AuthorData
+    {
+        public FyodorDostoevsky()
+        {
+            this.Name = "Fyodor Dostoevsky";
+            this.Title = $"{this.Name}'s MasterPieces";
+            this.Description = $"Generate a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
+            this.Country = "Russia";
+
+            Books = new Dictionary<string, string>()
+            {
+                ["Crime and Punishment"] = "",
+                ["The Brothers Karamazov"] = "",
+                ["The Idiot"] = "",
+                ["Notes from Underground"] = "",
+                ["The Possessed"] = "",
+                ["The Gambler"] = "",
+                ["White Nights"] = "",
+                ["Poor Folk"] = "",
+                ["The Eternal Husband"] = "",
+                ["The House of the Dead"] = "",
+            };
+        }   
+    }
+
+    internal class Program
+    {
+        
+        static void Main(string[] args)
+        {
+            //Generate_Document(VictorHugoBooks, VictorHugoName, VictorHugoTitle, VictorHugoDescription);
+            Generate_Document(new FyodorDostoevsky());
+            // Generate_HtmlWebSite();
+        }
+
+
+        public static void Generate_Document(AuthorData a)
         {
             var generatedDocuments = new GeneratedDocuments();
-            generatedDocuments.Properties.Title = "Victor Hugo's MasterPieces";
-            generatedDocuments.Properties.Description = "Generate a summary of Victor Hugo's MasterPieces and an image inspired by the book.";
+            generatedDocuments.Properties.Title = a.Title;
+            generatedDocuments.Properties.Description = a.Description;
             OpenAI.TraceOn = true;
             OpenAI.Trace($"Generating document about {generatedDocuments.Properties.Title}", new { });
 
             var client = new OpenAI();
-            foreach (var book in Books.Keys)
+            foreach (var book in a.Books.Keys)
             {
                 var generatedDocument = generatedDocuments.Add(book);
                 var prompt = new Prompt_GPT_4
                 {
                     Messages = new List<GPTMessage> {
-                        new GPTMessage { Role =  MessageRole.system, Content = "As French literature expert."},
+                        new GPTMessage { Role =  MessageRole.system, Content = "As literature expert."},
                         new GPTMessage { Role =  MessageRole.user  , Content =
-                               $@"Summarize in 10 lines the book from French author Victor Hugo, ""{book}""."
+                            $@"Summarize in 10 lines the book ""{book}"" from author ""{a.Name}""."
                         }
                     }
                 };
@@ -82,11 +129,11 @@ It also highlights the brutality of slavery and the courage of those who fought 
                     generatedDocument.Summary = response.Text;
                     var imagePrompt = $@"
 As French literature expert and people expert.
-Generate an image inspired by Victor Hugo's classic novel, '{book}'.
+Generate an image inspired by {a.Name}'s classic novel, '{book}'.
 Also used the following book's summary as a prompt:
 [MORE_DALLE_PROMPT]
 
-The image should depict 3 characters from France only and from the era of the novel.
+The image should depict 3 characters from {a.Country} only and from the era of the novel.
 The image should be a painting, not a photograph.
 
 About the image to be generated:
@@ -97,9 +144,9 @@ About the image to be generated:
 */
 ".RemoveComment(StringComment.C);
 
-                    var useSanitizedSummaryVersion = !string.IsNullOrEmpty(Books[book]); // Avoid our content policy from openAI, about image generation.
+                    var useSanitizedSummaryVersion = !string.IsNullOrEmpty(a.Books[book]); // Avoid our content policy from openAI, about image generation.
                     if (useSanitizedSummaryVersion)
-                        imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", Books[book]);
+                        imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", a.Books[book]);
                     else
                         imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", $@"Also used the following book's summary as a prompt:\r\n{generatedDocument.Summary}\r\n");
 
@@ -113,7 +160,7 @@ About the image to be generated:
                     }
                 }
             }
-            generatedDocuments.Save(@"c:\temp\VictorHugo.Documents.json");
+            generatedDocuments.Save($@"c:\temp\{a.Name}.Documents.json");
             OpenAI.Trace($"Done", new { });
         }
 
