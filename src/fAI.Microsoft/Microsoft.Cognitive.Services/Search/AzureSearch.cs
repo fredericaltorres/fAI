@@ -21,6 +21,21 @@ namespace fAI.Microsoft.Search
     // Open AI Embeddings in Azure Vector Database of Cognitive Search (https://www.youtube.com/watch?v=Re4fLSKi43A)
     // https://github.com/Azure-Samples/azure-search-dotnet-samples
     // See example azure-search-dotnet-samples\quickstart\v11\AzureSearchQuickstart-v11\Hotel.cs
+
+
+
+    /*
+    {
+      "search": "*",
+      "filter": "Country eq 'USA'"
+    }
+    {
+      "SearchFields" : [ "Tags" ],
+      "search": "pool"
+
+    }
+    */
+
     public class AzureSearch
     {
         // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/fAI/providers/Microsoft.Search/searchServices/fai-search/indexes
@@ -50,10 +65,7 @@ namespace fAI.Microsoft.Search
             searchClient.IndexDocumentsAsync(IndexDocumentsBatch.Upload(documents)).GetAwaiter().GetResult();
         }
 
-        public 
-            //SearchResults<SearchDocument>
-            Pageable<SearchResult<SearchDocument>>
-            VectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
+        public Pageable<SearchResult<SearchDocument>> VectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
         {
             var searchClient = adminClient.GetSearchClient(indexName);
             var queryEmbeddings = OpenAI.GenerateEmbeddings(query);
@@ -64,7 +76,6 @@ namespace fAI.Microsoft.Search
                     Queries = { new VectorizedQuery(queryEmbeddings.ToArray()) { KNearestNeighborsCount = k, Fields = { vectorPropertyName } } }
                 },
                 Size = k,
-                //Select = { "id", "title", "description", "category" },
             };
 
             if(columns.Count > 0 )
@@ -72,7 +83,6 @@ namespace fAI.Microsoft.Search
                 foreach(var c in columns)
                     searchOptions.Select.Add(c);
             }
-
             
             SearchResults<SearchDocument> response = searchClient.SearchAsync<SearchDocument>(null, searchOptions).GetAwaiter().GetResult();
             var response2 = response.GetResults();
@@ -106,6 +116,7 @@ namespace fAI.Microsoft.Search
                 Console.WriteLine(ex.Message);
             }
         }
+
         public void UploadDocuments(string indexName, List<CityAI> documents)
         {
             SearchClient ingesterClient = adminClient.GetSearchClient(indexName);
@@ -120,22 +131,11 @@ namespace fAI.Microsoft.Search
             {
                 IndexDocumentsResult result = ingesterClient.IndexDocuments(batch);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                throw;
             }
         }
-
-        /*
-{
-  "search": "*",
-  "filter": "Country eq 'USA'"
-}
-{
-  "SearchFields" : [ "Tags" ],
-  "search": "pool"
-
-}
-        */
 
         public List<T> SearchDocuments<T>(string indexName, string filterWhereClause, string orderBy) where T : new()
         {
@@ -146,9 +146,6 @@ namespace fAI.Microsoft.Search
                 OrderBy = { orderBy }
             };
 
-            //options.Select.Add("ID");
-            //options.Select.Add("City");
-            //options.Select.Add("Country");
             var props = ReflectionHelper.GetDictionary(new T()).Keys.ToList();
             foreach(var p in props)
                 options.Select.Add(p);
