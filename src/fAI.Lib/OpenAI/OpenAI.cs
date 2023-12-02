@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -7,6 +8,13 @@ namespace fAI
 {
     public class OpenAI 
     {
+        public static IReadOnlyList<float> GenerateEmbeddings(string text)
+        {
+            var client = new OpenAI();
+            var r = client.Embeddings.Create(text);
+            return r.Data[0].Embedding;
+        }
+
         public OpenAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             OpenAIHttpBase._openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");

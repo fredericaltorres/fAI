@@ -44,6 +44,41 @@ namespace fAI.Microsoft.Search
             adminClient.DeleteIndex(indexName);
         }
 
+        public void IndexDocuments(List<SearchDocument> documents, string indexName)
+        {
+            var searchClient = adminClient.GetSearchClient(indexName);
+            searchClient.IndexDocumentsAsync(IndexDocumentsBatch.Upload(documents)).GetAwaiter().GetResult();
+        }
+
+        public 
+            //SearchResults<SearchDocument>
+            Pageable<SearchResult<SearchDocument>>
+            VectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
+        {
+            var searchClient = adminClient.GetSearchClient(indexName);
+            var queryEmbeddings = OpenAI.GenerateEmbeddings(query);
+            var searchOptions = new SearchOptions
+            {
+                VectorSearch = new VectorSearchOptions()
+                {
+                    Queries = { new VectorizedQuery(queryEmbeddings.ToArray()) { KNearestNeighborsCount = k, Fields = { vectorPropertyName } } }
+                },
+                Size = k,
+                //Select = { "id", "title", "description", "category" },
+            };
+
+            if(columns.Count > 0 )
+            {
+                foreach(var c in columns)
+                    searchOptions.Select.Add(c);
+            }
+
+            
+            SearchResults<SearchDocument> response = searchClient.SearchAsync<SearchDocument>(null, searchOptions).GetAwaiter().GetResult();
+            var response2 = response.GetResults();
+            return response2;
+        }
+
         public void CreateIndex(SearchIndex searchIndex) 
         {
             adminClient.CreateOrUpdateIndex(searchIndex);
