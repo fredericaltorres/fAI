@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DynamicSugarStandard, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DynamicSugarStandard.1.0.4\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
+    <Reference Include="DynamicSugarStandard, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DynamicSugarStandard.1.0.5\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CognitiveServices.Speech.csharp, Version=1.33.0.28, Culture=neutral, PublicKeyToken=d2e6dcccb609e663, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CognitiveServices.Speech.1.33.0\lib\net462\Microsoft.CognitiveServices.Speech.csharp.dll</HintPath>
@@ -86,6 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="audio\Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="VictorHugoPresentation\audio\audio.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -102,6 +108,69 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Fyodor Dostoevsky\audio\img-8x2YdczoE8G1RMxc5RtgVExr.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-GtZVRJU1PonT6kQncm8DpWmW.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-H1J2b4waY93ZfE8QsmvUVP5j.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-NKurS4YhqbzLrDC9Lrfqj0dn.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-oeGFpOimgikUholqLaPE1Fem.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-qk5IxoX20mQuTJvTLdQMsMSD.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-quy6znEajBWrv2rbpIUu9egM.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-quy6znEajBWrv2rbpIUuAAAA.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-VlFZBBb7lCEcrRu4vTG4dV8i.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\img-zZQmXb0Kc4Yl277lRXEcvzcI.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\audio\Readme.txt" />
+    <Content Include="Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html" />
+    <Content Include="Fyodor Dostoevsky\images\img-8x2YdczoE8G1RMxc5RtgVExr.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-GtZVRJU1PonT6kQncm8DpWmW.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-H1J2b4waY93ZfE8QsmvUVP5j.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-NKurS4YhqbzLrDC9Lrfqj0dn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-oeGFpOimgikUholqLaPE1Fem.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-qk5IxoX20mQuTJvTLdQMsMSD.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-quy6znEajBWrv2rbpIUu9egM.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-quy6znEajBWrv2rbpIUuAAAA.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-VlFZBBb7lCEcrRu4vTG4dV8i.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fyodor Dostoevsky\images\img-zZQmXb0Kc4Yl277lRXEcvzcI.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\DynamicSugar2.Logo.jpg" />
     <Content Include="VictorHugoPresentation\audio\img-5IrHioHauMXNpu7nrJOjjeMD.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -132,7 +201,6 @@
     <Content Include="VictorHugoPresentation\audio\img-WWs73PmjDTEWp3d2xWz0lSZc.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\DynamicSugar2.Logo.jpg" />
     <Content Include="VictorHugoPresentation\images\img-5IrHioHauMXNpu7nrJOjjeMD.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

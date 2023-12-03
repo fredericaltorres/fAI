@@ -10,15 +10,18 @@
             Your browser does not support the audio element.
         </audio>
 
-    <p style="font-size: 12px">
-        GPT 4 Prompt:<br />{{_summaryPrompt}}
-    </p>
-    <p style="font-size: 12px">
-        DALL-E Prompt:<br />{{_imagePrompt}}
-    </p>
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />{{_summaryPrompt}}
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />{{_imagePrompt}}
+        </p>
     </div>
+
     <div class="document_image">
-        <img src="images\{{LocalImage}}" alt="alt text" width="256" height="256">
+        <img src="images\{{LocalImage}}" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('{{Id}}');">
+        <div class="imageContainer" id="{{Id}}_imageContainer">
+            <img src="images\{{LocalImage}}" alt="Enlarged Image" onclick="closeImage('{{Id}}');">
+        </div>
     </div>
-    
 </div>

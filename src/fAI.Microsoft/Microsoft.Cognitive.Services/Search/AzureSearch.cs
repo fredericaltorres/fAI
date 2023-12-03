@@ -65,7 +65,47 @@ namespace fAI.Microsoft.Search
             searchClient.IndexDocumentsAsync(IndexDocumentsBatch.Upload(documents)).GetAwaiter().GetResult();
         }
 
-        public Pageable<SearchResult<SearchDocument>> VectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
+        public static string LowerCaseFirstLetter(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            char[] charArray = input.ToCharArray();
+            charArray[0] = char.ToLower(charArray[0]);
+            return new string(charArray);
+        }
+
+        public T ConvertSearchDocumentTo<T>(SearchDocument document, T targetObject)
+        {
+            var dt = ReflectionHelper.GetDictionaryWithType(targetObject);
+            var d = ReflectionHelper.GetDictionary(targetObject);
+            foreach(var e in d)
+            {
+                var propName = LowerCaseFirstLetter(e.Key);
+                if(document.ContainsKey(propName))
+                {
+                    var value = document[propName];
+                    ReflectionHelper.SetProperty(targetObject, e.Key, value);
+                }
+            }
+            return targetObject;
+        }
+
+        public List<PresentationAI> VectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
+        {
+            var r = new List<PresentationAI>();
+            var page = __vectorSearch(indexName, query, vectorPropertyName, columns, k);
+
+            foreach(var result in page)
+            {
+                var p = new PresentationAI();
+                p = ConvertSearchDocumentTo(result.Document, p);
+                r.Add(p);
+            }
+            return r;
+        }
+
+        private Pageable<SearchResult<SearchDocument>> __vectorSearch(string indexName, string query, string vectorPropertyName, List<string> columns, int k = 3)
         {
             var searchClient = adminClient.GetSearchClient(indexName);
             var queryEmbeddings = OpenAI.GenerateEmbeddings(query);

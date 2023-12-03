@@ -74,30 +74,28 @@ It also highlights the brutality of slavery and the courage of those who fought 
 
             Books = new Dictionary<string, string>()
             {
-                ["Crime and Punishment"] = "",
-                ["The Brothers Karamazov"] = "",
-                ["The Idiot"] = "",
-                ["Notes from Underground"] = "",
-                ["The Possessed"] = "",
-                ["The Gambler"] = "",
-                ["White Nights"] = "",
-                ["Poor Folk"] = "",
-                ["The Eternal Husband"] = "",
-                ["The House of the Dead"] = "",
+                ["Crime and Punishment"]    = "",
+                ["The Brothers Karamazov"]  = "",
+                ["The Idiot"]               = @"Imagine a bustling street in Moscow, Russia, in the year 1880. A man named the muffin-man, with a good heart is walking in main street. The scene is vibrant with the daily life of the era. In the foreground, a horse-drawn carriage is passing by,while pedestrians in period attire - men in long coats and women in flowing dresses - walk along the cobblestone streets. The architecture reflects the historic Russian style, with onion domes visible in the distance. The muffin-man meet 2 women in the street. The muffin-man is viewed by others as an punk. The muffin-man's compassion lead him into a series of sad circumstances. Delves into themes of love and the struggle between good and evil.",
+                ["Notes from Underground"]  = "",
+                ["The Possessed"]           = "",
+                ["The Gambler"]             = "",
+                ["White Nights"]            = "",
+                ["Poor Folk"]               = "",
+                ["The Eternal Husband"]     = @"As Russia literature expert and people expert. Render an image based on the following: Imagine 2 man and one woman in the street in Moscow, Russia, in the year 1880. Explores the relationship between two men man1 and man2, who are connected by a woman1. man1 is married to woman1. woman1 was the former lover of man2. Delves into themes of guilt, jealousy, and the complexities of love and marriage.",
+                ["The House of the Dead"]   = "",
             };
         }   
     }
 
     internal class Program
     {
-        
         static void Main(string[] args)
         {
             //Generate_Document(VictorHugoBooks, VictorHugoName, VictorHugoTitle, VictorHugoDescription);
-            Generate_Document(new FyodorDostoevsky());
-            // Generate_HtmlWebSite();
+           //Generate_Document(new FyodorDostoevsky());
+            Generate_HtmlWebSite();
         }
-
 
         public static void Generate_Document(AuthorData a)
         {
@@ -110,6 +108,7 @@ It also highlights the brutality of slavery and the courage of those who fought 
             var client = new OpenAI();
             foreach (var book in a.Books.Keys)
             {
+                Console.WriteLine($"Generating document about {book}");
                 var generatedDocument = generatedDocuments.Add(book);
                 var prompt = new Prompt_GPT_4
                 {
@@ -121,34 +120,24 @@ It also highlights the brutality of slavery and the courage of those who fought 
                     }
                 };
                 generatedDocument._summaryPrompt = prompt.GetPromptString(); // Save the prompt for debugging purposes.
-
                 var response = client.Completions.Create(prompt);
-
                 if (response.Success)
                 {
                     generatedDocument.Summary = response.Text;
                     var imagePrompt = $@"
-As French literature expert and people expert.
-Generate an image inspired by {a.Name}'s classic novel, '{book}'.
-Also used the following book's summary as a prompt:
+As {a.Country} literature expert and people expert.
+Generate an image inspired by {a.Name}'s classic novel, ""{book}"".
 [MORE_DALLE_PROMPT]
 
 The image should depict 3 characters from {a.Country} only and from the era of the novel.
 The image should be a painting, not a photograph.
-
-About the image to be generated:
-- Level of Detail: High.
-/*
-- Artistic Style: Impressionism.
-- Color Scheme: Vincent Van Gogh color palette.
-*/
-".RemoveComment(StringComment.C);
+".RemoveComment(StringComment.C).Trim();
 
                     var useSanitizedSummaryVersion = !string.IsNullOrEmpty(a.Books[book]); // Avoid our content policy from openAI, about image generation.
                     if (useSanitizedSummaryVersion)
                         imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", a.Books[book]);
                     else
-                        imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", $@"Also used the following book's summary as a prompt:\r\n{generatedDocument.Summary}\r\n");
+                        imagePrompt = imagePrompt.Replace("[MORE_DALLE_PROMPT]", $@"Also used the following book's summary as a prompt:{Environment.NewLine}{generatedDocument.Summary}{Environment.NewLine}");
 
                     var promptLength = imagePrompt.Length;
                     generatedDocument._imagePrompt = imagePrompt; // Save the prompt for debugging purposes.
@@ -167,9 +156,26 @@ About the image to be generated:
 
         public static void Generate_HtmlWebSite()
         {
-            var generatedDocuments = GeneratedDocuments.Load(@".\VictorHugoPresentation\VictorHugo.Documents.json");
+            var jsonInput = @".\VictorHugoPresentation\VictorHugo.Documents.json";
+            var htmlOutput = @".\VictorHugoPresentation\VictorHugo.Documents.3.html";
+
+            jsonInput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json";
+            htmlOutput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html";
+
+            var generatedDocuments = GeneratedDocuments.Load(jsonInput);
             var templateGenerator = new StaticHtmlTemplateGenerator();
-            templateGenerator.GenerateFile(generatedDocuments, @"C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\VictorHugo.Documents.3.html", OpenAISpeech.Voices.onyx);
+            templateGenerator.GenerateFile(generatedDocuments, htmlOutput, OpenAISpeech.Voices.onyx);
         }
     }
 }
+
+
+
+/*
+The text title ""{book}"" is located at the bottom of the image.
+About the image to be generated:
+- Level of Detail: High.
+
+- Artistic Style: Impressionism.
+- Color Scheme: Vincent Van Gogh color palette.
+*/

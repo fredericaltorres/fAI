@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fyodor Dostoevsky's MasterPieces</title>
+
+<!-- 
+	Creation Date: 12/1/2023 11:19:45 PM
+-->
+
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+ html, body {
+	font-family: var(--markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--markdown-font-size, 16px);
+	padding: 0 26px;
+	line-height: var(--markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+body {
+	padding-top: 1em;
+}
+
+/* Reset margin top for elements */
+h1, h2, h3, h4, h5, h6,
+p, ol, ul, pre {
+	margin-top: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 600;
+	margin-top: 24px;
+	margin-bottom: 16px;
+	line-height: 1.25;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection :not(tr,ul,ol).code-active-line:before,
+body.showEditorSelection :not(tr,ul,ol).code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+.vscode-high-contrast.showEditorSelection  :not(tr,ul,ol).code-line .code-line:hover:before {
+	border-left: none;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+/* Prevent `sub` and `sup` elements from affecting line height */
+sub,
+sup {
+	line-height: 0;
+}
+
+ul ul:first-child,
+ul ol:first-child,
+ol ul:first-child,
+ol ol:first-child {
+	margin-bottom: 0;
+}
+
+img, video {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+p {
+	margin-bottom: 16px;
+}
+
+li p {
+	margin-bottom: 0.7em;
+}
+
+ul,
+ol {
+	margin-bottom: 0.7em;
+}
+
+hr {
+	border: 0;
+	height: 1px;
+	border-bottom: 1px solid;
+}
+
+h1 {
+	font-size: 2em;
+	margin-top: 0;
+	padding-bottom: 0.3em;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h2 {
+	font-size: 1.5em;
+	padding-bottom: 0.3em;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h3 {
+	font-size: 1.25em;
+}
+
+h4 {
+	font-size: 1em;
+}
+
+h5 {
+	font-size: 0.875em;
+}
+
+h6 {
+	font-size: 0.85em;
+}
+
+table {
+	border-collapse: collapse;
+	margin-bottom: 0.7em;
+}
+
+th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+th,
+td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0;
+	padding: 2px 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+	border-radius: 2px;
+}
+
+code {
+	font-family: var(--vscode-editor-font-family, "SF Mono", Monaco, Menlo, Consolas, "Ubuntu Mono", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace);
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+pre {
+	background-color: var(--vscode-textCodeBlock-background);
+	border: 1px solid var(--vscode-widget-border);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light h2,
+.vscode-light hr,
+.vscode-light td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark h2,
+.vscode-dark hr,
+.vscode-dark td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    /*align-items: center;*/
+}
+
+.document_text, .image {
+    flex: 1;
+}
+
+/* Optional: Add some padding or margins as needed */
+.document_text {
+    padding-right: 20px; /* Adjust as needed */
+}
+
+.document_image {
+    padding-left: 20px; /* Adjust as needed */
+}
+
+.document_image img {
+    width: 33%; /* Adjust image width as needed */
+    height: auto; /* This will maintain the aspect ratio of the image */
+}
+
+
+
+
+
+/* CSS to display the image in big when we click on it */
+
+    /* Define CSS styles for the larger image container */
+    .imageContainer {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Style the larger image */
+    .largeImage {
+        max-width: 100%;
+        max-height: 100%;
+        border: 2px solid white;
+    }
+
+</style>
+
+</head>
+<body >
+
+	<h1>Fyodor Dostoevsky's MasterPieces</h1>
+	<p>Generate a summary of Fyodor Dostoevsky's MasterPieces and an image inspired by the book.</p>
+
+
+<h2 id="Crime and Punishment__img-VlFZBBb7lCEcrRu4vTG4dV8i">Crime and Punishment</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "Crime and Punishment" by Fyodor Dostoevsky is a psychological novel set in 19th-century Russia. The protagonist, Rodion Raskolnikov, is a poor ex-student who, in an attempt to escape his miserable condition, murders a pawnbroker for her money. He believes that he is justified in this act, considering himself an extraordinary person who is not bound by moral laws. However, he is consumed by guilt and paranoia after the crime. The novel explores his mental anguish and moral dilemmas. He eventually confesses to the crime and is sentenced to Siberian exile, where he seeks redemption and spiritual rebirth through suffering and the love of a woman named Sonia.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-VlFZBBb7lCEcrRu4vTG4dV8i.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "Crime and Punishment" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "Crime and Punishment".
+Also used the following book's summary as a prompt:
+"Crime and Punishment" by Fyodor Dostoevsky is a psychological novel set in 19th-century Russia. The protagonist, Rodion Raskolnikov, is a poor ex-student who, in an attempt to escape his miserable condition, murders a pawnbroker for her money. He believes that he is justified in this act, considering himself an extraordinary person who is not bound by moral laws. However, he is consumed by guilt and paranoia after the crime. The novel explores his mental anguish and moral dilemmas. He eventually confesses to the crime and is sentenced to Siberian exile, where he seeks redemption and spiritual rebirth through suffering and the love of a woman named Sonia.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-VlFZBBb7lCEcrRu4vTG4dV8i.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-VlFZBBb7lCEcrRu4vTG4dV8i');">
+        
+        <div class="imageContainer" id="img-VlFZBBb7lCEcrRu4vTG4dV8i_imageContainer">
+            <img src="images\img-VlFZBBb7lCEcrRu4vTG4dV8i.png" alt="Enlarged Image" onclick="closeImage('img-VlFZBBb7lCEcrRu4vTG4dV8i');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The Brothers Karamazov__img-quy6znEajBWrv2rbpIUu9egM">The Brothers Karamazov</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The Brothers Karamazov" is a profound philosophical and psychological novel by Fyodor Dostoevsky. It revolves around the complex, conflicting dynamics of the Karamazov brothers - Dmitri, Ivan, and Alyosha - and their morally corrupt father, Fyodor. The narrative explores themes of faith, doubt, free will, and morality, set against the backdrop of Russian society. The plot thickens when Fyodor is murdered, and Dmitri is accused. Ivan grapples with existential questions, while Alyosha, a novice monk, embodies faith and virtue. The novel is a deep exploration of the human soul, the struggle between good and evil, and the search for God.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-quy6znEajBWrv2rbpIUu9egM.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The Brothers Karamazov" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The Brothers Karamazov".
+Also used the following book's summary as a prompt:
+"The Brothers Karamazov" is a profound philosophical and psychological novel by Fyodor Dostoevsky. It revolves around the complex, conflicting dynamics of the Karamazov brothers - Dmitri, Ivan, and Alyosha - and their morally corrupt father, Fyodor. The narrative explores themes of faith, doubt, free will, and morality, set against the backdrop of Russian society. The plot thickens when Fyodor is murdered, and Dmitri is accused. Ivan grapples with existential questions, while Alyosha, a novice monk, embodies faith and virtue. The novel is a deep exploration of the human soul, the struggle between good and evil, and the search for God.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-quy6znEajBWrv2rbpIUu9egM.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-quy6znEajBWrv2rbpIUu9egM');">
+        
+        <div class="imageContainer" id="img-quy6znEajBWrv2rbpIUu9egM_imageContainer">
+            <img src="images\img-quy6znEajBWrv2rbpIUu9egM.png" alt="Enlarged Image" onclick="closeImage('img-quy6znEajBWrv2rbpIUu9egM');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The Idiot__img-quy6znEajBWrv2rbpIUuAAAA">The Idiot</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The Idiot" by Fyodor Dostoevsky is a profound exploration of the human condition. The protagonist, Prince Myshkin, is a nobleman with a pure heart and an innocent demeanor, often perceived as an 'idiot' by society. He returns to Russia from a Swiss sanatorium and becomes entangled in a complex love triangle with the beautiful but tormented Nastasya Filippovna and the virtuous Aglaya. His naivety and compassion lead to tragic consequences, as he is manipulated by those around him. The novel delves into themes of morality, society, and the struggle between good and evil, ultimately questioning what it means to be an 'idiot' in a corrupt world.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-quy6znEajBWrv2rbpIUuAAAA.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The Idiot" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The Idiot".
+Imagine a bustling street in Moscow, Russia, in the year 1880. A man named the muffin-man, with a good heart is walking in main street. The scene is vibrant with the daily life of the era. In the foreground, a horse-drawn carriage is passing by,while pedestrians in period attire - men in long coats and women in flowing dresses - walk along the cobblestone streets. The architecture reflects the historic Russian style, with onion domes visible in the distance. The muffin-man meet 2 women in the street. The muffin-man is viewed by others as an punk. The muffin-man's compassion lead him into a series of sad circumstances. Delves into themes of love and the struggle between good and evil.
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-quy6znEajBWrv2rbpIUuAAAA.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-quy6znEajBWrv2rbpIUuAAAA');">
+        
+        <div class="imageContainer" id="img-quy6znEajBWrv2rbpIUuAAAA_imageContainer">
+            <img src="images\img-quy6znEajBWrv2rbpIUuAAAA.png" alt="Enlarged Image" onclick="closeImage('img-quy6znEajBWrv2rbpIUuAAAA');">
+        </div>
+    </div>
+
+</div>
+<h2 id="Notes from Underground__img-zZQmXb0Kc4Yl277lRXEcvzcI">Notes from Underground</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "Notes from Underground" by Fyodor Dostoevsky is a profound psychological exploration of an isolated, anonymous narrator, known as the Underground Man. The book is divided into two parts. In the first part, the Underground Man, a bitter and misanthropic retired civil servant living in St. Petersburg, critiques contemporary social and philosophical beliefs, particularly the concept of utopianism. In the second part, he recounts episodes from his past, revealing his struggles with social alienation, his cruel treatment of others, and his inability to form meaningful relationships. The book is a deep dive into the human psyche, exploring themes of free will, existentialism, and the nature of human happiness.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-zZQmXb0Kc4Yl277lRXEcvzcI.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "Notes from Underground" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "Notes from Underground".
+Also used the following book's summary as a prompt:
+"Notes from Underground" by Fyodor Dostoevsky is a profound psychological exploration of an isolated, anonymous narrator, known as the Underground Man. The book is divided into two parts. In the first part, the Underground Man, a bitter and misanthropic retired civil servant living in St. Petersburg, critiques contemporary social and philosophical beliefs, particularly the concept of utopianism. In the second part, he recounts episodes from his past, revealing his struggles with social alienation, his cruel treatment of others, and his inability to form meaningful relationships. The book is a deep dive into the human psyche, exploring themes of free will, existentialism, and the nature of human happiness.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-zZQmXb0Kc4Yl277lRXEcvzcI.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-zZQmXb0Kc4Yl277lRXEcvzcI');">
+        
+        <div class="imageContainer" id="img-zZQmXb0Kc4Yl277lRXEcvzcI_imageContainer">
+            <img src="images\img-zZQmXb0Kc4Yl277lRXEcvzcI.png" alt="Enlarged Image" onclick="closeImage('img-zZQmXb0Kc4Yl277lRXEcvzcI');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The Possessed__img-NKurS4YhqbzLrDC9Lrfqj0dn">The Possessed</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The Possessed," also known as "Demons," is a complex novel by Fyodor Dostoevsky that explores the political and social chaos in 19th-century Russia. The story revolves around a group of revolutionaries, led by the charismatic but manipulative Pyotr Verkhovensky, who aim to overthrow the existing social order. Their plans, however, lead to disastrous consequences, including murder and suicide. The novel delves into the psychological depths of its characters, revealing their inner turmoil and moral dilemmas. Dostoevsky uses this narrative to critique radical ideologies and to highlight the destructive potential of nihilism and anarchism. The book is a profound exploration of human nature, societal structures, and the consequences of extreme ideologies.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-NKurS4YhqbzLrDC9Lrfqj0dn.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The Possessed" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The Possessed".
+Also used the following book's summary as a prompt:
+"The Possessed," also known as "Demons," is a complex novel by Fyodor Dostoevsky that explores the political and social chaos in 19th-century Russia. The story revolves around a group of revolutionaries, led by the charismatic but manipulative Pyotr Verkhovensky, who aim to overthrow the existing social order. Their plans, however, lead to disastrous consequences, including murder and suicide. The novel delves into the psychological depths of its characters, revealing their inner turmoil and moral dilemmas. Dostoevsky uses this narrative to critique radical ideologies and to highlight the destructive potential of nihilism and anarchism. The book is a profound exploration of human nature, societal structures, and the consequences of extreme ideologies.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-NKurS4YhqbzLrDC9Lrfqj0dn.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-NKurS4YhqbzLrDC9Lrfqj0dn');">
+        
+        <div class="imageContainer" id="img-NKurS4YhqbzLrDC9Lrfqj0dn_imageContainer">
+            <img src="images\img-NKurS4YhqbzLrDC9Lrfqj0dn.png" alt="Enlarged Image" onclick="closeImage('img-NKurS4YhqbzLrDC9Lrfqj0dn');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The Gambler__img-qk5IxoX20mQuTJvTLdQMsMSD">The Gambler</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The Gambler" by Fyodor Dostoevsky is a psychological novel centered around Alexei Ivanovich, a young tutor working in the household of an imperious Russian general. Alexei is in love with the General's niece, Polina, and in an attempt to win her over, he becomes obsessed with roulette. His addiction to gambling mirrors the destructive power of his unrequited love. The novel explores themes of addiction, love, and the human condition, set against the backdrop of a European gambling resort. The story ends with Alexei losing his position, wealth, and any chance of a relationship with Polina, demonstrating the destructive power of obsession.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-qk5IxoX20mQuTJvTLdQMsMSD.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The Gambler" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The Gambler".
+Also used the following book's summary as a prompt:
+"The Gambler" by Fyodor Dostoevsky is a psychological novel centered around Alexei Ivanovich, a young tutor working in the household of an imperious Russian general. Alexei is in love with the General's niece, Polina, and in an attempt to win her over, he becomes obsessed with roulette. His addiction to gambling mirrors the destructive power of his unrequited love. The novel explores themes of addiction, love, and the human condition, set against the backdrop of a European gambling resort. The story ends with Alexei losing his position, wealth, and any chance of a relationship with Polina, demonstrating the destructive power of obsession.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-qk5IxoX20mQuTJvTLdQMsMSD.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-qk5IxoX20mQuTJvTLdQMsMSD');">
+        
+        <div class="imageContainer" id="img-qk5IxoX20mQuTJvTLdQMsMSD_imageContainer">
+            <img src="images\img-qk5IxoX20mQuTJvTLdQMsMSD.png" alt="Enlarged Image" onclick="closeImage('img-qk5IxoX20mQuTJvTLdQMsMSD');">
+        </div>
+    </div>
+
+</div>
+<h2 id="White Nights__img-oeGFpOimgikUholqLaPE1Fem">White Nights</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "White Nights" by Fyodor Dostoevsky is a poignant tale of love and loneliness. The unnamed narrator, a dreamer, lives in isolation in St. Petersburg and encounters a young woman, Nastenka, during one of his solitary walks. They form a deep bond, sharing their innermost thoughts and feelings. Nastenka, however, is waiting for her former lover to return. The dreamer falls in love with her, but his feelings remain unrequited. In the end, Nastenka's lover returns, leaving the dreamer alone once again. The story is a profound exploration of unrequited love, solitude, and the human condition.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-oeGFpOimgikUholqLaPE1Fem.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "White Nights" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "White Nights".
+Also used the following book's summary as a prompt:
+"White Nights" by Fyodor Dostoevsky is a poignant tale of love and loneliness. The unnamed narrator, a dreamer, lives in isolation in St. Petersburg and encounters a young woman, Nastenka, during one of his solitary walks. They form a deep bond, sharing their innermost thoughts and feelings. Nastenka, however, is waiting for her former lover to return. The dreamer falls in love with her, but his feelings remain unrequited. In the end, Nastenka's lover returns, leaving the dreamer alone once again. The story is a profound exploration of unrequited love, solitude, and the human condition.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-oeGFpOimgikUholqLaPE1Fem.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-oeGFpOimgikUholqLaPE1Fem');">
+        
+        <div class="imageContainer" id="img-oeGFpOimgikUholqLaPE1Fem_imageContainer">
+            <img src="images\img-oeGFpOimgikUholqLaPE1Fem.png" alt="Enlarged Image" onclick="closeImage('img-oeGFpOimgikUholqLaPE1Fem');">
+        </div>
+    </div>
+
+</div>
+<h2 id="Poor Folk__img-GtZVRJU1PonT6kQncm8DpWmW">Poor Folk</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "Poor Folk" is Fyodor Dostoevsky's first novel, which presents a poignant tale of two distant relatives, Makar Devushkin and Varvara Dobroselova, living in abject poverty in St. Petersburg. The story unfolds through their letters, revealing their struggles, hopes, and fears. Devushkin, a low-paid government clerk, and Dobroselova, a seamstress, share a deep affection, but their impoverished circumstances prevent them from marrying. The novel explores themes of poverty, societal status, and unrequited love. Dostoevsky masterfully portrays the psychological impact of poverty and the tragic irony of love that cannot be fulfilled due to societal constraints.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-GtZVRJU1PonT6kQncm8DpWmW.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "Poor Folk" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "Poor Folk".
+Also used the following book's summary as a prompt:
+"Poor Folk" is Fyodor Dostoevsky's first novel, which presents a poignant tale of two distant relatives, Makar Devushkin and Varvara Dobroselova, living in abject poverty in St. Petersburg. The story unfolds through their letters, revealing their struggles, hopes, and fears. Devushkin, a low-paid government clerk, and Dobroselova, a seamstress, share a deep affection, but their impoverished circumstances prevent them from marrying. The novel explores themes of poverty, societal status, and unrequited love. Dostoevsky masterfully portrays the psychological impact of poverty and the tragic irony of love that cannot be fulfilled due to societal constraints.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-GtZVRJU1PonT6kQncm8DpWmW.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-GtZVRJU1PonT6kQncm8DpWmW');">
+        
+        <div class="imageContainer" id="img-GtZVRJU1PonT6kQncm8DpWmW_imageContainer">
+            <img src="images\img-GtZVRJU1PonT6kQncm8DpWmW.png" alt="Enlarged Image" onclick="closeImage('img-GtZVRJU1PonT6kQncm8DpWmW');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The Eternal Husband__img-H1J2b4waY93ZfE8QsmvUVP5j">The Eternal Husband</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The Eternal Husband" by Fyodor Dostoevsky is a psychological novella that explores the complex relationship between two men, Velchaninov and Trusotsky, who are connected through a deceased woman, Natalia, who was Trusotsky's wife and Velchaninov's former lover. The story unfolds as Trusotsky confronts Velchaninov about their shared past, leading to a tense and uncomfortable friendship. The narrative delves into themes of guilt, remorse, and the haunting past. Trusotsky's denial of his wife's infidelity and Velchaninov's guilt over the affair form the crux of the story. The climax reveals that Natalia's daughter might be Velchaninov's child, adding another layer of complexity to their relationship.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-H1J2b4waY93ZfE8QsmvUVP5j.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The Eternal Husband" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The Eternal Husband".
+As Russia literature expert and people expert. Render an image based on the following: Imagine 2 man and one woman in the street in Moscow, Russia, in the year 1880. Explores the relationship between two men man1 and man2, who are connected by a woman1. man1 is married to woman1. woman1 was the former lover of man2. Delves into themes of guilt, jealousy, and the complexities of love and marriage.
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-H1J2b4waY93ZfE8QsmvUVP5j.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-H1J2b4waY93ZfE8QsmvUVP5j');">
+        
+        <div class="imageContainer" id="img-H1J2b4waY93ZfE8QsmvUVP5j_imageContainer">
+            <img src="images\img-H1J2b4waY93ZfE8QsmvUVP5j.png" alt="Enlarged Image" onclick="closeImage('img-H1J2b4waY93ZfE8QsmvUVP5j');">
+        </div>
+    </div>
+
+</div>
+<h2 id="The House of the Dead__img-8x2YdczoE8G1RMxc5RtgVExr">The House of the Dead</h2>
+<div class="container">
+    <div class="document_text">
+        <p>
+            "The House of the Dead" by Fyodor Dostoevsky is a semi-autobiographical novel that explores life in a Siberian prison camp. The protagonist, Aleksandr Petrovich Goryanchikov, is a nobleman sentenced to penal servitude for murdering his wife. The narrative vividly portrays the harsh conditions, brutal punishments, and dehumanizing effects of the prison system. Despite the grim setting, Dostoevsky also highlights the prisoners' resilience, camaraderie, and moments of humanity. The novel is a profound exploration of human nature, suffering, and redemption, and a critique of the Russian penal system.
+        </p>
+
+        <audio controls>
+            <source src="audio\img-8x2YdczoE8G1RMxc5RtgVExr.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <p style="font-size: 12px">
+            GPT 4 Prompt:<br />system: As literature expert.
+user: Summarize in 10 lines the book "The House of the Dead" from author "Fyodor Dostoevsky".
+
+        </p>
+        <p style="font-size: 12px">
+            DALL-E Prompt:<br />As Russia literature expert and people expert.
+Generate an image inspired by Fyodor Dostoevsky's classic novel, "The House of the Dead".
+Also used the following book's summary as a prompt:
+"The House of the Dead" by Fyodor Dostoevsky is a semi-autobiographical novel that explores life in a Siberian prison camp. The protagonist, Aleksandr Petrovich Goryanchikov, is a nobleman sentenced to penal servitude for murdering his wife. The narrative vividly portrays the harsh conditions, brutal punishments, and dehumanizing effects of the prison system. Despite the grim setting, Dostoevsky also highlights the prisoners' resilience, camaraderie, and moments of humanity. The novel is a profound exploration of human nature, suffering, and redemption, and a critique of the Russian penal system.
+
+
+The image should depict 3 characters from Russia only and from the era of the novel.
+The image should be a painting, not a photograph.
+        </p>
+    </div>
+
+
+
+    <div class="document_image">
+
+        <img src="images\img-8x2YdczoE8G1RMxc5RtgVExr.png" alt="alt text" width="256" height="256" id="img-VlFZBBb7lCEcrRu4vTG4dV8i" onclick="displayImage('img-8x2YdczoE8G1RMxc5RtgVExr');">
+        
+        <div class="imageContainer" id="img-8x2YdczoE8G1RMxc5RtgVExr_imageContainer">
+            <img src="images\img-8x2YdczoE8G1RMxc5RtgVExr.png" alt="Enlarged Image" onclick="closeImage('img-8x2YdczoE8G1RMxc5RtgVExr');">
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    var _imageIdSelected = null;
+    // Function to display the larger image
+    function displayImage(id) {
+        _imageIdSelected = id;
+        const containerId = id + "_imageContainer";
+        var imageContainer = document.getElementById(containerId);
+        imageContainer.style.display = "flex"; // Show the container
+    }
+
+    // Function to close the larger image
+    function closeImage(id) {
+        var imageContainer = document.getElementById(id + "_imageContainer");
+        imageContainer.style.display = "none"; // Hide the container
+    }
+    // Function to be triggered when the Escape key is pressed
+    function onEscapeKeyPress(event) {
+        if (event.keyCode === 27) {
+            closeImage(_imageIdSelected);
+        }
+    }
+
+    // Add an event listener to the document to listen for keydown events
+    document.addEventListener("keydown", onEscapeKeyPress);
+</script>
+
+</body>
+</html>
+
+

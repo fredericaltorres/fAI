@@ -11,6 +11,7 @@ using static fAI.MicrosoftCognitiveServices;
 using fAI.Microsoft.Search;
 using Azure.Search.Documents.Models;
 using Azure.Search.Documents;
+using Newtonsoft.Json;
 
 namespace fAI.Tests
 {
@@ -50,15 +51,10 @@ namespace fAI.Tests
         {
             var sb = new System.Text.StringBuilder();
             var azureSearch = new AzureSearch(serviceName);
+            var selectColumns = DS.List("id", "title", "description", "category");
+            var  presentationFounds = azureSearch.VectorSearch(PresentationAI.indexName, "Tell me about cats?", "titleVector", selectColumns);
 
-            var selectColumns = new List<string>() { "id", "title", "description", "category" };
-            var documents = azureSearch.VectorSearch(PresentationAI.indexName, "Tell me about cats?", "titleVector", selectColumns);
-            foreach(var result in documents)
-            {
-                sb.Append(result.Document["id"]).Append(", ");
-                sb.Append(result.Document["title"]).AppendLine();
-            }
-            File.WriteAllText(@"C:\a\VectorSearchResults.txt", sb.ToString());
+            File.AppendAllText(@"C:\a\VectorSearchResults.txt", JsonConvert.SerializeObject(presentationFounds, Formatting.Indented));
         }
     }
 }  

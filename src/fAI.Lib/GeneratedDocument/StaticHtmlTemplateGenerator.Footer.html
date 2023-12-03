@@ -1,4 +1,30 @@
 ﻿
 
+<script>
+    var _imageIdSelected = null;
+    // Function to display the larger image
+    function displayImage(id) {
+        _imageIdSelected = id;
+        const containerId = id + "_imageContainer";
+        var imageContainer = document.getElementById(containerId);
+        imageContainer.style.display = "flex"; // Show the container
+    }
+
+    // Function to close the larger image
+    function closeImage(id) {
+        var imageContainer = document.getElementById(id + "_imageContainer");
+        imageContainer.style.display = "none"; // Hide the container
+    }
+    // Function to be triggered when the Escape key is pressed
+    function onEscapeKeyPress(event) {
+        if (event.keyCode === 27) {
+            closeImage(_imageIdSelected);
+        }
+    }
+
+    // Add an event listener to the document to listen for keydown events
+    document.addEventListener("keydown", onEscapeKeyPress);
+</script>
+
 </body>
 </html>
