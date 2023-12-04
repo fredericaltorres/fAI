@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
@@ -13,23 +14,41 @@ namespace fAI
      https://www.youtube.com/watch?v=ud7HJ2p3gp0
 
      */
+
+    public interface IChainable
+    {
+        string Invoke(string query);
+    }
+
     public partial class Chain 
     {
         GPTPrompt _prompt;
         CompletionResponse response;
+        Stack<string> _invokedStack = new Stack<string>();
 
+        public string InvokedText => string.Join(Environment.NewLine, _invokedStack.ToArray());
+        
         public Chain()
         {
         }
+
         public string Text { get => response.Text; }
 
-        public Chain Prompt(GPTPrompt prompt)
+        //public Chain Prompt(GPTPrompt prompt)
+        //{
+        //    this._prompt = prompt;
+        //    return this;
+        //}
+        public Chain Invoke(IChainable chainable, object pocoQuery)
         {
-            this._prompt = prompt;
+            var parameters = DS.Dictionary(pocoQuery);
+            _invokedStack.Push(chainable.Invoke(parameters["Query"].ToString()));
             return this;
         }
-        public Chain Invoke(object pocoAsDictionary)
+
+        public Chain Invoke(GPTPrompt prompt, object pocoAsDictionary)
         {
+            this._prompt = prompt;
             var parameters = DS.Dictionary(pocoAsDictionary);
             if (this._prompt == null) throw new Exception("Prompt is null");
             var client = new OpenAI();

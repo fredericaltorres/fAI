@@ -89,7 +89,20 @@ namespace fAI
         */
         public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
 
-        public string FullPrompt => $"{Text}";
+        public string FullPrompt
+        {
+            get
+            {
+                if(this.Messages.Count > 0)
+                {
+                    return string.Join("\r\n", this.Messages.Select(m => $"{m.Role}: {m.Content}"));
+                }
+                else
+                {
+                    return this.Text;
+                }
+            }
+        }
 
         public override string ToString()
         {
