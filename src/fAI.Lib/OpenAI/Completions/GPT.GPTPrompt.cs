@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using DynamicSugar;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace fAI
 {
@@ -31,8 +33,33 @@ namespace fAI
         public ResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }
         public string Text { get; set; }
+        public List<GPTMessage> Messages { get; set; } = new List<GPTMessage>();
 
-        public List<GPTMessage> Messages { get; set; } 
+        public CompletionResponse Response { get; set; }
+        public GPTPrompt UnprocessPrompt { get; set; } // allow to back up the current prompt before being processed.
+
+        public GPTPrompt Clone()
+        {
+            var p = new GPTPrompt();
+            p.response_format = this.response_format;
+            p.Url = this.Url;
+            p.Text = this.Text;
+            p.Messages.AddRange(this.Messages);
+            return p;
+        }
+
+        public void ProcessPrompt(Dictionary<string, object> parameters)
+        {
+            this.UnprocessPrompt = this.Clone();
+            if(this.Messages.Count > 0)
+            {
+                this.Messages.ForEach(m => m.Content = m.Content.Template(parameters, "[", "]"));
+            }
+            else
+            {
+                this.Text = this.Text.Template(parameters, "[", "]");
+            }
+        }
 
 
         public string GetPromptString()
@@ -62,7 +89,7 @@ namespace fAI
         */
         public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
 
-        public string FullPrompt => $"{PrePrompt}{Text}{PostPrompt}";
+        public string FullPrompt => $"{Text}";
 
         public override string ToString()
         {
@@ -71,7 +98,7 @@ namespace fAI
             return string.Join("\r\n", this.Messages);
         }
 
-        public CompletionResponse Response { get; set; } = new CompletionResponse();
+        
 
         public bool Success => Response.Success;
 

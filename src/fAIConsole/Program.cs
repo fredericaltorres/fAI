@@ -159,8 +159,8 @@ The image should be a painting, not a photograph.
             var jsonInput = @".\VictorHugoPresentation\VictorHugo.Documents.json";
             var htmlOutput = @".\VictorHugoPresentation\VictorHugo.Documents.3.html";
 
-            jsonInput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json";
-            htmlOutput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html";
+            //jsonInput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json";
+            //htmlOutput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html";
 
             var generatedDocuments = GeneratedDocuments.Load(jsonInput);
             var templateGenerator = new StaticHtmlTemplateGenerator();
