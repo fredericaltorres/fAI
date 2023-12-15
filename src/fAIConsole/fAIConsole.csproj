@@ -85,7 +85,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Alexandre Dumas\Promot.md" />
     <None Include="App.config" />
+    <Content Include="Alexandre Dumas\1.png" />
+    <Content Include="Alexandre Dumas\2.png" />
+    <Content Include="Alexandre Dumas\3.png" />
+    <Content Include="Alexandre Dumas\4.1.png" />
+    <Content Include="Alexandre Dumas\4.2.png" />
+    <Content Include="Alexandre Dumas\4.png" />
     <Content Include="audio\Readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
