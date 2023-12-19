@@ -12,20 +12,20 @@ namespace faiWinApp
 {
     public class ImageUtility
     {
-        public static List<string> SliceImageBy4(string originalImage)
+        public static List<string> SliceImageBy4(string originalImage, string tmpFolder)
         {
             var r = new List<string>();
-            r.Add(SliceImageBy4_TopRight(originalImage));
-            r.Add(SliceImageBy4_BottomRight(originalImage));
-            r.Add(SliceImageBy4_TopLeft(originalImage));
-            r.Add(SliceImageBy4_BottomLeft(originalImage));
+            r.Add(SliceImageBy4_TopRight(originalImage, tmpFolder));
+            r.Add(SliceImageBy4_BottomRight(originalImage, tmpFolder));
+            r.Add(SliceImageBy4_TopLeft(originalImage, tmpFolder));
+            r.Add(SliceImageBy4_BottomLeft(originalImage, tmpFolder));
             return r;
         }
 
-        public static string SliceImageBy4_BottomRight(string filePath)
+        public static string SliceImageBy4_BottomRight(string filePath, string tmpFolder)
         {
             string originalImagePath = filePath;
-            string newImagePath = GetNewImageFileName(ImageFormat.Png);
+            string newImagePath = GetNewImageFileName(ImageFormat.Png, tmpFolder);
 
             using (Bitmap originalImage = new Bitmap(originalImagePath))
             {
@@ -44,10 +44,10 @@ namespace faiWinApp
             }
         }
 
-        public static string SliceImageBy4_TopRight(string filePath)
+        public static string SliceImageBy4_TopRight(string filePath, string tmpFolder)
         {
             string originalImagePath = filePath;
-            string newImagePath = GetNewImageFileName(ImageFormat.Png);
+            string newImagePath = GetNewImageFileName(ImageFormat.Png, tmpFolder);
 
             using (Bitmap originalImage = new Bitmap(originalImagePath))
             {
@@ -65,10 +65,10 @@ namespace faiWinApp
             }
         }
 
-        public static string SliceImageBy4_TopLeft(string filePath)
+        public static string SliceImageBy4_TopLeft(string filePath, string tmpFolder)
         {
             string originalImagePath = filePath;
-            string newImagePath = GetNewImageFileName(ImageFormat.Png);
+            string newImagePath = GetNewImageFileName(ImageFormat.Png, tmpFolder);
 
             using (Bitmap originalImage = new Bitmap(originalImagePath))
             {
@@ -85,10 +85,10 @@ namespace faiWinApp
             }
         }
 
-        public static string SliceImageBy4_BottomLeft(string filePath)
+        public static string SliceImageBy4_BottomLeft(string filePath, string tmpFolder)
         {
             string originalImagePath = filePath;
-            string newImagePath = GetNewImageFileName(ImageFormat.Png);
+            string newImagePath = GetNewImageFileName(ImageFormat.Png, tmpFolder);
 
             using (Bitmap originalImage = new Bitmap(originalImagePath))
             {
@@ -106,7 +106,7 @@ namespace faiWinApp
             }
         }
 
-        public static string GetImageInfo(string filePath)
+        public static string GetImageInfo(string filePath, string tmpFolder)
         {
             var sb = new StringBuilder();
             using (Image img = Image.FromFile(filePath))
@@ -121,16 +121,17 @@ namespace faiWinApp
             return sb.ToString();
         }
 
-        public static string GetNewImageFileName(ImageFormat imageFormat)
+        public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder)
         {
-            return Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + $".{imageFormat}");
+            return Path.Combine((string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath(): tmpFolder), 
+                                Path.GetTempFileName() + $".{imageFormat}");
         }
 
-        public static string SaveImageFromClipboard(ImageFormat imageFormat)
+        public static string SaveImageFromClipboard(ImageFormat imageFormat, string tmpFolder)
         {
             if (Clipboard.ContainsImage())
             {
-                string filePath = GetNewImageFileName(imageFormat);
+                string filePath = GetNewImageFileName(imageFormat, tmpFolder);
                 Image img = Clipboard.GetImage();
                 img.Save(filePath, imageFormat);
                 return filePath;

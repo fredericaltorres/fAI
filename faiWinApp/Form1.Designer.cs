@@ -33,8 +33,10 @@
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtUserOutput = new System.Windows.Forms.TextBox();
+            this.WorkFolder = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,7 +47,8 @@
             this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(910, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.menuStrip1.Size = new System.Drawing.Size(1177, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -61,7 +64,7 @@
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(159, 24);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -77,35 +80,58 @@
             // pasteImageToolStripMenuItem
             // 
             this.pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
-            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(158, 24);
             this.pasteImageToolStripMenuItem.Text = "Paste Image";
             this.pasteImageToolStripMenuItem.Click += new System.EventHandler(this.pasToolStripMenuItem_Click);
-            // 
-            // txtUserOutput
-            // 
-            this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserOutput.Location = new System.Drawing.Point(21, 50);
-            this.txtUserOutput.Multiline = true;
-            this.txtUserOutput.Name = "txtUserOutput";
-            this.txtUserOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtUserOutput.Size = new System.Drawing.Size(864, 457);
-            this.txtUserOutput.TabIndex = 1;
             // 
             // sliceBy4ToolStripMenuItem
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
-            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(158, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
             // 
+            // txtUserOutput
+            // 
+            this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtUserOutput.Location = new System.Drawing.Point(17, 89);
+            this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtUserOutput.Multiline = true;
+            this.txtUserOutput.Name = "txtUserOutput";
+            this.txtUserOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtUserOutput.Size = new System.Drawing.Size(1135, 502);
+            this.txtUserOutput.TabIndex = 1;
+            // 
+            // WorkFolder
+            // 
+            this.WorkFolder.Location = new System.Drawing.Point(155, 42);
+            this.WorkFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.WorkFolder.Name = "WorkFolder";
+            this.WorkFolder.Size = new System.Drawing.Size(984, 26);
+            this.WorkFolder.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 45);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(117, 19);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Work Folder:";
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(910, 542);
+            this.ClientSize = new System.Drawing.Size(1177, 608);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.WorkFolder);
             this.Controls.Add(this.txtUserOutput);
             this.Controls.Add(this.menuStrip1);
+            this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "fAi Win Utility App";
@@ -126,6 +152,8 @@
         private System.Windows.Forms.ToolStripMenuItem pasteImageToolStripMenuItem;
         private System.Windows.Forms.TextBox txtUserOutput;
         private System.Windows.Forms.ToolStripMenuItem sliceBy4ToolStripMenuItem;
+        private System.Windows.Forms.TextBox WorkFolder;
+        private System.Windows.Forms.Label label1;
     }
 }
 
