@@ -123,8 +123,8 @@ namespace faiWinApp
 
         public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder)
         {
-            return Path.Combine((string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath(): tmpFolder), 
-                                Path.GetTempFileName() + $".{imageFormat}");
+            var folder = (string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath() : tmpFolder);
+            return Path.Combine(folder, $"{Environment.TickCount}.{imageFormat}");
         }
 
         public static string SaveImageFromClipboard(ImageFormat imageFormat, string tmpFolder)

@@ -80,14 +80,15 @@
             // pasteImageToolStripMenuItem
             // 
             this.pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
-            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(158, 24);
+            this.pasteImageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
             this.pasteImageToolStripMenuItem.Text = "Paste Image";
             this.pasteImageToolStripMenuItem.Click += new System.EventHandler(this.pasToolStripMenuItem_Click);
             // 
             // sliceBy4ToolStripMenuItem
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
-            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(158, 24);
+            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
             // 
@@ -95,17 +96,17 @@
             // 
             this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtUserOutput.Location = new System.Drawing.Point(17, 89);
-            this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4);
             this.txtUserOutput.Multiline = true;
             this.txtUserOutput.Name = "txtUserOutput";
             this.txtUserOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtUserOutput.Size = new System.Drawing.Size(1135, 502);
+            this.txtUserOutput.Size = new System.Drawing.Size(991, 487);
             this.txtUserOutput.TabIndex = 1;
             // 
             // WorkFolder
             // 
             this.WorkFolder.Location = new System.Drawing.Point(155, 42);
-            this.WorkFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.WorkFolder.Margin = new System.Windows.Forms.Padding(4);
             this.WorkFolder.Name = "WorkFolder";
             this.WorkFolder.Size = new System.Drawing.Size(984, 26);
             this.WorkFolder.TabIndex = 2;
@@ -122,6 +123,7 @@
             // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1177, 608);
@@ -131,11 +133,13 @@
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "fAi Win Utility App";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
