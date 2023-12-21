@@ -165,65 +165,63 @@ namespace faiWinApp
                 File.Delete(file);
         }
 
-        public static bool GenerateGif(string gifName, List<string> imageFileNames, bool _256ColorOptimization = false, 
+
+        public static string BlendBitmaps(string bitmap1, string bitmap2, float blendLevel)
+        {
+            var b = BlendBitmaps(new Bitmap(bitmap1), new Bitmap(bitmap2), blendLevel);
+            var fileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
+            b.Save(fileName);
+            return fileName;
+        }
+
+        public static Bitmap BlendBitmaps(Bitmap bitmap1, Bitmap bitmap2, float blendLevel)
+        {
+            Bitmap blendedBitmap = new Bitmap(bitmap1.Width, bitmap1.Height);
+
+            using (Graphics g = Graphics.FromImage(blendedBitmap))
+            {
+                g.DrawImage(bitmap1, 0, 0);
+
+                ColorMatrix colorMatrix = null;
+
+                colorMatrix = new ColorMatrix(new float[][] {
+                    new float[] {1, 0, 0, 0, 0},
+                    new float[] {0, 1, 0, 0, 0},
+                    new float[] {0, 0, 1, 0, 0},
+                    new float[] {0, 0, 0, blendLevel, 0}, // Change alpha to blend
+                    new float[] {0, 0, 0, 0, 1}
+                });
+
+                ImageAttributes imageAttributes = new ImageAttributes();
+                imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                g.DrawImage(bitmap2, new Rectangle(0, 0, bitmap2.Width, bitmap2.Height), 0, 0, bitmap2.Width, bitmap2.Height, GraphicsUnit.Pixel, imageAttributes);
+            }
+
+            return blendedBitmap;
+        }
+
+        public static bool GenerateGif(string gifName, int delay, List<string> imageFileNames, bool _256ColorOptimization = false, 
             List<string> messages = null, int messageX = -1, int messageY = -1, int fontSize = 64, string fontName = "Consola")
         {
             DeleteFile(gifName);
             using (var collection = new MagickImageCollection())
             {
                 var i = 0;
+                var imagesCount = imageFileNames.Count;
                 foreach (var fileName in imageFileNames)
                 {
-                    var (width, height) = GetImageWidthAndHeight(fileName);
-                    var settings = new MagickReadSettings()
+                    GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay);
+                    if(i == 0)
                     {
-                        FillColor = MagickColors.White, // Text in white with a black stroke
-                        StrokeColor = MagickColors.Black,
-                        Font = fontName,
-                        FontStyle = FontStyleType.Normal,
-                        FontPointsize = fontSize,
-                        Width = width, 
-                        Height = height,
-                    };
-
-                    if (messageX == -1 && messageY == -1)
-                    {
-                        settings.Width = width;
-                        settings.Height = height;
-                    }
-
-                    MagickImage image = null;
-                    if (messageX == -1 && messageY == -1)
-                        image = new MagickImage(File.ReadAllBytes(fileName), settings);
-                    else
-                        image = new MagickImage(File.ReadAllBytes(fileName));
-
-                    if (messages != null)
-                    {
-                        // https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=36435
-                        var message = messages[i];
-                        //image.Draw(new Drawables().Color( ).Font(fontName).FontPointSize(72).Text(messageX, messageY, message));
-
-                        if(messageX ==-1 && messageY == -1)
+                        var fadingSteps = 5;
+                        var fadingValue = 0.20f;
+                        for (int j = 0; j < fadingSteps; j++)
                         {
-                            image.Annotate(message, Gravity.South);
-                        }
-                        else
-                        {
-                            //IMagickGeometry boundingArea = new MagickGeometry(messageX, messageY, messageX+100, messageY+100);
-                            //image.Annotate(message, boundingArea);
-                            image.Draw(new Drawables().FillColor(MagickColors.White)
-                                                      .Font(fontName)
-                                                      .FontPointSize(fontSize)
-                                                      .StrokeColor(MagickColors.Black)
-                                                      .StrokeWidth(1)
-                                                      .Text(messageX, messageY, message));
+                            var transitionImageFileName = BlendBitmaps(imageFileNames[0], imageFileNames[1], (j+1)*fadingValue);
+                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, 20);
+                            DeleteFile(transitionImageFileName);
                         }
                     }
-                    collection.Add(image);
-                    collection[i].AnimationDelay = 100;
-                    collection[i].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
-
                     i += 1;
                 }
 
@@ -240,6 +238,44 @@ namespace faiWinApp
             }
 
             return true;
+        }
+
+        private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay)
+        {
+            var (width, height) = GetImageWidthAndHeight(fileName);
+            var settings = new MagickReadSettings()
+            {
+                FillColor = MagickColors.White, // Text in white with a black stroke
+                StrokeColor = MagickColors.Black,
+                Font = fontName,
+                FontStyle = FontStyleType.Normal,
+                FontPointsize = fontSize,
+                Width = width,
+                Height = height,
+            };
+
+            if (messageX == -1 && messageY == -1)
+            {
+                settings.Width = width;
+                settings.Height = height;
+            }
+
+            MagickImage image = null;
+            if (messageX == -1 && messageY == -1)
+                image = new MagickImage(File.ReadAllBytes(fileName), settings);
+            else
+                image = new MagickImage(File.ReadAllBytes(fileName));
+
+            if (message != null)
+            {
+                if (messageX == -1 && messageY == -1)
+                    image.Annotate(message, Gravity.South);
+                else
+                    image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(fontSize).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(messageX, messageY, message));
+            }
+            collection.Add(image);
+            collection[collection.Count-1].AnimationDelay = animationDelay;
+            collection[collection.Count - 1].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
         }
     }
 }

@@ -38,8 +38,6 @@
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tESTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mosaicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,9 +74,7 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pasteImageToolStripMenuItem,
             this.sliceBy4ToolStripMenuItem,
-            this.createGifAnimationToolStripMenuItem,
-            this.tESTToolStripMenuItem,
-            this.mosaicToolStripMenuItem});
+            this.createGifAnimationToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
             this.editToolStripMenuItem.Text = "Edit";
@@ -134,20 +130,6 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Work Folder:";
             // 
-            // tESTToolStripMenuItem
-            // 
-            this.tESTToolStripMenuItem.Name = "tESTToolStripMenuItem";
-            this.tESTToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
-            this.tESTToolStripMenuItem.Text = "Test";
-            this.tESTToolStripMenuItem.Click += new System.EventHandler(this.tESTToolStripMenuItem_Click);
-            // 
-            // mosaicToolStripMenuItem
-            // 
-            this.mosaicToolStripMenuItem.Name = "mosaicToolStripMenuItem";
-            this.mosaicToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
-            this.mosaicToolStripMenuItem.Text = "Mosaic";
-            this.mosaicToolStripMenuItem.Click += new System.EventHandler(this.mosaicToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -186,8 +168,6 @@
         private System.Windows.Forms.TextBox WorkFolder;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem createGifAnimationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tESTToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mosaicToolStripMenuItem;
     }
 }
 
