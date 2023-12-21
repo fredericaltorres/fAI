@@ -111,8 +111,7 @@ namespace faiWinApp
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
-            ImageUtility.GenerateGif(this.GifName, 200, this._dragAndDropFileSelection, messages: fileNames, messageX: -1, messageY: -1);
-            //ImageUtility.GenerateGif(this.GifName, this._dragAndDropFileSelection, messages: fileNames, messageX: 80, messageY: 100);
+            ImageUtility.GenerateGif(this.GifName, 200, ImageUtility.GifTransitionMode.Fade1, this._dragAndDropFileSelection, messages: fileNames, messageX: -1, messageY: -1);
             this.ViewFile(this.GifName);
         }
 

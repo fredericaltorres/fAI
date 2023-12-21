@@ -200,8 +200,24 @@ namespace faiWinApp
             return blendedBitmap;
         }
 
-        public static bool GenerateGif(string gifName, int delay, List<string> imageFileNames, bool _256ColorOptimization = false, 
-            List<string> messages = null, int messageX = -1, int messageY = -1, int fontSize = 64, string fontName = "Consola")
+        public enum GifTransitionMode
+        {
+            None,
+            Fade1,
+            Fade6
+        }
+
+        public static bool GenerateGif(
+            string gifName, 
+            int delay, 
+            GifTransitionMode gifTransitionMode, 
+            List<string> imageFileNames, 
+            bool _256ColorOptimization = false, 
+            List<string> messages = null, 
+            int messageX = -1, 
+            int messageY = -1, 
+            int fontSize = 64, 
+            string fontName = "Consola")
         {
             DeleteFile(gifName);
             using (var collection = new MagickImageCollection())
@@ -211,17 +227,32 @@ namespace faiWinApp
                 foreach (var fileName in imageFileNames)
                 {
                     GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay);
-                    if(i == 0)
+
+                    if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
-                        var fadingSteps = 5;
-                        var fadingValue = 0.20f;
+                        var fadingSteps = 6;
+                        var fadingValue = 0.17f;
+                        var imageIndexStartFading = i;
+                        var fadeDelay = 16;
+                        var imageIndexEndFading = i + 1;
+                        if (i == imagesCount - 1)
+                            imageIndexEndFading = 0; // Fade from the last one to the first one
+
+                        if(gifTransitionMode == GifTransitionMode.Fade1)
+                        {
+                            fadingSteps = 1;
+                            fadingValue = 0.6f;
+                            fadeDelay = 40;
+                        }
+
                         for (int j = 0; j < fadingSteps; j++)
                         {
-                            var transitionImageFileName = BlendBitmaps(imageFileNames[0], imageFileNames[1], (j+1)*fadingValue);
-                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, 20);
+                            var transitionImageFileName = BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue);
+                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, fadeDelay);
                             DeleteFile(transitionImageFileName);
                         }
                     }
+                  
                     i += 1;
                 }
 
