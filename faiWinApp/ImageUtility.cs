@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -106,6 +107,16 @@ namespace faiWinApp
             }
         }
 
+
+        public static (int, int) GetImageWidthAndHeight(string filePath)
+        {
+            var sb = new StringBuilder();
+            using (Image img = Image.FromFile(filePath))
+            {
+                return (img.Width, img.Height);
+            }
+        }
+
         public static string GetImageInfo(string filePath, string tmpFolder)
         {
             var sb = new StringBuilder();
@@ -146,6 +157,89 @@ namespace faiWinApp
                 return true;
             }
             else return false;
+        }
+
+        private static void DeleteFile(string file)
+        {
+            if (File.Exists(file))
+                File.Delete(file);
+        }
+
+        public static bool GenerateGif(string gifName, List<string> imageFileNames, bool _256ColorOptimization = false, 
+            List<string> messages = null, int messageX = -1, int messageY = -1, int fontSize = 64, string fontName = "Consola")
+        {
+            DeleteFile(gifName);
+            using (var collection = new MagickImageCollection())
+            {
+                var i = 0;
+                foreach (var fileName in imageFileNames)
+                {
+                    var (width, height) = GetImageWidthAndHeight(fileName);
+                    var settings = new MagickReadSettings()
+                    {
+                        FillColor = MagickColors.White, // Text in white with a black stroke
+                        StrokeColor = MagickColors.Black,
+                        Font = fontName,
+                        FontStyle = FontStyleType.Normal,
+                        FontPointsize = fontSize,
+                        Width = width, 
+                        Height = height,
+                    };
+
+                    if (messageX == -1 && messageY == -1)
+                    {
+                        settings.Width = width;
+                        settings.Height = height;
+                    }
+
+                    MagickImage image = null;
+                    if (messageX == -1 && messageY == -1)
+                        image = new MagickImage(File.ReadAllBytes(fileName), settings);
+                    else
+                        image = new MagickImage(File.ReadAllBytes(fileName));
+
+                    if (messages != null)
+                    {
+                        // https://legacy.imagemagick.org/discourse-server/viewtopic.php?t=36435
+                        var message = messages[i];
+                        //image.Draw(new Drawables().Color( ).Font(fontName).FontPointSize(72).Text(messageX, messageY, message));
+
+                        if(messageX ==-1 && messageY == -1)
+                        {
+                            image.Annotate(message, Gravity.South);
+                        }
+                        else
+                        {
+                            //IMagickGeometry boundingArea = new MagickGeometry(messageX, messageY, messageX+100, messageY+100);
+                            //image.Annotate(message, boundingArea);
+                            image.Draw(new Drawables().FillColor(MagickColors.White)
+                                                      .Font(fontName)
+                                                      .FontPointSize(fontSize)
+                                                      .StrokeColor(MagickColors.Black)
+                                                      .StrokeWidth(1)
+                                                      .Text(messageX, messageY, message));
+                        }
+                    }
+                    collection.Add(image);
+                    collection[i].AnimationDelay = 100;
+                    collection[i].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
+
+                    i += 1;
+                }
+
+                if (_256ColorOptimization)
+                {
+                    // Lower quality and file size
+                    var settings = new QuantizeSettings();
+                    settings.Colors = 256;
+                    collection.Quantize(settings);
+                    collection.Optimize();
+                }
+
+                collection.Write(gifName);
+            }
+
+            return true;
         }
     }
 }

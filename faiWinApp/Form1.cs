@@ -21,7 +21,10 @@ namespace faiWinApp
     {
         private string _lastImageFile = null;
         AppOptions _appOptions = new AppOptions();
-        List<string> _dragAndDropFileSelection = new List<string>();
+        List<string> _dragAndDropFileSelection = new List<string>() {
+            @"C:\DVT\AI\images\549902968.Png",
+            @"C:\DVT\AI\images\549897484.Png"
+        };
 
         public Form1()
         {
@@ -50,8 +53,7 @@ namespace faiWinApp
             {
                 this.UserMessage($"Saved image to {newImageFile}");
                 this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
-                ViewFile(newImageFile);
-                _lastImageFile = newImageFile;
+                ViewFile(newImageFile);                _lastImageFile = newImageFile;
             }
             else MessageBox.Show("No image found in clipboard.");
         }
@@ -103,39 +105,16 @@ namespace faiWinApp
 
 
 
-        string GigName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
+        string GifName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
         string PngName => System.IO.Path.Combine(_appOptions.WorkFolder, "Output.png");
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GenerateGif2();
-            return;
-            using (MagickImageCollection collection = new MagickImageCollection())
-            {
-                int index = 0;
-                var delay = 2 * 2000;
-                _dragAndDropFileSelection.ForEach(imageFile => {
-                    collection.Add(imageFile);
-                    collection[index].AnimationDelay = delay;
-                    index += 1;
-                });
-                
-                //// Add second image, set the animation delay to 100ms and flip the image
-                //collection.Add("Snakeware.png");
-                //collection[1].AnimationDelay = 100;
-                //collection[1].Flip();
-
-                // Optionally reduce colors
-                var settings = new QuantizeSettings();
-                //settings.Colors = 256;
-                collection.Quantize(settings);
-                collection.Optimize();
-                if (File.Exists(GigName))
-                    File.Delete(GigName);
-                collection.Write(GigName);
-            }
+            var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
+            ImageUtility.GenerateGif(this.GifName, this._dragAndDropFileSelection, messages: fileNames, messageX: -1, messageY: -1);
+            //ImageUtility.GenerateGif(this.GifName, this._dragAndDropFileSelection, messages: fileNames, messageX: 80, messageY: 100);
+            this.ViewFile(this.GifName);
         }
-
 
         public bool GenerateMosaic()
         {
@@ -165,40 +144,6 @@ namespace faiWinApp
             return true;
         }
 
-        public bool GenerateGif2()
-        {
-            DeleteFile(GigName);
-            using (var collection = new MagickImageCollection())
-            {
-                var i = 0;
-                foreach (var fileName in _dragAndDropFileSelection)
-                {
-                    var image = new MagickImage(File.ReadAllBytes(fileName));
-                    //image.Draw(new Drawables().FontPointSize(72).Text(128, 128 * 2, sub));
-                    collection.Add(image);
-                    collection[i].AnimationDelay = 100;
-                    collection[i].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
-
-                    i += 1;
-                }
-
-                // Better Quality, but larger file size
-                //var settings = new QuantizeSettings();
-                //settings.Colors = 256;
-                //collection.Quantize(settings);
-                //collection.Optimize();
-
-                //var result = collection.Mosaic();
-                //result.Write(GigName);
-
-                collection.Write(GigName);
-
-                this.UserMessage($"Created {GigName}");
-                ViewFile(GigName);
-            }
-
-            return true;
-        }
 
 
         private void DisplayImageInfo(string fileName)
@@ -243,7 +188,7 @@ namespace faiWinApp
 
         public bool NewInstance()
         {
-            DeleteFile(GigName);
+            DeleteFile(GifName);
             using (var collection = new MagickImageCollection())
             {
                 for (var i = 1; i < testString.Length; i++)
@@ -254,9 +199,9 @@ namespace faiWinApp
                     collection.Add(image);
                     collection[i - 1].AnimationDelay = 20;
                 }
-                collection.Write(GigName);
-                this.UserMessage($"Created {GigName}");
-                ViewFile(GigName);
+                collection.Write(GifName);
+                this.UserMessage($"Created {GifName}");
+                ViewFile(GifName);
             }
 
             return true;
