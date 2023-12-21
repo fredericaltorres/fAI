@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace faiWinApp
 {
@@ -102,6 +104,7 @@ namespace faiWinApp
 
 
         string GigName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
+        string PngName => System.IO.Path.Combine(_appOptions.WorkFolder, "Output.png");
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -133,6 +136,35 @@ namespace faiWinApp
             }
         }
 
+
+        public bool GenerateMosaic()
+        {
+            DeleteFile(PngName);
+            using (var collection = new MagickImageCollection())
+            {
+                var i = 0;
+                foreach (var fileName in _dragAndDropFileSelection)
+                {
+                    var image = new MagickImage(File.ReadAllBytes(fileName));
+                    collection.Add(image);
+                    i += 1;
+                }
+
+                using (var result = collection.Mosaic())
+                {
+                    result.Write(PngName);
+                }
+                    
+
+                //collection.Write(PngName);
+
+                this.UserMessage($"Created {PngName}");
+                ViewFile(PngName);
+            }
+
+            return true;
+        }
+
         public bool GenerateGif2()
         {
             DeleteFile(GigName);
@@ -145,15 +177,22 @@ namespace faiWinApp
                     //image.Draw(new Drawables().FontPointSize(72).Text(128, 128 * 2, sub));
                     collection.Add(image);
                     collection[i].AnimationDelay = 100;
+                    collection[i].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
+
                     i += 1;
                 }
 
+                // Better Quality, but larger file size
                 //var settings = new QuantizeSettings();
                 //settings.Colors = 256;
                 //collection.Quantize(settings);
                 //collection.Optimize();
 
+                //var result = collection.Mosaic();
+                //result.Write(GigName);
+
                 collection.Write(GigName);
+
                 this.UserMessage($"Created {GigName}");
                 ViewFile(GigName);
             }
@@ -191,7 +230,7 @@ namespace faiWinApp
         private void ViewFile(string fileName)
         {
             DisplayImageInfo(fileName);
-            ImageUtility.ViewFile(GigName);
+            ImageUtility.ViewFile(fileName);
         }
 
         private void DeleteFile(string file)
@@ -201,6 +240,7 @@ namespace faiWinApp
         }
 
         private string testString = "Hello, world!";
+
         public bool NewInstance()
         {
             DeleteFile(GigName);
@@ -225,6 +265,11 @@ namespace faiWinApp
         private void tESTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NewInstance();
+        }
+
+        private void mosaicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateMosaic();
         }
     }
 }
