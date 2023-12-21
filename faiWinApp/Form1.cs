@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ImageMagick;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -36,7 +38,7 @@ namespace faiWinApp
             this.txtUserOutput.Text += $"{m}{(m.EndsWith(Environment.NewLine) ? "" : Environment.NewLine)}";
             this.txtUserOutput.SelectionStart = this.txtUserOutput.TextLength;
             this.txtUserOutput.ScrollToCaret();
-            Application.DoEvents();
+            System.Windows.Forms.Application.DoEvents();
         }
 
         private void pasToolStripMenuItem_Click(object sender, EventArgs e)
@@ -46,7 +48,7 @@ namespace faiWinApp
             {
                 this.UserMessage($"Saved image to {newImageFile}");
                 this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
-                ImageUtility.ViewFile(newImageFile);
+                ViewFile(newImageFile);
                 _lastImageFile = newImageFile;
             }
             else MessageBox.Show("No image found in clipboard.");
@@ -54,7 +56,7 @@ namespace faiWinApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _appOptions = AppOptions.FromFile($@".\{Application.ProductName}.config.json");
+            _appOptions = AppOptions.FromFile($@".\{System.Windows.Forms.Application.ProductName}.config.json");
             this.WorkFolder.Text = _appOptions.WorkFolder;
             this.UserMessage("Ready...");
         }
@@ -65,7 +67,7 @@ namespace faiWinApp
             newImages.ForEach(newImage =>
             {
                 this.UserMessage(ImageUtility.GetImageInfo(newImage, _appOptions.WorkFolder));
-                ImageUtility.ViewFile(newImage);
+                ViewFile(newImage);
             });
         }
 
@@ -84,13 +86,145 @@ namespace faiWinApp
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var file in files)
+            {
                 _dragAndDropFileSelection.Add(file);
+                DisplayImageInfo(file);
+            }
 
             this.UserMessage($"File Selection: {_dragAndDropFileSelection.Count}");
             _dragAndDropFileSelection.ForEach(fileSelected =>
             {
                 this.UserMessage("   "+fileSelected);
             });
+        }
+
+
+
+
+        string GigName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
+
+        private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateGif2();
+            return;
+            using (MagickImageCollection collection = new MagickImageCollection())
+            {
+                int index = 0;
+                var delay = 2 * 2000;
+                _dragAndDropFileSelection.ForEach(imageFile => {
+                    collection.Add(imageFile);
+                    collection[index].AnimationDelay = delay;
+                    index += 1;
+                });
+                
+                //// Add second image, set the animation delay to 100ms and flip the image
+                //collection.Add("Snakeware.png");
+                //collection[1].AnimationDelay = 100;
+                //collection[1].Flip();
+
+                // Optionally reduce colors
+                var settings = new QuantizeSettings();
+                //settings.Colors = 256;
+                collection.Quantize(settings);
+                collection.Optimize();
+                if (File.Exists(GigName))
+                    File.Delete(GigName);
+                collection.Write(GigName);
+            }
+        }
+
+        public bool GenerateGif2()
+        {
+            DeleteFile(GigName);
+            using (var collection = new MagickImageCollection())
+            {
+                var i = 0;
+                foreach (var fileName in _dragAndDropFileSelection)
+                {
+                    var image = new MagickImage(File.ReadAllBytes(fileName));
+                    //image.Draw(new Drawables().FontPointSize(72).Text(128, 128 * 2, sub));
+                    collection.Add(image);
+                    collection[i].AnimationDelay = 100;
+                    i += 1;
+                }
+
+                //var settings = new QuantizeSettings();
+                //settings.Colors = 256;
+                //collection.Quantize(settings);
+                //collection.Optimize();
+
+                collection.Write(GigName);
+                this.UserMessage($"Created {GigName}");
+                ViewFile(GigName);
+            }
+
+            return true;
+        }
+
+
+        private void DisplayImageInfo(string fileName)
+        {
+
+            var len = new FileInfo(fileName).Length / 1024.0 / 1024.0;
+            Bitmap image = null;
+            try
+            {
+                image = new Bitmap(fileName);
+
+                int width = image.Width;
+                int height = image.Height;
+                PixelFormat pixelFormat = image.PixelFormat;
+                //int colorDepth =  System.Drawing.Image.GetPixelFormatSize(pixelFormat);
+                this.UserMessage($"Image:{Path.GetFileName(fileName)}, size:{len:0.0} Mb, width: {width}, height: {height}, pixelFormat: {pixelFormat}");
+            }
+            catch(Exception ex)
+            {
+                this.UserMessage($"Error: {ex.Message}");
+            }
+            finally
+            {
+                if(image != null)
+                    image.Dispose();
+            }
+        }
+
+        private void ViewFile(string fileName)
+        {
+            DisplayImageInfo(fileName);
+            ImageUtility.ViewFile(GigName);
+        }
+
+        private void DeleteFile(string file)
+        {
+            if (File.Exists(file))
+                File.Delete(file);
+        }
+
+        private string testString = "Hello, world!";
+        public bool NewInstance()
+        {
+            DeleteFile(GigName);
+            using (var collection = new MagickImageCollection())
+            {
+                for (var i = 1; i < testString.Length; i++)
+                {
+                    var sub = testString.Substring(0, i);
+                    var image = new MagickImage(File.ReadAllBytes(@"C:\DVT\AI\images\549902968.Png"));
+                    image.Draw(new Drawables().FontPointSize(72).Text(128, 128*2, sub));
+                    collection.Add(image);
+                    collection[i - 1].AnimationDelay = 20;
+                }
+                collection.Write(GigName);
+                this.UserMessage($"Created {GigName}");
+                ViewFile(GigName);
+            }
+
+            return true;
+        }
+
+        private void tESTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewInstance();
         }
     }
 }

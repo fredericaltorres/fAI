@@ -34,9 +34,11 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGifAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.tESTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +74,9 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pasteImageToolStripMenuItem,
-            this.sliceBy4ToolStripMenuItem});
+            this.sliceBy4ToolStripMenuItem,
+            this.createGifAnimationToolStripMenuItem,
+            this.tESTToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
             this.editToolStripMenuItem.Text = "Edit";
@@ -81,16 +85,23 @@
             // 
             this.pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
             this.pasteImageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
+            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
             this.pasteImageToolStripMenuItem.Text = "Paste Image";
             this.pasteImageToolStripMenuItem.Click += new System.EventHandler(this.pasToolStripMenuItem_Click);
             // 
             // sliceBy4ToolStripMenuItem
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
-            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
+            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
+            // 
+            // createGifAnimationToolStripMenuItem
+            // 
+            this.createGifAnimationToolStripMenuItem.Name = "createGifAnimationToolStripMenuItem";
+            this.createGifAnimationToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
+            this.createGifAnimationToolStripMenuItem.Text = "Create Gif Animation";
+            this.createGifAnimationToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -120,6 +131,13 @@
             this.label1.Size = new System.Drawing.Size(117, 19);
             this.label1.TabIndex = 3;
             this.label1.Text = "Work Folder:";
+            // 
+            // tESTToolStripMenuItem
+            // 
+            this.tESTToolStripMenuItem.Name = "tESTToolStripMenuItem";
+            this.tESTToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
+            this.tESTToolStripMenuItem.Text = "Test";
+            this.tESTToolStripMenuItem.Click += new System.EventHandler(this.tESTToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -158,6 +176,8 @@
         private System.Windows.Forms.ToolStripMenuItem sliceBy4ToolStripMenuItem;
         private System.Windows.Forms.TextBox WorkFolder;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem createGifAnimationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tESTToolStripMenuItem;
     }
 }
 
