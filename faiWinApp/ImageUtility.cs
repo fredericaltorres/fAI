@@ -161,6 +161,7 @@ namespace faiWinApp
             }
             else return null;
         }
+
         public static bool ViewFile(string filePath)
         {
             if (File.Exists(filePath))
@@ -271,18 +272,23 @@ namespace faiWinApp
                 var imagesCount = imageFileNames.Count;
                 foreach (var fileName in imageFileNames)
                 {
+                    if (gifTransitionMode == GifTransitionMode.ZoomIn)
+                    {
+                        delay = delay / 3;
+                    }
+
                     GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay, refWidth, refHeight);
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
-                        var zoomPercent = 8;
-                        for (var pZoom = 1; pZoom < 5; pZoom++)
+                        var zoomPercent = 1;
+                        for (var pZoom = 1; pZoom <= 10; pZoom++)
                         {
                             var zoomX = refWidth * (pZoom * zoomPercent) / 100;
                             var zoomY = refHeight * (pZoom * zoomPercent) / 100;
                             var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomX, zoomY, refWidth - (zoomX*2), refHeight - (zoomY*2)));
                             GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
-                            zoomPercent -= 1;
+                            //zoomPercent -= 1;
                         }
                     }
 
