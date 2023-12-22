@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -132,10 +133,21 @@ namespace faiWinApp
             return sb.ToString();
         }
 
+        static List<string> _fileToCleanUp = new List<string>();
+
+        public static void CleanUpTempFiles()
+        {
+            foreach(var f in _fileToCleanUp)
+                DeleteFile(f);
+            _fileToCleanUp.Clear();
+        }
+
         public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder)
         {
             var folder = (string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath() : tmpFolder);
-            return Path.Combine(folder, $"{Environment.TickCount}.{imageFormat}");
+            var f = Path.Combine(folder, $"{Environment.TickCount}.{imageFormat}");
+            _fileToCleanUp.Add(f);
+            return f;
         }
 
         public static string SaveImageFromClipboard(ImageFormat imageFormat, string tmpFolder)
@@ -165,6 +177,34 @@ namespace faiWinApp
                 File.Delete(file);
         }
 
+        public static Bitmap ZoomIntoBitmap(Bitmap originalBitmap, Rectangle zoomArea)
+        {
+            // Create a new bitmap with the same size as the zoom area
+            Bitmap zoomedBitmap = new Bitmap(zoomArea.Width, zoomArea.Height);
+
+            using (Graphics graphics = Graphics.FromImage(zoomedBitmap))
+            {
+                // Set high-quality processing
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+                // Draw the zoomed area
+                graphics.DrawImage(originalBitmap, new Rectangle(0, 0, zoomedBitmap.Width, zoomedBitmap.Height), zoomArea, GraphicsUnit.Pixel);
+            }
+
+            return zoomedBitmap;
+        }
+
+        public static string ZoomIntoBitmap(string fileName, Rectangle zoomArea)
+        {
+            Bitmap originalBitmap = new Bitmap(fileName);
+            var b = ZoomIntoBitmap(originalBitmap, zoomArea);
+            var newFileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
+            b.Save(newFileName);
+            return newFileName;
+        }
 
         public static string BlendBitmaps(string bitmap1, string bitmap2, float blendLevel)
         {
@@ -192,6 +232,9 @@ namespace faiWinApp
                     new float[] {0, 0, 0, 0, 1}
                 });
 
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+
                 ImageAttributes imageAttributes = new ImageAttributes();
                 imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                 g.DrawImage(bitmap2, new Rectangle(0, 0, bitmap2.Width, bitmap2.Height), 0, 0, bitmap2.Width, bitmap2.Height, GraphicsUnit.Pixel, imageAttributes);
@@ -204,7 +247,8 @@ namespace faiWinApp
         {
             None,
             Fade1,
-            Fade6
+            Fade6,
+            ZoomIn,
         }
 
         public static bool GenerateGif(
@@ -219,6 +263,7 @@ namespace faiWinApp
             int fontSize = 64, 
             string fontName = "Consola")
         {
+            var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
             DeleteFile(gifName);
             using (var collection = new MagickImageCollection())
             {
@@ -226,7 +271,13 @@ namespace faiWinApp
                 var imagesCount = imageFileNames.Count;
                 foreach (var fileName in imageFileNames)
                 {
-                    GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay);
+                    GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay, refWidth, refHeight);
+
+                    if (gifTransitionMode == GifTransitionMode.ZoomIn)
+                    {
+                        var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(refWidth/2, refHeight/2, refWidth-(refWidth / 2), refHeight-(refHeight/2)));
+                        GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
+                    }
 
                     if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
@@ -242,14 +293,13 @@ namespace faiWinApp
                         {
                             fadingSteps = 1;
                             fadingValue = 0.6f;
-                            fadeDelay = 40;
+                            fadeDelay = delay/4;
                         }
 
                         for (int j = 0; j < fadingSteps; j++)
                         {
                             var transitionImageFileName = BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue);
-                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, fadeDelay);
-                            DeleteFile(transitionImageFileName);
+                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, fadeDelay, refWidth, refHeight);
                         }
                     }
                   
@@ -271,9 +321,19 @@ namespace faiWinApp
             return true;
         }
 
-        private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay)
+        private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay, int refWidth, int refHeight)
         {
             var (width, height) = GetImageWidthAndHeight(fileName);
+            if(width != refWidth || height != refHeight)
+            {
+                // Resize
+                var newFileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
+                var nImage = new MagickImage(File.ReadAllBytes(fileName));
+                nImage.Resize(refWidth, refHeight);
+                nImage.Write(newFileName);
+                fileName = newFileName;
+            }
+
             var settings = new MagickReadSettings()
             {
                 FillColor = MagickColors.White, // Text in white with a black stroke

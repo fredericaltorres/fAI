@@ -1,5 +1,6 @@
 ﻿
 using ImageMagick;
+using LogViewer.Net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +35,10 @@ namespace faiWinApp
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _appOptions.WorkFolder = this.WorkFolder.Text;
+            _appOptions.GifFade1 = this.rdoGifFade1.Checked;
+            _appOptions.GifFade6 = this.rdoGifFade6.Checked;
+            _appOptions.GifDelay = this.txtGifDelay.Text;
+
             _appOptions.ToFile();
             this.Close();
         }
@@ -48,31 +53,41 @@ namespace faiWinApp
 
         private void pasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var newImageFile = ImageUtility.SaveImageFromClipboard(ImageFormat.Png, _appOptions.WorkFolder);
-            if(newImageFile != null)
+            using (var cursor = new CWaitCursor(this))
             {
-                this.UserMessage($"Saved image to {newImageFile}");
-                this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
-                ViewFile(newImageFile);                _lastImageFile = newImageFile;
+                var newImageFile = ImageUtility.SaveImageFromClipboard(ImageFormat.Png, _appOptions.WorkFolder);
+                if (newImageFile != null)
+                {
+                    this.UserMessage($"Saved image to {newImageFile}");
+                    this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
+                    ViewFile(newImageFile); _lastImageFile = newImageFile;
+                }
+                else MessageBox.Show("No image found in clipboard.");
             }
-            else MessageBox.Show("No image found in clipboard.");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             _appOptions = AppOptions.FromFile($@".\{System.Windows.Forms.Application.ProductName}.config.json");
             this.WorkFolder.Text = _appOptions.WorkFolder;
+            this.rdoGifFade1.Checked = _appOptions.GifFade1;
+            this.rdoGifFade6.Checked = _appOptions.GifFade6;
+            this.txtGifDelay.Text = _appOptions.GifDelay;
+
             this.UserMessage("Ready...");
         }
 
         private void sliceBy4ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var newImages = ImageUtility.SliceImageBy4(_lastImageFile, _appOptions.WorkFolder);
-            newImages.ForEach(newImage =>
+            using (var cursor = new CWaitCursor(this))
             {
-                this.UserMessage(ImageUtility.GetImageInfo(newImage, _appOptions.WorkFolder));
-                ViewFile(newImage);
-            });
+                var newImages = ImageUtility.SliceImageBy4(_lastImageFile, _appOptions.WorkFolder);
+                newImages.ForEach(newImage =>
+                {
+                    this.UserMessage(ImageUtility.GetImageInfo(newImage, _appOptions.WorkFolder));
+                    ViewFile(newImage);
+                });
+            }
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -102,52 +117,32 @@ namespace faiWinApp
             });
         }
 
-
-
-
         string GifName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
         string PngName => System.IO.Path.Combine(_appOptions.WorkFolder, "Output.png");
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
-            ImageUtility.GenerateGif(this.GifName, 200, ImageUtility.GifTransitionMode.Fade1, this._dragAndDropFileSelection, messages: fileNames, messageX: -1, messageY: -1);
-            this.ViewFile(this.GifName);
-        }
-
-        public bool GenerateMosaic()
-        {
-            DeleteFile(PngName);
-            using (var collection = new MagickImageCollection())
+            using (var cursor = new CWaitCursor(this))
             {
-                var i = 0;
-                foreach (var fileName in _dragAndDropFileSelection)
-                {
-                    var image = new MagickImage(File.ReadAllBytes(fileName));
-                    collection.Add(image);
-                    i += 1;
-                }
+                var transition = ImageUtility.GifTransitionMode.None;
+                if (rdoGifFade1.Checked)
+                    transition = ImageUtility.GifTransitionMode.Fade1;
+                else if (rdoGifFade6.Checked)
+                    transition = ImageUtility.GifTransitionMode.Fade6;
+                else if (rdoZoomIn.Checked)
+                    transition = ImageUtility.GifTransitionMode.ZoomIn;
 
-                using (var result = collection.Mosaic())
-                {
-                    result.Write(PngName);
-                }
-                    
-
-                //collection.Write(PngName);
-
-                this.UserMessage($"Created {PngName}");
-                ViewFile(PngName);
+                var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
+                ImageUtility.GenerateGif(this.GifName, int.Parse(this.txtGifDelay.Text),
+                     transition, this._dragAndDropFileSelection,
+                     messages: fileNames, messageX: -1, messageY: -1);
+                this.ViewFile(this.GifName);
+                ImageUtility.CleanUpTempFiles();
             }
-
-            return true;
         }
-
-
 
         private void DisplayImageInfo(string fileName)
         {
-
             var len = new FileInfo(fileName).Length / 1024.0 / 1024.0;
             Bitmap image = null;
             try
@@ -211,9 +206,12 @@ namespace faiWinApp
             NewInstance();
         }
 
-        private void mosaicToolStripMenuItem_Click(object sender, EventArgs e)
+        
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GenerateMosaic();
+            this.txtUserOutput.Text = "";
+            _dragAndDropFileSelection.Clear();
         }
     }
 }
