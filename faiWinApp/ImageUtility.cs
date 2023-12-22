@@ -275,8 +275,15 @@ namespace faiWinApp
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
-                        var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(refWidth/2, refHeight/2, refWidth-(refWidth / 2), refHeight-(refHeight/2)));
-                        GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
+                        var zoomPercent = 8;
+                        for (var pZoom = 1; pZoom < 5; pZoom++)
+                        {
+                            var zoomX = refWidth * (pZoom * zoomPercent) / 100;
+                            var zoomY = refHeight * (pZoom * zoomPercent) / 100;
+                            var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomX, zoomY, refWidth - (zoomX*2), refHeight - (zoomY*2)));
+                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
+                            zoomPercent -= 1;
+                        }
                     }
 
                     if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)

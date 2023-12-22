@@ -38,7 +38,8 @@ namespace faiWinApp
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
-
+            _appOptions.ZoomIn = this.rdoZoomIn.Checked;
+            
             _appOptions.ToFile();
             this.Close();
         }
@@ -73,6 +74,7 @@ namespace faiWinApp
             this.rdoGifFade1.Checked = _appOptions.GifFade1;
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.txtGifDelay.Text = _appOptions.GifDelay;
+            this.rdoZoomIn.Checked = _appOptions.ZoomIn;    
 
             this.UserMessage("Ready...");
         }
