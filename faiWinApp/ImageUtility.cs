@@ -173,7 +173,14 @@ namespace faiWinApp
             else return false;
         }
 
-        private static void DeleteFile(string file)
+        public static void RenameFile(string file, string newName)
+        {
+            DeleteFile(newName);
+            if (File.Exists(file))
+                File.Move(file, newName);
+        }
+
+        public static void DeleteFile(string file)
         {
             if (File.Exists(file))
                 File.Delete(file);
@@ -288,9 +295,14 @@ namespace faiWinApp
             }
         }
 
+        /// <summary>
+        /// https://ezgif.com/maker/ezgif-4-5112dde2-gif
+        /// </summary>
+        /// <returns></returns>
         public static GeneratedGif GenerateGif(
             string gifName, 
             int delay, 
+            int repeat,
             GifTransitionMode gifTransitionMode, 
             List<string> imageFileNames, 
             bool _256ColorOptimization = false, 
@@ -320,6 +332,7 @@ namespace faiWinApp
 
                     // Generate the main image
                     GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, delay, refWidth, refHeight);
+                 
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
@@ -359,23 +372,30 @@ namespace faiWinApp
                     imageIndex += 1;
                 }
 
+                var settings = new QuantizeSettings();
+                settings.DitherMethod = DitherMethod.FloydSteinberg;
                 if (_256ColorOptimization)
                 {
-                    // Lower quality and file size
-                    var settings = new QuantizeSettings();
                     settings.Colors = 256;
-                    collection.Quantize(settings);
-                    collection.Optimize();
                 }
+                collection.Quantize(settings);
+                collection.Optimize();
 
                 rr.ImageCount = collection.Count;
                 rr.Duration = collection.Sum(i => i.AnimationDelay);
+
+                if (repeat == 1)
+                {
+                    collection[0].AnimationIterations = 1;
+                    //collection.ToList().ForEach(action: i => i.AnimationIterations = 1);
+                }
+
                 collection.Write(gifName);
 
-                using (var animatedGif = new MagickImageCollection(gifName))
-                {
-                    animatedGif.Write($"{gifName}.webp", MagickFormat.WebP);
-                }
+                //using (var animatedGif = new MagickImageCollection(gifName))
+                //{
+                //    animatedGif.Write($"{gifName}.webp", MagickFormat.WebP);
+                //}
             }
 
             return rr;
@@ -412,6 +432,8 @@ namespace faiWinApp
                 image = new MagickImage(File.ReadAllBytes(fileName), settings);
             else
                 image = new MagickImage(File.ReadAllBytes(fileName));
+
+            //image.HasAlpha = true;
 
             if (message != null)
             {

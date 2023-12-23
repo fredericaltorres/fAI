@@ -1,4 +1,5 @@
 ﻿
+using DynamicSugar;
 using ImageMagick;
 using LogViewer.Net;
 using System;
@@ -38,6 +39,7 @@ namespace faiWinApp
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
+            _appOptions.GifRepeat = this.txtGifRepeat.Text;
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
             _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
             
@@ -75,7 +77,8 @@ namespace faiWinApp
             this.rdoGifFade1.Checked = _appOptions.GifFade1;
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.txtGifDelay.Text = _appOptions.GifDelay;
-            this.rdoZoomIn.Checked = _appOptions.ZoomIn;    
+            this.txtGifRepeat.Text = _appOptions.GifRepeat;
+            this.rdoZoomIn.Checked = _appOptions.ZoomIn;
             this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
 
             this.UserMessage("Ready...");
@@ -126,6 +129,11 @@ namespace faiWinApp
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            createGifAnimation(true);
+        }
+
+        private void createGifAnimation(bool viewFile)
+        {
             using (var cursor = new CWaitCursor(this))
             {
                 var transition = ImageUtility.GifTransitionMode.None;
@@ -142,6 +150,7 @@ namespace faiWinApp
                 var r = ImageUtility.GenerateGif(
                         this.GifName,
                         int.Parse(this.txtGifDelay.Text),
+                        int.Parse(this.txtGifRepeat.Text),
                         transition,
                         this._dragAndDropFileSelection,
                         messages: fileNames,
@@ -151,7 +160,7 @@ namespace faiWinApp
                 );
 
                 this.UserMessage($"Gif created: {r}");
-                if(r.Success)
+                if(r.Success && viewFile)
                     this.ViewFile(this.GifName, displayImageInfo: false);
                 ImageUtility.CleanUpTempFiles();
             }
@@ -188,7 +197,13 @@ namespace faiWinApp
             ImageUtility.ViewFile(fileName);
         }
 
-        private void DeleteFile(string file)
+        public static void RenameFile(string file, string newName)
+        {
+            if (File.Exists(file))
+                File.Move(file, newName);
+        }
+
+        public static void DeleteFile(string file)
         {
             if (File.Exists(file))
                 File.Delete(file);
@@ -228,6 +243,22 @@ namespace faiWinApp
         {
             this.txtUserOutput.Text = "";
             _dragAndDropFileSelection.Clear();
+        }
+
+        private void createGifAnimationZoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileToZooms = _dragAndDropFileSelection.Clone();
+            _dragAndDropFileSelection.Clear();
+
+            foreach (var file in fileToZooms)
+            {
+                _dragAndDropFileSelection.Clear();
+                _dragAndDropFileSelection.Add(file);
+                createGifAnimation(false);
+                var newGifName = Path.Combine(Path.GetDirectoryName(this.GifName), Path.GetFileNameWithoutExtension(file) + "." + Path.GetFileName(this.GifName));
+                ImageUtility.RenameFile(this.GifName, newGifName);
+                ImageUtility.ViewFile(newGifName);
+            }
         }
     }
 }
