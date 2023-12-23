@@ -35,18 +35,20 @@
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createGifAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
-            this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
-            this.rdoGifFade6 = new System.Windows.Forms.RadioButton();
-            this.txtGifDelay = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdoZoomIn = new System.Windows.Forms.RadioButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtGifDelay = new System.Windows.Forms.TextBox();
+            this.rdoGifFade6 = new System.Windows.Forms.RadioButton();
+            this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
+            this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtZoomImageCount = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -95,23 +97,37 @@
             // 
             this.pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
             this.pasteImageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
+            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
             this.pasteImageToolStripMenuItem.Text = "Paste Image";
             this.pasteImageToolStripMenuItem.Click += new System.EventHandler(this.pasToolStripMenuItem_Click);
             // 
             // sliceBy4ToolStripMenuItem
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
-            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
+            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
             // 
             // createGifAnimationToolStripMenuItem
             // 
             this.createGifAnimationToolStripMenuItem.Name = "createGifAnimationToolStripMenuItem";
-            this.createGifAnimationToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
+            this.createGifAnimationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.createGifAnimationToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
             this.createGifAnimationToolStripMenuItem.Text = "Create Gif Animation";
             this.createGifAnimationToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(266, 6);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.clearToolStripMenuItem.Text = "Clear";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -144,6 +160,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.txtZoomImageCount);
             this.groupBox1.Controls.Add(this.rdoZoomIn);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtGifDelay);
@@ -157,6 +175,55 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
             // 
+            // rdoZoomIn
+            // 
+            this.rdoZoomIn.AutoSize = true;
+            this.rdoZoomIn.Location = new System.Drawing.Point(821, 36);
+            this.rdoZoomIn.Name = "rdoZoomIn";
+            this.rdoZoomIn.Size = new System.Drawing.Size(90, 23);
+            this.rdoZoomIn.TabIndex = 5;
+            this.rdoZoomIn.Text = "Zoom In";
+            this.rdoZoomIn.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(603, 41);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 19);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Delay:";
+            // 
+            // txtGifDelay
+            // 
+            this.txtGifDelay.Location = new System.Drawing.Point(690, 36);
+            this.txtGifDelay.Margin = new System.Windows.Forms.Padding(4);
+            this.txtGifDelay.Name = "txtGifDelay";
+            this.txtGifDelay.Size = new System.Drawing.Size(94, 26);
+            this.txtGifDelay.TabIndex = 3;
+            this.txtGifDelay.Text = "200";
+            // 
+            // rdoGifFade6
+            // 
+            this.rdoGifFade6.AutoSize = true;
+            this.rdoGifFade6.Location = new System.Drawing.Point(345, 39);
+            this.rdoGifFade6.Name = "rdoGifFade6";
+            this.rdoGifFade6.Size = new System.Drawing.Size(198, 23);
+            this.rdoGifFade6.TabIndex = 2;
+            this.rdoGifFade6.Text = "6 Transition Images";
+            this.rdoGifFade6.UseVisualStyleBackColor = true;
+            // 
+            // rdoGifFade1
+            // 
+            this.rdoGifFade1.AutoSize = true;
+            this.rdoGifFade1.Location = new System.Drawing.Point(129, 39);
+            this.rdoGifFade1.Name = "rdoGifFade1";
+            this.rdoGifFade1.Size = new System.Drawing.Size(189, 23);
+            this.rdoGifFade1.TabIndex = 1;
+            this.rdoGifFade1.Text = "1 Transition Image";
+            this.rdoGifFade1.UseVisualStyleBackColor = true;
+            // 
             // rdgGifNoFade
             // 
             this.rdgGifNoFade.AutoSize = true;
@@ -169,66 +236,24 @@
             this.rdgGifNoFade.Text = "No Fade";
             this.rdgGifNoFade.UseVisualStyleBackColor = true;
             // 
-            // rdoGifFade1
+            // label3
             // 
-            this.rdoGifFade1.AutoSize = true;
-            this.rdoGifFade1.Location = new System.Drawing.Point(129, 39);
-            this.rdoGifFade1.Name = "rdoGifFade1";
-            this.rdoGifFade1.Size = new System.Drawing.Size(189, 23);
-            this.rdoGifFade1.TabIndex = 1;
-            this.rdoGifFade1.Text = "1 Transition Image";
-            this.rdoGifFade1.UseVisualStyleBackColor = true;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(929, 36);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(63, 19);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Delay:";
             // 
-            // rdoGifFade6
+            // txtZoomImageCount
             // 
-            this.rdoGifFade6.AutoSize = true;
-            this.rdoGifFade6.Location = new System.Drawing.Point(345, 39);
-            this.rdoGifFade6.Name = "rdoGifFade6";
-            this.rdoGifFade6.Size = new System.Drawing.Size(198, 23);
-            this.rdoGifFade6.TabIndex = 2;
-            this.rdoGifFade6.Text = "6 Transition Images";
-            this.rdoGifFade6.UseVisualStyleBackColor = true;
-            // 
-            // txtGifDelay
-            // 
-            this.txtGifDelay.Location = new System.Drawing.Point(690, 36);
-            this.txtGifDelay.Margin = new System.Windows.Forms.Padding(4);
-            this.txtGifDelay.Name = "txtGifDelay";
-            this.txtGifDelay.Size = new System.Drawing.Size(94, 26);
-            this.txtGifDelay.TabIndex = 3;
-            this.txtGifDelay.Text = "200";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(603, 41);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 19);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Delay:";
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(214, 6);
-            // 
-            // clearToolStripMenuItem
-            // 
-            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(217, 24);
-            this.clearToolStripMenuItem.Text = "Clear";
-            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
-            // 
-            // rdoZoomIn
-            // 
-            this.rdoZoomIn.AutoSize = true;
-            this.rdoZoomIn.Location = new System.Drawing.Point(821, 36);
-            this.rdoZoomIn.Name = "rdoZoomIn";
-            this.rdoZoomIn.Size = new System.Drawing.Size(90, 23);
-            this.rdoZoomIn.TabIndex = 5;
-            this.rdoZoomIn.Text = "Zoom In";
-            this.rdoZoomIn.UseVisualStyleBackColor = true;
+            this.txtZoomImageCount.Location = new System.Drawing.Point(1016, 31);
+            this.txtZoomImageCount.Margin = new System.Windows.Forms.Padding(4);
+            this.txtZoomImageCount.Name = "txtZoomImageCount";
+            this.txtZoomImageCount.Size = new System.Drawing.Size(94, 26);
+            this.txtZoomImageCount.TabIndex = 6;
+            this.txtZoomImageCount.Text = "200";
             // 
             // Form1
             // 
@@ -280,6 +305,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         private System.Windows.Forms.RadioButton rdoZoomIn;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtZoomImageCount;
     }
 }
 

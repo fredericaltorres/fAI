@@ -39,6 +39,7 @@ namespace faiWinApp
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
+            _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
             
             _appOptions.ToFile();
             this.Close();
@@ -75,6 +76,7 @@ namespace faiWinApp
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.txtGifDelay.Text = _appOptions.GifDelay;
             this.rdoZoomIn.Checked = _appOptions.ZoomIn;    
+            this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
 
             this.UserMessage("Ready...");
         }
@@ -134,11 +136,22 @@ namespace faiWinApp
                 else if (rdoZoomIn.Checked)
                     transition = ImageUtility.GifTransitionMode.ZoomIn;
 
+                this.UserMessage($"Creating Gif, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{GifName}");
                 var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
-                ImageUtility.GenerateGif(this.GifName, int.Parse(this.txtGifDelay.Text),
-                     transition, this._dragAndDropFileSelection,
-                     messages: fileNames, messageX: -1, messageY: -1);
-                this.ViewFile(this.GifName);
+                var r = ImageUtility.GenerateGif(
+                        this.GifName,
+                        int.Parse(this.txtGifDelay.Text),
+                        transition,
+                        this._dragAndDropFileSelection,
+                        messages: fileNames,
+                        messageX: -1,
+                        messageY: -1,
+                        zoomImageCount: int.Parse(this.txtZoomImageCount.Text)
+                );
+
+                this.UserMessage($"Gif created: {r}");
+                if(r.Success)
+                    this.ViewFile(this.GifName, displayImageInfo: false);
                 ImageUtility.CleanUpTempFiles();
             }
         }
@@ -154,7 +167,6 @@ namespace faiWinApp
                 int width = image.Width;
                 int height = image.Height;
                 PixelFormat pixelFormat = image.PixelFormat;
-                //int colorDepth =  System.Drawing.Image.GetPixelFormatSize(pixelFormat);
                 this.UserMessage($"Image:{Path.GetFileName(fileName)}, size:{len:0.0} Mb, width: {width}, height: {height}, pixelFormat: {pixelFormat}");
             }
             catch(Exception ex)
@@ -168,9 +180,10 @@ namespace faiWinApp
             }
         }
 
-        private void ViewFile(string fileName)
+        private void ViewFile(string fileName, bool displayImageInfo = true)
         {
-            DisplayImageInfo(fileName);
+            if(displayImageInfo)
+                DisplayImageInfo(fileName);
             ImageUtility.ViewFile(fileName);
         }
 

@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using System;
+using DynamicSugar;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -178,21 +179,36 @@ namespace faiWinApp
                 File.Delete(file);
         }
 
-        public static Bitmap ZoomIntoBitmap(Bitmap originalBitmap, Rectangle zoomArea)
+        public static Bitmap ZoomIntoBitmap_old(Bitmap originalBitmap, Rectangle zoomArea)
         {
-            // Create a new bitmap with the same size as the zoom area
-            Bitmap zoomedBitmap = new Bitmap(zoomArea.Width, zoomArea.Height);
+            var zoomedBitmap = new Bitmap(zoomArea.Width, zoomArea.Height); // Create a new bitmap with the same size as the zoom area
 
-            using (Graphics graphics = Graphics.FromImage(zoomedBitmap))
+            using (var graphics = Graphics.FromImage(zoomedBitmap))
             {
-                // Set high-quality processing
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic; // Set high-quality processing
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
 
                 // Draw the zoomed area
                 graphics.DrawImage(originalBitmap, new Rectangle(0, 0, zoomedBitmap.Width, zoomedBitmap.Height), zoomArea, GraphicsUnit.Pixel);
+            }
+
+            return zoomedBitmap;
+        }
+        public static Bitmap ZoomIntoBitmap(Bitmap originalBitmap, Rectangle zoomArea)
+        {
+            var zoomedBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height); // Create a new bitmap with the same size as the zoom area
+
+            using (var graphics = Graphics.FromImage(zoomedBitmap))
+            {
+                graphics.InterpolationMode  = InterpolationMode.HighQualityBicubic; // Set high-quality processing
+                graphics.SmoothingMode      = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode    = PixelOffsetMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+                // Draw the zoomed area
+                graphics.DrawImage(originalBitmap, new Rectangle(0, 0, originalBitmap.Width, originalBitmap.Height), zoomArea, GraphicsUnit.Pixel);
             }
 
             return zoomedBitmap;
@@ -252,7 +268,25 @@ namespace faiWinApp
             ZoomIn,
         }
 
-        public static bool GenerateGif(
+        public class GeneratedGif
+        {
+            public int Width { get; set; }
+            public int Height { get; set; }
+            public string GifName { get; set; }
+            public int ImageCount { get; set; }
+            public long ImageSizeMB { get; set; }
+
+            public Exception Exception { get; set; }
+            public bool Success => Exception == null;
+
+            public override string ToString()
+            {
+                this.ImageSizeMB = new FileInfo(this.GifName).Length / 1024 / 1024; 
+                return DS.Dictionary(this).Format();
+            }
+        }
+
+        public static GeneratedGif GenerateGif(
             string gifName, 
             int delay, 
             GifTransitionMode gifTransitionMode, 
@@ -262,9 +296,13 @@ namespace faiWinApp
             int messageX = -1, 
             int messageY = -1, 
             int fontSize = 64, 
-            string fontName = "Consola")
+            string fontName = "Consola", 
+            int zoomImageCount = 32,
+            int zoomImagePixelStep = 1) // Pixels
         {
             var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
+            var rr = new GeneratedGif { GifName = gifName, Width = refWidth, Height = refHeight };
+
             DeleteFile(gifName);
             using (var collection = new MagickImageCollection())
             {
@@ -274,21 +312,20 @@ namespace faiWinApp
                 {
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
-                        delay = delay / 3;
+                        delay = delay / 4;
                     }
 
                     GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay, refWidth, refHeight);
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
-                        var zoomPercent = 1;
-                        for (var pZoom = 1; pZoom <= 10; pZoom++)
+                        var zoomPixelStep = 3; // Pixels
+                        var zoomPixel = zoomPixelStep;
+                        for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
-                            var zoomX = refWidth * (pZoom * zoomPercent) / 100;
-                            var zoomY = refHeight * (pZoom * zoomPercent) / 100;
-                            var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomX, zoomY, refWidth - (zoomX*2), refHeight - (zoomY*2)));
+                            var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - zoomPixel*2, refHeight - zoomPixel * 2));
                             GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
-                            //zoomPercent -= 1;
+                            zoomPixel += zoomPixelStep;
                         }
                     }
 
@@ -328,14 +365,17 @@ namespace faiWinApp
                     collection.Optimize();
                 }
 
+                rr.ImageCount = collection.Count;
+
                 collection.Write(gifName);
             }
 
-            return true;
+            return rr;
         }
 
         private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay, int refWidth, int refHeight)
         {
+            int imageNumber = collection.Count;
             var (width, height) = GetImageWidthAndHeight(fileName);
             if(width != refWidth || height != refHeight)
             {
@@ -358,11 +398,11 @@ namespace faiWinApp
                 Height = height,
             };
 
-            if (messageX == -1 && messageY == -1)
-            {
-                settings.Width = width;
-                settings.Height = height;
-            }
+            //if (messageX == -1 && messageY == -1)
+            //{
+            //    settings.Width = width;
+            //    settings.Height = height;
+            //}
 
             MagickImage image = null;
             if (messageX == -1 && messageY == -1)
@@ -376,6 +416,8 @@ namespace faiWinApp
                     image.Annotate(message, Gravity.South);
                 else
                     image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(fontSize).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(messageX, messageY, message));
+
+                image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(22).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height-16, imageNumber.ToString()));
             }
             collection.Add(image);
             collection[collection.Count-1].AnimationDelay = animationDelay;
