@@ -276,6 +276,8 @@ namespace faiWinApp
             public int ImageCount { get; set; }
             public long ImageSizeMB { get; set; }
 
+            public int Duration { get; set; }
+
             public Exception Exception { get; set; }
             public bool Success => Exception == null;
 
@@ -298,24 +300,26 @@ namespace faiWinApp
             int fontSize = 64, 
             string fontName = "Consola", 
             int zoomImageCount = 32,
-            int zoomImagePixelStep = 1) // Pixels
+            int zoomImagePixelStep = 1,
+            bool generateMP4 = false) // Pixels
         {
             var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
             var rr = new GeneratedGif { GifName = gifName, Width = refWidth, Height = refHeight };
-
+            int duration = 0;
             DeleteFile(gifName);
             using (var collection = new MagickImageCollection())
             {
-                var i = 0;
+                var imageIndex = 0;
                 var imagesCount = imageFileNames.Count;
                 foreach (var fileName in imageFileNames)
                 {
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
-                    {
                         delay = delay / 4;
-                    }
 
-                    GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, fileName, delay, refWidth, refHeight);
+                    var message = messages == null ? null : messages[imageIndex];
+
+                    // Generate the main image
+                    GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, delay, refWidth, refHeight);
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
@@ -324,19 +328,18 @@ namespace faiWinApp
                         for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
                             var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - zoomPixel*2, refHeight - zoomPixel * 2));
-                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, newZoomedImage, delay, refWidth, refHeight);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, delay, refWidth, refHeight);
                             zoomPixel += zoomPixelStep;
                         }
                     }
-
-                    if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
+                    else if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
                         var fadingSteps = 6;
                         var fadingValue = 0.17f;
-                        var imageIndexStartFading = i;
+                        var imageIndexStartFading = imageIndex;
                         var fadeDelay = 16;
-                        var imageIndexEndFading = i + 1;
-                        if (i == imagesCount - 1)
+                        var imageIndexEndFading = imageIndex + 1;
+                        if (imageIndex == imagesCount - 1)
                             imageIndexEndFading = 0; // Fade from the last one to the first one
 
                         if(gifTransitionMode == GifTransitionMode.Fade1)
@@ -349,11 +352,11 @@ namespace faiWinApp
                         for (int j = 0; j < fadingSteps; j++)
                         {
                             var transitionImageFileName = BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue);
-                            GenerateGifOneImage(messages[i], messageX, messageY, fontSize, fontName, collection, i, transitionImageFileName, fadeDelay, refWidth, refHeight);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight);
                         }
                     }
                   
-                    i += 1;
+                    imageIndex += 1;
                 }
 
                 if (_256ColorOptimization)
@@ -366,8 +369,13 @@ namespace faiWinApp
                 }
 
                 rr.ImageCount = collection.Count;
-
+                rr.Duration = collection.Sum(i => i.AnimationDelay);
                 collection.Write(gifName);
+
+                using (var animatedGif = new MagickImageCollection(gifName))
+                {
+                    animatedGif.Write($"{gifName}.webp", MagickFormat.WebP);
+                }
             }
 
             return rr;
@@ -398,11 +406,6 @@ namespace faiWinApp
                 Height = height,
             };
 
-            //if (messageX == -1 && messageY == -1)
-            //{
-            //    settings.Width = width;
-            //    settings.Height = height;
-            //}
 
             MagickImage image = null;
             if (messageX == -1 && messageY == -1)
@@ -416,9 +419,8 @@ namespace faiWinApp
                     image.Annotate(message, Gravity.South);
                 else
                     image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(fontSize).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(messageX, messageY, message));
-
-                image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(22).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height-16, imageNumber.ToString()));
             }
+            image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(22).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height - 16, imageNumber.ToString()));
             collection.Add(image);
             collection[collection.Count-1].AnimationDelay = animationDelay;
             collection[collection.Count - 1].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other

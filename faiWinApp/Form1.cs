@@ -138,6 +138,7 @@ namespace faiWinApp
 
                 this.UserMessage($"Creating Gif, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{GifName}");
                 var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
+                fileNames = null;
                 var r = ImageUtility.GenerateGif(
                         this.GifName,
                         int.Parse(this.txtGifDelay.Text),
