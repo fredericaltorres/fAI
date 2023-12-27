@@ -30,7 +30,6 @@ namespace fAI
             if (openAiOrg != null)
                 OpenAIHttpBase. _openAiOrg = openAiOrg;
         }
-
         
         OpenAIAudio _audio = null;
         public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio());
@@ -43,7 +42,7 @@ namespace fAI
 
         public OpenAIImage _image = null;
         public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
-
+        
         public static bool TraceOn { get; set; } = false;
 
         public const string DefaultLogFileName = @"c:\temp\fAI.log";
@@ -91,4 +90,3 @@ namespace fAI
         }
     }
 }
-
