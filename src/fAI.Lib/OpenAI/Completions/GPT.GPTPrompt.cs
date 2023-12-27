@@ -120,7 +120,7 @@ namespace fAI
 
         public string GetPostBody()
         {
-            if (this.Messages != null)
+            if (this.Messages != null && this.Messages.Count > 0)
             {
                 return JsonConvert.SerializeObject(new
                 {

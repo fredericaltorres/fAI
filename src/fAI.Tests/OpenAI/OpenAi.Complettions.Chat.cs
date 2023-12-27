@@ -8,6 +8,7 @@ using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace fAI.Tests
 {
@@ -17,6 +18,11 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAiComplettionsChat
     {
+        public OpenAiComplettionsChat()
+        {
+            OpenAI.TraceOn = true;
+        }
+            
         [Fact()]
         [TestBeforeAfter]
         public void GetModels()
@@ -222,6 +228,15 @@ End of text
 
         const string ReferenceEnglishSentence = "Hello world.";
 
+        const string ReferenceEnglishJsonDictionary = @"{
+        ""(50,51)"": ""There are people who have a significant number of followers in every business domain. There are people who have a significant number of followers in every business domain."",
+        ""(50,52)"": ""Education "",
+        ""(53,54)"": ""Classroom 01"",
+        ""(53,55)"": ""Classroom 02"",
+        ""(56,57)"": ""Business Charts"",
+        ""(56,58)"": ""Is a great way to visualize information about users""
+      }";
+
         [Fact()]
         [TestBeforeAfter]
         public void Translate_EnglishToFrench()
@@ -229,6 +244,21 @@ End of text
             var client = new OpenAI();
             var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
             Assert.Equal("Bonjour monde.", translation);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_Dictionary()
+        {
+            var client = new OpenAI();
+            var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
+            var outputDictionary = client.Completions.Translate(inputDictionary, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(6, outputDictionary.Keys.Count);
+
+            inputDictionary.Keys.ToList().ForEach(k => Assert.True(outputDictionary.ContainsKey(k)));
+
+            Assert.Equal("Éducation", outputDictionary["(50,52)"]);
+            Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
         }
 
         [Fact()]

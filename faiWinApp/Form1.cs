@@ -42,6 +42,7 @@ namespace faiWinApp
             _appOptions.GifRepeat = this.txtGifRepeat.Text;
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
             _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
+            _appOptions.ViewImageAfterWork = this.chkViewFileAfterWork.Checked;
             
             _appOptions.ToFile();
             this.Close();
@@ -65,6 +66,7 @@ namespace faiWinApp
                     this.UserMessage($"Saved image to {newImageFile}");
                     this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
                     ViewFile(newImageFile); _lastImageFile = newImageFile;
+                    new ClipBoard().SetText(newImageFile);
                 }
                 else MessageBox.Show("No image found in clipboard.");
             }
@@ -80,6 +82,7 @@ namespace faiWinApp
             this.txtGifRepeat.Text = _appOptions.GifRepeat;
             this.rdoZoomIn.Checked = _appOptions.ZoomIn;
             this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
+            this.chkViewFileAfterWork.Checked = _appOptions.ViewImageAfterWork;
 
             this.UserMessage("Ready...");
         }
@@ -192,9 +195,12 @@ namespace faiWinApp
 
         private void ViewFile(string fileName, bool displayImageInfo = true)
         {
-            if(displayImageInfo)
-                DisplayImageInfo(fileName);
-            ImageUtility.ViewFile(fileName);
+            if (this.chkViewFileAfterWork.Checked)
+            {
+                if (displayImageInfo)
+                    DisplayImageInfo(fileName);
+                ImageUtility.ViewFile(fileName);
+            }
         }
 
         public static void RenameFile(string file, string newName)
@@ -259,6 +265,11 @@ namespace faiWinApp
                 ImageUtility.RenameFile(this.GifName, newGifName);
                 ImageUtility.ViewFile(newGifName);
             }
+        }
+
+        private void butOpenWorkFolder_Click(object sender, EventArgs e)
+        {
+            ImageUtility.OpenFolderInExplorer(_appOptions.WorkFolder);
         }
     }
 }

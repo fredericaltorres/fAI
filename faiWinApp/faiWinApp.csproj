@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppOptions.cs" />
+    <Compile Include="util\ClipBoard.cs" />
     <Compile Include="util\CWaitCursor.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

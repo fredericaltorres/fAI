@@ -163,6 +163,16 @@ namespace faiWinApp
             else return null;
         }
 
+        public static bool OpenFolderInExplorer(string filePath)
+        {
+            if (Directory.Exists(filePath))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+                return true;
+            }
+            else return false;
+        }
+
         public static bool ViewFile(string filePath)
         {
             if (File.Exists(filePath))

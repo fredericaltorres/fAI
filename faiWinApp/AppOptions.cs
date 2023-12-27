@@ -9,6 +9,7 @@
         public bool GifFade6 { get; set; }
         public bool ZoomIn { get; set; }
         public string ZoomInImageCount { get; set; }
+        public bool ViewImageAfterWork { get; set; }
     }
 
 }

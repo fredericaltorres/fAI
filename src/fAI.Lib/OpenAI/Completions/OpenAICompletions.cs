@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -99,6 +100,18 @@ namespace fAI
             };
 
             return Create(prompt).Text.Trim();
+        }
+
+        public Dictionary<string, string> Translate(Dictionary<string, string> inputDictionary, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        {
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(inputDictionary, formatting: Formatting.Indented);
+            var prompt = new Prompt_GPT_35_TurboInstruct
+            {
+                Text = $"Translate from {sourceLangague} to {targetLanguage} the following JSON blob:\r\n{json}",
+            };
+            var outputDictionaryJson = Create(prompt).Text.Trim();
+            var od = JsonConvert.DeserializeObject<Dictionary<string, string>>(outputDictionaryJson);
+            return od;
         }
     }
 }

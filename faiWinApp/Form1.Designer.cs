@@ -35,24 +35,26 @@
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createGifAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.batchModesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGifAnimationZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtGifRepeat = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtZoomImageCount = new System.Windows.Forms.TextBox();
             this.rdoZoomIn = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.txtGifDelay = new System.Windows.Forms.TextBox();
             this.rdoGifFade6 = new System.Windows.Forms.RadioButton();
             this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
             this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txtZoomImageCount = new System.Windows.Forms.TextBox();
-            this.batchModesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createGifAnimationZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtGifRepeat = new System.Windows.Forms.TextBox();
+            this.butOpenWorkFolder = new System.Windows.Forms.Button();
+            this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +67,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1177, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(1274, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -121,6 +123,21 @@
             this.createGifAnimationToolStripMenuItem.Text = "Create Gif Animation";
             this.createGifAnimationToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem_Click);
             // 
+            // batchModesToolStripMenuItem
+            // 
+            this.batchModesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createGifAnimationZoomToolStripMenuItem});
+            this.batchModesToolStripMenuItem.Name = "batchModesToolStripMenuItem";
+            this.batchModesToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.batchModesToolStripMenuItem.Text = "Batch Modes";
+            // 
+            // createGifAnimationZoomToolStripMenuItem
+            // 
+            this.createGifAnimationZoomToolStripMenuItem.Name = "createGifAnimationZoomToolStripMenuItem";
+            this.createGifAnimationZoomToolStripMenuItem.Size = new System.Drawing.Size(271, 24);
+            this.createGifAnimationZoomToolStripMenuItem.Text = "Create Gif Animation - Zoom";
+            this.createGifAnimationZoomToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationZoomToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -137,12 +154,12 @@
             // txtUserOutput
             // 
             this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserOutput.Location = new System.Drawing.Point(17, 188);
+            this.txtUserOutput.Location = new System.Drawing.Point(26, 281);
             this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4);
             this.txtUserOutput.Multiline = true;
             this.txtUserOutput.Name = "txtUserOutput";
             this.txtUserOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtUserOutput.Size = new System.Drawing.Size(989, 407);
+            this.txtUserOutput.Size = new System.Drawing.Size(1221, 408);
             this.txtUserOutput.TabIndex = 1;
             // 
             // WorkFolder
@@ -150,7 +167,7 @@
             this.WorkFolder.Location = new System.Drawing.Point(155, 42);
             this.WorkFolder.Margin = new System.Windows.Forms.Padding(4);
             this.WorkFolder.Name = "WorkFolder";
-            this.WorkFolder.Size = new System.Drawing.Size(984, 26);
+            this.WorkFolder.Size = new System.Drawing.Size(797, 26);
             this.WorkFolder.TabIndex = 2;
             // 
             // label1
@@ -165,6 +182,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkViewFileAfterWork);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.txtGifRepeat);
             this.groupBox1.Controls.Add(this.label3);
@@ -177,10 +195,48 @@
             this.groupBox1.Controls.Add(this.rdgGifNoFade);
             this.groupBox1.Location = new System.Drawing.Point(26, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1139, 87);
+            this.groupBox1.Size = new System.Drawing.Size(1139, 177);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(686, 41);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 19);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Repeat:";
+            // 
+            // txtGifRepeat
+            // 
+            this.txtGifRepeat.Location = new System.Drawing.Point(766, 39);
+            this.txtGifRepeat.Margin = new System.Windows.Forms.Padding(4);
+            this.txtGifRepeat.Name = "txtGifRepeat";
+            this.txtGifRepeat.Size = new System.Drawing.Size(45, 26);
+            this.txtGifRepeat.TabIndex = 8;
+            this.txtGifRepeat.Text = "1";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(953, 38);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(117, 19);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Image Count:";
+            // 
+            // txtZoomImageCount
+            // 
+            this.txtZoomImageCount.Location = new System.Drawing.Point(1092, 33);
+            this.txtZoomImageCount.Margin = new System.Windows.Forms.Padding(4);
+            this.txtZoomImageCount.Name = "txtZoomImageCount";
+            this.txtZoomImageCount.Size = new System.Drawing.Size(40, 26);
+            this.txtZoomImageCount.TabIndex = 6;
+            this.txtZoomImageCount.Text = "200";
             // 
             // rdoZoomIn
             // 
@@ -243,65 +299,33 @@
             this.rdgGifNoFade.Text = "No Fade";
             this.rdgGifNoFade.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // butOpenWorkFolder
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(953, 38);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(117, 19);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Image Count:";
+            this.butOpenWorkFolder.Location = new System.Drawing.Point(983, 42);
+            this.butOpenWorkFolder.Name = "butOpenWorkFolder";
+            this.butOpenWorkFolder.Size = new System.Drawing.Size(182, 37);
+            this.butOpenWorkFolder.TabIndex = 5;
+            this.butOpenWorkFolder.Text = "Open In Explorer";
+            this.butOpenWorkFolder.UseVisualStyleBackColor = true;
+            this.butOpenWorkFolder.Click += new System.EventHandler(this.butOpenWorkFolder_Click);
             // 
-            // txtZoomImageCount
+            // chkViewFileAfterWork
             // 
-            this.txtZoomImageCount.Location = new System.Drawing.Point(1092, 33);
-            this.txtZoomImageCount.Margin = new System.Windows.Forms.Padding(4);
-            this.txtZoomImageCount.Name = "txtZoomImageCount";
-            this.txtZoomImageCount.Size = new System.Drawing.Size(40, 26);
-            this.txtZoomImageCount.TabIndex = 6;
-            this.txtZoomImageCount.Text = "200";
-            // 
-            // batchModesToolStripMenuItem
-            // 
-            this.batchModesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createGifAnimationZoomToolStripMenuItem});
-            this.batchModesToolStripMenuItem.Name = "batchModesToolStripMenuItem";
-            this.batchModesToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
-            this.batchModesToolStripMenuItem.Text = "Batch Modes";
-            // 
-            // createGifAnimationZoomToolStripMenuItem
-            // 
-            this.createGifAnimationZoomToolStripMenuItem.Name = "createGifAnimationZoomToolStripMenuItem";
-            this.createGifAnimationZoomToolStripMenuItem.Size = new System.Drawing.Size(271, 24);
-            this.createGifAnimationZoomToolStripMenuItem.Text = "Create Gif Animation - Zoom";
-            this.createGifAnimationZoomToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationZoomToolStripMenuItem_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(686, 41);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 19);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Repeat:";
-            // 
-            // txtGifRepeat
-            // 
-            this.txtGifRepeat.Location = new System.Drawing.Point(766, 39);
-            this.txtGifRepeat.Margin = new System.Windows.Forms.Padding(4);
-            this.txtGifRepeat.Name = "txtGifRepeat";
-            this.txtGifRepeat.Size = new System.Drawing.Size(45, 26);
-            this.txtGifRepeat.TabIndex = 8;
-            this.txtGifRepeat.Text = "1";
+            this.chkViewFileAfterWork.AutoSize = true;
+            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 91);
+            this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
+            this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
+            this.chkViewFileAfterWork.TabIndex = 10;
+            this.chkViewFileAfterWork.Text = "View File After Work";
+            this.chkViewFileAfterWork.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1177, 608);
+            this.ClientSize = new System.Drawing.Size(1274, 714);
+            this.Controls.Add(this.butOpenWorkFolder);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.WorkFolder);
@@ -352,6 +376,8 @@
         private System.Windows.Forms.ToolStripMenuItem createGifAnimationZoomToolStripMenuItem;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtGifRepeat;
+        private System.Windows.Forms.Button butOpenWorkFolder;
+        private System.Windows.Forms.CheckBox chkViewFileAfterWork;
     }
 }
 
