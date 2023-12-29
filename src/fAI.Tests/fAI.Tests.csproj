@@ -59,6 +59,7 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.Presentation.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.CityAI.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
