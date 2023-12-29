@@ -24,7 +24,7 @@ namespace fAI
         }
     }
 
-    public class DeepgramAI
+    public class DeepgramAI : Logger
     {
         DeepgramClient _deepgramClient;
 

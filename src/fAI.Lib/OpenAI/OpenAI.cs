@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace fAI
 {
-    public class OpenAI 
+    public class OpenAI : Logger
     {
         public static IReadOnlyList<float> GenerateEmbeddings(string text)
         {
@@ -42,7 +42,11 @@ namespace fAI
 
         public OpenAIImage _image = null;
         public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
-        
+    }
+
+
+    public class Logger
+    {
         public static bool TraceOn { get; set; } = false;
 
         public const string DefaultLogFileName = @"c:\temp\fAI.log";
@@ -50,12 +54,12 @@ namespace fAI
 
         private static void TraceToFile(string message)
         {
-            if(LogFileName == null)
+            if (LogFileName == null)
                 LogFileName = Environment.GetEnvironmentVariable("OPENAI_LOG_FILE");
             if (LogFileName == null)
                 LogFileName = DefaultLogFileName;
 
-            File.AppendAllText(LogFileName, message.Replace(Environment.NewLine,"`r`n") + Environment.NewLine);
+            File.AppendAllText(LogFileName, message.Replace(Environment.NewLine, "`r`n") + Environment.NewLine);
         }
 
         public static string TraceError(string message, object This, [CallerMemberName] string methodName = "")

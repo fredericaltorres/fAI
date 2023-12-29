@@ -31,7 +31,7 @@ namespace fAI
         public DeepgramTranscriptionResult Create(string audioFile, string language = "en", bool vtt = false, string model = "nova-2")
         {
             var r = new DeepgramTranscriptionResult();
-            OpenAI.Trace(new { audioFile, model }, this);
+            DeepgramAI.Trace(new { audioFile, model }, this);
 
             var options = new PrerecordedTranscriptionOptions()
             {
