@@ -333,30 +333,30 @@ namespace faiWinApp
             {
                 var imageIndex = 0;
                 var imagesCount = imageFileNames.Count;
+                var zoomDelay = delay / 8;
+
                 foreach (var fileName in imageFileNames)
                 {
-                    if (gifTransitionMode == GifTransitionMode.ZoomIn)
-                        delay = delay / 4;
-
                     var message = messages == null ? null : messages[imageIndex];
-
-                    // Generate the main image
-                    GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, delay, refWidth, refHeight);
-                 
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
+                        // Generate the main image
+                        GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, zoomDelay, refWidth, refHeight);
                         var zoomPixelStep = 3; // Pixels
                         var zoomPixel = zoomPixelStep;
                         for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
                             var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - zoomPixel*2, refHeight - zoomPixel * 2));
-                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, delay, refWidth, refHeight);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, zoomDelay, refWidth, refHeight);
                             zoomPixel += zoomPixelStep;
                         }
                     }
                     else if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
+                        // Generate the main image
+                        GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, delay, refWidth, refHeight);
+
                         var fadingSteps = 6;
                         var fadingValue = 0.17f;
                         var imageIndexStartFading = imageIndex;
