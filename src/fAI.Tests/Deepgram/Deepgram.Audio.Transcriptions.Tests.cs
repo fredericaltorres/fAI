@@ -23,5 +23,18 @@ namespace fAI.Tests
             var expected = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
             Assert.Equal(expected, r.Text);
         }
+
+        [Fact()]
+        public void SpeechToText_WithVTT()
+        {
+            var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
+            var client = new DeepgramAI();
+            var r = client.Audio.Transcriptions.Create(mp3FileName, vtt: true);
+            var expected = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+            Assert.Equal(expected, r.Text);
+            Assert.StartsWith("WEBVTT", r.VTT);
+            Assert.Contains("00:00:00 --> 00:00:02.260", r.VTT);
+            Assert.Contains(" - I am he as you are he as you are me,", r.VTT);
+        }
     }
 }

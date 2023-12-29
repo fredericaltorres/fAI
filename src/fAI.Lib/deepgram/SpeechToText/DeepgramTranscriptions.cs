@@ -28,7 +28,7 @@ namespace fAI
         }
 
         // https://playground.deepgram.com/?smart_format=true&language=en&model=nova-2
-        public DeepgramTranscriptionResult Create(string audioFile, string model = "nova-2", string language = "en")
+        public DeepgramTranscriptionResult Create(string audioFile, string language = "en", bool vtt = false, string model = "nova-2")
         {
             var r = new DeepgramTranscriptionResult();
             OpenAI.Trace(new { audioFile, model }, this);
@@ -38,6 +38,7 @@ namespace fAI
                 Model = model,
                 Language = language,
                 SmartFormat = true,
+                Utterances = vtt,
             };
 
             var mimeType = GetMimeType(audioFile);
@@ -47,7 +48,8 @@ namespace fAI
                 var stream = new StreamSource(fs, mimeType);
                 var response = _deepgramClient.Transcription.Prerecorded.GetTranscriptionAsync(stream, options).GetAwaiter().GetResult();
                 r.Text = response.Results.Channels[0].Alternatives[0].Transcript;
-                //r.VTT = response.ToWebVTT();
+                if(vtt)
+                    r.VTT = response.ToWebVTT();
             }
 
             return r;
