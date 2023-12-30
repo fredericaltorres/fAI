@@ -152,7 +152,7 @@ they share in the story.
 API keys can be hard coded in code or read automatically from environment variable. 
 
 |Environment Variable Names|
-----------------------------
+|----------------------------|
 |MICROSOFT_AZURE_SEARCH_KEY|
 |MICROSOFT_COGNITIVE_SERVICES_KEY|
 |MICROSOFT_COGNITIVE_SERVICES_REGION|
