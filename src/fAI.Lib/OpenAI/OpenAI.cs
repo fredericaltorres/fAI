@@ -75,7 +75,7 @@ namespace fAI
                 if (className.StartsWith("<"))
                     className = "";
 
-                var m = $"[{DateTime.Now}][{className}{methodName}()]{message}";
+                var m = $"{DateTime.Now}|[{className}{methodName}()]{message}";
                 Console.WriteLine(m);
                 TraceToFile(m);
             }

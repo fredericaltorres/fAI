@@ -123,6 +123,10 @@ namespace fAI
 
         public Dictionary<string, string> Translate(Dictionary<string, string> inputDictionary, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
         {
+            var strings = inputDictionary.Values.ToList();
+            if (IsNumeric(strings)) // GPT does not like things that cannot be translated and return an invalid JSON
+                return inputDictionary;
+
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(inputDictionary, formatting: Formatting.Indented);
             var prompt = new Prompt_GPT_35_TurboInstruct
             {
@@ -135,15 +139,24 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(Translate)}(), failed to translate dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{responseJson}");
         }
 
+        private bool IsNumeric(string value)
+        {
+            return value.All(char.IsNumber);
+        }
+
+        private bool IsNumeric(List<string> strings)
+        {
+            return strings.All(x => IsNumeric(x));
+        }
+
         public List<string> Translate(List<string> strings, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
         {
-            var d = new Dictionary<string, string>();
+            if (IsNumeric(strings)) // GPT does not like things that cannot be translated and return an invalid JSON
+                return strings;
+
             var intKey = 0;
-            foreach (var s in strings)
-            {
-                d.Add(intKey.ToString(), s);
-                intKey++;
-            }
+            var d = strings.ToDictionary(x => intKey.ToString(), x => x);
+          
             var dd = Translate(d, sourceLangague, targetLanguage);
             return dd.Values.ToList();
         }

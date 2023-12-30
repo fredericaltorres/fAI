@@ -145,7 +145,7 @@ The image should be a painting, not a photograph.
                     var r = client.Image.Generate(imagePrompt, size: OpenAIImageSize._1024x1024);
                     if (r.Success)
                     {
-                        generatedDocument.LocalImage = r.DownloadImageLocally()[0];
+                        generatedDocument.LocalImage = r.DownloadImage()[0];
                     }
                 }
             }

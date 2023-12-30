@@ -25,7 +25,7 @@ namespace fAI
             return JsonUtils.FromJSON<ImageResponse>(text);
         }
 
-        public List<string> DownloadImageLocally()
+        public List<string> DownloadImage()
         {
             var r = new List<string>();
             foreach (var d in this.data)

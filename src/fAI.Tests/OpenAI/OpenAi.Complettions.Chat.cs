@@ -9,11 +9,10 @@ using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using DynamicSugar;
 
 namespace fAI.Tests
 {
-
-    
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAiComplettionsChat
@@ -80,7 +79,7 @@ namespace fAI.Tests
             response = client.Completions.Create(prompt);
             Assert.Matches(@"Eric.*09\/01\/2021 at 15:00", response.Text);
 
-            prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to on 09/10/2021?" });
+            prompt.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What do I have to do on 09/10/2021?" });
             response = client.Completions.Create(prompt);
             Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
@@ -186,15 +185,34 @@ End of text
 
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
             response = client.Completions.Create(p);
-            Assert.True(response.Text.Contains("real-time"));
+            Assert.Contains("real-time", response.Text);
         }
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_JsonMode()
+        public void Completion_JsonMode_WorldCup()
         {
             var client = new OpenAI();
-            var p = new Prompt_GPT_35_Turbo_JsonMode
+            var p = new Prompt_GPT_35_Turbo_JsonAnswer
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful assistant designed to output JSON." },
+                    new GPTMessage { Role =  MessageRole.user,   Content = "Who won the soccer world cup in 1998?" }
+                }
+            };
+            var response = client.Completions.Create(p);
+            Assert.True(response.Success);
+            var answer = response.JsonObject["winner"];
+            Assert.Equal("France", answer);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_JsonMode_WorldSeries()
+        {
+            var client = new OpenAI();
+            var p = new Prompt_GPT_35_Turbo_JsonAnswer
             {
                 Messages = new List<GPTMessage>()
                 {
@@ -204,9 +222,8 @@ End of text
             };
             var response = client.Completions.Create(p);
             Assert.True(response.Success);
-            var a = response.JsonObject["winner"];
-            Assert.Equal("Los Angeles Dodgers", a);
-            
+            var answer = response.JsonObject["winner"];
+            Assert.Equal("Los Angeles Dodgers", answer);
         }
 
         [Fact()]
@@ -289,6 +306,18 @@ End of text
 
         [Fact()]
         [TestBeforeAfter]
+        public void Translate_EnglishToFrench_ListOfNumber()
+        {
+            var client = new OpenAI();
+            var inputList = DS.List(1, 2, 3, 4).Select(i => i.ToString()).ToList();
+
+            var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(4, outputList.Count);
+            DS.Range(4).ForEach(i => Assert.Contains((i+1).ToString(), outputList[i]));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Translate_EnglishToSpanish()
         {
             var client = new OpenAI();
@@ -310,15 +339,6 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
             var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
             Assert.NotEqual(null, summarization);
-        }
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Prompt()
-        {
-            //var gpt = new GPT();
-            //const string ReferenceEnglishTextForSummarization = @"Q: What's the diameter of the earth? A:";
-            //var answer = gpt.Prompt(ReferenceEnglishTextForSummarization);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace fAI
 {
-    
     public class Prompt_GPT_35_TurboInstruct : GPTPrompt
     {
         public Prompt_GPT_35_TurboInstruct() : base()
@@ -23,22 +22,20 @@
         }
     }
 
-
-    public class ResponseFormat
+    public class JsonResponseFormat
     {
         public string type { get; set; } = "json_object";
     }
 
-    public class Prompt_GPT_35_Turbo_JsonMode : GPTPrompt
+    public class Prompt_GPT_35_Turbo_JsonAnswer : GPTPrompt
     {
-        
-        public Prompt_GPT_35_Turbo_JsonMode() : base()
+        public Prompt_GPT_35_Turbo_JsonAnswer() : base()
         {
             Model = "gpt-3.5-turbo-1106";
             Url = "https://api.openai.com/v1/chat/completions";
             MaxTokens = 2000;
             NewTokens = 400;
-            response_format = new ResponseFormat();
+            response_format = new JsonResponseFormat();
         }
     }
 
@@ -48,7 +45,6 @@
         {
             Model = "gpt-4";
             Url = "https://api.openai.com/v1/chat/completions";
-                   
 
             MaxTokens = 2000;
             NewTokens = 400;
