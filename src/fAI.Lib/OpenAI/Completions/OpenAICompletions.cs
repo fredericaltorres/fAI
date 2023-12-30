@@ -107,6 +107,20 @@ namespace fAI
             return Create(prompt).Text.Trim();
         }
 
+
+        private bool IsValidJson<T>(string json)
+        {
+            try 
+            {                 
+                var o = JsonConvert.DeserializeObject<T>(json);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public Dictionary<string, string> Translate(Dictionary<string, string> inputDictionary, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
         {
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(inputDictionary, formatting: Formatting.Indented);
@@ -114,9 +128,11 @@ namespace fAI
             {
                 Text = $"Translate from {sourceLangague} to {targetLanguage} the following JSON blob:\r\n{json}",
             };
-            var outputDictionaryJson = Create(prompt).Text.Trim();
-            var od = JsonConvert.DeserializeObject<Dictionary<string, string>>(outputDictionaryJson);
-            return od;
+            var responseJson = Create(prompt).Text.Trim();
+            if (IsValidJson<Dictionary<string, string>>(responseJson))
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(responseJson);
+            else
+                throw new ChatGPTException($"{nameof(Translate)}(), failed to translate dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{responseJson}");
         }
 
         public List<string> Translate(List<string> strings, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
