@@ -77,7 +77,7 @@ public void Completion_Chat_QuestionAboutPastSchedule()
 Translation with model gpt-3.5-turbo
 
 ```csharp
-public string                     Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage);
+public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage);
 ```
 
 ```csharp
@@ -90,8 +90,8 @@ public void Translate_EnglishToSpanish()
     Assert.Equal("'Hola mundo.'", translation);
 }
 ```
-Others helper to execute translations. Translating dictionary or list of string can do 2 things
-1. Batch translating more than one text with 1 call to GPT.
+Others helper to execute translations. Translating dictionary or list of strings can do 2 things
+1. Translate more than one text with one call to GPT.
 2. For a dictionary the `key` is not translated as part of the answer and can be use to map the translation
 with the original texts.
 
