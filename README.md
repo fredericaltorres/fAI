@@ -147,3 +147,16 @@ they share in the story.
 
 <img src=".\Image_Generate.example.png" alt="Image_Generate.example.png" width="448"/>
 
+
+# Third parties API Key
+API keys can be hard coded in code or read automatically from environment variable. 
+
+|Environment Variable Names|
+----------------------------
+|MICROSOFT_AZURE_SEARCH_KEY|
+|MICROSOFT_COGNITIVE_SERVICES_KEY|
+|MICROSOFT_COGNITIVE_SERVICES_REGION|
+|OPENAI_API_KEY|
+|OPENAI_ORGANIZATION_ID|
+|OPENAI_LOG_FILE|
+|DEEPGRAM_API_KEY|
