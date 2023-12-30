@@ -30,7 +30,9 @@ namespace fAI
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create(GPTPrompt p)
         {
-            OpenAI.Trace(new { prompt = p }, this);
+            OpenAI.Trace(new { p.Url }, this);
+            OpenAI.Trace(new { Prompt = p }, this);
+            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
@@ -38,6 +40,8 @@ namespace fAI
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+
                 var r = CompletionResponse.FromJson(response.Text);
                 r.GPTPrompt = p;
                 r.Stopwatch = sw;

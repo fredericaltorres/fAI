@@ -59,7 +59,7 @@ namespace fAI
             if (LogFileName == null)
                 LogFileName = DefaultLogFileName;
 
-            File.AppendAllText(LogFileName, message.Replace(Environment.NewLine, "`r`n") + Environment.NewLine);
+            File.AppendAllText(LogFileName, message + Environment.NewLine);
         }
 
         public static string TraceError(string message, object This, [CallerMemberName] string methodName = "")
@@ -90,7 +90,11 @@ namespace fAI
             foreach (var k in d.Keys)
                 sb.Append($"{k}: {d[k]}, ");
 
-            return Trace(sb.ToString(), This, methodName);
+            var s = sb.ToString();
+            s = s.Replace(Environment.NewLine, "");
+            s = s.Replace("\n", "");
+            s = s.Replace("\r", "");
+            return Trace(s, This, methodName);
         }
     }
 }
