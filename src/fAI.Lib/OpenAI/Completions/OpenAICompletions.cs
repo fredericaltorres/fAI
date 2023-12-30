@@ -155,7 +155,7 @@ namespace fAI
                 return strings;
 
             var intKey = 0;
-            var d = strings.ToDictionary(x => intKey.ToString(), x => x);
+            var d = strings.ToDictionary(x => (intKey++).ToString(), x => x);
           
             var dd = Translate(d, sourceLangague, targetLanguage);
             return dd.Values.ToList();
