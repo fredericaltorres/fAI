@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -112,6 +113,19 @@ namespace fAI
             var outputDictionaryJson = Create(prompt).Text.Trim();
             var od = JsonConvert.DeserializeObject<Dictionary<string, string>>(outputDictionaryJson);
             return od;
+        }
+
+        public List<string> Translate(List<string> strings, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        {
+            var d = new Dictionary<string, string>();
+            var intKey = 0;
+            foreach (var s in strings)
+            {
+                d.Add(intKey.ToString(), s);
+                intKey++;
+            }
+            var dd = Translate(d, sourceLangague, targetLanguage);
+            return dd.Values.ToList();
         }
     }
 }

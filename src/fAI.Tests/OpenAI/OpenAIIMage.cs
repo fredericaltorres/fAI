@@ -13,7 +13,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAIIMageTests
+    public class OpenAIImageTests
     {
         [Fact()]
         public void Image_Generate()

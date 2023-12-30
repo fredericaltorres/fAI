@@ -261,6 +261,32 @@ End of text
             Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
         }
 
+        private void AssertWords(string text, List<string> words)
+        {
+            foreach (var w in words)
+                Assert.Contains(w.ToLower(), text.ToLower());
+        }
+
+        private void AssertWords(string text, string words)
+        {
+            AssertWords(text, words.Split(',').ToList());
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_List()
+        {
+            var client = new OpenAI();
+            var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
+            var inputList = inputDictionary.Values.ToList();
+
+            var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(6, outputList.Count);
+
+            AssertWords(outputList[0], "personnes,important,domaine,activité");
+            AssertWords(outputList[4], "Graphiques,entreprise");
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Translate_EnglishToSpanish()
