@@ -280,7 +280,7 @@ namespace faiWinApp
         public enum GifTransitionMode
         {
             None,
-            Fade1,
+            Fade2,
             Fade6,
             ZoomIn,
         }
@@ -312,7 +312,7 @@ namespace faiWinApp
         public static GeneratedGif GenerateGif(
             string gifName, 
             int delay, 
-            int repeat,
+            bool repeat,
             GifTransitionMode gifTransitionMode, 
             List<string> imageFileNames, 
             bool _256ColorOptimization = false, 
@@ -352,7 +352,7 @@ namespace faiWinApp
                             zoomPixel += zoomPixelStep;
                         }
                     }
-                    else if (gifTransitionMode == GifTransitionMode.Fade1 || gifTransitionMode == GifTransitionMode.Fade6)
+                    else if (gifTransitionMode == GifTransitionMode.Fade2 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
                         // Generate the main image
                         GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, delay, refWidth, refHeight);
@@ -365,11 +365,11 @@ namespace faiWinApp
                         if (imageIndex == imagesCount - 1)
                             imageIndexEndFading = 0; // Fade from the last one to the first one
 
-                        if(gifTransitionMode == GifTransitionMode.Fade1)
+                        if(gifTransitionMode == GifTransitionMode.Fade2)
                         {
-                            fadingSteps = 1;
-                            fadingValue = 0.6f;
-                            fadeDelay = delay/4;
+                            fadingSteps = 2;
+                            fadingValue = 0.4f;
+                            fadeDelay = 22;
                         }
 
                         for (int j = 0; j < fadingSteps; j++)
@@ -394,7 +394,7 @@ namespace faiWinApp
                 rr.ImageCount = collection.Count;
                 rr.Duration = collection.Sum(i => i.AnimationDelay);
 
-                if (repeat == 1)
+                if (repeat)
                 {
                     collection[0].AnimationIterations = 1;
                     //collection.ToList().ForEach(action: i => i.AnimationIterations = 1);

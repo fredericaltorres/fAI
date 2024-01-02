@@ -43,8 +43,7 @@
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtGifRepeat = new System.Windows.Forms.TextBox();
+            this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtZoomImageCount = new System.Windows.Forms.TextBox();
             this.rdoZoomIn = new System.Windows.Forms.RadioButton();
@@ -54,7 +53,7 @@
             this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
             this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
             this.butOpenWorkFolder = new System.Windows.Forms.Button();
-            this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
+            this.cbGifRepeat = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -182,9 +181,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cbGifRepeat);
             this.groupBox1.Controls.Add(this.chkViewFileAfterWork);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.txtGifRepeat);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txtZoomImageCount);
             this.groupBox1.Controls.Add(this.rdoZoomIn);
@@ -200,24 +198,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
             // 
-            // label4
+            // chkViewFileAfterWork
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(686, 41);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 19);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Repeat:";
-            // 
-            // txtGifRepeat
-            // 
-            this.txtGifRepeat.Location = new System.Drawing.Point(766, 39);
-            this.txtGifRepeat.Margin = new System.Windows.Forms.Padding(4);
-            this.txtGifRepeat.Name = "txtGifRepeat";
-            this.txtGifRepeat.Size = new System.Drawing.Size(45, 26);
-            this.txtGifRepeat.TabIndex = 8;
-            this.txtGifRepeat.Text = "1";
+            this.chkViewFileAfterWork.AutoSize = true;
+            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 91);
+            this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
+            this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
+            this.chkViewFileAfterWork.TabIndex = 10;
+            this.chkViewFileAfterWork.Text = "View File After Work";
+            this.chkViewFileAfterWork.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -309,15 +298,15 @@
             this.butOpenWorkFolder.UseVisualStyleBackColor = true;
             this.butOpenWorkFolder.Click += new System.EventHandler(this.butOpenWorkFolder_Click);
             // 
-            // chkViewFileAfterWork
+            // cbGifRepeat
             // 
-            this.chkViewFileAfterWork.AutoSize = true;
-            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 91);
-            this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
-            this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
-            this.chkViewFileAfterWork.TabIndex = 10;
-            this.chkViewFileAfterWork.Text = "View File After Work";
-            this.chkViewFileAfterWork.UseVisualStyleBackColor = true;
+            this.cbGifRepeat.AutoSize = true;
+            this.cbGifRepeat.Location = new System.Drawing.Point(701, 40);
+            this.cbGifRepeat.Name = "cbGifRepeat";
+            this.cbGifRepeat.Size = new System.Drawing.Size(82, 23);
+            this.cbGifRepeat.TabIndex = 11;
+            this.cbGifRepeat.Text = "Repeat";
+            this.cbGifRepeat.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -374,10 +363,9 @@
         private System.Windows.Forms.TextBox txtZoomImageCount;
         private System.Windows.Forms.ToolStripMenuItem batchModesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createGifAnimationZoomToolStripMenuItem;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtGifRepeat;
         private System.Windows.Forms.Button butOpenWorkFolder;
         private System.Windows.Forms.CheckBox chkViewFileAfterWork;
+        private System.Windows.Forms.CheckBox cbGifRepeat;
     }
 }
 

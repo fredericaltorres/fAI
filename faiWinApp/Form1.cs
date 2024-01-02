@@ -39,7 +39,7 @@ namespace faiWinApp
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
-            _appOptions.GifRepeat = this.txtGifRepeat.Text;
+            _appOptions.GifRepeat = this.cbGifRepeat.Checked;
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
             _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
             _appOptions.ViewImageAfterWork = this.chkViewFileAfterWork.Checked;
@@ -79,7 +79,7 @@ namespace faiWinApp
             this.rdoGifFade1.Checked = _appOptions.GifFade1;
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.txtGifDelay.Text = _appOptions.GifDelay;
-            this.txtGifRepeat.Text = _appOptions.GifRepeat;
+            this.cbGifRepeat.Checked = _appOptions.GifRepeat;
             this.rdoZoomIn.Checked = _appOptions.ZoomIn;
             this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
             this.chkViewFileAfterWork.Checked = _appOptions.ViewImageAfterWork;
@@ -141,7 +141,7 @@ namespace faiWinApp
             {
                 var transition = ImageUtility.GifTransitionMode.None;
                 if (rdoGifFade1.Checked)
-                    transition = ImageUtility.GifTransitionMode.Fade1;
+                    transition = ImageUtility.GifTransitionMode.Fade2;
                 else if (rdoGifFade6.Checked)
                     transition = ImageUtility.GifTransitionMode.Fade6;
                 else if (rdoZoomIn.Checked)
@@ -153,13 +153,13 @@ namespace faiWinApp
                 var r = ImageUtility.GenerateGif(
                         this.GifName,
                         int.Parse(this.txtGifDelay.Text),
-                        int.Parse(this.txtGifRepeat.Text),
+                        this.cbGifRepeat.Checked,
                         transition,
                         this._dragAndDropFileSelection,
                         messages: fileNames,
                         messageX: -1,
                         messageY: -1,
-                        zoomImageCount: int.Parse(this.txtZoomImageCount.Text)
+                        zoomImageCount: this.GettxtZoomImageCount()
                 );
 
                 this.UserMessage($"Gif created: {r}");
@@ -167,6 +167,15 @@ namespace faiWinApp
                     this.ViewFile(this.GifName, displayImageInfo: false);
                 ImageUtility.CleanUpTempFiles();
             }
+        }
+
+
+        private int GettxtZoomImageCount ()
+        {
+            if(string.IsNullOrEmpty(this.txtZoomImageCount.Text))
+                return 0;
+
+            return int.Parse(this.txtZoomImageCount.Text);
         }
 
         private void DisplayImageInfo(string fileName)
