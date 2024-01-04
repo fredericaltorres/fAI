@@ -170,7 +170,8 @@ namespace faiWinApp
                         messages: fileNames,
                         messageX: -1,
                         messageY: -1,
-                        zoomImageCount: this.GettxtZoomImageCount()
+                        zoomImageCount: this.GettxtZoomImageCount(),
+                        generateMP4: true
                 );
 
                 this.UserMessage($"Gif created: {r}");

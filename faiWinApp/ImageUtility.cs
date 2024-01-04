@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.CodeDom.Compiler;
 
 namespace faiWinApp
 {
@@ -402,6 +403,33 @@ namespace faiWinApp
 
                 collection.Write(gifName);
 
+                if (generateMP4)
+                {
+                    var imageVdoFileNames = collection.Select(i => i.).ToList();
+                    var sequence = 0;
+                    var tmpPath = Path.GetTempPath();
+                    var imageVdoFileNamesSequenced = new List<string>();
+                    imageVdoFileNames.ForEach(f => {
+                        var ff = Path.Combine(tmpPath, $"seq_{sequence:000000}.png");
+                        File.Copy(f, ff);
+                        imageVdoFileNamesSequenced.Add(ff);
+                        sequence++;
+                    });
+
+                    var vdoFileName = Path.ChangeExtension(gifName, "mp4");
+                    DeleteFile(vdoFileName);
+                    var cmd = $@"-y -framerate 10 -i ""{tmpPath}seq_*.png"" -c:v libx264 -pix_fmt yuv420p {vdoFileName}";
+                    var intExitCode = 0;
+                    var ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\binffmpeg.exe";
+                    var r = Executorr.ExecProgram(ffmpeg, cmd, true, ref intExitCode, true);
+                    if (r && intExitCode != 0)
+                    {
+
+                    }
+
+                    imageVdoFileNamesSequenced.ForEach(f => DeleteFile(f));
+                }
+
                 //using (var animatedGif = new MagickImageCollection(gifName))
                 //{
                 //    animatedGif.Write($"{gifName}.webp", MagickFormat.WebP);
@@ -439,9 +467,11 @@ namespace faiWinApp
 
             MagickImage image = null;
             if (messageX == -1 && messageY == -1)
-                image = new MagickImage(File.ReadAllBytes(fileName), settings);
+                //image = new MagickImage(File.ReadAllBytes(fileName), settings);
+                image = new MagickImage(fileName, settings);
             else
-                image = new MagickImage(File.ReadAllBytes(fileName));
+                //image = new MagickImage(File.ReadAllBytes(fileName));
+                image = new MagickImage(fileName);
 
             //image.HasAlpha = true;
 
