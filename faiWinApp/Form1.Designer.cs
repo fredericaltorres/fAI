@@ -43,6 +43,7 @@
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbGifRepeat = new System.Windows.Forms.CheckBox();
             this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtZoomImageCount = new System.Windows.Forms.TextBox();
@@ -53,7 +54,6 @@
             this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
             this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
             this.butOpenWorkFolder = new System.Windows.Forms.Button();
-            this.cbGifRepeat = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -110,8 +110,9 @@
             // sliceBy4ToolStripMenuItem
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
+            this.sliceBy4ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D4)));
             this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
-            this.sliceBy4ToolStripMenuItem.Text = "Slice By 4";
+            this.sliceBy4ToolStripMenuItem.Text = "Paste and Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
             // 
             // createGifAnimationToolStripMenuItem
@@ -197,6 +198,16 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
+            // 
+            // cbGifRepeat
+            // 
+            this.cbGifRepeat.AutoSize = true;
+            this.cbGifRepeat.Location = new System.Drawing.Point(701, 40);
+            this.cbGifRepeat.Name = "cbGifRepeat";
+            this.cbGifRepeat.Size = new System.Drawing.Size(82, 23);
+            this.cbGifRepeat.TabIndex = 11;
+            this.cbGifRepeat.Text = "Repeat";
+            this.cbGifRepeat.UseVisualStyleBackColor = true;
             // 
             // chkViewFileAfterWork
             // 
@@ -297,16 +308,6 @@
             this.butOpenWorkFolder.Text = "Open In Explorer";
             this.butOpenWorkFolder.UseVisualStyleBackColor = true;
             this.butOpenWorkFolder.Click += new System.EventHandler(this.butOpenWorkFolder_Click);
-            // 
-            // cbGifRepeat
-            // 
-            this.cbGifRepeat.AutoSize = true;
-            this.cbGifRepeat.Location = new System.Drawing.Point(701, 40);
-            this.cbGifRepeat.Name = "cbGifRepeat";
-            this.cbGifRepeat.Size = new System.Drawing.Size(82, 23);
-            this.cbGifRepeat.TabIndex = 11;
-            this.cbGifRepeat.Text = "Repeat";
-            this.cbGifRepeat.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

@@ -322,7 +322,7 @@ namespace faiWinApp
             int fontSize = 64, 
             string fontName = "Consola", 
             int zoomImageCount = 32,
-            int zoomImagePixelStep = 1,
+            int zoomPixelStep = 1,
             bool generateMP4 = false) // Pixels
         {
             var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
@@ -333,7 +333,7 @@ namespace faiWinApp
             {
                 var imageIndex = 0;
                 var imagesCount = imageFileNames.Count;
-                var zoomDelay = delay / 8;
+                var zoomDelay = delay / 10;
 
                 foreach (var fileName in imageFileNames)
                 {
@@ -343,11 +343,11 @@ namespace faiWinApp
                     {
                         // Generate the main image
                         GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, fileName, zoomDelay, refWidth, refHeight);
-                        var zoomPixelStep = 3; // Pixels
+                        
                         var zoomPixel = zoomPixelStep;
                         for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
-                            var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - zoomPixel*2, refHeight - zoomPixel * 2));
+                            var newZoomedImage = ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)));
                             GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, zoomDelay, refWidth, refHeight);
                             zoomPixel += zoomPixelStep;
                         }
@@ -394,7 +394,7 @@ namespace faiWinApp
                 rr.ImageCount = collection.Count;
                 rr.Duration = collection.Sum(i => i.AnimationDelay);
 
-                if (repeat)
+                if (!repeat)
                 {
                     collection[0].AnimationIterations = 1;
                     //collection.ToList().ForEach(action: i => i.AnimationIterations = 1);
@@ -452,7 +452,7 @@ namespace faiWinApp
                 else
                     image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(fontSize).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(messageX, messageY, message));
             }
-            image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(22).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height - 16, imageNumber.ToString()));
+            image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(26).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height - 16, imageNumber.ToString()));
             collection.Add(image);
             collection[collection.Count-1].AnimationDelay = animationDelay;
             collection[collection.Count - 1].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other

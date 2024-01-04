@@ -58,6 +58,11 @@ namespace faiWinApp
 
         private void pasToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            PasteImage(true);
+        }
+
+        private void PasteImage(bool viewfile)
+        {
             using (var cursor = new CWaitCursor(this))
             {
                 var newImageFile = ImageUtility.SaveImageFromClipboard(ImageFormat.Png, _appOptions.WorkFolder);
@@ -65,7 +70,11 @@ namespace faiWinApp
                 {
                     this.UserMessage($"Saved image to {newImageFile}");
                     this.UserMessage(ImageUtility.GetImageInfo(newImageFile, _appOptions.WorkFolder));
-                    ViewFile(newImageFile); _lastImageFile = newImageFile;
+                    _lastImageFile = newImageFile;
+                    if (this.chkViewFileAfterWork.Checked && viewfile)
+                    {
+                        ViewFile(newImageFile); 
+                    }
                     new ClipBoard().SetText(newImageFile);
                 }
                 else MessageBox.Show("No image found in clipboard.");
@@ -89,9 +98,11 @@ namespace faiWinApp
 
         private void sliceBy4ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            PasteImage(false);
             using (var cursor = new CWaitCursor(this))
             {
                 var newImages = ImageUtility.SliceImageBy4(_lastImageFile, _appOptions.WorkFolder);
+                new TestFileHelper().DeleteFile(_lastImageFile);
                 newImages.ForEach(newImage =>
                 {
                     this.UserMessage(ImageUtility.GetImageInfo(newImage, _appOptions.WorkFolder));
