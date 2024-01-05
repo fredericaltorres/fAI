@@ -40,6 +40,7 @@ namespace faiWinApp
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
             _appOptions.GifRepeat = this.cbGifRepeat.Checked;
+            _appOptions.GenerateMP4 = this.ckGenerateMP4.Checked;
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
             _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
             _appOptions.ViewImageAfterWork = this.chkViewFileAfterWork.Checked;
@@ -89,6 +90,7 @@ namespace faiWinApp
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.txtGifDelay.Text = _appOptions.GifDelay;
             this.cbGifRepeat.Checked = _appOptions.GifRepeat;
+            this.ckGenerateMP4.Checked = _appOptions.GenerateMP4;
             this.rdoZoomIn.Checked = _appOptions.ZoomIn;
             this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
             this.chkViewFileAfterWork.Checked = _appOptions.ViewImageAfterWork;
@@ -138,8 +140,8 @@ namespace faiWinApp
             });
         }
 
-        string GifName => System.IO.Path.Combine(_appOptions.WorkFolder, "Animated.gif");
-        string PngName => System.IO.Path.Combine(_appOptions.WorkFolder, "Output.png");
+        string FinalOutputFileName => Path.Combine(_appOptions.WorkFolder, "Animated." + (this._appOptions.GenerateMP4 ? "mp4" : "gif"));
+        //string PngName => Path.Combine(_appOptions.WorkFolder, "Output.png");
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -148,6 +150,7 @@ namespace faiWinApp
 
         private void createGifAnimation(bool viewFile)
         {
+            Action<string> notify = (m) => this.UserMessage(m);
             using (var cursor = new CWaitCursor(this))
             {
                 var transition = ImageUtility.GifTransitionMode.None;
@@ -158,11 +161,12 @@ namespace faiWinApp
                 else if (rdoZoomIn.Checked)
                     transition = ImageUtility.GifTransitionMode.ZoomIn;
 
-                this.UserMessage($"Creating Gif, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{GifName}");
+                this.UserMessage($"Creating Gif, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{FinalOutputFileName}");
                 var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
                 fileNames = null;
                 var r = ImageUtility.GenerateGif(
-                        this.GifName,
+                        notify,
+                        this.FinalOutputFileName,
                         int.Parse(this.txtGifDelay.Text),
                         this.cbGifRepeat.Checked,
                         transition,
@@ -176,7 +180,7 @@ namespace faiWinApp
 
                 this.UserMessage($"Gif created: {r}");
                 if(r.Success && viewFile)
-                    this.ViewFile(this.GifName, displayImageInfo: false);
+                    this.ViewFile(this.FinalOutputFileName, displayImageInfo: false);
                 ImageUtility.CleanUpTempFiles();
             }
         }
@@ -240,7 +244,7 @@ namespace faiWinApp
 
         public bool NewInstance()
         {
-            DeleteFile(GifName);
+            DeleteFile(FinalOutputFileName);
             using (var collection = new MagickImageCollection())
             {
                 for (var i = 1; i < testString.Length; i++)
@@ -251,9 +255,9 @@ namespace faiWinApp
                     collection.Add(image);
                     collection[i - 1].AnimationDelay = 20;
                 }
-                collection.Write(GifName);
-                this.UserMessage($"Created {GifName}");
-                ViewFile(GifName);
+                collection.Write(FinalOutputFileName);
+                this.UserMessage($"Created {FinalOutputFileName}");
+                ViewFile(FinalOutputFileName);
             }
 
             return true;
@@ -282,8 +286,8 @@ namespace faiWinApp
                 _dragAndDropFileSelection.Clear();
                 _dragAndDropFileSelection.Add(file);
                 createGifAnimation(false);
-                var newGifName = Path.Combine(Path.GetDirectoryName(this.GifName), Path.GetFileNameWithoutExtension(file) + "." + Path.GetFileName(this.GifName));
-                ImageUtility.RenameFile(this.GifName, newGifName);
+                var newGifName = Path.Combine(Path.GetDirectoryName(this.FinalOutputFileName), Path.GetFileNameWithoutExtension(file) + "." + Path.GetFileName(this.FinalOutputFileName));
+                ImageUtility.RenameFile(this.FinalOutputFileName, newGifName);
                 ImageUtility.ViewFile(newGifName);
             }
         }

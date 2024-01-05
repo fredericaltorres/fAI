@@ -54,6 +54,7 @@
             this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
             this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
             this.butOpenWorkFolder = new System.Windows.Forms.Button();
+            this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -182,6 +183,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ckGenerateMP4);
             this.groupBox1.Controls.Add(this.cbGifRepeat);
             this.groupBox1.Controls.Add(this.chkViewFileAfterWork);
             this.groupBox1.Controls.Add(this.label3);
@@ -212,7 +214,7 @@
             // chkViewFileAfterWork
             // 
             this.chkViewFileAfterWork.AutoSize = true;
-            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 91);
+            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 131);
             this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
             this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
             this.chkViewFileAfterWork.TabIndex = 10;
@@ -309,6 +311,16 @@
             this.butOpenWorkFolder.UseVisualStyleBackColor = true;
             this.butOpenWorkFolder.Click += new System.EventHandler(this.butOpenWorkFolder_Click);
             // 
+            // ckGenerateMP4
+            // 
+            this.ckGenerateMP4.AutoSize = true;
+            this.ckGenerateMP4.Location = new System.Drawing.Point(14, 83);
+            this.ckGenerateMP4.Name = "ckGenerateMP4";
+            this.ckGenerateMP4.Size = new System.Drawing.Size(127, 23);
+            this.ckGenerateMP4.TabIndex = 12;
+            this.ckGenerateMP4.Text = "GenerateMP4";
+            this.ckGenerateMP4.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -367,6 +379,7 @@
         private System.Windows.Forms.Button butOpenWorkFolder;
         private System.Windows.Forms.CheckBox chkViewFileAfterWork;
         private System.Windows.Forms.CheckBox cbGifRepeat;
+        private System.Windows.Forms.CheckBox ckGenerateMP4;
     }
 }
 

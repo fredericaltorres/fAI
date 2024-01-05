@@ -321,6 +321,7 @@ namespace faiWinApp
         /// </summary>
         /// <returns></returns>
         public static GeneratedGif GenerateGif(
+            Action<string> notify,
             string gifName, 
             int delay, 
             bool repeat,
@@ -335,6 +336,7 @@ namespace faiWinApp
             int zoomImageCount = 32,
             int zoomPixelStep = 1,
             string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe",
+            int mp4FrameRate = 12,
             bool generateMP4 = false) // Pixels
         {
             var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
@@ -357,6 +359,7 @@ namespace faiWinApp
 
                 foreach (var fileName in imageFileNames)
                 {
+                    notify($"Processing {imageIndex} / {imageFileNames.Count}");
                     var message = messages == null ? null : messages[imageIndex];
 
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
@@ -377,8 +380,14 @@ namespace faiWinApp
                         // Generate the main image
                         GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
 
-                        var fadingSteps = 6;
-                        var fadingValue = 0.17f;
+                        if(generateMP4) // Generate a wait of 1 second for the MP4
+                        {
+                            foreach (var i in DS.Range(mp4FrameRate))
+                                GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
+                        }
+
+                        var fadingSteps = mp4FrameRate;
+                        var fadingValue = 0.14f;
                         var imageIndexStartFading = imageIndex;
                         var fadeDelay = 16;
                         var imageIndexEndFading = imageIndex + 1;
@@ -387,70 +396,73 @@ namespace faiWinApp
 
                         if (gifTransitionMode == GifTransitionMode.Fade2)
                         {
-                            fadingSteps = 2;
-                            fadingValue = 0.4f;
+                            fadingSteps = 4;
+                            fadingValue = 0.3f;
                             fadeDelay = 22;
                         }
 
                         for (int j = 0; j < fadingSteps; j++)
                         {
                             var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue));
-                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight);
+                            foreach (var i in DS.Range(generateMP4 ? 3 : 1))
+                                GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight);
                         }
                     }
 
                     imageIndex += 1;
                 }
 
-                var settings = new QuantizeSettings();
-                settings.DitherMethod = DitherMethod.FloydSteinberg;
-                if (_256ColorOptimization)
-                {
-                    settings.Colors = 256;
-                }
-                collection.Quantize(settings);
-                collection.Optimize();
-
                 rr.ImageCount = collection.Count;
                 rr.Duration = collection.Sum(i => i.AnimationDelay);
 
-                if (!repeat)
-                {
-                    collection[0].AnimationIterations = 1;
-                }
-
-                collection.Write(gifName);
 
                 if (generateMP4)
                 {
+                    notify($"Generating MP4");
                     var sequence = 0;
-                    var tfh = new TestFileHelper();
-                    var tmpPath = tfh.GetTempFolder();
-                    var imageVdoFileNamesSequenced = new List<string>();
-                    imagesGenerated.ForEach(f => {
-                        var ff = Path.Combine(tmpPath, $"{sequence:00000}.png");
-                        File.Copy(f, ff);
-                        imageVdoFileNamesSequenced.Add(ff);
-                        sequence++;
-                    });
-
-                    var frameRate = 10;
-
-                    var vdoFileName = Path.ChangeExtension(gifName, "mp4");
-                    DeleteFile(vdoFileName);
-                    var cmd = $@"-y -framerate {frameRate} -i ""{tmpPath}\%05d*.png"" -start_number 0 -c:v libx264 -r 30 -pix_fmt yuv420p ""{vdoFileName}""";
-                    var intExitCode = 0;
-                    var r = Executorr.ExecProgram(ffmpeg, cmd, true, ref intExitCode, true);
-                    if (r && intExitCode != 0)
+                    using (var tfh = new TestFileHelper())
                     {
+                        var tmpPath = tfh.GetTempFolder();
+                        var imageVdoFileNamesSequenced = new List<string>();
+                        imagesGenerated.ForEach(f =>
+                        {
+                            var ff = Path.Combine(tmpPath, $"{sequence:00000}.png");
+                            File.Copy(f, ff);
+                            imageVdoFileNamesSequenced.Add(ff);
+                            sequence++;
+                        });
 
+                        var vdoFileName = Path.ChangeExtension(gifName, "mp4");
+                        DeleteFile(vdoFileName);
+                        var cmd = $@"-y -framerate {mp4FrameRate} -i ""{tmpPath}\%05d.png"" -start_number 0 -c:v libx264 -r 30 -pix_fmt yuv420p ""{vdoFileName}""";
+                        var intExitCode = 0;
+                        var r = Executorr.ExecProgram(ffmpeg, cmd, true, ref intExitCode, true);
+                        if (r && intExitCode != 0)
+                        {
+
+                        }
+                        imageVdoFileNamesSequenced.ForEach(f =>
+                        {
+                            RemoveReadOnlyAttribute(f);
+                            tfh.FileNamesToDelete.Add(f);
+                        });
                     }
+                }
+                else
+                {
+                    var settings = new QuantizeSettings();
+                    settings.DitherMethod = DitherMethod.FloydSteinberg;
+                    if (_256ColorOptimization)
+                    {
+                        settings.Colors = 256;
+                    }
+                    collection.Quantize(settings);
+                    collection.Optimize();
 
-                    imageVdoFileNamesSequenced.ForEach(f => {
-                        RemoveReadOnlyAttribute(f);
-                        DeleteFile(f);
-                    });
-                    tfh.Clean();
+                    if (!repeat)
+                        collection[0].AnimationIterations = 1;
+
+                    collection.Write(gifName);
                 }
 
                 //using (var animatedGif = new MagickImageCollection(gifName))
