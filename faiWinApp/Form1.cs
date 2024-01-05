@@ -115,7 +115,8 @@ namespace faiWinApp
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
-            e.Effect = DragDropEffects.Copy;
+            e.Effect = DragDropEffects.All;
+            // e.AllowedEffect = DragDropEffects.Copy | DragDropEffects.Move;
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
@@ -124,19 +125,24 @@ namespace faiWinApp
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
                 return;
 
-            _dragAndDropFileSelection.Clear();
+            if(_isCtrlDown)
+            {
+                _dragAndDropFileSelection.Clear();
+            }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var file in files)
             {
                 _dragAndDropFileSelection.Add(file);
-                DisplayImageInfo(file);
+                
             }
 
+            this.UserMessage(Environment.NewLine);
             this.UserMessage($"File Selection: {_dragAndDropFileSelection.Count}");
             _dragAndDropFileSelection.ForEach(fileSelected =>
             {
-                this.UserMessage("   "+fileSelected);
+                DisplayImageInfo(fileSelected);
+                // this.UserMessage("   "+fileSelected);
             });
         }
 
@@ -295,6 +301,23 @@ namespace faiWinApp
         private void butOpenWorkFolder_Click(object sender, EventArgs e)
         {
             ImageUtility.OpenFolderInExplorer(_appOptions.WorkFolder);
+        }
+
+        bool _isCtrlDown = false;
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            var show = _isCtrlDown != e.Control;
+            _isCtrlDown = e.Control;
+            if(show)
+                this.UserMessage($"Ctrl:{_isCtrlDown}"); 
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            var show = _isCtrlDown != e.Control;
+            _isCtrlDown = e.Control;
+            if (show)
+                this.UserMessage($"Ctrl:{_isCtrlDown}");
         }
     }
 }
