@@ -293,9 +293,7 @@ namespace faiWinApp
             public string GifName { get; set; }
             public int ImageCount { get; set; }
             public long ImageSizeMB { get; set; }
-
             public int Duration { get; set; }
-
             public Exception Exception { get; set; }
             public bool Success => Exception == null;
 
@@ -316,27 +314,58 @@ namespace faiWinApp
             }
         }
 
+        static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
+
+        public static int RunFFMPEG(string cmd, string mp4OutputFile)
+        {
+            DeleteFile(mp4OutputFile);
+            var intExitCode = 0;
+            var r = Executorr.ExecProgram(ffmpeg, cmd, true, ref intExitCode, true);
+            return intExitCode;
+        }
+
+        public static int LoopMp4(string mp4IutputFile, string mp4OutputFile, int loopCount)
+        {
+            return RunFFMPEG($@"-stream_loop {loopCount-1} -i ""{mp4IutputFile}"" -c copy ""{mp4OutputFile}"" ", mp4OutputFile);
+        }
+
+        public static string ConcatMp4(List<string> mp4IutputFile, string mp4OutputFile)
+        {
+            var tfh = new TestFileHelper();
+            var sb = new StringBuilder();
+            mp4IutputFile.ForEach(f => sb.AppendLine($"file {f.Replace(@"\",@"/")}"));
+            var mp4FileList = tfh.CreateTempFile(sb.ToString(),"txt");
+            
+            var newMp4 = tfh.GetTempFileName("mp4");
+            var r = RunFFMPEG($@" -safe 0 -f concat -i ""{mp4FileList}"" -c copy ""{mp4OutputFile}"" ", mp4OutputFile);
+            tfh.DeleteFile(mp4FileList);
+            if (r == 0)
+                return mp4OutputFile;
+            else
+                return null;
+        }
+
         /// <summary>
         /// https://ezgif.com/maker/ezgif-4-5112dde2-gif
         /// </summary>
         /// <returns></returns>
         public static GeneratedGif GenerateGif(
             Action<string> notify,
-            string gifName, 
-            int delay, 
+            string gifName,
+            int delay,
             bool repeat,
-            GifTransitionMode gifTransitionMode, 
-            List<string> imageFileNames, 
-            bool _256ColorOptimization = false, 
-            List<string> messages = null, 
-            int messageX = -1, 
-            int messageY = -1, 
-            int fontSize = 64, 
+            GifTransitionMode gifTransitionMode,
+            List<string> imageFileNames,
+            bool _256ColorOptimization = false,
+            List<string> messages = null,
+            int messageX = -1,
+            int messageY = -1,
+            int fontSize = 64,
             string fontName = "Consola", 
             int zoomImageCount = 32,
             int zoomPixelStep = 1,
-            string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe",
             int mp4FrameRate = 12,
+            int mp4FirstFrameDurationSecond = 2,
             bool generateMP4 = false) // Pixels
         {
             var (refWidth, refHeight) = GetImageWidthAndHeight(imageFileNames[0]);
@@ -380,9 +409,9 @@ namespace faiWinApp
                         // Generate the main image
                         GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
 
-                        if(generateMP4) // Generate a wait of 1 second for the MP4
+                        if(generateMP4) // Generate a wait of 2 second for the MP4
                         {
-                            foreach (var i in DS.Range(mp4FrameRate))
+                            foreach (var i in DS.Range(mp4FrameRate * mp4FirstFrameDurationSecond))
                                 GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
                         }
 
@@ -415,7 +444,6 @@ namespace faiWinApp
                 rr.ImageCount = collection.Count;
                 rr.Duration = collection.Sum(i => i.AnimationDelay);
 
-
                 if (generateMP4)
                 {
                     notify($"Generating MP4");
@@ -433,14 +461,11 @@ namespace faiWinApp
                         });
 
                         var vdoFileName = Path.ChangeExtension(gifName, "mp4");
-                        DeleteFile(vdoFileName);
                         var cmd = $@"-y -framerate {mp4FrameRate} -i ""{tmpPath}\%05d.png"" -start_number 0 -c:v libx264 -r 30 -pix_fmt yuv420p ""{vdoFileName}""";
-                        var intExitCode = 0;
-                        var r = Executorr.ExecProgram(ffmpeg, cmd, true, ref intExitCode, true);
-                        if (r && intExitCode != 0)
-                        {
+                        var intExitCode = RunFFMPEG(cmd, vdoFileName);
+                        if (intExitCode != 0)
+                            rr.Exception = new Exception($"ffmpeg failed with exit code {intExitCode}");
 
-                        }
                         imageVdoFileNamesSequenced.ForEach(f =>
                         {
                             RemoveReadOnlyAttribute(f);

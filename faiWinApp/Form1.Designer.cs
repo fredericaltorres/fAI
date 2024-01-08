@@ -34,7 +34,6 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createGifAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchModesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createGifAnimationZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -44,7 +43,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbGifRepeat = new System.Windows.Forms.CheckBox();
-            this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtZoomImageCount = new System.Windows.Forms.TextBox();
             this.rdoZoomIn = new System.Windows.Forms.RadioButton();
@@ -54,9 +52,19 @@
             this.rdoGifFade1 = new System.Windows.Forms.RadioButton();
             this.rdgGifNoFade = new System.Windows.Forms.RadioButton();
             this.butOpenWorkFolder = new System.Windows.Forms.Button();
+            this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.mp4FirstFrameDurationSecond = new System.Windows.Forms.TextBox();
+            this.mP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.combineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGifAnimationToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.concatMP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -67,7 +75,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1274, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(1308, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -92,7 +100,8 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pasteImageToolStripMenuItem,
             this.sliceBy4ToolStripMenuItem,
-            this.createGifAnimationToolStripMenuItem,
+            this.gIFToolStripMenuItem,
+            this.mP4ToolStripMenuItem,
             this.batchModesToolStripMenuItem,
             this.toolStripMenuItem1,
             this.clearToolStripMenuItem});
@@ -115,14 +124,6 @@
             this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Paste and Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
-            // 
-            // createGifAnimationToolStripMenuItem
-            // 
-            this.createGifAnimationToolStripMenuItem.Name = "createGifAnimationToolStripMenuItem";
-            this.createGifAnimationToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.createGifAnimationToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
-            this.createGifAnimationToolStripMenuItem.Text = "Create Gif Animation";
-            this.createGifAnimationToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem_Click);
             // 
             // batchModesToolStripMenuItem
             // 
@@ -155,7 +156,7 @@
             // txtUserOutput
             // 
             this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserOutput.Location = new System.Drawing.Point(26, 281);
+            this.txtUserOutput.Location = new System.Drawing.Point(26, 415);
             this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4);
             this.txtUserOutput.Multiline = true;
             this.txtUserOutput.Name = "txtUserOutput";
@@ -183,9 +184,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.ckGenerateMP4);
             this.groupBox1.Controls.Add(this.cbGifRepeat);
-            this.groupBox1.Controls.Add(this.chkViewFileAfterWork);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txtZoomImageCount);
             this.groupBox1.Controls.Add(this.rdoZoomIn);
@@ -194,9 +193,9 @@
             this.groupBox1.Controls.Add(this.rdoGifFade6);
             this.groupBox1.Controls.Add(this.rdoGifFade1);
             this.groupBox1.Controls.Add(this.rdgGifNoFade);
-            this.groupBox1.Location = new System.Drawing.Point(26, 85);
+            this.groupBox1.Location = new System.Drawing.Point(17, 85);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1139, 177);
+            this.groupBox1.Size = new System.Drawing.Size(1279, 127);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
@@ -210,16 +209,6 @@
             this.cbGifRepeat.TabIndex = 11;
             this.cbGifRepeat.Text = "Repeat";
             this.cbGifRepeat.UseVisualStyleBackColor = true;
-            // 
-            // chkViewFileAfterWork
-            // 
-            this.chkViewFileAfterWork.AutoSize = true;
-            this.chkViewFileAfterWork.Location = new System.Drawing.Point(14, 131);
-            this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
-            this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
-            this.chkViewFileAfterWork.TabIndex = 10;
-            this.chkViewFileAfterWork.Text = "View File After Work";
-            this.chkViewFileAfterWork.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -311,22 +300,105 @@
             this.butOpenWorkFolder.UseVisualStyleBackColor = true;
             this.butOpenWorkFolder.Click += new System.EventHandler(this.butOpenWorkFolder_Click);
             // 
+            // chkViewFileAfterWork
+            // 
+            this.chkViewFileAfterWork.AutoSize = true;
+            this.chkViewFileAfterWork.Location = new System.Drawing.Point(31, 372);
+            this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
+            this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
+            this.chkViewFileAfterWork.TabIndex = 11;
+            this.chkViewFileAfterWork.Text = "View File After Work";
+            this.chkViewFileAfterWork.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.ckGenerateMP4);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.mp4FirstFrameDurationSecond);
+            this.groupBox2.Location = new System.Drawing.Point(17, 218);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(1279, 127);
+            this.groupBox2.TabIndex = 13;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "MP4:";
+            // 
             // ckGenerateMP4
             // 
             this.ckGenerateMP4.AutoSize = true;
-            this.ckGenerateMP4.Location = new System.Drawing.Point(14, 83);
+            this.ckGenerateMP4.Location = new System.Drawing.Point(14, 36);
             this.ckGenerateMP4.Name = "ckGenerateMP4";
             this.ckGenerateMP4.Size = new System.Drawing.Size(127, 23);
-            this.ckGenerateMP4.TabIndex = 12;
+            this.ckGenerateMP4.TabIndex = 13;
             this.ckGenerateMP4.Text = "GenerateMP4";
             this.ckGenerateMP4.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(156, 36);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(162, 19);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Frame 1 Duration:";
+            // 
+            // mp4FirstFrameDurationSecond
+            // 
+            this.mp4FirstFrameDurationSecond.Location = new System.Drawing.Point(326, 36);
+            this.mp4FirstFrameDurationSecond.Margin = new System.Windows.Forms.Padding(4);
+            this.mp4FirstFrameDurationSecond.Name = "mp4FirstFrameDurationSecond";
+            this.mp4FirstFrameDurationSecond.Size = new System.Drawing.Size(45, 26);
+            this.mp4FirstFrameDurationSecond.TabIndex = 3;
+            this.mp4FirstFrameDurationSecond.Text = "3";
+            // 
+            // mP4ToolStripMenuItem
+            // 
+            this.mP4ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.combineToolStripMenuItem,
+            this.concatMP4ToolStripMenuItem});
+            this.mP4ToolStripMenuItem.Name = "mP4ToolStripMenuItem";
+            this.mP4ToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.mP4ToolStripMenuItem.Text = "MP4";
+            // 
+            // combineToolStripMenuItem
+            // 
+            this.combineToolStripMenuItem.Name = "combineToolStripMenuItem";
+            this.combineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.combineToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
+            this.combineToolStripMenuItem.Text = "Repeat and Combine MP4";
+            this.combineToolStripMenuItem.Click += new System.EventHandler(this.loopMp4ToolStripMenuItem_Click);
+            // 
+            // gIFToolStripMenuItem
+            // 
+            this.gIFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createGifAnimationToolStripMenuItem2});
+            this.gIFToolStripMenuItem.Name = "gIFToolStripMenuItem";
+            this.gIFToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.gIFToolStripMenuItem.Text = "GIF";
+            // 
+            // createGifAnimationToolStripMenuItem2
+            // 
+            this.createGifAnimationToolStripMenuItem2.Name = "createGifAnimationToolStripMenuItem2";
+            this.createGifAnimationToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.createGifAnimationToolStripMenuItem2.Size = new System.Drawing.Size(269, 24);
+            this.createGifAnimationToolStripMenuItem2.Text = "Create Gif Animation";
+            this.createGifAnimationToolStripMenuItem2.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem2_Click);
+            // 
+            // concatMP4ToolStripMenuItem
+            // 
+            this.concatMP4ToolStripMenuItem.Name = "concatMP4ToolStripMenuItem";
+            this.concatMP4ToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
+            this.concatMP4ToolStripMenuItem.Text = "Concat MP4";
+            this.concatMP4ToolStripMenuItem.Click += new System.EventHandler(this.concatMP4ToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1274, 714);
+            this.ClientSize = new System.Drawing.Size(1308, 848);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.chkViewFileAfterWork);
             this.Controls.Add(this.butOpenWorkFolder);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -349,6 +421,8 @@
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -365,7 +439,6 @@
         private System.Windows.Forms.ToolStripMenuItem sliceBy4ToolStripMenuItem;
         private System.Windows.Forms.TextBox WorkFolder;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ToolStripMenuItem createGifAnimationToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rdoGifFade1;
         private System.Windows.Forms.RadioButton rdgGifNoFade;
@@ -380,9 +453,17 @@
         private System.Windows.Forms.ToolStripMenuItem batchModesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createGifAnimationZoomToolStripMenuItem;
         private System.Windows.Forms.Button butOpenWorkFolder;
-        private System.Windows.Forms.CheckBox chkViewFileAfterWork;
         private System.Windows.Forms.CheckBox cbGifRepeat;
+        private System.Windows.Forms.CheckBox chkViewFileAfterWork;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox mp4FirstFrameDurationSecond;
         private System.Windows.Forms.CheckBox ckGenerateMP4;
+        private System.Windows.Forms.ToolStripMenuItem gIFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createGifAnimationToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem mP4ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem combineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem concatMP4ToolStripMenuItem;
     }
 }
 
