@@ -241,9 +241,11 @@ namespace faiWinApp
             return newFileName;
         }
 
-        public static string BlendBitmaps(string bitmap1, string bitmap2, float blendLevel)
+        public static string BlendBitmaps(string imageFileName1, string imageFileName2, float blendLevel)
         {
-            var b = BlendBitmaps(new Bitmap(bitmap1), new Bitmap(bitmap2), blendLevel);
+            var b1 = new Bitmap(imageFileName1);
+            var b2 = new Bitmap(imageFileName2);
+            var b = BlendBitmaps(b1, b2, blendLevel);
             var fileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
             b.Save(fileName);
             return fileName;
@@ -251,11 +253,11 @@ namespace faiWinApp
 
         public static Bitmap BlendBitmaps(Bitmap bitmap1, Bitmap bitmap2, float blendLevel)
         {
-            Bitmap blendedBitmap = new Bitmap(bitmap1.Width, bitmap1.Height);
+            var blendedBitmap = new Bitmap(bitmap1.Width, bitmap1.Height);
 
-            using (Graphics g = Graphics.FromImage(blendedBitmap))
+            using (var g = Graphics.FromImage(blendedBitmap))
             {
-                g.DrawImage(bitmap1, 0, 0);
+                g.DrawImage(bitmap1, 0, 0, bitmap1.Width, bitmap1.Height);
 
                 ColorMatrix colorMatrix = null;
 
@@ -272,7 +274,8 @@ namespace faiWinApp
 
                 ImageAttributes imageAttributes = new ImageAttributes();
                 imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                g.DrawImage(bitmap2, new Rectangle(0, 0, bitmap2.Width, bitmap2.Height), 0, 0, bitmap2.Width, bitmap2.Height, GraphicsUnit.Pixel, imageAttributes);
+                var rect = new Rectangle(0, 0, bitmap2.Width, bitmap2.Height);
+                g.DrawImage(bitmap2, rect, 0, 0, bitmap2.Width, bitmap2.Height, GraphicsUnit.Pixel, imageAttributes);
             }
 
             return blendedBitmap;
@@ -488,7 +491,7 @@ namespace faiWinApp
                         collection[0].AnimationIterations = 1;
 
                     collection.Write(gifName);
-                }
+                 }
 
                 //using (var animatedGif = new MagickImageCollection(gifName))
                 //{

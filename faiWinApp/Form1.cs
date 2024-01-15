@@ -304,8 +304,6 @@ namespace faiWinApp
             NewInstance();
         }
 
-        
-
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.txtUserOutput.Text = "";
@@ -388,5 +386,10 @@ namespace faiWinApp
             }
         }
         private bool IsSelectionAllMp4 => _dragAndDropFileSelection.Count == _dragAndDropFileSelection.Where(f => Path.GetExtension(f).ToLower() == ".mp4").ToList().Count;
+
+        private void gIFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

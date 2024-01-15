@@ -34,6 +34,11 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceBy4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGifAnimationToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.mP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.combineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.concatMP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.batchModesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createGifAnimationZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,11 +62,6 @@
             this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.mp4FirstFrameDurationSecond = new System.Windows.Forms.TextBox();
-            this.mP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.combineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createGifAnimationToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.concatMP4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -113,7 +113,7 @@
             // 
             this.pasteImageToolStripMenuItem.Name = "pasteImageToolStripMenuItem";
             this.pasteImageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.pasteImageToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
             this.pasteImageToolStripMenuItem.Text = "Paste Image";
             this.pasteImageToolStripMenuItem.Click += new System.EventHandler(this.pasToolStripMenuItem_Click);
             // 
@@ -121,16 +121,57 @@
             // 
             this.sliceBy4ToolStripMenuItem.Name = "sliceBy4ToolStripMenuItem";
             this.sliceBy4ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D4)));
-            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.sliceBy4ToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
             this.sliceBy4ToolStripMenuItem.Text = "Paste and Slice By 4";
             this.sliceBy4ToolStripMenuItem.Click += new System.EventHandler(this.sliceBy4ToolStripMenuItem_Click);
+            // 
+            // gIFToolStripMenuItem
+            // 
+            this.gIFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createGifAnimationToolStripMenuItem2});
+            this.gIFToolStripMenuItem.Name = "gIFToolStripMenuItem";
+            this.gIFToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.gIFToolStripMenuItem.Text = "GIF";
+            this.gIFToolStripMenuItem.Click += new System.EventHandler(this.gIFToolStripMenuItem_Click);
+            // 
+            // createGifAnimationToolStripMenuItem2
+            // 
+            this.createGifAnimationToolStripMenuItem2.Name = "createGifAnimationToolStripMenuItem2";
+            this.createGifAnimationToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.createGifAnimationToolStripMenuItem2.Size = new System.Drawing.Size(269, 24);
+            this.createGifAnimationToolStripMenuItem2.Text = "Create Gif Animation";
+            this.createGifAnimationToolStripMenuItem2.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem2_Click);
+            // 
+            // mP4ToolStripMenuItem
+            // 
+            this.mP4ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.combineToolStripMenuItem,
+            this.concatMP4ToolStripMenuItem});
+            this.mP4ToolStripMenuItem.Name = "mP4ToolStripMenuItem";
+            this.mP4ToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.mP4ToolStripMenuItem.Text = "MP4";
+            // 
+            // combineToolStripMenuItem
+            // 
+            this.combineToolStripMenuItem.Name = "combineToolStripMenuItem";
+            this.combineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.combineToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
+            this.combineToolStripMenuItem.Text = "Repeat and Combine MP4";
+            this.combineToolStripMenuItem.Click += new System.EventHandler(this.loopMp4ToolStripMenuItem_Click);
+            // 
+            // concatMP4ToolStripMenuItem
+            // 
+            this.concatMP4ToolStripMenuItem.Name = "concatMP4ToolStripMenuItem";
+            this.concatMP4ToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
+            this.concatMP4ToolStripMenuItem.Text = "Concat MP4";
+            this.concatMP4ToolStripMenuItem.Click += new System.EventHandler(this.concatMP4ToolStripMenuItem_Click);
             // 
             // batchModesToolStripMenuItem
             // 
             this.batchModesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createGifAnimationZoomToolStripMenuItem});
             this.batchModesToolStripMenuItem.Name = "batchModesToolStripMenuItem";
-            this.batchModesToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.batchModesToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
             this.batchModesToolStripMenuItem.Text = "Batch Modes";
             // 
             // createGifAnimationZoomToolStripMenuItem
@@ -143,13 +184,13 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(266, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(255, 6);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(269, 24);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -350,46 +391,6 @@
             this.mp4FirstFrameDurationSecond.Size = new System.Drawing.Size(45, 26);
             this.mp4FirstFrameDurationSecond.TabIndex = 3;
             this.mp4FirstFrameDurationSecond.Text = "3";
-            // 
-            // mP4ToolStripMenuItem
-            // 
-            this.mP4ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.combineToolStripMenuItem,
-            this.concatMP4ToolStripMenuItem});
-            this.mP4ToolStripMenuItem.Name = "mP4ToolStripMenuItem";
-            this.mP4ToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.mP4ToolStripMenuItem.Text = "MP4";
-            // 
-            // combineToolStripMenuItem
-            // 
-            this.combineToolStripMenuItem.Name = "combineToolStripMenuItem";
-            this.combineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.combineToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
-            this.combineToolStripMenuItem.Text = "Repeat and Combine MP4";
-            this.combineToolStripMenuItem.Click += new System.EventHandler(this.loopMp4ToolStripMenuItem_Click);
-            // 
-            // gIFToolStripMenuItem
-            // 
-            this.gIFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createGifAnimationToolStripMenuItem2});
-            this.gIFToolStripMenuItem.Name = "gIFToolStripMenuItem";
-            this.gIFToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.gIFToolStripMenuItem.Text = "GIF";
-            // 
-            // createGifAnimationToolStripMenuItem2
-            // 
-            this.createGifAnimationToolStripMenuItem2.Name = "createGifAnimationToolStripMenuItem2";
-            this.createGifAnimationToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.createGifAnimationToolStripMenuItem2.Size = new System.Drawing.Size(269, 24);
-            this.createGifAnimationToolStripMenuItem2.Text = "Create Gif Animation";
-            this.createGifAnimationToolStripMenuItem2.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem2_Click);
-            // 
-            // concatMP4ToolStripMenuItem
-            // 
-            this.concatMP4ToolStripMenuItem.Name = "concatMP4ToolStripMenuItem";
-            this.concatMP4ToolStripMenuItem.Size = new System.Drawing.Size(306, 24);
-            this.concatMP4ToolStripMenuItem.Text = "Concat MP4";
-            this.concatMP4ToolStripMenuItem.Click += new System.EventHandler(this.concatMP4ToolStripMenuItem_Click);
             // 
             // Form1
             // 
