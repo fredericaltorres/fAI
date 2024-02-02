@@ -42,17 +42,16 @@ Wlop, unique detail, masterpiece
 
             var client = new Leonardo();
             var job = client.Image.Generate(
-                prompt,
-                negative_prompt: negativePrompt,
-                size: ImageSize._1024x1024);
+                prompt, negative_prompt: negativePrompt, size: ImageSize._1024x1024
+                ,seed : 407795969
+                );
 
             GenerationResultResponse jobState = null;
-            var jobSucceeded = Managers.TimeOutManager("Test", 0.1, () => {
+            var jobSucceeded = Managers.TimeOutManager("Test", 1, () => {
                  jobState = client.Image.GetJobStatus(job.GenerationId);
                 return jobState.Completed;
             });
             Assert.True(jobSucceeded);
-
 
             var pngFileNames = jobState.DownloadImages();
             Assert.True(pngFileNames.Count == 1);
