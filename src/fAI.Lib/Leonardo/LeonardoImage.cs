@@ -54,13 +54,33 @@ namespace fAI
             else return new GenerationResultResponse {  Exception = response.Exception };
         }
 
+        public enum PresetStylePhotoRealOn
+        {
+            CINEMATIC, CREATIVE, VIBRANT, NONE
+        }
+
+        public enum PresetStyleAlchemyOff
+        {
+            LEONARDO, NONE
+        }
+
+        public enum PresetStyleAlchemyOn
+        {
+            ANIME, CREATIVE, DYNAMIC, ENVIRONMENT, GENERAL, ILLUSTRATION, PHOTOGRAPHY, RAYTRACED, RENDER_3D, SKETCH_BW, SKETCH_COLOR, NONE
+        }
+
         // https://docs.leonardo.ai/reference/creategeneration
         public GenerationResponse Generate(string prompt, 
             string negative_prompt = null,
             string modelId = MODEL_ID, 
             int imageCount = 1, 
             ImageSize size = ImageSize._1024x1024,
-            bool isPublic = false)
+            bool isPublic = false,
+            bool alchemy = true,
+            bool promptMagic = true,
+            int seed = 407795968,
+            PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
+            double promptMagicStrength = 0.5)
         {
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
@@ -71,11 +91,15 @@ namespace fAI
                 prompt,
                 negative_prompt,
                 modelId,
-                size,
                 num_images = imageCount,
                 @public = isPublic,
                 width,
-                height
+                height,
+                promptMagicStrength,
+                alchemy,
+                promptMagic,
+                seed,
+                presetStyle = presetStyleAlchemyOn.ToString()
             };
 
             OpenAI.Trace(body, this);
