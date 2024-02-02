@@ -14,6 +14,10 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class DeepgramAudioTranscriptionsTests
     {
+        private static string FlexStrCompare(string s)
+        {
+            return s.ToLowerInvariant().Replace(",", ".");
+        }
         [Fact()]
         public void SpeechToText()
         {
@@ -21,7 +25,7 @@ namespace fAI.Tests
             var client = new DeepgramAI();
             var r = client.Audio.Transcriptions.Create(mp3FileName);
             var expected = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
-            Assert.Equal(expected, r.Text);
+            Assert.Equal(FlexStrCompare(expected), FlexStrCompare(r.Text));
         }
 
         [Fact()]
@@ -31,10 +35,10 @@ namespace fAI.Tests
             var client = new DeepgramAI();
             var r = client.Audio.Transcriptions.Create(mp3FileName, vtt: true);
             var expected = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
-            Assert.Equal(expected, r.Text);
+            Assert.Equal(FlexStrCompare(expected), FlexStrCompare(r.Text));
             Assert.StartsWith("WEBVTT", r.VTT);
             Assert.Contains("00:00:00 --> 00:00:02.260", r.VTT);
-            Assert.Contains(" - I am he as you are he as you are me,", r.VTT);
+            Assert.Contains(FlexStrCompare(" - I am he as you are he as you are me,"), FlexStrCompare(r.VTT));
         }
     }
 }

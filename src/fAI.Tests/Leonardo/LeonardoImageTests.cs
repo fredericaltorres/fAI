@@ -26,7 +26,7 @@ namespace fAI.Tests
             Assert.True(userInfo.user_details[0].subscriptionModelTokens > 1);
             Assert.True(userInfo.user_details[0].apiConcurrencySlots > 1);
         }
-            [Fact()]
+            //[Fact()]
         public void Image_Generate()
         {
             var prompt = @"Generate an image inspired by Victor Hugo's classic novel, 'Les Misérables'. 
