@@ -68,6 +68,16 @@ namespace fAI
             {
                 return JsonUtils.FromJSON<GenerationResultResponse>(text);
             }
+
+            public List<string> DownloadImages()
+            {
+                var r = new List<string>();
+
+                foreach (var d in this.generations_by_pk.generated_images)
+                    r.Add(base.DownloadImage(new Uri(d.url)));
+
+                return r;
+            }
         }
     }
 }

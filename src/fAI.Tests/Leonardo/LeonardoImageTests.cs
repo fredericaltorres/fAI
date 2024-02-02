@@ -8,6 +8,7 @@ using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 using static fAI.OpenAIImage;
+using DynamicSugar;
 
 namespace fAI.Tests
 {
@@ -30,21 +31,24 @@ namespace fAI.Tests
         [Fact()]
         public void Image_Generate()
         {
-            var prompt = @"Generate an image inspired by Victor Hugo's classic novel, 'Les Misérables'. 
-The image should depict three characters, each with distinct characteristics. 
-The first is an older, physically strong man with a scarred face, wearing threadbare clothes, indicative of a hard life — this represents Jean Valjean. 
-The second is a young woman radiating innocence and kindness; she wears modest clothes and has beautiful shining eyes — this is Cosette. 
-The third is a stern-looking middle-aged man in a gentleman's attire and hat,  representing law and order — representative of Javert. 
-Their expressions should reflect the nuances of the complex relationships 
-they share in the story.
+            var prompt = @"
+Portrait of a undead Kid goblin girl doing martial arts, cyborg parts, futuristic city, neon signs, Japanese city, 
+in a Cyberpunk city alley, creative_techwear_clothes, warhammer_chaos_marine, art by Mika Pikazo, guweiz, 
+Wlop, unique detail, masterpiece
 ";
-            var client = new Leonardo();
-            //var r = client.Image.Generate(prompt, size :  ImageSize._512x512);
+            var negativePrompt = @"Close up face, EasyNegative, (badv2:0.8), (badhandv4:1.18), (bad quality:1.3), (worst quality:1.3), watermark, (blurry), (cropped), (cleavage:1.3) canvas frame, cartoon, 3d, , ((bad art)), extra limbs)),((close up)),((b&w)), , signature, blurry, (((duplicate))), ((morbid)), ((mutilated)), [out of frame], extra fingers, mutated hands, ((poorly drawn hands)), ((poorly drawn face)), blurry,, ((extra limbs)), cloned face, out of frame, ugly, extra limbs, (malformed limbs), ((missing arms)), ((missing legs)), (((extra arms))), (((extra legs))), mutated hands, (fused fingers), (too many fingers), (((long neck))), tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, extra limbs, extra legs, extra arms, cross-eye, body out of frame, blurr";
 
-            var state = client.Image.GetJobStatus("d18f2d7a-8f25-4735-bbd3-3267861c32ab");
-            //var pngFileNames = r.DownloadImage();
-            //Assert.True(pngFileNames.Count == 1);
-            //Assert.True(File.Exists(pngFileNames[0]));
+            var client = new Leonardo();
+            var job = client.Image.Generate(
+                prompt, 
+                negative_prompt: negativePrompt,
+                size : ImageSize._1024x1024);
+
+            var jobState = client.Image.GetJobStatus(job.GenerationId);
+
+            var pngFileNames = jobState.DownloadImages();
+            Assert.True(pngFileNames.Count == 1);
+            Assert.True(File.Exists(pngFileNames[0]));
         }
     }
 }

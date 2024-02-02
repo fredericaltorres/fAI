@@ -55,16 +55,32 @@ namespace fAI
         }
 
         // https://docs.leonardo.ai/reference/creategeneration
-        public GenerationResponse Generate(string prompt, string modelId = MODEL_ID, int imageCount = 1, ImageSize size = ImageSize._1024x1024)
+        public GenerationResponse Generate(string prompt, 
+            string negative_prompt = null,
+            string modelId = MODEL_ID, 
+            int imageCount = 1, 
+            ImageSize size = ImageSize._1024x1024,
+            bool isPublic = false)
         {
-            OpenAI.Trace(new { prompt, modelId, size }, this);
-
-            var dimensions = size.ToString().Replace("_","").Split('x').ToList();
+            var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
             var height = int.Parse(dimensions[1]);
 
+            var body = new
+            {
+                prompt,
+                negative_prompt,
+                modelId,
+                size,
+                num_images = imageCount,
+                @public = isPublic,
+                width,
+                height
+            };
+
+            OpenAI.Trace(body, this);
+
             var sw = Stopwatch.StartNew();
-            var body = new { prompt, modelId, width, height};
             var response = InitWebClient().POST(__urlGeneations, JsonConvert.SerializeObject(body));
             sw.Stop();
             if (response.Success)
