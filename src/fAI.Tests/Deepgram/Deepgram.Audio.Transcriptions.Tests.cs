@@ -10,14 +10,12 @@ using System.Runtime.InteropServices;
 
 namespace fAI.Tests
 {
+
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class DeepgramAudioTranscriptionsTests
+    public class DeepgramAudioTranscriptionsTests : UnitTestBase
     {
-        private static string FlexStrCompare(string s)
-        {
-            return s.ToLowerInvariant().Replace(",", ".");
-        }
+      
         [Fact()]
         public void SpeechToText()
         {

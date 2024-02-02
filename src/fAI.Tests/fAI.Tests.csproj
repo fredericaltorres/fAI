@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
+    <Compile Include="Deepgram\UnitTestBase.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.Presentation.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.CityAI.SearchTests.cs" />

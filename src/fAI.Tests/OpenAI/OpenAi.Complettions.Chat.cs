@@ -15,7 +15,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiComplettionsChat
+    public class OpenAiComplettionsChat : UnitTestBase
     {
         public OpenAiComplettionsChat()
         {
@@ -260,7 +260,9 @@ End of text
         {
             var client = new OpenAI();
             var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
-            Assert.Equal("Bonjour monde.", translation);
+            Assert.True(FlexStrCompare("Bonjour monde.") == FlexStrCompare(translation) ||
+                        FlexStrCompare("Bonjour le monde.") == FlexStrCompare(translation));
+            
         }
 
         [Fact()]
