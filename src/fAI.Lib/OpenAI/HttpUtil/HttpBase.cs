@@ -11,13 +11,13 @@ namespace fAI
         public object code { get; set; }
     }
 
-    public class OpenAIHttpError
+    public class HttpError
     {
         public ErrorDetail error { get; set; }
 
-        public static OpenAIHttpError FromJson(string text)
+        public static HttpError FromJson(string text)
         {
-            return JsonUtils.FromJSON<OpenAIHttpError>(text);
+            return JsonUtils.FromJSON<HttpError>(text);
         }
         public static bool IsHttpError(string text)
         {
@@ -37,19 +37,19 @@ namespace fAI
         }
     }
 
-    public class OpenAIHttpBase
+    public class HttpBase
     {
         public static int _timeout = 60 * 4;
-        public static string _openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        public static string _key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
         public static string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
-        public OpenAIHttpBase(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public HttpBase(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             if (timeOut > 0)
                 _timeout = timeOut;
 
             if (openAiKey != null)
-                _openAiKey = openAiKey;
+                _key = openAiKey;
 
             if (openAiOrg != null)
                 _openAiOrg = openAiOrg;
@@ -58,7 +58,7 @@ namespace fAI
         protected ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
             var mc = new ModernWebClient(_timeout);
-            mc.AddHeader("Authorization", $"Bearer {_openAiKey}")
+            mc.AddHeader("Authorization", $"Bearer {_key}")
               .AddHeader("OpenAI-Organization", _openAiOrg);
 
             if (addJsonContentType)
@@ -69,12 +69,12 @@ namespace fAI
 
         protected bool IsError(string text)
         {
-            return OpenAIHttpError.IsHttpError(text);
+            return HttpError.IsHttpError(text);
         }
 
-        protected OpenAIHttpError GetError(string text)
+        protected HttpError GetError(string text)
         {
-            return OpenAIHttpError.FromJson(text);
+            return HttpError.FromJson(text);
         }
     }
 }

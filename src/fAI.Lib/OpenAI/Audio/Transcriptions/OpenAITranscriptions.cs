@@ -9,7 +9,7 @@ namespace fAI
     /// <summary>
     /// https://platform.openai.com/docs/guides/speech-to-text
     /// </summary>
-    public class OpenAITranscriptions : OpenAIHttpBase
+    public class OpenAITranscriptions : HttpBase
     {
         const string __url = "https://api.openai.com/v1/audio/transcriptions";
 

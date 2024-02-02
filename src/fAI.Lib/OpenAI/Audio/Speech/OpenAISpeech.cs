@@ -5,7 +5,7 @@ using System.Net.Cache;
 
 namespace fAI
 {
-    public class OpenAISpeech : OpenAIHttpBase
+    public class OpenAISpeech : HttpBase
     {
         const string __url = "https://api.openai.com/v1/audio/speech";
 

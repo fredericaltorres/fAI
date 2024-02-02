@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace fAI
 {
-    public partial class OpenAICompletions  : OpenAIHttpBase
+    public partial class OpenAICompletions  : HttpBase
     {
         public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
         {

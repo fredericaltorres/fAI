@@ -13,7 +13,7 @@ namespace fAI
         https://platform.openai.com/docs/quickstart?context=python
      */
 
-    public partial class OpenAIEmbeddings : OpenAIHttpBase
+    public partial class OpenAIEmbeddings : HttpBase
     {
         public OpenAIEmbeddings(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
         {

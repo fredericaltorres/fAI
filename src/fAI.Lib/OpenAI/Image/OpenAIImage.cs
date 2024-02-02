@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace fAI
 {
-    public partial class OpenAIImage : OpenAIHttpBase
+    public partial class OpenAIImage : HttpBase
     {
         public OpenAIImage(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
         {

@@ -152,10 +152,11 @@ namespace faiWinApp
 
         private void createGifAnimationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-          
-
             createGifAnimation(true);
         }
+
+
+        private int GetGifDelayInRigthUnit() =>int.Parse(this.txtGifDelay.Text) * 100;
 
         private void createGifAnimation(bool viewFile)
         {
@@ -177,7 +178,7 @@ namespace faiWinApp
                 var r = ImageUtility.GenerateGif(
                         notify,
                         this.FinalOutputFileName,
-                        int.Parse(this.txtGifDelay.Text),
+                        this.GetGifDelayInRigthUnit(),
                         this.cbGifRepeat.Checked,
                         transition,
                         this._dragAndDropFileSelection,

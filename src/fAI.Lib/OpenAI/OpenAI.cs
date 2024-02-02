@@ -17,18 +17,18 @@ namespace fAI
 
         public OpenAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
-            OpenAIHttpBase._openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-            OpenAIHttpBase._openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
-            OpenAIHttpBase._timeout = 60 * 4;
+            HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            HttpBase._openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
+            HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
-                OpenAIHttpBase._timeout = timeOut;
+                HttpBase._timeout = timeOut;
 
             if (openAiKey != null)
-                OpenAIHttpBase._openAiKey = openAiKey;
+                HttpBase._key = openAiKey;
 
             if (openAiOrg != null)
-                OpenAIHttpBase. _openAiOrg = openAiOrg;
+                HttpBase. _openAiOrg = openAiOrg;
         }
         
         OpenAIAudio _audio = null;
