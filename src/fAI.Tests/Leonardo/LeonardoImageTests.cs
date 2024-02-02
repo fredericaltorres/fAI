@@ -9,6 +9,8 @@ using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 using static fAI.OpenAIImage;
 using DynamicSugar;
+using System.Threading;
+using static fAI.LeonardoImage;
 
 namespace fAI.Tests
 {
@@ -44,7 +46,13 @@ Wlop, unique detail, masterpiece
                 negative_prompt: negativePrompt,
                 size: ImageSize._1024x1024);
 
-            var jobState = client.Image.GetJobStatus(job.GenerationId);
+            GenerationResultResponse jobState = null;
+            var jobSucceeded = Managers.TimeOutManager("Test", 0.1, () => {
+                 jobState = client.Image.GetJobStatus(job.GenerationId);
+                return jobState.Completed;
+            });
+            Assert.True(jobSucceeded);
+
 
             var pngFileNames = jobState.DownloadImages();
             Assert.True(pngFileNames.Count == 1);

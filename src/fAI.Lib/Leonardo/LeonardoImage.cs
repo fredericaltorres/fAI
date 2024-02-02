@@ -85,6 +85,11 @@ namespace fAI
             ANIME, CREATIVE, DYNAMIC, ENVIRONMENT, GENERAL, ILLUSTRATION, PHOTOGRAPHY, RAYTRACED, RENDER_3D, SKETCH_BW, SKETCH_COLOR, NONE
         }
 
+        public enum PromptMagic
+        {
+            V2, V3
+        }
+
         // https://docs.leonardo.ai/reference/creategeneration
         public GenerationResponse Generate(string prompt, 
             string negative_prompt = null,
@@ -93,7 +98,7 @@ namespace fAI
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
             bool alchemy = true,
-            bool promptMagic = true,
+            PromptMagic promptMagic = PromptMagic.V3,
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             double promptMagicStrength = 0.5)
@@ -113,7 +118,7 @@ namespace fAI
                 height,
                 promptMagicStrength,
                 alchemy,
-                promptMagic,
+                promptMagic = promptMagic.ToString(),
                 seed,
                 presetStyle = presetStyleAlchemyOn.ToString()
             };
