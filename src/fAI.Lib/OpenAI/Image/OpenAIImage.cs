@@ -12,7 +12,7 @@ namespace fAI
 
         const string __url = "https://api.openai.com/v1/images/generations";
 
-        public enum OpenAIImageSize  
+        public enum ImageSize  
         { 
             _256x256,
             _512x512,
@@ -22,7 +22,7 @@ namespace fAI
         }
 
         // https://platform.openai.com/docs/api-reference/images/create
-        public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, OpenAIImageSize size = OpenAIImageSize._1024x1024)
+        public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, ImageSize size = ImageSize._1024x1024)
         {
             OpenAI.Trace(new { prompt, model, size }, this);
 

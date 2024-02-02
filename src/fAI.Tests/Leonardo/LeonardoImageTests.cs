@@ -26,7 +26,8 @@ namespace fAI.Tests
             Assert.True(userInfo.user_details[0].subscriptionModelTokens > 1);
             Assert.True(userInfo.user_details[0].apiConcurrencySlots > 1);
         }
-            //[Fact()]
+
+        [Fact()]
         public void Image_Generate()
         {
             var prompt = @"Generate an image inspired by Victor Hugo's classic novel, 'Les Misérables'. 
@@ -37,11 +38,13 @@ The third is a stern-looking middle-aged man in a gentleman's attire and hat,  r
 Their expressions should reflect the nuances of the complex relationships 
 they share in the story.
 ";
-            var client = new OpenAI();
-            var r = client.Image.Generate(prompt, size :  OpenAIImageSize._1792x1024);
-            var pngFileNames = r.DownloadImage();
-            Assert.True(pngFileNames.Count == 1);
-            Assert.True(File.Exists(pngFileNames[0]));
+            var client = new Leonardo();
+            //var r = client.Image.Generate(prompt, size :  ImageSize._512x512);
+
+            var state = client.Image.GetJobStatus("d18f2d7a-8f25-4735-bbd3-3267861c32ab");
+            //var pngFileNames = r.DownloadImage();
+            //Assert.True(pngFileNames.Count == 1);
+            //Assert.True(File.Exists(pngFileNames[0]));
         }
     }
 }

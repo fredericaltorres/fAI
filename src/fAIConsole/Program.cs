@@ -142,10 +142,10 @@ The image should be a painting, not a photograph.
                     var promptLength = imagePrompt.Length;
                     generatedDocument._imagePrompt = imagePrompt; // Save the prompt for debugging purposes.
 
-                    var r = client.Image.Generate(imagePrompt, size: OpenAIImageSize._1024x1024);
+                    var r = client.Image.Generate(imagePrompt, size: ImageSize._1024x1024);
                     if (r.Success)
                     {
-                        generatedDocument.LocalImage = r.DownloadImage()[0];
+                        generatedDocument.LocalImage = r.DownloadImages()[0];
                     }
                 }
             }

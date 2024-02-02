@@ -25,7 +25,7 @@ namespace fAI
             return JsonUtils.FromJSON<ImageResponse>(text);
         }
 
-        public List<string> DownloadImage()
+        public List<string> DownloadImages()
         {
             var r = new List<string>();
             foreach (var d in this.data)
@@ -36,28 +36,6 @@ namespace fAI
             return r;
         }
 
-        private string DownloadImage(Uri uri)
-        {
-            string fileNameOnly = Path.GetFileName(uri.LocalPath);
-            var fullPath = Path.Combine(Path.GetTempPath(), fileNameOnly);
-            DownloadImageAsync(this.data[0].url, fullPath).Wait();
-            return fullPath;
-        }
-
-        public static async Task DownloadImageAsync(string imageUrl, string savePath)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(imageUrl);
-                if (response.IsSuccessStatusCode)
-                {
-                    byte[] imageData = await response.Content.ReadAsByteArrayAsync();
-                    File.WriteAllBytes(savePath, imageData);
-                }
-                else
-                {
-                }
-            }
-        }
+        
     }
 }

@@ -1,6 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace fAI
 {
@@ -34,6 +38,30 @@ namespace fAI
         public Stopwatch Stopwatch { get; set; }
         public System.Exception Exception { get; set; }
         public bool Success => Exception == null;
+
+        protected string DownloadImage(Uri uri)
+        {
+            string fileNameOnly = Path.GetFileName(uri.LocalPath);
+            var fullPath = Path.Combine(Path.GetTempPath(), fileNameOnly);
+            DownloadImageAsync(uri.ToString(), fullPath).Wait();
+            return fullPath;
+        }
+
+        public static async Task DownloadImageAsync(string imageUrl, string savePath)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(imageUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    byte[] imageData = await response.Content.ReadAsByteArrayAsync();
+                    File.WriteAllBytes(savePath, imageData);
+                }
+                else
+                {
+                }
+            }
+        }
     }
 
     public class EmbeddingResponse : BaseHttpResponse

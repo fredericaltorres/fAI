@@ -262,7 +262,6 @@ End of text
             var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
             Assert.True(FlexStrCompare("Bonjour monde.") == FlexStrCompare(translation) ||
                         FlexStrCompare("Bonjour le monde.") == FlexStrCompare(translation));
-            
         }
 
         [Fact()]
