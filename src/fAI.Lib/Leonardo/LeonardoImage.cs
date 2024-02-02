@@ -38,6 +38,22 @@ namespace fAI
             }
         }
 
+        public DeleteGenerationsResponse DeleteJob(string id)
+        {
+            OpenAI.Trace(new { }, this);
+
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().DELETE($"{__urlGeneations}/{id}");
+            sw.Stop();
+            if (response.Success)
+            {
+                var r = DeleteGenerationsResponse.FromJson(response.Text);
+                r.Stopwatch = sw;
+                return r;
+            }
+            else return new DeleteGenerationsResponse { Exception = response.Exception };
+        }
+
         public GenerationResultResponse GetJobStatus(string id)
         {
             OpenAI.Trace(new { }, this);

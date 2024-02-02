@@ -66,6 +66,27 @@ namespace fAI
             return r;
         }
 
+        public ModernWebClientResult DELETE(string url, string body = null)
+        {
+            var r = new ModernWebClientResult();
+            try
+            {
+                var buffer = new byte[0];
+                var text = string.Empty;
+                if (string.IsNullOrEmpty(body))
+                    buffer = this.UploadData(url, "DELETE", new byte[0]);
+                else
+                    buffer = this.UploadData(url, "DELETE", System.Text.Encoding.UTF8.GetBytes(body));
+                r.SetText(buffer, this.GetResponseContentType());
+
+            }
+            catch (Exception ex)
+            {
+                r.SetException(ex);
+            }
+            return r;
+        }
+
         public ModernWebClientResult POST(string url, string fileName, Dictionary<string, string> options = null, string streamName = "file"/*"media"*/)
         {
             using (var fileStream = File.OpenRead(fileName))

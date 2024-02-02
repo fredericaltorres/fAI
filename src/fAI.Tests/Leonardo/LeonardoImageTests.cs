@@ -40,15 +40,19 @@ Wlop, unique detail, masterpiece
 
             var client = new Leonardo();
             var job = client.Image.Generate(
-                prompt, 
+                prompt,
                 negative_prompt: negativePrompt,
-                size : ImageSize._1024x1024);
+                size: ImageSize._1024x1024);
 
             var jobState = client.Image.GetJobStatus(job.GenerationId);
 
             var pngFileNames = jobState.DownloadImages();
             Assert.True(pngFileNames.Count == 1);
             Assert.True(File.Exists(pngFileNames[0]));
+
+            var r = client.Image.DeleteJob(jobState.GenerationId);
+            Assert.True(r.Success);
+            Assert.Equal(jobState.GenerationId, r.GenerationId);
         }
     }
 }
