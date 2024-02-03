@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.IO;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace fAI
 {
@@ -53,6 +54,7 @@ namespace fAI
 
         public ModernWebClientResult GET(string url)
         {
+            Logger.Trace($"GET {url}", this);
             var r = new ModernWebClientResult();
             try
             {
@@ -68,6 +70,7 @@ namespace fAI
 
         public ModernWebClientResult DELETE(string url, string body = null)
         {
+            Logger.Trace($"DELETE {url}", this);
             var r = new ModernWebClientResult();
             try
             {
@@ -89,6 +92,8 @@ namespace fAI
 
         public ModernWebClientResult POST(string url, string fileName, Dictionary<string, string> options = null, string streamName = "file"/*"media"*/)
         {
+            Logger.Trace($"POST {url}, fileName:{fileName}", this);
+
             using (var fileStream = File.OpenRead(fileName))
             {
                 var r = new ModernWebClientResult();
@@ -98,14 +103,8 @@ namespace fAI
                         if (header.ToLowerInvariant() != "content-type")
                             httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
 
-                    //var ret = new HttpRequestMessage
-                    //{
-                    //    Method = HttpMethod.Post
-                    //};
-
                     var multiPartcontent = new MultipartFormDataContent("----MyGreatBoundary");
                     multiPartcontent.Add(new StreamContent(fileStream), streamName, Path.GetFileName(fileName));
-                    //ret.Content = multiPartcontent;
 
                     if (options != null)
                     {
@@ -127,6 +126,7 @@ namespace fAI
 
         public ModernWebClientResult POST(string url, string body)
         {
+            Logger.Trace($"POST {url}, body:{body}", this);
             this.InitializeHeaderAsJson();
             var r = new ModernWebClientResult();
             try

@@ -43,21 +43,21 @@ namespace fAI
         {
             string fileNameOnly = Path.GetFileName(uri.LocalPath);
             var fullPath = Path.Combine(Path.GetTempPath(), fileNameOnly);
-            DownloadImageAsync(uri.ToString(), fullPath).Wait();
+            DownloadImageAsync(uri.ToString(), fullPath);
             return fullPath;
         }
 
-        public static async Task DownloadImageAsync(string imageUrl, string savePath)
+        public void DownloadImageAsync(string imageUrl, string savePath)
         {
             if(File.Exists(savePath))
                 File.Delete(savePath);
 
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(imageUrl);
+                HttpResponseMessage response = client.GetAsync(imageUrl).GetAwaiter().GetResult();
                 if (response.IsSuccessStatusCode)
                 {
-                    byte[] imageData = await response.Content.ReadAsByteArrayAsync();
+                    byte[] imageData = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
                     File.WriteAllBytes(savePath, imageData);
                 }
                 else

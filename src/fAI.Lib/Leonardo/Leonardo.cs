@@ -11,6 +11,7 @@ namespace fAI
     {
         public Leonardo(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
+            Trace("Leonardo ctor", this);
             HttpBase._key = Environment.GetEnvironmentVariable("LEONARDO_API_KEY");
             HttpBase._timeout = 60 * 4;
 

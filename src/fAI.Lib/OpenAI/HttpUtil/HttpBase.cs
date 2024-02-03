@@ -2,7 +2,6 @@
 
 namespace fAI
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class ErrorDetail
     {
         public string message { get; set; }
@@ -37,7 +36,7 @@ namespace fAI
         }
     }
 
-    public class HttpBase
+    public class HttpBase : Logger
     {
         public static int _timeout = 60 * 4;
         public static string _key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");

@@ -24,7 +24,7 @@ namespace fAI
 
         public UserInformation GetUserInformation()
         {
-            OpenAI.Trace(new { }, this);
+            Trace(new { }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().GET(__urlGetUserInfo);
@@ -43,7 +43,7 @@ namespace fAI
 
         public DeleteGenerationsResponse DeleteJob(string id)
         {
-            OpenAI.Trace(new { }, this);
+            Trace(new { id }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().DELETE($"{__urlGeneations}/{id}");
@@ -59,7 +59,7 @@ namespace fAI
 
         public GenerationResultResponse GetJobStatus(string id)
         {
-            OpenAI.Trace(new { }, this);
+            Trace(new { id }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().GET($"{__urlGeneations}/{id}");
@@ -110,6 +110,8 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5)
         {
+            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+
             GenerationResponse job = Generate(prompt, negative_prompt, modelId,  imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
@@ -118,7 +120,7 @@ namespace fAI
                 if (jobS.Completed)
                     return jobS;
                 return null;
-            });
+            }, sleepDuration: 6);
 
             var pngFileNames = jobState.DownloadImages();
             var r = this.DeleteJob(jobState.GenerationId);
@@ -147,6 +149,8 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5)
         {
+            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
             var height = int.Parse(dimensions[1]);
@@ -169,7 +173,7 @@ namespace fAI
                 presetStyle = presetStylePhotoRealOn == PresetStylePhotoRealOn.NONE ? presetStyleAlchemyOn.ToString() : presetStylePhotoRealOn.ToString()
             };
 
-            OpenAI.Trace(body, this);
+            Trace(body, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(__urlGeneations, JsonConvert.SerializeObject(body));

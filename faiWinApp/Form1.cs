@@ -392,5 +392,27 @@ namespace faiWinApp
         {
 
         }
+
+        private void womanOverTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.UserMessage("[Leonardo]Generating images, Woman over time...");
+            var prompt = @"
+Close-up portrait BLONDE WOMAN {age} years old, nice body shape,|(STYLED HAIR:1.7), color portrait, Linkedin profile picture, professional portrait photography by Martin Schoeller, by Mark Mann, by Steve McCurry, bokeh, studio lighting, canonical lens, shot on dslr, 64 megapixels, sharp focus.
+";
+            var ages = new List<int>() { 20, 30, 40, 50, 60, 70, 80 };
+            var finalOutputFiles = new FileSequenceManager(@"c:\temp\@fAiImages");
+            finalOutputFiles.DeleteDirectory(finalOutputFiles.TargetFolder);
+            finalOutputFiles.CreateDirectory(finalOutputFiles.TargetFolder);
+
+            var client = new fAI.Leonardo();
+
+            foreach (var age in ages)
+            {
+                this.UserMessage("[Leonardo]Age:{age}".Template(new { age }));
+                var fileName = client.Image.GenerateSync(prompt.Template(new { age }),
+                                                         size: fAI.OpenAIImage.ImageSize._768x1360, seed: 689242880);
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
+        }
     }
 }

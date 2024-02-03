@@ -62,6 +62,8 @@
             this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.mp4FirstFrameDurationSecond = new System.Windows.Forms.TextBox();
+            this.leonardoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womanOverTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -71,7 +73,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.leonardoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
@@ -392,6 +395,21 @@
             this.mp4FirstFrameDurationSecond.TabIndex = 3;
             this.mp4FirstFrameDurationSecond.Text = "3";
             // 
+            // leonardoToolStripMenuItem
+            // 
+            this.leonardoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.womanOverTimeToolStripMenuItem});
+            this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
+            this.leonardoToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.leonardoToolStripMenuItem.Text = "Leonardo";
+            // 
+            // womanOverTimeToolStripMenuItem
+            // 
+            this.womanOverTimeToolStripMenuItem.Name = "womanOverTimeToolStripMenuItem";
+            this.womanOverTimeToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
+            this.womanOverTimeToolStripMenuItem.Text = "Woman over time";
+            this.womanOverTimeToolStripMenuItem.Click += new System.EventHandler(this.womanOverTimeToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -465,6 +483,8 @@
         private System.Windows.Forms.ToolStripMenuItem mP4ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem combineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem concatMP4ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem leonardoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem womanOverTimeToolStripMenuItem;
     }
 }
 
