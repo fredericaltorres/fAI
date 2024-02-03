@@ -409,16 +409,19 @@ namespace faiWinApp
                     }
                     else if (gifTransitionMode == GifTransitionMode.Fade2 || gifTransitionMode == GifTransitionMode.Fade6)
                     {
-                        // Generate the main image
-                        GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
-
                         if(generateMP4) // Generate a wait of 2 second for the MP4
                         {
-                            foreach (var i in DS.Range(mp4FrameRate * mp4FirstFrameDurationSecond))
-                                GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
+                            // Generate the main image for x second in mnp4 mode
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight, 
+                                duplicate: mp4FrameRate * mp4FirstFrameDurationSecond);
+                        }
+                        else
+                        {
+                            // Generate the main image
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
                         }
 
-                        var fadingSteps = mp4FrameRate;
+                        var fadingSteps = mp4FrameRate*2;
                         var fadingValue = 0.14f;
                         var imageIndexStartFading = imageIndex;
                         var fadeDelay = 16;
@@ -436,7 +439,7 @@ namespace faiWinApp
                         for (int j = 0; j < fadingSteps; j++)
                         {
                             var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue));
-                            foreach (var i in DS.Range(generateMP4 ? 3 : 1))
+                            foreach (var i in DS.Range(mp4FrameRate/2))
                                 GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight);
                         }
                     }
@@ -502,7 +505,7 @@ namespace faiWinApp
             return rr;
         }
 
-        private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay, int refWidth, int refHeight)
+        private static void GenerateGifOneImage(string message, int messageX, int messageY, int fontSize, string fontName, MagickImageCollection collection, int i, string fileName, int animationDelay, int refWidth, int refHeight, int duplicate = 1)
         {
             int imageNumber = collection.Count;
             var (width, height) = GetImageWidthAndHeight(fileName);
@@ -546,9 +549,14 @@ namespace faiWinApp
                     image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(fontSize).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(messageX, messageY, message));
             }
             image.Draw(new Drawables().FillColor(MagickColors.White).Font(fontName).FontPointSize(26).StrokeColor(MagickColors.Black).StrokeWidth(1).Text(8, height - 16, imageNumber.ToString()));
-            collection.Add(image);
-            collection[collection.Count-1].AnimationDelay = animationDelay;
-            collection[collection.Count - 1].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
+
+            for (var j = 0; j < duplicate; j++)
+            {
+                var image2 = new MagickImage(image);
+                collection.Add(image2);
+                collection[collection.Count - 1].AnimationDelay = animationDelay;
+                collection[collection.Count - 1].GifDisposeMethod = GifDisposeMethod.Previous; // Prevents frames with transparent backgrounds from overlapping each other
+            }
         }
     }
 }

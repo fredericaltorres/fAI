@@ -399,8 +399,8 @@ namespace faiWinApp
             var prompt = @"
 Close-up portrait BLONDE WOMAN {age} years old, nice body shape,|(STYLED HAIR:1.7), color portrait, Linkedin profile picture, professional portrait photography by Martin Schoeller, by Mark Mann, by Steve McCurry, bokeh, studio lighting, canonical lens, shot on dslr, 64 megapixels, sharp focus.
 ";
-            var ages = new List<int>() { 20, 30, 40, 50, 60, 70, 80 };
-            var finalOutputFiles = new FileSequenceManager(@"c:\temp\@fAiImages");
+            var ages = new List<int>() { 10, 20, 30, 40, 50, 60, 70, 80 };
+            var finalOutputFiles = new FileSequenceManager(@"C:\temp\@fAiImages\Leonardo.Woman.Life");
             finalOutputFiles.DeleteDirectory(finalOutputFiles.TargetFolder);
             finalOutputFiles.CreateDirectory(finalOutputFiles.TargetFolder);
 
