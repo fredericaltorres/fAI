@@ -95,5 +95,27 @@ high quality, 8K Ultra HD, In this extraordinary full-body digital illustration,
             Assert.True(r.Success);
             Assert.Equal(jobState.GenerationId, r.GenerationId);
         }
+
+
+
+
+
+        [Fact()]
+        public void Image_Generate_WomanAtDifferentAge()
+        {
+            var prompt = @"
+Close-up portrait BLONDE WOMAN [AGE] years old, nice body shape,|(STYLED HAIR:1.7), color portrait, Linkedin profile picture, professional portrait photography by Martin Schoeller, by Mark Mann, by Steve McCurry, bokeh, studio lighting, canonical lens, shot on dslr, 64 megapixels, sharp focus.
+";
+            var ages = new List<int>() { 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
+
+            foreach (var age in ages)
+            {
+                var client = new Leonardo();
+
+                var fileName = client.Image.GenerateSync(prompt.Replace("[AGE]", age.ToString()), 
+                                size: ImageSize._768x1360, seed: 689242880);
+                
+            }
+        }
     }
 }

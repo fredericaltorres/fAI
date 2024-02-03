@@ -5,6 +5,9 @@ using System;
 using System.Diagnostics;
 using static fAI.OpenAIImage;
 using System.Linq;
+using DynamicSugar;
+using static DynamicSugar.DS;
+using System.IO;
 
 namespace fAI
 {
@@ -91,11 +94,45 @@ namespace fAI
         }
 
 
-       
 
-        // https://docs.leonardo.ai/reference/creategeneration
+        public string GenerateSync(string prompt,
+            string negative_prompt = null,
+            string modelId = MODEL_ID,
+            int imageCount = 1,
+            ImageSize size = ImageSize._1024x1024,
+            bool isPublic = false,
+            bool alchemy = true,
+            bool photoReal = false,
+            bool promptMagic = true,
+            PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
+            int seed = 407795968,
+            PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
+            PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
+            double promptMagicStrength = 0.5)
+        {
+            GenerationResponse job = Generate(prompt, negative_prompt, modelId,  imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
 
-        public GenerationResponse Generate(string prompt, 
+            var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
+            {
+                var jobS = this.GetJobStatus(job.GenerationId);
+                if (jobS.Completed)
+                    return jobS;
+                return null;
+            });
+
+            var pngFileNames = jobState.DownloadImages();
+            var r = this.DeleteJob(jobState.GenerationId);
+
+            var tfh = new TestFileHelper();
+            var newFileName = tfh.GetTempFileName(".jpg");
+            File.Move(pngFileNames[0], newFileName);
+
+            return newFileName;
+        }
+
+            // https://docs.leonardo.ai/reference/creategeneration
+
+            public GenerationResponse Generate(string prompt, 
             string negative_prompt = null,
             string modelId = MODEL_ID, 
             int imageCount = 1, 
