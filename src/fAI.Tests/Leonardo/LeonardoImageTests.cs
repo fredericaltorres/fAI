@@ -31,7 +31,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        public void Image_Generate()
+        public void Image_Generate_1()
         {
             var prompt = @"
 Portrait of a undead Kid goblin girl doing martial arts, cyborg parts, futuristic city, neon signs, Japanese city, 
@@ -49,6 +49,40 @@ Wlop, unique detail, masterpiece
             GenerationResultResponse jobState = null;
             var jobSucceeded = Managers.TimeOutManager("Test", 1, () => {
                  jobState = client.Image.GetJobStatus(job.GenerationId);
+                return jobState.Completed;
+            });
+            Assert.True(jobSucceeded);
+
+            var pngFileNames = jobState.DownloadImages();
+            Assert.True(pngFileNames.Count == 1);
+            Assert.True(File.Exists(pngFileNames[0]));
+
+            var r = client.Image.DeleteJob(jobState.GenerationId);
+            Assert.True(r.Success);
+            Assert.Equal(jobState.GenerationId, r.GenerationId);
+        }
+
+        [Fact()]
+        public void Image_Generate_photoReal_on()
+        {
+            var prompt = @"
+high quality, 8K Ultra HD, In this extraordinary full-body digital illustration, envision the enchanting presence of a captivating woman with ethereal features. Her elegant allure takes center stage, accentuated by flowing golden locks and mesmerizing cyan eyes, creating an otherworldly charm that captivates the observer, However, in this arrangement, her gaze holds a subtle hint of intrigue, inviting viewers to delve into the mystery that surrounds her, As a masterful touch, consider adding a celestial glow to her entire being, emanating softly from the stars above and reflecting in her eyes, by yukisakura, awesome full color,
+";
+            var negativePrompt = @"";
+
+            var client = new Leonardo();
+            var job = client.Image.Generate(
+                prompt, 
+                //negative_prompt: negativePrompt, 
+                size: ImageSize._512x984,
+                seed: 276570112, 
+                photoReal: true,
+                presetStylePhotoRealOn: PresetStylePhotoRealOn.MINIMALIST
+            );
+
+            GenerationResultResponse jobState = null;
+            var jobSucceeded = Managers.TimeOutManager("Test", 1, () => {
+                jobState = client.Image.GetJobStatus(job.GenerationId);
                 return jobState.Completed;
             });
             Assert.True(jobSucceeded);

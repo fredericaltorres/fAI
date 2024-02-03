@@ -72,7 +72,7 @@ namespace fAI
 
         public enum PresetStylePhotoRealOn
         {
-            CINEMATIC, CREATIVE, VIBRANT, NONE
+            MINIMALIST, CINEMATIC, CREATIVE, VIBRANT, NONE, 
         }
 
         public enum PresetStyleAlchemyOff
@@ -90,8 +90,11 @@ namespace fAI
             v2, v3
         }
 
+
+       
+
         // https://docs.leonardo.ai/reference/creategeneration
-        
+
         public GenerationResponse Generate(string prompt, 
             string negative_prompt = null,
             string modelId = MODEL_ID, 
@@ -99,10 +102,12 @@ namespace fAI
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
             bool alchemy = true,
+            bool photoReal = false,
             bool promptMagic = true,
             PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
+            PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5)
         {
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
@@ -113,17 +118,18 @@ namespace fAI
             {
                 prompt,
                 negative_prompt,
-                modelId,
+                modelId = photoReal ? null:modelId,
                 num_images = imageCount,
                 @public = isPublic,
                 width,
                 height,
                 promptMagicStrength,
                 alchemy,
+                photoReal,
                 promptMagic,
                 promptMagicVersion = promptMagicVersion.ToString(),
                 seed,
-                presetStyle = presetStyleAlchemyOn.ToString()
+                presetStyle = presetStylePhotoRealOn == PresetStylePhotoRealOn.NONE ? presetStyleAlchemyOn.ToString() : presetStylePhotoRealOn.ToString()
             };
 
             OpenAI.Trace(body, this);

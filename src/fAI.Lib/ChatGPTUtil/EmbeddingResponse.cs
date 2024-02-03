@@ -49,6 +49,9 @@ namespace fAI
 
         public static async Task DownloadImageAsync(string imageUrl, string savePath)
         {
+            if(File.Exists(savePath))
+                File.Delete(savePath);
+
             using (HttpClient client = new HttpClient())
             {
                 HttpResponseMessage response = await client.GetAsync(imageUrl);
