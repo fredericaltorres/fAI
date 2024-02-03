@@ -377,9 +377,10 @@ namespace faiWinApp
             DeleteFile(gifName);
             var imagesGenerated = new List<string>();
 
-            Func<string, string> Img = (f) =>
+            Func<string, int, string> Img = (f, count) =>
             {
-                imagesGenerated.Add(f);
+                for(var i = 0; i < count; i++)
+                    imagesGenerated.Add(f);
                 return f;
             };
 
@@ -397,12 +398,12 @@ namespace faiWinApp
                     if (gifTransitionMode == GifTransitionMode.ZoomIn)
                     {
                         // Generate the main image
-                        GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), zoomDelay, refWidth, refHeight);
+                        GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName, 1), zoomDelay, refWidth, refHeight);
 
                         var zoomPixel = zoomPixelStep;
                         for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
-                            var newZoomedImage = Img(ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2))));
+                            var newZoomedImage = Img(ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2))),1);
                             GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, zoomDelay, refWidth, refHeight);
                             zoomPixel += zoomPixelStep;
                         }
@@ -411,17 +412,19 @@ namespace faiWinApp
                     {
                         if(generateMP4) // Generate a wait of 2 second for the MP4
                         {
+                            var duplicateCount = mp4FrameRate * mp4FirstFrameDurationSecond;
                             // Generate the main image for x second in mnp4 mode
-                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight, 
-                                duplicate: mp4FrameRate * mp4FirstFrameDurationSecond);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName, duplicateCount), delay, refWidth, refHeight, 
+                                duplicate: duplicateCount);
                         }
                         else
                         {
                             // Generate the main image
-                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName), delay, refWidth, refHeight);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, Img(fileName, 1), delay, refWidth, refHeight);
                         }
 
-                        var fadingSteps = mp4FrameRate*2;
+                        // GifTransitionMode.Fade6
+                        var fadingSteps = mp4FrameRate;
                         var fadingValue = 0.14f;
                         var imageIndexStartFading = imageIndex;
                         var fadeDelay = 16;
@@ -438,9 +441,9 @@ namespace faiWinApp
 
                         for (int j = 0; j < fadingSteps; j++)
                         {
-                            var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue));
-                            foreach (var i in DS.Range(mp4FrameRate/2))
-                                GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight);
+                            var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue), 1);
+                            GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight, 
+                                                duplicate: mp4FrameRate);
                         }
                     }
 
