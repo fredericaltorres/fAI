@@ -1,0 +1,1 @@
+Close-up portrait BLONDE WOMAN 76 years old, nice body shape,|(STYLED HAIR:1.7), color portrait, Linkedin profile picture, professional portrait photography by Martin Schoeller, by Mark Mann, by Steve McCurry, bokeh, studio lighting, canonical lens, shot on dslr, 64 megapixels, sharp focus.
