@@ -43,6 +43,8 @@
             this.createGifAnimationZoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leonardoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womanOverTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -62,8 +64,9 @@
             this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.mp4FirstFrameDurationSecond = new System.Windows.Forms.TextBox();
-            this.leonardoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.womanOverTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label4 = new System.Windows.Forms.Label();
+            this.PasteFileName = new System.Windows.Forms.TextBox();
+            this.butSortFileNames = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -78,7 +81,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1308, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(1281, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -94,7 +97,7 @@
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(159, 24);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -197,15 +200,30 @@
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
+            // leonardoToolStripMenuItem
+            // 
+            this.leonardoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.womanOverTimeToolStripMenuItem});
+            this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
+            this.leonardoToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.leonardoToolStripMenuItem.Text = "Leonardo";
+            // 
+            // womanOverTimeToolStripMenuItem
+            // 
+            this.womanOverTimeToolStripMenuItem.Name = "womanOverTimeToolStripMenuItem";
+            this.womanOverTimeToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
+            this.womanOverTimeToolStripMenuItem.Text = "Woman over time";
+            this.womanOverTimeToolStripMenuItem.Click += new System.EventHandler(this.womanOverTimeToolStripMenuItem_Click);
+            // 
             // txtUserOutput
             // 
             this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserOutput.Location = new System.Drawing.Point(26, 415);
+            this.txtUserOutput.Location = new System.Drawing.Point(13, 520);
             this.txtUserOutput.Margin = new System.Windows.Forms.Padding(4);
             this.txtUserOutput.Multiline = true;
             this.txtUserOutput.Name = "txtUserOutput";
             this.txtUserOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtUserOutput.Size = new System.Drawing.Size(1221, 408);
+            this.txtUserOutput.Size = new System.Drawing.Size(1255, 421);
             this.txtUserOutput.TabIndex = 1;
             // 
             // WorkFolder
@@ -237,9 +255,9 @@
             this.groupBox1.Controls.Add(this.rdoGifFade6);
             this.groupBox1.Controls.Add(this.rdoGifFade1);
             this.groupBox1.Controls.Add(this.rdgGifNoFade);
-            this.groupBox1.Location = new System.Drawing.Point(17, 85);
+            this.groupBox1.Location = new System.Drawing.Point(13, 153);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1279, 127);
+            this.groupBox1.Size = new System.Drawing.Size(1214, 127);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gif Animation";
@@ -347,7 +365,7 @@
             // chkViewFileAfterWork
             // 
             this.chkViewFileAfterWork.AutoSize = true;
-            this.chkViewFileAfterWork.Location = new System.Drawing.Point(31, 372);
+            this.chkViewFileAfterWork.Location = new System.Drawing.Point(17, 490);
             this.chkViewFileAfterWork.Name = "chkViewFileAfterWork";
             this.chkViewFileAfterWork.Size = new System.Drawing.Size(208, 23);
             this.chkViewFileAfterWork.TabIndex = 11;
@@ -359,9 +377,9 @@
             this.groupBox2.Controls.Add(this.ckGenerateMP4);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.mp4FirstFrameDurationSecond);
-            this.groupBox2.Location = new System.Drawing.Point(17, 218);
+            this.groupBox2.Location = new System.Drawing.Point(13, 286);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1279, 127);
+            this.groupBox2.Size = new System.Drawing.Size(1152, 99);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MP4:";
@@ -395,27 +413,44 @@
             this.mp4FirstFrameDurationSecond.TabIndex = 3;
             this.mp4FirstFrameDurationSecond.Text = "3";
             // 
-            // leonardoToolStripMenuItem
+            // label4
             // 
-            this.leonardoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.womanOverTimeToolStripMenuItem});
-            this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
-            this.leonardoToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
-            this.leonardoToolStripMenuItem.Text = "Leonardo";
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(13, 79);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(135, 19);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Paste FileName";
             // 
-            // womanOverTimeToolStripMenuItem
+            // PasteFileName
             // 
-            this.womanOverTimeToolStripMenuItem.Name = "womanOverTimeToolStripMenuItem";
-            this.womanOverTimeToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
-            this.womanOverTimeToolStripMenuItem.Text = "Woman over time";
-            this.womanOverTimeToolStripMenuItem.Click += new System.EventHandler(this.womanOverTimeToolStripMenuItem_Click);
+            this.PasteFileName.Location = new System.Drawing.Point(155, 76);
+            this.PasteFileName.Margin = new System.Windows.Forms.Padding(4);
+            this.PasteFileName.Name = "PasteFileName";
+            this.PasteFileName.Size = new System.Drawing.Size(797, 26);
+            this.PasteFileName.TabIndex = 14;
+            this.PasteFileName.TextChanged += new System.EventHandler(this.PasteFileName_TextChanged);
+            // 
+            // butSortFileNames
+            // 
+            this.butSortFileNames.Location = new System.Drawing.Point(983, 85);
+            this.butSortFileNames.Name = "butSortFileNames";
+            this.butSortFileNames.Size = new System.Drawing.Size(182, 37);
+            this.butSortFileNames.TabIndex = 16;
+            this.butSortFileNames.Text = "Sort FileNames";
+            this.butSortFileNames.UseVisualStyleBackColor = true;
+            this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1308, 848);
+            this.ClientSize = new System.Drawing.Size(1281, 954);
+            this.Controls.Add(this.butSortFileNames);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.PasteFileName);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.chkViewFileAfterWork);
             this.Controls.Add(this.butOpenWorkFolder);
@@ -485,6 +520,9 @@
         private System.Windows.Forms.ToolStripMenuItem concatMP4ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem leonardoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem womanOverTimeToolStripMenuItem;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox PasteFileName;
+        private System.Windows.Forms.Button butSortFileNames;
     }
 }
 

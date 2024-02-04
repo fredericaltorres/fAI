@@ -3,6 +3,7 @@
     public class AppOptions : JsonObject
     {
         public string WorkFolder { get; set; }
+        public string PasteFileName { get; set; }
         public string GifDelay { get; set; }
         public string Mp4FirstFrameDuration { get; set; }
         public bool GifRepeat { get; set; }

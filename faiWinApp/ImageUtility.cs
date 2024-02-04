@@ -144,19 +144,19 @@ namespace faiWinApp
             _fileToCleanUp.Clear();
         }
 
-        public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder)
+        public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder, string imageFileNamePrefix = "")
         {
             var folder = (string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath() : tmpFolder);
-            var f = Path.Combine(folder, $"{Environment.TickCount}.{imageFormat}");
+            var f = Path.Combine(folder, $"{imageFileNamePrefix}{(string.IsNullOrEmpty(imageFileNamePrefix) ? "" : "." )}{Environment.TickCount}.{imageFormat}");
             _fileToCleanUp.Add(f);
             return f;
         }
 
-        public static string SaveImageFromClipboard(ImageFormat imageFormat, string tmpFolder)
+        public static string SaveImageFromClipboard(ImageFormat imageFormat, string tmpFolder, string imageFileNamePrefix)
         {
             if (Clipboard.ContainsImage())
             {
-                string filePath = GetNewImageFileName(imageFormat, tmpFolder);
+                string filePath = GetNewImageFileName(imageFormat, tmpFolder, imageFileNamePrefix);
                 Image img = Clipboard.GetImage();
                 img.Save(filePath, imageFormat);
                 return filePath;
@@ -367,7 +367,7 @@ namespace faiWinApp
             string fontName = "Consola", 
             int zoomImageCount = 32,
             int zoomPixelStep = 1,
-            int mp4FrameRate = 12,
+            int mp4FrameRate = 16,
             int mp4FirstFrameDurationSecond = 2,
             bool generateMP4 = false) // Pixels
         {
@@ -425,7 +425,7 @@ namespace faiWinApp
 
                         // GifTransitionMode.Fade6
                         var fadingSteps = mp4FrameRate;
-                        var fadingValue = 0.14f;
+                        var fadingValue = 0.9f / fadingSteps;
                         var imageIndexStartFading = imageIndex;
                         var fadeDelay = 16;
                         var imageIndexEndFading = imageIndex + 1;
@@ -443,7 +443,7 @@ namespace faiWinApp
                         {
                             var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue), 1);
                             GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight, 
-                                                duplicate: mp4FrameRate);
+                                                duplicate: mp4FrameRate/2);
                         }
                     }
 

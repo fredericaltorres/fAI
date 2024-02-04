@@ -34,6 +34,7 @@ namespace faiWinApp
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            _appOptions.PasteFileName = this.PasteFileName.Text;
             _appOptions.WorkFolder = this.WorkFolder.Text;
             _appOptions.Mp4FirstFrameDuration = this.mp4FirstFrameDurationSecond.Text;
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
@@ -66,7 +67,7 @@ namespace faiWinApp
         {
             using (var cursor = new CWaitCursor(this))
             {
-                var newImageFile = ImageUtility.SaveImageFromClipboard(ImageFormat.Png, _appOptions.WorkFolder);
+                var newImageFile = ImageUtility.SaveImageFromClipboard(ImageFormat.Png, _appOptions.WorkFolder, _appOptions.PasteFileName);
                 if (newImageFile != null)
                 {
                     this.UserMessage($"Saved image to {newImageFile}");
@@ -86,6 +87,7 @@ namespace faiWinApp
         {
             _appOptions = AppOptions.FromFile($@".\{System.Windows.Forms.Application.ProductName}.config.json");
             this.WorkFolder.Text = _appOptions.WorkFolder;
+            this.PasteFileName.Text = _appOptions.PasteFileName;
             this.rdoGifFade1.Checked = _appOptions.GifFade1;
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.mp4FirstFrameDurationSecond.Text = _appOptions.Mp4FirstFrameDuration;
@@ -143,7 +145,6 @@ namespace faiWinApp
             _dragAndDropFileSelection.ForEach(fileSelected =>
             {
                 DisplayImageInfo(fileSelected);
-                // this.UserMessage("   "+fileSelected);
             });
         }
 
@@ -413,6 +414,20 @@ Close-up portrait BLONDE WOMAN {age} years old, nice body shape,|(STYLED HAIR:1.
                                                          size: fAI.OpenAIImage.ImageSize._768x1360, seed: 689242880);
                 finalOutputFiles.AddFile(fileName, move: true);
             }
+        }
+
+        private void PasteFileName_TextChanged(object sender, EventArgs e)
+        {
+            _appOptions.PasteFileName = this.PasteFileName.Text;
+        }
+
+        private void butSortFileNames_Click(object sender, EventArgs e)
+        {
+            _dragAndDropFileSelection.Sort();
+            _dragAndDropFileSelection.ForEach(fileSelected =>
+            {
+                DisplayImageInfo(fileSelected);
+            });
         }
     }
 }
