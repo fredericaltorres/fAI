@@ -241,13 +241,13 @@ namespace faiWinApp
             return newFileName;
         }
 
-        public static string BlendBitmaps(string imageFileName1, string imageFileName2, float blendLevel)
+        public static string BlendBitmaps(string imageFileName1, string imageFileName2, float blendLevel, ImageFormat imageFormat)
         {
             var b1 = new Bitmap(imageFileName1);
             var b2 = new Bitmap(imageFileName2);
             var b = BlendBitmaps(b1, b2, blendLevel);
-            var fileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
-            b.Save(fileName);
+            var fileName = GetNewImageFileName(imageFormat, Path.GetTempPath());
+            b.Save(fileName, imageFormat);
             return fileName;
         }
 
@@ -319,19 +319,39 @@ namespace faiWinApp
 
         static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
 
-        public static bool RunFFMPEG(List<string> inputPngFiles, string mp4OutputFile, int mp4FrameRate = 16)
+        public static bool RunFFMPEG(Action<string> notify, List<string> inputPngFiles, string mp4OutputFile, int mp4FrameRate = 16)
         {
-            List<string> pngFilesForFrames = new List<string>();
-            foreach (var pngFile in inputPngFiles)
-                for(var f=0; f<mp4FrameRate; f++)
+            var pngFilesForFrames = new List<string>();
+            for (var z=0; z< inputPngFiles.Count; z++)
+            {
+                notify($"Processing {z} / {inputPngFiles.Count}");
+                var pngFile = inputPngFiles[z];
+                for (var f = 0; f < mp4FrameRate; f++) // Fill 1 second of frame
                     pngFilesForFrames.Add(pngFile);
+
+                //Now generate transition to next image
+                var nextPngFile = (z + 1) < inputPngFiles.Count - 1 ? inputPngFiles[z + 1] : inputPngFiles[0];
+                var fadingSteps = mp4FrameRate;
+                var fadingValue = 0.99f / fadingSteps;
+                for (int j = 0; j < fadingSteps; j++)
+                {
+                    var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Jpeg);
+                    pngFilesForFrames.Add(transitionImageFileName);
+                }
+            }
+
+            notify($"{pngFilesForFrames.Count} images generated");
 
             var fileList = string.Join("\r\n", pngFilesForFrames.Select(f => $"file '{f}'"));
             var tfh = new TestFileHelper();
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
-            var cmd = $@"-y-f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r 30 -pix_fmt yuv420p   -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}""    ""{mp4OutputFile}""";
+            var cmd = $@" -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r 30 -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
+            notify($"FFMPEG.exe {cmd}");
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
+
+            CleanUpTempFiles();
+
             return intExitCode == 0;
         }
 
@@ -457,7 +477,7 @@ namespace faiWinApp
 
                         for (int j = 0; j < fadingSteps; j++)
                         {
-                            var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue), 1);
+                            var transitionImageFileName = Img(BlendBitmaps(imageFileNames[imageIndexStartFading], imageFileNames[imageIndexEndFading], (j + 1) * fadingValue, ImageFormat.Png), 1);
                             GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, transitionImageFileName, fadeDelay, refWidth, refHeight, 
                                                 duplicate: mp4FrameRate/2);
                         }

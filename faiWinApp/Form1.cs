@@ -465,10 +465,11 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
 
         private void buildVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Action<string> notify = (m) => this.UserMessage(m);
             var sequenceFileName = @"C:\temp\@fAiImages\Darkwave.Soundscape\sequence.md";
             var finalOutputFiles = new FileSequenceManager();
             var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
-            ImageUtility.RunFFMPEG(finalOutputFiles.FileNames, this.FinalOutputFileName);
+            ImageUtility.RunFFMPEG(notify, finalOutputFiles.FileNames, this.FinalOutputFileName);
         }
     }
 }
