@@ -345,7 +345,7 @@ namespace faiWinApp
             var pngFilesForFrames = new List<string>();
             for (var z=0; z< inputPngFiles.Count; z++)
             {
-                notify($"Processing {z} / {inputPngFiles.Count}");
+                notify($"Processing {z} / {inputPngFiles.Count}, zoomIn:{zoomIn}");
                 var pngFile = inputPngFiles[z];
 
                 if(zoomIn)
@@ -353,6 +353,7 @@ namespace faiWinApp
                     for (var f = 0; f < mp4FrameRate * 1; f++) // Fill 1 second of frame
                         pngFilesForFrames.Add(pngFile);
 
+                    notify($"Calculating zoom");
                     var zoomInDuration = imageDurationSecond - 1;
                     var zoomPixel = zoomPixelStep;
                     var zoomImage = "";
@@ -370,6 +371,7 @@ namespace faiWinApp
                         pngFilesForFrames.Add(pngFile);
                 }
 
+                notify($"Calculating Transition");
                 //Now generate transition to next image
                 var nextPngFile = (z + 1) < inputPngFiles.Count - 1 ? inputPngFiles[z + 1] : inputPngFiles[0];
                 var fadingSteps = mp4FrameRate;

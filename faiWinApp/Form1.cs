@@ -471,7 +471,12 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
             var sequenceFileName = @"C:\temp\@fAiImages\Darkwave.Soundscape\sequence.md";
             var finalOutputFiles = new FileSequenceManager();
             var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
-            ImageUtility.GenerateMP4Animation(notify, finalOutputFiles.FileNames, this.FinalOutputFileName, mp4FrameRate : GetMp4FrameRate(), imageDurationSecond: GetMp4FirstFrameDurationSecond());
+            ImageUtility.GenerateMP4Animation(notify, 
+                finalOutputFiles.FileNames, 
+                this.FinalOutputFileName, 
+                mp4FrameRate : GetMp4FrameRate(), 
+                imageDurationSecond: GetMp4FirstFrameDurationSecond(),
+                zoomInPercent: 33);
         }
     }
 }
