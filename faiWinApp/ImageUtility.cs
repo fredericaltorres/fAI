@@ -319,15 +319,56 @@ namespace faiWinApp
 
         static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
 
-        public static bool RunFFMPEG(Action<string> notify, List<string> inputPngFiles, string mp4OutputFile, int mp4FrameRate = 16)
+        public static bool GenerateMP4Animation(Action<string> notify, List<string> inputPngFiles, string mp4OutputFile, 
+            int mp4FrameRate = 16, 
+            int imageDurationSecond = 2, 
+            int zoomInPercent = -1)
         {
+            var zoomIn = zoomInPercent != -1;
+            int widthBeforeZoom = 0;
+            int widthAfterZoom = 0;
+            int zoomPixelDistance = 0;
+            int zoomPixelStep = 0;
+            int zoomImageCount = ((imageDurationSecond - 1) * mp4FrameRate);
+            var (refWidth, refHeight) = GetImageWidthAndHeight(inputPngFiles[0]);
+            if (zoomIn) 
+            {
+                using (Bitmap originalImage = new Bitmap(inputPngFiles[0]))
+                {
+                    widthBeforeZoom = originalImage.Width;
+                    widthAfterZoom = (widthBeforeZoom * zoomInPercent / 100);
+                    zoomPixelDistance = widthBeforeZoom - widthAfterZoom;
+                    zoomPixelStep = zoomPixelDistance / zoomImageCount;
+                }
+            }
+
             var pngFilesForFrames = new List<string>();
             for (var z=0; z< inputPngFiles.Count; z++)
             {
                 notify($"Processing {z} / {inputPngFiles.Count}");
                 var pngFile = inputPngFiles[z];
-                for (var f = 0; f < mp4FrameRate; f++) // Fill 1 second of frame
-                    pngFilesForFrames.Add(pngFile);
+
+                if(zoomIn)
+                {
+                    for (var f = 0; f < mp4FrameRate * 1; f++) // Fill 1 second of frame
+                        pngFilesForFrames.Add(pngFile);
+
+                    var zoomInDuration = imageDurationSecond - 1;
+                    var zoomPixel = zoomPixelStep;
+                    var zoomImage = "";
+                    for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
+                    {
+                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)));
+                        zoomPixel += zoomPixelStep;
+                        pngFilesForFrames.Add(zoomImage);
+                    }
+                    pngFile = zoomImage;
+                }
+                else
+                {
+                    for (var f = 0; f < mp4FrameRate * imageDurationSecond; f++) // Fill 1 second of frame
+                        pngFilesForFrames.Add(pngFile);
+                }
 
                 //Now generate transition to next image
                 var nextPngFile = (z + 1) < inputPngFiles.Count - 1 ? inputPngFiles[z + 1] : inputPngFiles[0];

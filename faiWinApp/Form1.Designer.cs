@@ -47,6 +47,7 @@
             this.womanOverTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.darkwaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -69,7 +70,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.buildVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label6 = new System.Windows.Forms.Label();
+            this.mp4FrameRate = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -231,9 +233,16 @@
             // createImageToolStripMenuItem
             // 
             this.createImageToolStripMenuItem.Name = "createImageToolStripMenuItem";
-            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
             this.createImageToolStripMenuItem.Text = "Create Image";
             this.createImageToolStripMenuItem.Click += new System.EventHandler(this.createImageToolStripMenuItem_Click);
+            // 
+            // buildVideoToolStripMenuItem
+            // 
+            this.buildVideoToolStripMenuItem.Name = "buildVideoToolStripMenuItem";
+            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
+            this.buildVideoToolStripMenuItem.Text = "Build Video";
+            this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -394,6 +403,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.mp4FrameRate);
             this.groupBox2.Controls.Add(this.ckGenerateMP4);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.mp4FirstFrameDurationSecond);
@@ -420,13 +431,13 @@
             this.label5.Location = new System.Drawing.Point(156, 36);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(162, 19);
+            this.label5.Size = new System.Drawing.Size(144, 19);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Frame 1 Duration:";
+            this.label5.Text = "Frame Duration:";
             // 
             // mp4FirstFrameDurationSecond
             // 
-            this.mp4FirstFrameDurationSecond.Location = new System.Drawing.Point(326, 36);
+            this.mp4FirstFrameDurationSecond.Location = new System.Drawing.Point(308, 34);
             this.mp4FirstFrameDurationSecond.Margin = new System.Windows.Forms.Padding(4);
             this.mp4FirstFrameDurationSecond.Name = "mp4FirstFrameDurationSecond";
             this.mp4FirstFrameDurationSecond.Size = new System.Drawing.Size(45, 26);
@@ -462,12 +473,24 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // buildVideoToolStripMenuItem
+            // label6
             // 
-            this.buildVideoToolStripMenuItem.Name = "buildVideoToolStripMenuItem";
-            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
-            this.buildVideoToolStripMenuItem.Text = "Build Video";
-            this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(408, 37);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(144, 19);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Frame Rate / S:";
+            // 
+            // mp4FrameRate
+            // 
+            this.mp4FrameRate.Location = new System.Drawing.Point(560, 35);
+            this.mp4FrameRate.Margin = new System.Windows.Forms.Padding(4);
+            this.mp4FrameRate.Name = "mp4FrameRate";
+            this.mp4FrameRate.Size = new System.Drawing.Size(45, 26);
+            this.mp4FrameRate.TabIndex = 14;
+            this.mp4FrameRate.Text = "3";
             // 
             // Form1
             // 
@@ -553,6 +576,8 @@
         private System.Windows.Forms.ToolStripMenuItem darkwaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox mp4FrameRate;
     }
 }
 

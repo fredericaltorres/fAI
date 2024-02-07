@@ -39,6 +39,7 @@ namespace faiWinApp
             _appOptions.PasteFileName = this.PasteFileName.Text;
             _appOptions.WorkFolder = this.WorkFolder.Text;
             _appOptions.Mp4FirstFrameDuration = this.mp4FirstFrameDurationSecond.Text;
+            _appOptions.mp4FrameRate = this.mp4FrameRate.Text;
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
@@ -93,6 +94,7 @@ namespace faiWinApp
             this.rdoGifFade1.Checked = _appOptions.GifFade1;
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.mp4FirstFrameDurationSecond.Text = _appOptions.Mp4FirstFrameDuration;
+            this.mp4FrameRate.Text = _appOptions.mp4FrameRate;
             this.txtGifDelay.Text = _appOptions.GifDelay;
             this.cbGifRepeat.Checked = _appOptions.GifRepeat;
             this.ckGenerateMP4.Checked = _appOptions.GenerateMP4;
@@ -158,8 +160,8 @@ namespace faiWinApp
             createGifAnimation(true);
         }
 
-
         private int GetGifDelayInRigthUnit() => int.Parse(this.txtGifDelay.Text) * 100;
+        private int GetMp4FrameRate() => int.Parse(this.mp4FrameRate.Text);
 
         private void createGifAnimation(bool viewFile)
         {
@@ -469,7 +471,7 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
             var sequenceFileName = @"C:\temp\@fAiImages\Darkwave.Soundscape\sequence.md";
             var finalOutputFiles = new FileSequenceManager();
             var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
-            ImageUtility.RunFFMPEG(notify, finalOutputFiles.FileNames, this.FinalOutputFileName);
+            ImageUtility.GenerateMP4Animation(notify, finalOutputFiles.FileNames, this.FinalOutputFileName, mp4FrameRate : GetMp4FrameRate(), imageDurationSecond: GetMp4FirstFrameDurationSecond());
         }
     }
 }
