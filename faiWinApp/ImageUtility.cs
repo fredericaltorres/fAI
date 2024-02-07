@@ -319,6 +319,18 @@ namespace faiWinApp
 
         static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
 
+        public static bool RunFFMPEG(List<string> pngFiles, string mp4OutputFile, int mp4FrameRate = 16)
+        {
+            var fileList = string.Join("\r\n", pngFiles.Select(f => $"file '{f}'"));
+            var tfh = new TestFileHelper();
+            var inputFileName = tfh.CreateFile(fileList, "txt");
+
+            var tmpPath = "";
+            var cmd = $@"-y -framerate {mp4FrameRate} -f concat -i ""{inputFileName}"" -c:v libx264 -r 30 -pix_fmt yuv420p ""{mp4OutputFile}""";
+            var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
+            return intExitCode == 0;
+        }
+
         public static int RunFFMPEG(string cmd, string mp4OutputFile)
         {
             DeleteFile(mp4OutputFile);

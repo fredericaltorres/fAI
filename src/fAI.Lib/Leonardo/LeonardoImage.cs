@@ -18,9 +18,8 @@ namespace fAI
         {
         }
 
-        const string __urlGetUserInfo = "https://cloud.leonardo.ai/api/rest/v1/me";
-        const string __urlGeneations = "https://cloud.leonardo.ai/api/rest/v1/generations";
-                                        
+        const string __urlGetUserInfo   = "https://cloud.leonardo.ai/api/rest/v1/me";
+        const string __urlGeneations    = "https://cloud.leonardo.ai/api/rest/v1/generations";
 
         public UserInformation GetUserInformation()
         {
@@ -93,11 +92,10 @@ namespace fAI
             v2, v3
         }
 
-
-
         public string GenerateSync(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,
+            StableDiffusionVersion stabeDiffusionVersion = StableDiffusionVersion.v1_5,
             int imageCount = 1,
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
@@ -110,9 +108,9 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5)
         {
-            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+            Trace(new { prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
 
-            GenerationResponse job = Generate(prompt, negative_prompt, modelId,  imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
+            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
             {
@@ -132,11 +130,17 @@ namespace fAI
             return newFileName;
         }
 
+        public enum StableDiffusionVersion
+        {
+            v1_5,
+            v2_1
+        }
             // https://docs.leonardo.ai/reference/creategeneration
 
-            public GenerationResponse Generate(string prompt, 
+        public GenerationResponse Generate(string prompt,
             string negative_prompt = null,
-            string modelId = MODEL_ID, 
+            string modelId = MODEL_ID,
+            StableDiffusionVersion stabeDiffusionVersion =  StableDiffusionVersion.v1_5,
             int imageCount = 1, 
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
@@ -160,6 +164,7 @@ namespace fAI
                 prompt,
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
+                sd_version = stabeDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,
                 width,

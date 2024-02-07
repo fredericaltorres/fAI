@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DynamicSugarStandard">
-      <Version>1.0.21</Version>
+      <Version>1.0.23</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CognitiveServices.Speech">
       <Version>1.33.0</Version>

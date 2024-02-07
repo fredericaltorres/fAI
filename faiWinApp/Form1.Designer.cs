@@ -45,6 +45,8 @@
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leonardoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.womanOverTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkwaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -67,6 +69,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
+            this.buildVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -97,7 +100,7 @@
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(159, 24);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -203,7 +206,8 @@
             // leonardoToolStripMenuItem
             // 
             this.leonardoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.womanOverTimeToolStripMenuItem});
+            this.womanOverTimeToolStripMenuItem,
+            this.darkwaveToolStripMenuItem});
             this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
             this.leonardoToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
             this.leonardoToolStripMenuItem.Text = "Leonardo";
@@ -214,6 +218,22 @@
             this.womanOverTimeToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
             this.womanOverTimeToolStripMenuItem.Text = "Woman over time";
             this.womanOverTimeToolStripMenuItem.Click += new System.EventHandler(this.womanOverTimeToolStripMenuItem_Click);
+            // 
+            // darkwaveToolStripMenuItem
+            // 
+            this.darkwaveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createImageToolStripMenuItem,
+            this.buildVideoToolStripMenuItem});
+            this.darkwaveToolStripMenuItem.Name = "darkwaveToolStripMenuItem";
+            this.darkwaveToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
+            this.darkwaveToolStripMenuItem.Text = "Darkwave";
+            // 
+            // createImageToolStripMenuItem
+            // 
+            this.createImageToolStripMenuItem.Name = "createImageToolStripMenuItem";
+            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem.Text = "Create Image";
+            this.createImageToolStripMenuItem.Click += new System.EventHandler(this.createImageToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -442,6 +462,13 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
+            // buildVideoToolStripMenuItem
+            // 
+            this.buildVideoToolStripMenuItem.Name = "buildVideoToolStripMenuItem";
+            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoToolStripMenuItem.Text = "Build Video";
+            this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -523,6 +550,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox PasteFileName;
         private System.Windows.Forms.Button butSortFileNames;
+        private System.Windows.Forms.ToolStripMenuItem darkwaveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem;
     }
 }
 

@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static fAI.LeonardoImage;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace faiWinApp
@@ -23,7 +24,8 @@ namespace faiWinApp
     {
         private string _lastImageFile = null;
         AppOptions _appOptions = new AppOptions();
-        List<string> _dragAndDropFileSelection = new List<string>() {
+        List<string> _dragAndDropFileSelection = new List<string>()
+        {
 
         };
 
@@ -45,7 +47,7 @@ namespace faiWinApp
             _appOptions.ZoomIn = this.rdoZoomIn.Checked;
             _appOptions.ZoomInImageCount = this.txtZoomImageCount.Text;
             _appOptions.ViewImageAfterWork = this.chkViewFileAfterWork.Checked;
-            
+
             _appOptions.ToFile();
             this.Close();
         }
@@ -75,7 +77,7 @@ namespace faiWinApp
                     _lastImageFile = newImageFile;
                     if (this.chkViewFileAfterWork.Checked && viewfile)
                     {
-                        ViewFile(newImageFile); 
+                        ViewFile(newImageFile);
                     }
                     new ClipBoard().SetText(newImageFile);
                 }
@@ -95,7 +97,7 @@ namespace faiWinApp
             this.cbGifRepeat.Checked = _appOptions.GifRepeat;
             this.ckGenerateMP4.Checked = _appOptions.GenerateMP4;
             this.rdoZoomIn.Checked = _appOptions.ZoomIn;
-            this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount; 
+            this.txtZoomImageCount.Text = _appOptions.ZoomInImageCount;
             this.chkViewFileAfterWork.Checked = _appOptions.ViewImageAfterWork;
 
             this.UserMessage("Ready...");
@@ -128,7 +130,7 @@ namespace faiWinApp
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
                 return;
 
-            if(_isCtrlDown)
+            if (_isCtrlDown)
             {
                 _dragAndDropFileSelection.Clear();
             }
@@ -137,7 +139,7 @@ namespace faiWinApp
             foreach (var file in files)
             {
                 _dragAndDropFileSelection.Add(file);
-                
+
             }
 
             this.UserMessage(Environment.NewLine);
@@ -157,7 +159,7 @@ namespace faiWinApp
         }
 
 
-        private int GetGifDelayInRigthUnit() =>int.Parse(this.txtGifDelay.Text) * 100;
+        private int GetGifDelayInRigthUnit() => int.Parse(this.txtGifDelay.Text) * 100;
 
         private void createGifAnimation(bool viewFile)
         {
@@ -173,7 +175,7 @@ namespace faiWinApp
                 else if (rdoZoomIn.Checked)
                     transition = ImageUtility.GifTransitionMode.ZoomIn;
 
-                this.UserMessage($"Creating {(generateMP4 ? "MP4":"GIF")}, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{FinalOutputFileName}");
+                this.UserMessage($"Creating {(generateMP4 ? "MP4" : "GIF")}, imageCount:{_dragAndDropFileSelection.Count}, transition:{transition}, output:{FinalOutputFileName}");
                 var fileNames = _dragAndDropFileSelection.Select(file => Path.GetFileName(file)).ToList();
                 fileNames = null;
                 var r = ImageUtility.GenerateGif(
@@ -204,7 +206,7 @@ namespace faiWinApp
                 ImageUtility.CleanUpTempFiles();
             }
         }
-        
+
         private void ShowError(string message)
         {
             MessageBox.Show(message);
@@ -218,9 +220,9 @@ namespace faiWinApp
             return int.Parse(this.mp4FirstFrameDurationSecond.Text);
         }
 
-        private int GetTxtZoomImageCount ()
+        private int GetTxtZoomImageCount()
         {
-            if(string.IsNullOrEmpty(this.txtZoomImageCount.Text))
+            if (string.IsNullOrEmpty(this.txtZoomImageCount.Text))
                 return 0;
 
             return int.Parse(this.txtZoomImageCount.Text);
@@ -245,13 +247,13 @@ namespace faiWinApp
                     this.UserMessage($"Image:{Path.GetFileName(fileName)}, size:{len:0.0} Mb, width: {width}, height: {height}, pixelFormat: {pixelFormat}");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.UserMessage($"Error: {ex.Message}");
             }
             finally
             {
-                if(image != null)
+                if (image != null)
                     image.Dispose();
             }
         }
@@ -289,7 +291,7 @@ namespace faiWinApp
                 {
                     var sub = testString.Substring(0, i);
                     var image = new MagickImage(File.ReadAllBytes(@"C:\DVT\AI\images\549902968.Png"));
-                    image.Draw(new Drawables().FontPointSize(72).Text(128, 128*2, sub));
+                    image.Draw(new Drawables().FontPointSize(72).Text(128, 128 * 2, sub));
                     collection.Add(image);
                     collection[i - 1].AnimationDelay = 20;
                 }
@@ -338,8 +340,8 @@ namespace faiWinApp
         {
             var show = _isCtrlDown != e.Control;
             _isCtrlDown = e.Control;
-            if(show)
-                this.UserMessage($"Ctrl:{_isCtrlDown}"); 
+            if (show)
+                this.UserMessage($"Ctrl:{_isCtrlDown}");
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -426,6 +428,47 @@ Close-up portrait BLONDE WOMAN {age} years old, nice body shape,|(STYLED HAIR:1.
             {
                 DisplayImageInfo(fileSelected);
             });
+        }
+
+        private void DarkwaveSoundscape_CreateImages()
+        {
+            this.UserMessage("[Leonardo]Generating images, Woman over time...");
+            var prompt = @"
+In the depths of a darkwave soundscape, a celestial being emerges, embodying the essence of Mars while emanating an ethereal aura. Captured in an oil painting, this image encapsulates the mysterious and otherworldly nature of the heavenly martian. Every brushstroke reveals a macabre beauty, with their midnight black wings gently unfurled against the backdrop of a crimson sky. Gleaming silver veins intricately trace over their translucent skin, contrasting with their phosphorescent green eyes, which seem to hold the secrets of ancient galaxies. This meticulously crafted masterpiece, rendered with impeccable detail, conveys a sense of enigmatic allure and invites the viewers to contemplate the enigmatic allure of the celestial realm.
+";
+            var workFolder = @"C:\temp\@fAiImages\Darkwave.Soundscape";
+            var startSeed = 935939584;
+            var imageCount = 50;
+            var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
+            finalOutputFiles.CreateDirectory(workFolder);
+            finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
+
+
+            var client = new fAI.Leonardo();
+
+            for (var i = 30; i < imageCount; i++)
+            {
+                var seed = startSeed + i;
+                this.UserMessage("[Leonardo]Age:{seed}".Template(new { seed }));
+                var fileName = client.Image.GenerateSync(prompt,
+                                                         size: fAI.OpenAIImage.ImageSize._768x1360,
+                                                         seed: seed, photoReal: true, stabeDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
+        }
+
+        private void createImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DarkwaveSoundscape_CreateImages();
+        }
+
+        private void buildVideoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\Darkwave.Soundscape\sequence.md";
+            var finalOutputFiles = new FileSequenceManager();
+            var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
+            ImageUtility.RunFFMPEG(finalOutputFiles.FileNames, this.FinalOutputFileName);
         }
     }
 }
