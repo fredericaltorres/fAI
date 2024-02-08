@@ -64,14 +64,18 @@
             this.butOpenWorkFolder = new System.Windows.Forms.Button();
             this.chkViewFileAfterWork = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.mp4ZoomPercent = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.mp4FrameRate = new System.Windows.Forms.TextBox();
             this.ckGenerateMP4 = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.mp4FirstFrameDurationSecond = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.mp4FrameRate = new System.Windows.Forms.TextBox();
+            this.decadenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createImageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -209,7 +213,8 @@
             // 
             this.leonardoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.womanOverTimeToolStripMenuItem,
-            this.darkwaveToolStripMenuItem});
+            this.darkwaveToolStripMenuItem,
+            this.decadenceToolStripMenuItem});
             this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
             this.leonardoToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
             this.leonardoToolStripMenuItem.Text = "Leonardo";
@@ -233,14 +238,14 @@
             // createImageToolStripMenuItem
             // 
             this.createImageToolStripMenuItem.Name = "createImageToolStripMenuItem";
-            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
+            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             this.createImageToolStripMenuItem.Text = "Create Image";
             this.createImageToolStripMenuItem.Click += new System.EventHandler(this.createImageToolStripMenuItem_Click);
             // 
             // buildVideoToolStripMenuItem
             // 
             this.buildVideoToolStripMenuItem.Name = "buildVideoToolStripMenuItem";
-            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
+            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             this.buildVideoToolStripMenuItem.Text = "Build Video";
             this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
             // 
@@ -403,6 +408,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.mp4ZoomPercent);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.mp4FrameRate);
             this.groupBox2.Controls.Add(this.ckGenerateMP4);
@@ -414,6 +421,44 @@
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MP4:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(648, 42);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(72, 19);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Zoom %:";
+            // 
+            // mp4ZoomPercent
+            // 
+            this.mp4ZoomPercent.Location = new System.Drawing.Point(800, 40);
+            this.mp4ZoomPercent.Margin = new System.Windows.Forms.Padding(4);
+            this.mp4ZoomPercent.Name = "mp4ZoomPercent";
+            this.mp4ZoomPercent.Size = new System.Drawing.Size(45, 26);
+            this.mp4ZoomPercent.TabIndex = 16;
+            this.mp4ZoomPercent.Text = "3";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(408, 37);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(144, 19);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Frame Rate / S:";
+            // 
+            // mp4FrameRate
+            // 
+            this.mp4FrameRate.Location = new System.Drawing.Point(560, 35);
+            this.mp4FrameRate.Margin = new System.Windows.Forms.Padding(4);
+            this.mp4FrameRate.Name = "mp4FrameRate";
+            this.mp4FrameRate.Size = new System.Drawing.Size(45, 26);
+            this.mp4FrameRate.TabIndex = 14;
+            this.mp4FrameRate.Text = "3";
             // 
             // ckGenerateMP4
             // 
@@ -473,24 +518,20 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // label6
+            // decadenceToolStripMenuItem
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(408, 37);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(144, 19);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Frame Rate / S:";
+            this.decadenceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createImageToolStripMenuItem1});
+            this.decadenceToolStripMenuItem.Name = "decadenceToolStripMenuItem";
+            this.decadenceToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
+            this.decadenceToolStripMenuItem.Text = "Decadence";
             // 
-            // mp4FrameRate
+            // createImageToolStripMenuItem1
             // 
-            this.mp4FrameRate.Location = new System.Drawing.Point(560, 35);
-            this.mp4FrameRate.Margin = new System.Windows.Forms.Padding(4);
-            this.mp4FrameRate.Name = "mp4FrameRate";
-            this.mp4FrameRate.Size = new System.Drawing.Size(45, 26);
-            this.mp4FrameRate.TabIndex = 14;
-            this.mp4FrameRate.Text = "3";
+            this.createImageToolStripMenuItem1.Name = "createImageToolStripMenuItem1";
+            this.createImageToolStripMenuItem1.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem1.Text = "Create image";
+            this.createImageToolStripMenuItem1.Click += new System.EventHandler(this.createImageToolStripMenuItem1_Click);
             // 
             // Form1
             // 
@@ -578,6 +619,10 @@
         private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox mp4FrameRate;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox mp4ZoomPercent;
+        private System.Windows.Forms.ToolStripMenuItem decadenceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem1;
     }
 }
 

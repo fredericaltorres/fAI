@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 
 namespace fAI
 {
@@ -8,6 +10,8 @@ namespace fAI
         public string Text { get; set; }
         public string ContenType { get; set; }
         public Exception Exception { get; set; }
+        public string ServerErrorInfo { get; set; }
+
         public bool Success { get { return this.Exception == null; } }
         private Stopwatch _stopwatch { get; set; }
         public byte[] Buffer;
@@ -32,6 +36,18 @@ namespace fAI
                 _stopwatch.Stop();
             this.Exception = ex;
         }
+
+        public void SetException(WebException ex)
+        {
+            var responseStream = ex.Response.GetResponseStream();
+            if (responseStream != null)
+            {
+                using (var reader = new StreamReader(responseStream))
+                    this.ServerErrorInfo = reader.ReadToEnd();
+            }
+            SetException((Exception)ex);
+        }
+
         public void SetResult(byte[] buffer , string contentType)
         {
             if (_stopwatch.IsRunning)

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
+using System.Xml.Serialization;
 
 namespace fAI
 {
@@ -134,6 +135,10 @@ namespace fAI
                 this.Encoding = System.Text.Encoding.UTF8;
                 var buffer = this.UploadData(url, "POST", System.Text.Encoding.UTF8.GetBytes(body));
                 r.SetResult(buffer, this.GetResponseContentType());
+            }
+            catch (WebException wex)
+            {
+                r.SetException(wex);
             }
             catch (Exception ex)
             {

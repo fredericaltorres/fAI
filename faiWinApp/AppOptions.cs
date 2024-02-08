@@ -7,7 +7,8 @@
         public string GifDelay { get; set; }
         public string Mp4FirstFrameDuration { get; set; }
         public string mp4FrameRate { get; set; }
-        
+        public string mp4ZoomPercent { get; set; }
+
         public bool GifRepeat { get; set; }
         public bool GifFade1 { get; set; }
         public bool GifFade6 { get; set; }

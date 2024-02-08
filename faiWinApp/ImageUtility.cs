@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.CodeDom.Compiler;
+using System.Threading;
 
 namespace faiWinApp
 {
@@ -147,7 +148,9 @@ namespace faiWinApp
         public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder, string imageFileNamePrefix = "")
         {
             var folder = (string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath() : tmpFolder);
+            imageFileNamePrefix = imageFileNamePrefix == "" ? "fai_" : imageFileNamePrefix;
             var f = Path.Combine(folder, $"{imageFileNamePrefix}{(string.IsNullOrEmpty(imageFileNamePrefix) ? "" : "." )}{Environment.TickCount}.{imageFormat}");
+            Thread.Sleep(2);
             _fileToCleanUp.Add(f);
             return f;
         }
@@ -191,10 +194,24 @@ namespace faiWinApp
                 File.Move(file, newName);
         }
 
-        public static void DeleteFile(string file)
+        public static void DeleteFile(string file, int recursive = 0)
         {
-            if (File.Exists(file))
-                File.Delete(file);
+            try
+            {
+                if (File.Exists(file))
+                {
+                    File.Delete(file);
+                }
+            }
+           catch(Exception ex) 
+           {
+                if (recursive < 3) 
+                {
+                    Thread.Sleep(1000 * 5);
+                    DeleteFile(file, recursive + 1);
+                }
+                // else throw ex;
+           }
         }
 
         public static Bitmap ZoomIntoBitmap_old(Bitmap originalBitmap, Rectangle zoomArea)
@@ -232,12 +249,12 @@ namespace faiWinApp
             return zoomedBitmap;
         }
 
-        public static string ZoomIntoBitmap(string fileName, Rectangle zoomArea)
+        public static string ZoomIntoBitmap(string fileName, Rectangle zoomArea, ImageFormat ImageFormat)
         {
             Bitmap originalBitmap = new Bitmap(fileName);
             var b = ZoomIntoBitmap(originalBitmap, zoomArea);
-            var newFileName = GetNewImageFileName(ImageFormat.Png, Path.GetTempPath());
-            b.Save(newFileName);
+            var newFileName = GetNewImageFileName(ImageFormat, Path.GetTempPath());
+            b.Save(newFileName, ImageFormat);
             return newFileName;
         }
 
@@ -319,26 +336,30 @@ namespace faiWinApp
 
         static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
 
-        public static bool GenerateMP4Animation(Action<string> notify, List<string> inputPngFiles, string mp4OutputFile, 
-            int mp4FrameRate = 16, 
-            int imageDurationSecond = 2, 
+        public static bool GenerateMP4Animation(
+            Action<string> notify,
+            List<string> inputPngFiles,
+            string mp4OutputFile,
+            int mp4FrameRate = 16,
+            int imageDurationSecond = 2,
             int zoomInPercent = -1)
         {
             var zoomIn = zoomInPercent != -1;
+            float zoomInFrame1Duration = 0.25f;
             int widthBeforeZoom = 0;
             int widthAfterZoom = 0;
-            int zoomPixelDistance = 0;
+            //int zoomPixelDistance = 0;
             int zoomPixelStep = 0;
-            int zoomImageCount = ((imageDurationSecond - 1) * mp4FrameRate);
+            int zoomImageCount = (int)((imageDurationSecond - zoomInFrame1Duration) * mp4FrameRate);
             var (refWidth, refHeight) = GetImageWidthAndHeight(inputPngFiles[0]);
-            if (zoomIn) 
+            if (zoomIn)
             {
                 using (Bitmap originalImage = new Bitmap(inputPngFiles[0]))
                 {
                     widthBeforeZoom = originalImage.Width;
                     widthAfterZoom = (widthBeforeZoom * zoomInPercent / 100);
-                    zoomPixelDistance = widthBeforeZoom - widthAfterZoom;
-                    zoomPixelStep = zoomPixelDistance / zoomImageCount;
+                    //zoomPixelDistance = widthBeforeZoom - widthAfterZoom;
+                    zoomPixelStep = widthAfterZoom / zoomImageCount;
                 }
             }
 
@@ -350,7 +371,7 @@ namespace faiWinApp
 
                 if(zoomIn)
                 {
-                    for (var f = 0; f < mp4FrameRate * 1; f++) // Fill 1 second of frame
+                    for (var f = 0; f < ((int)(mp4FrameRate * zoomInFrame1Duration)); f++) // Fill 0.5 second of frame
                         pngFilesForFrames.Add(pngFile);
 
                     notify($"Calculating zoom");
@@ -359,8 +380,9 @@ namespace faiWinApp
                     var zoomImage = "";
                     for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                     {
-                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)));
+                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Jpeg);
                         zoomPixel += zoomPixelStep;
+                        pngFilesForFrames.Add(zoomImage);
                         pngFilesForFrames.Add(zoomImage);
                     }
                     pngFile = zoomImage;
@@ -394,6 +416,7 @@ namespace faiWinApp
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
 
             CleanUpTempFiles();
+            notify($"Done");
 
             return intExitCode == 0;
         }
@@ -482,7 +505,7 @@ namespace faiWinApp
                         var zoomPixel = zoomPixelStep;
                         for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                         {
-                            var newZoomedImage = Img(ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2))),1);
+                            var newZoomedImage = Img(ZoomIntoBitmap(fileName, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png),1);
                             GenerateGifOneImage(message, messageX, messageY, fontSize, fontName, collection, imageIndex, newZoomedImage, zoomDelay, refWidth, refHeight);
                             zoomPixel += zoomPixelStep;
                         }

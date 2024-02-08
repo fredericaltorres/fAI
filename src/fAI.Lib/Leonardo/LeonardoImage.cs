@@ -11,6 +11,22 @@ using System.IO;
 
 namespace fAI
 {
+
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    public class LeonardoWebError
+    {
+        public string error { get; set; }
+        public string path { get; set; }
+        public string code { get; set; }
+
+        public static LeonardoWebError FromJSON(string json)
+        {
+            return JsonConvert.DeserializeObject<LeonardoWebError>(json);
+        }
+    }
+
+
+
     public partial class LeonardoImage : HttpBase
     {
         public const string MODEL_ID =  "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3";
@@ -101,6 +117,7 @@ namespace fAI
             bool isPublic = false,
             bool alchemy = true,
             bool photoReal = false,
+            float photoRealStrength = 0.55f,
             bool promptMagic = true,
             PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
@@ -108,21 +125,18 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5)
         {
-            Trace(new { prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+            Trace(new { prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
 
-            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
+            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
             {
                 var jobS = this.GetJobStatus(job.GenerationId);
-                if (jobS.Completed)
-                    return jobS;
-                return null;
+                return  jobS.Completed ? jobS : null;
             }, sleepDuration: 6);
 
             var pngFileNames = jobState.DownloadImages();
             var r = this.DeleteJob(jobState.GenerationId);
-
             var tfh = new TestFileHelper();
             var newFileName = tfh.GetTempFileName(".jpg");
             File.Move(pngFileNames[0], newFileName);
@@ -146,6 +160,7 @@ namespace fAI
             bool isPublic = false,
             bool alchemy = true,
             bool photoReal = false,
+            float photoRealStrength = 0.55f,
             bool promptMagic = true,
             PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
@@ -158,6 +173,12 @@ namespace fAI
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
             var height = int.Parse(dimensions[1]);
+
+            var presetStyleStr = "NONE";
+            if (photoReal)
+                presetStyleStr = presetStylePhotoRealOn.ToString();
+            else if(alchemy)
+                presetStyleStr = presetStyleAlchemyOn.ToString();
 
             var body = new
             {
@@ -172,10 +193,11 @@ namespace fAI
                 promptMagicStrength,
                 alchemy,
                 photoReal,
+                /// photoRealStrength,
                 promptMagic,
                 promptMagicVersion = promptMagicVersion.ToString(),
                 seed,
-                presetStyle = presetStylePhotoRealOn == PresetStylePhotoRealOn.NONE ? presetStyleAlchemyOn.ToString() : presetStylePhotoRealOn.ToString()
+                presetStyle = presetStyleStr,
             };
 
             Trace(body, this);
@@ -190,7 +212,11 @@ namespace fAI
                 r.Stopwatch = sw;
                 return r;
             }
-            else throw new ChatGPTException($"{response.Exception.Message}", response.Exception);
+            else
+            {
+                //var erroInfo = LeonardoWebError.FromJSON(response.ServerErrorInfo);
+                throw new ChatGPTException($"{response.Exception.Message} - {response.ServerErrorInfo}", response.Exception);
+            }
         }
     }
 }

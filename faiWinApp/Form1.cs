@@ -40,6 +40,7 @@ namespace faiWinApp
             _appOptions.WorkFolder = this.WorkFolder.Text;
             _appOptions.Mp4FirstFrameDuration = this.mp4FirstFrameDurationSecond.Text;
             _appOptions.mp4FrameRate = this.mp4FrameRate.Text;
+            _appOptions.mp4ZoomPercent = this.mp4ZoomPercent.Text;
             _appOptions.GifFade1 = this.rdoGifFade1.Checked;
             _appOptions.GifFade6 = this.rdoGifFade6.Checked;
             _appOptions.GifDelay = this.txtGifDelay.Text;
@@ -95,6 +96,7 @@ namespace faiWinApp
             this.rdoGifFade6.Checked = _appOptions.GifFade6;
             this.mp4FirstFrameDurationSecond.Text = _appOptions.Mp4FirstFrameDuration;
             this.mp4FrameRate.Text = _appOptions.mp4FrameRate;
+            this.mp4ZoomPercent.Text = _appOptions.mp4ZoomPercent;
             this.txtGifDelay.Text = _appOptions.GifDelay;
             this.cbGifRepeat.Checked = _appOptions.GifRepeat;
             this.ckGenerateMP4.Checked = _appOptions.GenerateMP4;
@@ -220,6 +222,14 @@ namespace faiWinApp
                 return 1;
 
             return int.Parse(this.mp4FirstFrameDurationSecond.Text);
+        }
+
+        private int GetMp4ZoomPercent()
+        {
+            if (string.IsNullOrEmpty(this.mp4ZoomPercent.Text))
+                return -1;
+
+            return int.Parse(this.mp4ZoomPercent.Text);
         }
 
         private int GetTxtZoomImageCount()
@@ -476,7 +486,41 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
                 this.FinalOutputFileName, 
                 mp4FrameRate : GetMp4FrameRate(), 
                 imageDurationSecond: GetMp4FirstFrameDurationSecond(),
-                zoomInPercent: 33);
+                zoomInPercent: GetMp4ZoomPercent());
+        }
+
+        private void createImageToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Decadence_CreateImages();
+        }
+
+        private void Decadence_CreateImages()
+        {
+            this.UserMessage("[Leonardo]Generating images, Decadence...");
+            var prompt = @"
+a manifestation of the decadence of the human being, nature losing against humans, tragedy, pain
+";
+            var workFolder = @"C:\temp\@fAiImages\Decadence";
+            var startSeed = 318635520;
+            var imageCount = 32;
+            var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
+            finalOutputFiles.CreateDirectory(workFolder);
+            finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
+            var startImageIndex = finalOutputFiles.FileNames.Count;
+            var client = new fAI.Leonardo();
+
+            for (var i = startImageIndex; i < imageCount; i++)
+            {
+                var seed = startSeed + i;
+                this.UserMessage($"[Leonardo]Age:{seed}");
+                var fileName = client.Image.GenerateSync(prompt,
+                                                         size: fAI.OpenAIImage.ImageSize._1024x576,
+                                                         seed: seed, 
+                                                         photoReal: true, 
+                                                         stabeDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
         }
     }
 }
