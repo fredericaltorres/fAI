@@ -335,6 +335,16 @@ namespace faiWinApp
         }
 
         static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
+        private static List<string> GrabLastX(List<string> l, int count) { 
+
+            var lastX = l.Skip(Math.Max(0, l.Count - count)).ToList();
+
+            for (var i = 0; i < lastX.Count; i++)
+                l.RemoveAt(l.Count-1);
+
+            return lastX;
+        }
+        
 
         public static bool GenerateMP4Animation(
             Action<string> notify,
@@ -386,6 +396,8 @@ namespace faiWinApp
                         for (var f = 0; f < zoomSlowDownImageCount; f++)
                             pngFilesForFrames.Add(zoomImage);
                     }
+
+
                     pngFile = zoomImage;
                 }
                 else
@@ -396,14 +408,28 @@ namespace faiWinApp
 
                 if (generateTransition)
                 {
-                    notify($"Calculating Transition"); //Now generate transition to next image
+                    notify($"Calculating Transition");
+                    var fadingSteps = mp4FrameRate; // Zoom will be 1 second
                     var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
-                    var fadingSteps = mp4FrameRate;
                     var fadingValue = 0.99f / fadingSteps;
-                    for (int j = 0; j < fadingSteps; j++)
+
+                    if (zoomIn)
                     {
-                        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-                        pngFilesForFrames.Add(transitionImageFileName);
+                        var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
+                        for (int j = 0; j < fadingSteps; j++)
+                        {
+                            var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+                            pngFilesForFrames.Add(transitionImageFileName);
+                            pngFile = transitionImageFileName;
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < fadingSteps; j++)
+                        {
+                            var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+                            pngFilesForFrames.Add(transitionImageFileName);
+                        }
                     }
                 }
             }
