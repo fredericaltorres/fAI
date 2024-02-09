@@ -477,14 +477,19 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
 
         private void buildVideoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Action<string> notify = (m) => this.UserMessage(m);
             var sequenceFileName = @"C:\temp\@fAiImages\Darkwave.Soundscape\sequence.md";
+            BuildVideo(sequenceFileName);
+        }
+
+        private void BuildVideo(string sequenceFileName)
+        {
+            Action<string> notify = (m) => this.UserMessage(m);
             var finalOutputFiles = new FileSequenceManager();
             var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
-            ImageUtility.GenerateMP4Animation(notify, 
-                finalOutputFiles.FileNames, 
-                this.FinalOutputFileName, 
-                mp4FrameRate : GetMp4FrameRate(), 
+            ImageUtility.GenerateMP4Animation(notify,
+                finalOutputFiles.FileNames,
+                this.FinalOutputFileName,
+                mp4FrameRate: GetMp4FrameRate(),
                 imageDurationSecond: GetMp4FirstFrameDurationSecond(),
                 zoomInPercent: GetMp4ZoomPercent());
         }
@@ -521,6 +526,12 @@ a manifestation of the decadence of the human being, nature losing against human
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
                 finalOutputFiles.AddFile(fileName, move: true);
             }
+        }
+
+        private void buildVideoToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\Decadence.Manual\sequence.md";
+            BuildVideo(sequenceFileName);
         }
     }
 }

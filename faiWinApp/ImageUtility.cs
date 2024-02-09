@@ -342,13 +342,13 @@ namespace faiWinApp
             string mp4OutputFile,
             int mp4FrameRate = 16,
             int imageDurationSecond = 2,
-            int zoomInPercent = -1)
+            int zoomInPercent = -1,
+            bool generateTransition = true)
         {
             var zoomIn = zoomInPercent != -1;
-            float zoomInFrame1Duration = 0.25f;
+            float zoomInFrame1Duration = 0.125f;
             int widthBeforeZoom = 0;
             int widthAfterZoom = 0;
-            //int zoomPixelDistance = 0;
             int zoomPixelStep = 0;
             int zoomImageCount = (int)((imageDurationSecond - zoomInFrame1Duration) * mp4FrameRate);
             var (refWidth, refHeight) = GetImageWidthAndHeight(inputPngFiles[0]);
@@ -358,7 +358,6 @@ namespace faiWinApp
                 {
                     widthBeforeZoom = originalImage.Width;
                     widthAfterZoom = (widthBeforeZoom * zoomInPercent / 100);
-                    //zoomPixelDistance = widthBeforeZoom - widthAfterZoom;
                     zoomPixelStep = widthAfterZoom / zoomImageCount;
                 }
             }
@@ -371,19 +370,21 @@ namespace faiWinApp
 
                 if(zoomIn)
                 {
-                    for (var f = 0; f < ((int)(mp4FrameRate * zoomInFrame1Duration)); f++) // Fill 0.5 second of frame
-                        pngFilesForFrames.Add(pngFile);
+                    //for (var f = 0; f < ((int)(mp4FrameRate * zoomInFrame1Duration)); f++) // Fill 0.125 second of frame
+                    //    pngFilesForFrames.Add(pngFile);
+                    pngFilesForFrames.Add(pngFile);
 
                     notify($"Calculating zoom");
-                    var zoomInDuration = imageDurationSecond - 1;
+                    //var zoomInDuration = imageDurationSecond - 1;
                     var zoomPixel = zoomPixelStep;
                     var zoomImage = "";
+                    var zoomSlowDownImageCount = 1;
                     for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
                     {
-                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Jpeg);
+                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png);
                         zoomPixel += zoomPixelStep;
-                        pngFilesForFrames.Add(zoomImage);
-                        pngFilesForFrames.Add(zoomImage);
+                        for (var f = 0; f < zoomSlowDownImageCount; f++)
+                            pngFilesForFrames.Add(zoomImage);
                     }
                     pngFile = zoomImage;
                 }
@@ -393,26 +394,29 @@ namespace faiWinApp
                         pngFilesForFrames.Add(pngFile);
                 }
 
-                notify($"Calculating Transition");
-                //Now generate transition to next image
-                var nextPngFile = (z + 1) < inputPngFiles.Count - 1 ? inputPngFiles[z + 1] : inputPngFiles[0];
-                var fadingSteps = mp4FrameRate;
-                var fadingValue = 0.99f / fadingSteps;
-                for (int j = 0; j < fadingSteps; j++)
+                if (generateTransition)
                 {
-                    var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Jpeg);
-                    pngFilesForFrames.Add(transitionImageFileName);
+                    notify($"Calculating Transition"); //Now generate transition to next image
+                    var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
+                    var fadingSteps = mp4FrameRate;
+                    var fadingValue = 0.99f / fadingSteps;
+                    for (int j = 0; j < fadingSteps; j++)
+                    {
+                        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+                        pngFilesForFrames.Add(transitionImageFileName);
+                    }
                 }
             }
 
             notify($"{pngFilesForFrames.Count} images generated");
 
-            var fileList = string.Join("\r\n", pngFilesForFrames.Select(f => $"file '{f}'"));
+            // https://stackoverflow.com/questions/38368105/ffmpeg-custom-sequence-input-images/51618079#51618079
+            var fileList = string.Join("\r\n", pngFilesForFrames.Select(f => $"file '{f}'{Environment.NewLine}duration 0.01"));
             var tfh = new TestFileHelper();
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
             var cmd = $@" -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r 30 -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
-            notify($"FFMPEG.exe {cmd}");
+            notify($@"""{ffmpeg}"" {cmd}");
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
 
             CleanUpTempFiles();

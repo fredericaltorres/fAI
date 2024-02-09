@@ -48,6 +48,8 @@
             this.darkwaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildVideoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decadenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createImageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -74,8 +76,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.decadenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createImageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -248,6 +249,22 @@
             this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             this.buildVideoToolStripMenuItem.Text = "Build Video";
             this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
+            // 
+            // decadenceToolStripMenuItem
+            // 
+            this.decadenceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createImageToolStripMenuItem1,
+            this.buildVideoToolStripMenuItem1});
+            this.decadenceToolStripMenuItem.Name = "decadenceToolStripMenuItem";
+            this.decadenceToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
+            this.decadenceToolStripMenuItem.Text = "Decadence";
+            // 
+            // createImageToolStripMenuItem1
+            // 
+            this.createImageToolStripMenuItem1.Name = "createImageToolStripMenuItem1";
+            this.createImageToolStripMenuItem1.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem1.Text = "Create image";
+            this.createImageToolStripMenuItem1.Click += new System.EventHandler(this.createImageToolStripMenuItem1_Click);
             // 
             // txtUserOutput
             // 
@@ -518,20 +535,12 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // decadenceToolStripMenuItem
+            // buildVideoToolStripMenuItem1
             // 
-            this.decadenceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createImageToolStripMenuItem1});
-            this.decadenceToolStripMenuItem.Name = "decadenceToolStripMenuItem";
-            this.decadenceToolStripMenuItem.Size = new System.Drawing.Size(196, 24);
-            this.decadenceToolStripMenuItem.Text = "Decadence";
-            // 
-            // createImageToolStripMenuItem1
-            // 
-            this.createImageToolStripMenuItem1.Name = "createImageToolStripMenuItem1";
-            this.createImageToolStripMenuItem1.Size = new System.Drawing.Size(180, 24);
-            this.createImageToolStripMenuItem1.Text = "Create image";
-            this.createImageToolStripMenuItem1.Click += new System.EventHandler(this.createImageToolStripMenuItem1_Click);
+            this.buildVideoToolStripMenuItem1.Name = "buildVideoToolStripMenuItem1";
+            this.buildVideoToolStripMenuItem1.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoToolStripMenuItem1.Text = "Build Video";
+            this.buildVideoToolStripMenuItem1.Click += new System.EventHandler(this.buildVideoToolStripMenuItem1_Click);
             // 
             // Form1
             // 
@@ -623,6 +632,7 @@
         private System.Windows.Forms.TextBox mp4ZoomPercent;
         private System.Windows.Forms.ToolStripMenuItem decadenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem1;
     }
 }
 
