@@ -492,6 +492,8 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
                 mp4FrameRate: GetMp4FrameRate(),
                 imageDurationSecond: GetMp4FirstFrameDurationSecond(),
                 zoomInPercent: GetMp4ZoomPercent());
+
+            ViewFile(this.FinalOutputFileName);
         }
 
         private void createImageToolStripMenuItem1_Click(object sender, EventArgs e)

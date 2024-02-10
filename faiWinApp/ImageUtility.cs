@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.CodeDom.Compiler;
 using System.Threading;
+using System.Diagnostics.Eventing.Reader;
 
 namespace faiWinApp
 {
@@ -375,74 +376,109 @@ namespace faiWinApp
                 {
                     widthBeforeZoom = originalImage.Width;
                     widthAfterZoom = (widthBeforeZoom * zoomInPercent / 100);
-                    zoomPixelStep = widthAfterZoom / zoomImageCount;
+                    zoomPixelStep = Math.Max(1, widthAfterZoom / zoomImageCount);
                 }
             }
 
-            var tfhZoomSequences = new List<TestFileHelper>();
+            var tfh2 = new TestFileHelper();
             var zoomSequences = new List<FileSequenceManager>();
-            var pngFilesForFrames = new List<string>();
+            var __pngFilesFinalBucket = new List<string>();
 
-            // For each image generate the zoom sequence
+            var tmpParentFolder = tfh2.GetTempFolder($"fAI.GenerateMP4Animation");
+
+            // For each image generate the zoom sequence in a speparate sequence/bucket
             for (var z=0; z< inputPngFiles.Count; z++)
             {
                 notify($"Processing {z} / {inputPngFiles.Count}, zoomIn:{zoomIn}");
                 var pngFile = inputPngFiles[z];
-
                 if(zoomIn)
                 {
                     notify($"Calculating zoom");
+                    zoomSequences.Add(new FileSequenceManager(Path.Combine(tmpParentFolder, Environment.TickCount.ToString())));
+                    var tfsZoomSequence = zoomSequences.Last();
 
-                    tfhZoomSequences.Add(new TestFileHelper());
-                    var tfh2 = tfhZoomSequences.Last();
-                    
-                    zoomSequences.Add(new FileSequenceManager(tfh2.GetTempFolder()));
-                    var tfsZoom = zoomSequences.Last();
-
-                    tfsZoom.AddFile(pngFile); // Add the first image
+                    tfsZoomSequence.AddFile(pngFile, move: false); // Add the first image
                     var tmpPngFilesForFrames = ExecuteZoomSequence(zoomPixelStep, zoomImageCount, refWidth, refHeight, pngFile);
-                    tmpPngFilesForFrames.ForEach(f => tfsZoom.AddFile(f));
+                    tmpPngFilesForFrames.ForEach(f => tfsZoomSequence.AddFile(f, move: true));
                 }
                 else
                 {
                     for (var f = 0; f < mp4FrameRate * imageDurationSecond; f++) // Fill 1 second of frame
-                        pngFilesForFrames.Add(pngFile);
+                        __pngFilesFinalBucket.Add(pngFile);
                 }
             }
-            tfhZoomSequences.ForEach(tfhz => tfhz.Clean());
-            
-            /*
-            if (generateTransition)
+            //tfhZoomSequences.ForEach(tfhz => tfhz.Clean());
+            //zoomSequences.ForEach(zs => zs.Clean());
+
+            if (!generateTransition)
             {
+                var fadingSteps = mp4FrameRate;
                 notify($"Calculating Transition");
-                var fadingSteps = mp4FrameRate; // Zoom will be 1 second
-                var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
-                var fadingValue = 0.99f / fadingSteps;
+                for (var z = 0; z < inputPngFiles.Count; z++) // For each image generate the zoom sequence
+                {
+                    var tfsZoom = zoomSequences[z];
 
-                if (zoomIn)
-                {
-                    var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
-                    for (int j = 0; j < fadingSteps; j++)
-                    {
-                        var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-                        pngFilesForFrames.Add(transitionImageFileName);
-                        pngFile = transitionImageFileName;
+                    var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
+                    firstSection.ForEach(f => __pngFilesFinalBucket.Add(f));
+                    var secondSection = tfsZoom.FileNames.Skip(tfsZoom.FileNames.Count - fadingSteps).ToList();
+                    var isThereANextImage = (z + 1) < inputPngFiles.Count;
+
+                    if (isThereANextImage)
+                    { 
+                        var tfsZoomNext = zoomSequences[z + 1];
+                        var firstSectionNext = tfsZoomNext.FileNames.Take(fadingSteps).ToList();
+                        var fadingValue = 0.99f / fadingSteps;
+                        var fadingIndex = fadingValue;
+
+                        for (var f = 0; f < secondSection.Count - 1; f++) // Fill 1 second of frame
+                        {
+                            var i1 = secondSection[f];
+                            var i2 = firstSectionNext[f];
+                            var transImg = BlendBitmaps(i1, i2, (fadingIndex + 1) * fadingValue, ImageFormat.Png);
+                            __pngFilesFinalBucket.Add(transImg);
+                            fadingIndex += fadingValue;
+                        }
                     }
-                }
-                else
-                {
-                    for (int j = 0; j < fadingSteps; j++)
+                    else
                     {
-                        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-                        pngFilesForFrames.Add(transitionImageFileName);
+                        var firstSection2 = tfsZoom.FileNames;
+                        firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
                     }
                 }
             }
+            else
+            {
+                for (var z = 0; z < inputPngFiles.Count; z++) // For each image generate the zoom sequence
+                    zoomSequences[z].FileNames.ForEach(f => __pngFilesFinalBucket.Add(f));
+            }
 
-            notify($"{pngFilesForFrames.Count} images generated");
+
+            //var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
+            //var fadingValue = 0.99f / fadingSteps;
+
+            //if (zoomIn)
+            //{
+            //    var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
+            //    for (int j = 0; j < fadingSteps; j++)
+            //    {
+            //        var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+            //        pngFilesForFrames.Add(transitionImageFileName);
+            //        pngFile = transitionImageFileName;
+            //    }
+            //}
+            //else
+            //{
+            //    for (int j = 0; j < fadingSteps; j++)
+            //    {
+            //        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+            //        pngFilesForFrames.Add(transitionImageFileName);
+            //    }
+            //}
+
+            notify($"{__pngFilesFinalBucket.Count} images generated");
 
             // https://stackoverflow.com/questions/38368105/ffmpeg-custom-sequence-input-images/51618079#51618079
-            var fileList = string.Join("\r\n", pngFilesForFrames.Select(f => $"file '{f}'{Environment.NewLine}duration 0.01"));
+            var fileList = string.Join("\r\n", __pngFilesFinalBucket.Select(f => $"file '{f}'{Environment.NewLine}duration 0.01"));
             var tfh = new TestFileHelper();
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
@@ -454,8 +490,6 @@ namespace faiWinApp
             notify($"Done");
 
             return intExitCode == 0;
-            */
-            return true;
         }
 
         private static List<string> ExecuteZoomSequence(int zoomPixelStep, int zoomImageCount, int refWidth, int refHeight, string pngFile)
