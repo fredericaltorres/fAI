@@ -161,6 +161,13 @@ namespace faiWinApp
             {
                 string filePath = GetNewImageFileName(imageFormat, tmpFolder, imageFileNamePrefix);
                 Image img = Clipboard.GetImage();
+
+                var p = Path.GetDirectoryName(filePath);
+                if(!Directory.Exists(p))
+                {
+                    throw new ApplicationException($"The folder {p} does not exist");
+                }
+
                 img.Save(filePath, imageFormat);
                 return filePath;
             }
@@ -372,7 +379,11 @@ namespace faiWinApp
                 }
             }
 
+            var tfhZoomSequences = new List<TestFileHelper>();
+            var zoomSequences = new List<FileSequenceManager>();
             var pngFilesForFrames = new List<string>();
+
+            // For each image generate the zoom sequence
             for (var z=0; z< inputPngFiles.Count; z++)
             {
                 notify($"Processing {z} / {inputPngFiles.Count}, zoomIn:{zoomIn}");
@@ -380,56 +391,50 @@ namespace faiWinApp
 
                 if(zoomIn)
                 {
-                    //for (var f = 0; f < ((int)(mp4FrameRate * zoomInFrame1Duration)); f++) // Fill 0.125 second of frame
-                    //    pngFilesForFrames.Add(pngFile);
-                    pngFilesForFrames.Add(pngFile);
-
                     notify($"Calculating zoom");
-                    //var zoomInDuration = imageDurationSecond - 1;
-                    var zoomPixel = zoomPixelStep;
-                    var zoomImage = "";
-                    var zoomSlowDownImageCount = 1;
-                    for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
-                    {
-                        zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png);
-                        zoomPixel += zoomPixelStep;
-                        for (var f = 0; f < zoomSlowDownImageCount; f++)
-                            pngFilesForFrames.Add(zoomImage);
-                    }
 
+                    tfhZoomSequences.Add(new TestFileHelper());
+                    var tfh2 = tfhZoomSequences.Last();
+                    
+                    zoomSequences.Add(new FileSequenceManager(tfh2.GetTempFolder()));
+                    var tfsZoom = zoomSequences.Last();
 
-                    pngFile = zoomImage;
+                    tfsZoom.AddFile(pngFile); // Add the first image
+                    var tmpPngFilesForFrames = ExecuteZoomSequence(zoomPixelStep, zoomImageCount, refWidth, refHeight, pngFile);
+                    tmpPngFilesForFrames.ForEach(f => tfsZoom.AddFile(f));
                 }
                 else
                 {
                     for (var f = 0; f < mp4FrameRate * imageDurationSecond; f++) // Fill 1 second of frame
                         pngFilesForFrames.Add(pngFile);
                 }
+            }
+            tfhZoomSequences.ForEach(tfhz => tfhz.Clean());
+            
+            /*
+            if (generateTransition)
+            {
+                notify($"Calculating Transition");
+                var fadingSteps = mp4FrameRate; // Zoom will be 1 second
+                var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
+                var fadingValue = 0.99f / fadingSteps;
 
-                if (generateTransition)
+                if (zoomIn)
                 {
-                    notify($"Calculating Transition");
-                    var fadingSteps = mp4FrameRate; // Zoom will be 1 second
-                    var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
-                    var fadingValue = 0.99f / fadingSteps;
-
-                    if (zoomIn)
+                    var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
+                    for (int j = 0; j < fadingSteps; j++)
                     {
-                        var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
-                        for (int j = 0; j < fadingSteps; j++)
-                        {
-                            var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-                            pngFilesForFrames.Add(transitionImageFileName);
-                            pngFile = transitionImageFileName;
-                        }
+                        var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+                        pngFilesForFrames.Add(transitionImageFileName);
+                        pngFile = transitionImageFileName;
                     }
-                    else
+                }
+                else
+                {
+                    for (int j = 0; j < fadingSteps; j++)
                     {
-                        for (int j = 0; j < fadingSteps; j++)
-                        {
-                            var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-                            pngFilesForFrames.Add(transitionImageFileName);
-                        }
+                        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
+                        pngFilesForFrames.Add(transitionImageFileName);
                     }
                 }
             }
@@ -449,6 +454,25 @@ namespace faiWinApp
             notify($"Done");
 
             return intExitCode == 0;
+            */
+            return true;
+        }
+
+        private static List<string> ExecuteZoomSequence(int zoomPixelStep, int zoomImageCount, int refWidth, int refHeight, string pngFile)
+        {
+            List<string> pngImages = new List<string>();
+            var zoomPixel = zoomPixelStep;
+            var zoomImage = "";
+            var zoomSlowDownImageCount = 1;
+            for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
+            {
+                zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png);
+                zoomPixel += zoomPixelStep;
+                for (var f = 0; f < zoomSlowDownImageCount; f++)
+                    pngImages.Add(zoomImage);
+            }
+
+            return pngImages;
         }
 
         public static int RunFFMPEG(string cmd, string mp4OutputFile)
