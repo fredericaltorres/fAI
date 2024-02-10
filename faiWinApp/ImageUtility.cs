@@ -412,7 +412,7 @@ namespace faiWinApp
 
             if (generateTransition)
             {
-                var fadingSteps = mp4FrameRate;
+                var fadingSteps = mp4FrameRate*2;
                 notify($"Calculating Transition");
                 for (var z = 0; z < inputPngFiles.Count; z++) // For each image / zoom sequence, Bucket
                 {
@@ -444,6 +444,7 @@ namespace faiWinApp
                     else
                     {
                         var firstSection2 = tfsZoom.FileNames;
+                        firstSection2 = firstSection2.Skip(fadingSteps).ToList();
                         firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
                     }
                 }
