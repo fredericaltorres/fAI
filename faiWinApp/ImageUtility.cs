@@ -410,16 +410,22 @@ namespace faiWinApp
             //tfhZoomSequences.ForEach(tfhz => tfhz.Clean());
             //zoomSequences.ForEach(zs => zs.Clean());
 
-            if (!generateTransition)
+            if (generateTransition)
             {
                 var fadingSteps = mp4FrameRate;
                 notify($"Calculating Transition");
-                for (var z = 0; z < inputPngFiles.Count; z++) // For each image generate the zoom sequence
+                for (var z = 0; z < inputPngFiles.Count; z++) // For each image / zoom sequence, Bucket
                 {
                     var tfsZoom = zoomSequences[z];
-
                     var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
+
+                    if(z > 0) // We previously added/computed the first 16 images 
+                    {
+                        firstSection = firstSection.Skip(fadingSteps).ToList(); 
+                    }
+
                     firstSection.ForEach(f => __pngFilesFinalBucket.Add(f));
+
                     var secondSection = tfsZoom.FileNames.Skip(tfsZoom.FileNames.Count - fadingSteps).ToList();
                     var isThereANextImage = (z + 1) < inputPngFiles.Count;
 
@@ -428,15 +434,11 @@ namespace faiWinApp
                         var tfsZoomNext = zoomSequences[z + 1];
                         var firstSectionNext = tfsZoomNext.FileNames.Take(fadingSteps).ToList();
                         var fadingValue = 0.99f / fadingSteps;
-                        var fadingIndex = fadingValue;
 
-                        for (var f = 0; f < secondSection.Count - 1; f++) // Fill 1 second of frame
+                        for (var f = 0; f < fadingSteps; f++)
                         {
-                            var i1 = secondSection[f];
-                            var i2 = firstSectionNext[f];
-                            var transImg = BlendBitmaps(i1, i2, (fadingIndex + 1) * fadingValue, ImageFormat.Png);
+                            var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
                             __pngFilesFinalBucket.Add(transImg);
-                            fadingIndex += fadingValue;
                         }
                     }
                     else
