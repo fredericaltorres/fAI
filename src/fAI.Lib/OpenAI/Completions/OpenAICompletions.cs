@@ -62,7 +62,7 @@ namespace fAI
                 PostPrompt = "\n===\nSummary:\n",
             };
 
-            return Create(prompt).Text.Trim();
+            return Create(prompt).Text?.Trim();
         }
 
         public enum GPT_YesNoResponse

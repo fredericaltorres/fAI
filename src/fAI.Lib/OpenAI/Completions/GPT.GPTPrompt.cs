@@ -99,7 +99,10 @@ namespace fAI
                 }
                 else
                 {
-                    return this.Text;
+                    if(!string.IsNullOrEmpty(this.PrePrompt))
+                        return $"{this.PrePrompt}\r\n{this.Text}";
+                    else 
+                        return this.Text;
                 }
             }
         }

@@ -99,7 +99,8 @@ namespace fAI.Tests
             };
             var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
-            Assert.Contains("mismatch between the expected and actual", response.Text);
+            DS.Assert.Words(response.Text, "error & message & mismatch Folder & Description & AssertDetails & regular & expression");
+            
 
             var blogPost = response.BlogPost;
             Assert.Contains("Model:", blogPost);
@@ -340,6 +341,24 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
             var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
             Assert.NotEqual(null, summarization);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Summarize_CopyRightedText_EnglishText()
+        {
+            string text = @"
+Another suburban family morning
+Grandmother screaming at the wall
+We have to shout above the din of our rice crispies
+We can't hear anything at all";
+
+            var client = new OpenAI();
+            var summarization = client.Completions.Summarize(text, TranslationLanguages.English);
+            var result1 = "A chaotic morning in a suburban family where the grandmother is yelling and the noise of breakfast cereal makes it hard to hear anything.";
+            var result2 = "The text describes a chaotic morning in a suburban family, with the grandmother yelling and the noise of their breakfast cereal making it difficult to hear anything.";
+
+            DS.Assert.Words(summarization, "chaotic & morning & noise & cereal & grandmother");
         }
     }
 }

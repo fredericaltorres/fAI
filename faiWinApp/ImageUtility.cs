@@ -342,7 +342,9 @@ namespace faiWinApp
             }
         }
 
-        static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
+        //static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
+        static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v6.1.1\bin\ffmpeg.exe";
+        
         private static List<string> GrabLastX(List<string> l, int count) { 
 
             var lastX = l.Skip(Math.Max(0, l.Count - count)).ToList();
@@ -363,6 +365,9 @@ namespace faiWinApp
             int zoomInPercent = -1,
             bool generateTransition = true)
         {
+            //generateTransition = !false;
+            //inputPngFiles = inputPngFiles.Take(3).ToList();
+
             var zoomIn = zoomInPercent != -1;
             float zoomInFrame1Duration = 0.125f;
             int widthBeforeZoom = 0;
@@ -393,7 +398,7 @@ namespace faiWinApp
                 var pngFile = inputPngFiles[z];
                 if(zoomIn)
                 {
-                    notify($"Calculating zoom");
+                    notify($"Calculating zoom {Path.GetFileName(pngFile)}");
                     zoomSequences.Add(new FileSequenceManager(Path.Combine(tmpParentFolder, Environment.TickCount.ToString())));
                     var tfsZoomSequence = zoomSequences.Last();
 
@@ -416,6 +421,9 @@ namespace faiWinApp
                 notify($"Calculating Transition");
                 for (var z = 0; z < inputPngFiles.Count; z++) // For each image / zoom sequence, Bucket
                 {
+                    var pngFile = inputPngFiles[z];
+                    notify($"Calculating Transistion {Path.GetFileName(pngFile)}");
+
                     var tfsZoom = zoomSequences[z];
                     var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
 
@@ -437,7 +445,7 @@ namespace faiWinApp
 
                         for (var f = 0; f < fadingSteps; f++)
                         {
-                            var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
+                            var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
                             __pngFilesFinalBucket.Add(transImg);
                         }
                     }
@@ -445,7 +453,7 @@ namespace faiWinApp
                     {
                         var firstSection2 = tfsZoom.FileNames;
                         firstSection2 = firstSection2.Skip(fadingSteps).ToList();
-                        firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
+                     //   firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
                     }
                 }
             }
@@ -455,41 +463,18 @@ namespace faiWinApp
                     zoomSequences[z].FileNames.ForEach(f => __pngFilesFinalBucket.Add(f));
             }
 
-
-            //var nextPngFile = (z + 1) < inputPngFiles.Count ? inputPngFiles[z + 1] : inputPngFiles[0];
-            //var fadingValue = 0.99f / fadingSteps;
-
-            //if (zoomIn)
-            //{
-            //    var last8ImageOfZoom = GrabLastX(pngFilesForFrames, fadingSteps);
-            //    for (int j = 0; j < fadingSteps; j++)
-            //    {
-            //        var transitionImageFileName = BlendBitmaps(last8ImageOfZoom[j], nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-            //        pngFilesForFrames.Add(transitionImageFileName);
-            //        pngFile = transitionImageFileName;
-            //    }
-            //}
-            //else
-            //{
-            //    for (int j = 0; j < fadingSteps; j++)
-            //    {
-            //        var transitionImageFileName = BlendBitmaps(pngFile, nextPngFile, (j + 1) * fadingValue, ImageFormat.Png);
-            //        pngFilesForFrames.Add(transitionImageFileName);
-            //    }
-            //}
-
             notify($"{__pngFilesFinalBucket.Count} images generated");
 
             // https://stackoverflow.com/questions/38368105/ffmpeg-custom-sequence-input-images/51618079#51618079
-            var fileList = string.Join("\r\n", __pngFilesFinalBucket.Select(f => $"file '{f}'{Environment.NewLine}duration 0.01"));
+            var fileList = string.Join("\r\n", __pngFilesFinalBucket.Select(f => $"file '{f}'{Environment.NewLine}duration 0.1"));
             var tfh = new TestFileHelper();
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
-            var cmd = $@" -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r 30 -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
+            var cmd = $@"  -loglevel debug -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r {mp4FrameRate} -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
             notify($@"""{ffmpeg}"" {cmd}");
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
 
-            CleanUpTempFiles();
+            // CleanUpTempFiles();
             notify($"Done");
 
             return intExitCode == 0;
@@ -503,7 +488,7 @@ namespace faiWinApp
             var zoomSlowDownImageCount = 1;
             for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
             {
-                zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png);
+                zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Jpeg);
                 zoomPixel += zoomPixelStep;
                 for (var f = 0; f < zoomSlowDownImageCount; f++)
                     pngImages.Add(zoomImage);
