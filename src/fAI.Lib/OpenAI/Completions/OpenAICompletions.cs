@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace fAI
 {
@@ -97,7 +98,67 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
-        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        public class TranslationRule 
+        {
+            public TranslationLanguages sourceLangague { get; set; }
+            public TranslationLanguages targetLanguage { get; set; }
+            public Regex regex { get; set; } 
+            public bool TranslateIfMatch { get; set; }
+            public string Name{ get; set; }
+
+            public bool IsMatch(string text)
+            {
+                return regex.IsMatch(text);
+            }
+
+            public bool MatchLanguages(TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+            {
+                return this.sourceLangague == sourceLangague && this.targetLanguage == targetLanguage;
+            }
+
+            public override string ToString()
+            {
+                return $"{Name}, {sourceLangague} to {targetLanguage}, {regex}, {TranslateIfMatch}";
+            }
+        }
+
+        public bool NeedToBeTranslated(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        {
+            var translationRules = new List<TranslationRule>();
+            translationRules.AddRange(LoadEnglishToFrenchRules());
+
+            var applicableRules = translationRules.Where(r => r.MatchLanguages(sourceLangague, targetLanguage));
+            foreach (var rule in applicableRules)
+                if (rule.IsMatch(text))
+                    return rule.TranslateIfMatch;
+
+            return true;
+        }
+
+        private static List<TranslationRule> LoadEnglishToFrenchRules()
+        {
+            var numberRegEx = @"^-?\d+(\.\d+)?$";
+            var percentRegEx = @"^-?\d+(\.\d+)?%$";
+            var NumberWithKRegEx = @"^-?\d+(\.\d+)?K$";
+            var DollardAmountWithKRegEx = @"^\$-?\d+(\.\d+)?K$"; // $200K
+            var numberWithThousandSeparator = @"\d{1,3}(,\d{3})*(\.\d+)?";
+
+            return new List<TranslationRule>()
+            {
+                new TranslationRule { Name = "Percentage with float 100% or 0.22%", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(percentRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
+                new TranslationRule { Name = "Number with k like 200K", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(NumberWithKRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
+                new TranslationRule { Name = "Just a number", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(numberRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
+                new TranslationRule { Name = "$ amount with a k, Chat GPT do a good job translating", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(DollardAmountWithKRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = true },
+                new TranslationRule { Name = "Number with , as a thousand separator, Chat GPT do a good job translating", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(numberWithThousandSeparator, RegexOptions.IgnoreCase), TranslateIfMatch = true },
+            };
+        }
+
+        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, bool applyCustomRule = true)
         {
             var prompt = new Prompt_GPT_35_TurboInstruct
             {

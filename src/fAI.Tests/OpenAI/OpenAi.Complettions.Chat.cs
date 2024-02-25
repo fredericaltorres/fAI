@@ -257,6 +257,63 @@ End of text
 
         [Fact()]
         [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialRules()
+        {
+            var client = new OpenAI();
+            var text = "10%";
+            Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "10% cheaper";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "200K";
+            Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "200K cheaper";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "$200K";
+            Assert.True (client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "3,948";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
+            text = "3,948,123";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_NumberWithCommaAsThousandSeparator()
+        {
+            var client = new OpenAI();
+            var text = "3,948";
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("3 948") == FlexStrCompare(translation));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_Dollars200K()
+        {
+            var client = new OpenAI();
+            var text = "$200K";
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_200K()
+        {
+            var client = new OpenAI();
+            var text = "200K";
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare(text) == FlexStrCompare(translation));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Translate_EnglishToFrench()
         {
             var client = new OpenAI();
