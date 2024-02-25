@@ -66,7 +66,7 @@ namespace fAI.Tests
             var client = new OpenAI();
             var text = "$200K";
             var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-            Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
+            Assert.True(FlexStrCompare("200 000 $") == FlexStrCompare(translation));
         }
 
         [Fact()]

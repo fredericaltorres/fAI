@@ -52,8 +52,8 @@ namespace fAI.Tests
             Assert.True(models.data[0].Created < DateTime.Now);
         }
 
-        const string error_log = @"[2023-11-07T23:53:14.260Z] 2023/11/07 06:53:10.995 PM | [ERROR]Verify .Folder.Description expected:#regex (@PresentationFile@)|(@AuthorUsername@) actual:IntegrationTesting_Converters_Cheetah_Company_06 objectType:Category - AssertDetails:regex:'(WordDocument_UniqueAzureStorageEncryption.docx)|(IntegrationTesting_Converters_Cheetah_Company_06_Admin)', value:'IntegrationTesting_Converters_Cheetah_Company_06'";
-        const string info_success_log = @"2023-11-06 22:31:30.680|BrainRequin|Core|1.0.1.0|INFO|FTORRES-DL5560|msg=CEF:0|BrainRequin|Core|0|Message|Message|Info|msg=[SUCCEEDED 265493281, 10.0s] Deleting pid:533300675, type:HARD-DELETE, Method: Presentation.Delete(), ProcessId: 36336; ProcessName: BrainRequin.IntegrationTesting.Converters.Console; MachineName: FTORRES-DL5560; UserName: ftorres;";
+        const string error_log = @"2023/11/07 06:53:10.995 PM|[ERROR]Verify .Order.Description expected:#regex (Camembert|Toillete) actual:Gorgonzola, objectType:PurchaseOrder - AssertDetails:regex:'(Camembert|Toillete)', value:'Gorgonzola'";
+        const string info_success_log = @"2023-11-06 22:31:30.680|Requin|INFO|FTORRES-12345|Info|Messgae=[SUCCEEDED 10.0s] Deleting order:53330, Method: DeleteOrder(), ProcessId: 36336; ProcessName: OrderProcessingConsole.exe; MachineName: FTORRES-12345; UserName: ftorres;";
 
         [Fact()]
         [TestBeforeAfter]
@@ -298,7 +298,7 @@ End of text
         {
             var client = new OpenAI();
             var text = "3,948";
-            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
             Assert.True(FlexStrCompare("3 948") == FlexStrCompare(translation));
         }
 
@@ -308,7 +308,7 @@ End of text
         {
             var client = new OpenAI();
             var text = "$200K";
-            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
             Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
         }
 
@@ -318,7 +318,7 @@ End of text
         {
             var client = new OpenAI();
             var text = "200K";
-            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
             Assert.True(FlexStrCompare(text) == FlexStrCompare(translation));
         }
 
