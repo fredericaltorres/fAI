@@ -141,7 +141,7 @@ namespace fAI
             var percentRegEx = @"^-?\d+(\.\d+)?%$";
             var NumberWithKRegEx = @"^-?\d+(\.\d+)?K$";
             var DollardAmountWithKRegEx = @"^\$-?\d+(\.\d+)?K$"; // $200K
-            var numberWithThousandSeparator = @"\d{1,3}(,\d{3})*(\.\d+)?";
+            var numberWithThousandSeparator = @"^\d{1,3}(,\d{3})*(\.\d+)?$";
 
             return new List<TranslationRule>()
             {
@@ -160,14 +160,16 @@ namespace fAI
 
         public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, bool applyCustomRule = true)
         {
-            var prompt = new Prompt_GPT_35_TurboInstruct
+            if (applyCustomRule && NeedToBeTranslated(text, sourceLangague, targetLanguage) )
             {
-                Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
-            };
-
-            return Create(prompt).Text.Trim();
+                var prompt = new Prompt_GPT_35_TurboInstruct
+                {
+                    Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
+                };
+                return Create(prompt).Text.Trim();
+            }
+            else return text;
         }
-
 
         private bool IsValidJson<T>(string json)
         {

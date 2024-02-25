@@ -13,11 +13,31 @@ using DynamicSugar;
 
 namespace fAI.Tests
 {
+    public class OpenAiCompletionsBase : UnitTestBase
+    {
+        public const string ReferenceEnglishSentence = "Hello world.";
+
+        public const string ReferenceEnglishJsonDictionary = @"{
+        ""(50,51)"": ""There are people who have a significant number of followers in every business domain. There are people who have a significant number of followers in every business domain."",
+        ""(50,52)"": ""Education "",
+        ""(53,54)"": ""Classroom 01"",
+        ""(53,55)"": ""Classroom 02"",
+        ""(56,57)"": ""Business Charts"",
+        ""(56,58)"": ""Is a great way to visualize information about users""
+      }";
+
+
+        public OpenAiCompletionsBase()
+        {
+            OpenAI.TraceOn = true;
+        }
+    }
+
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiComplettionsChat : UnitTestBase
+    public class OpenAiCompletionsChat : OpenAiCompletionsBase
     {
-        public OpenAiComplettionsChat()
+        public OpenAiCompletionsChat()
         {
             OpenAI.TraceOn = true;
         }
@@ -244,17 +264,7 @@ End of text
             Assert.Equal("This is a test!", response.Text);
         }
 
-        const string ReferenceEnglishSentence = "Hello world.";
-
-        const string ReferenceEnglishJsonDictionary = @"{
-        ""(50,51)"": ""There are people who have a significant number of followers in every business domain. There are people who have a significant number of followers in every business domain."",
-        ""(50,52)"": ""Education "",
-        ""(53,54)"": ""Classroom 01"",
-        ""(53,55)"": ""Classroom 02"",
-        ""(56,57)"": ""Business Charts"",
-        ""(56,58)"": ""Is a great way to visualize information about users""
-      }";
-
+   
         [Fact()]
         [TestBeforeAfter]
         public void Translate_EnglishToFrench_SpecialRules()
@@ -337,17 +347,7 @@ End of text
             Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
         }
 
-        private void AssertWords(string text, List<string> words)
-        {
-            foreach (var w in words)
-                Assert.Contains(w.ToLower(), text.ToLower());
-        }
-
-        private void AssertWords(string text, string words)
-        {
-            AssertWords(text, words.Split(',').ToList());
-        }
-
+        
         [Fact()]
         [TestBeforeAfter]
         public void Translate_EnglishToFrench_List()
