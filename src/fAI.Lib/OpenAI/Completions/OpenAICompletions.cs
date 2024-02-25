@@ -99,54 +99,6 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
-
-        public class TranslationRuleBase
-        {
-            public TranslationLanguages sourceLangague { get; set; }
-            public TranslationLanguages targetLanguage { get; set; }
-            public string Name { get; set; }
-
-            public bool MatchLanguages(TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
-            {
-                return this.sourceLangague == sourceLangague && this.targetLanguage == targetLanguage;
-            }
-
-        }
-        public class TranslationOverrideRule : TranslationRuleBase
-        {
-            public Regex InputTextRegex { get; set; }
-            public Regex OutputTextRegex { get; set; }
-            public string Replacement { get; set; }
-
-            public bool IsMatch(string inputText, string outputText)
-            {
-                return InputTextRegex.IsMatch(inputText) && OutputTextRegex.IsMatch(outputText);
-            }
-
-            public string Replace(string inputText, string outputText)
-            {
-                if(IsMatch(inputText, outputText))
-                    return this.Replacement;
-                return outputText;
-            }
-        }
-
-        public class TranslationRule  : TranslationRuleBase
-        {
-            public Regex regex { get; set; } 
-            public bool TranslateIfMatch { get; set; }
-            
-            public bool IsMatch(string text)
-            {
-                return regex.IsMatch(text);
-            }
-
-            public override string ToString()
-            {
-                return $"{Name}, {sourceLangague} to {targetLanguage}, {regex}, {TranslateIfMatch}";
-            }
-        }
-
         public bool NeedToBeTranslated(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
         {
             var translationRules = new List<TranslationRule>();
@@ -210,7 +162,9 @@ namespace fAI
             return strings.All(x => IsNumeric(x));
         }
 
-        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, bool applyCustomRule = true, List<TranslationRule> translationRules = null)
+        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, 
+            bool applyCustomRule = true,
+            List<TranslationOverrideRule> translationOverrideRules = null)
         {
             if (applyCustomRule && NeedToBeTranslated(text, sourceLangague, targetLanguage))
             {
@@ -218,7 +172,15 @@ namespace fAI
                 {
                     Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
                 };
-                return Create(prompt).Text.Trim();
+                var translatedText = Create(prompt).Text.Trim();
+                if (translationOverrideRules != null)
+                {
+                    var translationOverrideRulesForLanguage = translationOverrideRules.Where(ru => ru.MatchLanguages(sourceLangague, targetLanguage));
+                    foreach(var rule in translationOverrideRulesForLanguage)
+                        if (rule.IsMatch(text, translatedText))
+                            translatedText = rule.Replacement;
+                }
+                return translatedText;
             }
             else return text;
         }

@@ -130,9 +130,29 @@ namespace fAI.Tests
             Assert.Equal(6, outputList.Count);
 
             DS.Assert.Words(outputList[0], "personnes & important & domaine & activité");
-            //AssertWords(outputList[4], "Graphiques,entreprise");
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_OverideValue()
+        {
+            var client = new OpenAI();
+            var text =  "Sales";
+            var translationOverrideRules = new List<TranslationOverrideRule>
+            {
+                new TranslationOverrideRule
+                {
+                    sourceLangague = TranslationLanguages.English,
+                    targetLanguage = TranslationLanguages.French,
+                    InputTextRegex = new Regex("Sales"),
+                    OutputTextRegex = new Regex("Vend"),
+                    Replacement = "Ventes"
+                }
+            };
+            
+            var outputText = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French,  translationOverrideRules: translationOverrideRules);
+            Assert.Equal("Ventes", outputText);
+        }
 
         [Fact()]
         [TestBeforeAfter]
