@@ -36,6 +36,9 @@ namespace fAI.Tests
             text = "200K";
             Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
+            text = "$22M"; // Do not translate because text is to long, '$1M' to '1 million de dollars'
+            Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+
             text = "200K cheaper";
             Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
@@ -47,6 +50,17 @@ namespace fAI.Tests
 
             text = "3,948,123";
             Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_TranslationOverRide()
+        {
+            var client = new OpenAI();
+            var text = "3,948";
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("3 948") == FlexStrCompare(translation));
         }
 
         [Fact()]
@@ -104,8 +118,6 @@ namespace fAI.Tests
             Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
         }
 
-        
-
         [Fact()]
         [TestBeforeAfter]
         public void Translate_EnglishToFrench_List()
@@ -117,8 +129,20 @@ namespace fAI.Tests
             var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
             Assert.Equal(6, outputList.Count);
 
-            AssertWords(outputList[0], "personnes,important,domaine,activité");
+            DS.Assert.Words(outputList[0], "personnes & important & domaine & activité");
             //AssertWords(outputList[4], "Graphiques,entreprise");
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_List_WithNonTranslatableValue()
+        {
+            var client = new OpenAI();
+            var inputList = new List<string> { "Strawberry", "200K", "Raspberry", "10%", "$1M" };
+            var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
+
+            DS.Assert.Words(string.Join(" ", outputList), "Fraise & 200K & Framboise & 10% & $1M");
         }
 
         [Fact()]

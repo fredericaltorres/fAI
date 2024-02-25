@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
@@ -98,22 +99,46 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
-        public class TranslationRule 
+
+        public class TranslationRuleBase
         {
             public TranslationLanguages sourceLangague { get; set; }
             public TranslationLanguages targetLanguage { get; set; }
-            public Regex regex { get; set; } 
-            public bool TranslateIfMatch { get; set; }
-            public string Name{ get; set; }
-
-            public bool IsMatch(string text)
-            {
-                return regex.IsMatch(text);
-            }
+            public string Name { get; set; }
 
             public bool MatchLanguages(TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
             {
                 return this.sourceLangague == sourceLangague && this.targetLanguage == targetLanguage;
+            }
+
+        }
+        public class TranslationOverrideRule : TranslationRuleBase
+        {
+            public Regex InputTextRegex { get; set; }
+            public Regex OutputTextRegex { get; set; }
+            public string Replacement { get; set; }
+
+            public bool IsMatch(string inputText, string outputText)
+            {
+                return InputTextRegex.IsMatch(inputText) && OutputTextRegex.IsMatch(outputText);
+            }
+
+            public string Replace(string inputText, string outputText)
+            {
+                if(IsMatch(inputText, outputText))
+                    return this.Replacement;
+                return outputText;
+            }
+        }
+
+        public class TranslationRule  : TranslationRuleBase
+        {
+            public Regex regex { get; set; } 
+            public bool TranslateIfMatch { get; set; }
+            
+            public bool IsMatch(string text)
+            {
+                return regex.IsMatch(text);
             }
 
             public override string ToString()
@@ -141,6 +166,7 @@ namespace fAI
             var percentRegEx = @"^-?\d+(\.\d+)?%$";
             var NumberWithKRegEx = @"^-?\d+(\.\d+)?K$";
             var DollardAmountWithKRegEx = @"^\$-?\d+(\.\d+)?K$"; // $200K
+            var DollardAmountWithMRegEx = @"^\$-?\d+(\.\d+)?M$"; // $1M
             var numberWithThousandSeparator = @"^\d{1,3}(,\d{3})*(\.\d+)?$";
 
             return new List<TranslationRule>()
@@ -151,24 +177,14 @@ namespace fAI
                                       regex = new Regex(NumberWithKRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
                 new TranslationRule { Name = "Just a number", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
                                       regex = new Regex(numberRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
+                new TranslationRule { Name = "$ amount with a m, $1M do not translate because too long", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
+                                      regex = new Regex(DollardAmountWithMRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = false },
+
                 new TranslationRule { Name = "$ amount with a k, Chat GPT do a good job translating", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
                                       regex = new Regex(DollardAmountWithKRegEx, RegexOptions.IgnoreCase), TranslateIfMatch = true },
                 new TranslationRule { Name = "Number with , as a thousand separator, Chat GPT do a good job translating", sourceLangague = TranslationLanguages.English, targetLanguage = TranslationLanguages.French,
                                       regex = new Regex(numberWithThousandSeparator, RegexOptions.IgnoreCase), TranslateIfMatch = true },
             };
-        }
-
-        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, bool applyCustomRule = true)
-        {
-            if (applyCustomRule && NeedToBeTranslated(text, sourceLangague, targetLanguage) )
-            {
-                var prompt = new Prompt_GPT_35_TurboInstruct
-                {
-                    Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
-                };
-                return Create(prompt).Text.Trim();
-            }
-            else return text;
         }
 
         private bool IsValidJson<T>(string json)
@@ -184,7 +200,33 @@ namespace fAI
             }
         }
 
-        public Dictionary<string, string> Translate(Dictionary<string, string> inputDictionary, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        private bool IsNumeric(string value)
+        {
+            return value.All(char.IsNumber);
+        }
+
+        private bool IsNumeric(List<string> strings)
+        {
+            return strings.All(x => IsNumeric(x));
+        }
+
+        public string Translate(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage, bool applyCustomRule = true, List<TranslationRule> translationRules = null)
+        {
+            if (applyCustomRule && NeedToBeTranslated(text, sourceLangague, targetLanguage))
+            {
+                var prompt = new Prompt_GPT_35_TurboInstruct
+                {
+                    Text = $"Translate the following {sourceLangague} text to {targetLanguage}: '{text}'",
+                };
+                return Create(prompt).Text.Trim();
+            }
+            else return text;
+        }
+
+        public Dictionary<string, string> Translate(Dictionary<string, string> inputDictionary, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage,
+             bool applyCustomRule = true, // todo" implement
+             List<TranslationRule> translationRules = null // todo" implement
+            )
         {
             var strings = inputDictionary.Values.ToList();
             if (IsNumeric(strings)) // GPT does not like things that cannot be translated and return an invalid JSON
@@ -202,26 +244,30 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(Translate)}(), failed to translate dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{responseJson}");
         }
 
-        private bool IsNumeric(string value)
-        {
-            return value.All(char.IsNumber);
-        }
 
-        private bool IsNumeric(List<string> strings)
-        {
-            return strings.All(x => IsNumeric(x));
-        }
-
-        public List<string> Translate(List<string> strings, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
+        public List<string> Translate(List<string> strings, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage,
+            bool applyCustomRule = true, // todo" implement
+             List<TranslationRule> translationRules = null // todo" implement
+            )
         {
             if (IsNumeric(strings)) // GPT does not like things that cannot be translated and return an invalid JSON
                 return strings;
 
             var intKey = 0;
             var d = strings.ToDictionary(x => (intKey++).ToString(), x => x);
-          
-            var dd = Translate(d, sourceLangague, targetLanguage);
-            return dd.Values.ToList();
+            var translatedStrings = Translate(d, sourceLangague, targetLanguage).Values.ToList();
+            var finalStrings = new List<string>();
+
+            // Ignore the translation of text we do not want to translate
+            for(var x = 0; x<strings.Count; x++)
+            {
+                var sourceText = strings[x];
+                if (applyCustomRule && NeedToBeTranslated(sourceText, sourceLangague, targetLanguage))
+                    finalStrings.Add(translatedStrings[x]);
+                else 
+                    finalStrings.Add(sourceText);
+            }
+            return finalStrings;
         }
     }
 }
