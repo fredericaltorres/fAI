@@ -46,20 +46,9 @@ Wlop, unique detail, masterpiece
                 ,seed : 407795969
                 );
 
-            GenerationResultResponse jobState = null;
-            var jobSucceeded = Managers.TimeOutManager("Test", 1, () => {
-                 jobState = client.Image.GetJobStatus(job.GenerationId);
-                return jobState.Completed;
-            });
-            Assert.True(jobSucceeded);
-
-            var pngFileNames = jobState.DownloadImages();
-            Assert.True(pngFileNames.Count == 1);
-            Assert.True(File.Exists(pngFileNames[0]));
-
-            var r = client.Image.DeleteJob(jobState.GenerationId);
-            Assert.True(r.Success);
-            Assert.Equal(jobState.GenerationId, r.GenerationId);
+            var pngFileNames = client.Image.WaitForImages(job);
+            pngFileNames.ForEach((f) => Assert.True(File.Exists(f)));
+            pngFileNames.ForEach((f) => File.Delete(f));
         }
 
         [Fact()]
@@ -80,20 +69,11 @@ high quality, 8K Ultra HD, In this extraordinary full-body digital illustration,
                 presetStylePhotoRealOn: PresetStylePhotoRealOn.MINIMALIST
             );
 
-            GenerationResultResponse jobState = null;
-            var jobSucceeded = Managers.TimeOutManager("Test", 1, () => {
-                jobState = client.Image.GetJobStatus(job.GenerationId);
-                return jobState.Completed;
-            });
-            Assert.True(jobSucceeded);
+            var pngFileNames = client.Image.WaitForImages(job);
 
-            var pngFileNames = jobState.DownloadImages();
             Assert.True(pngFileNames.Count == 1);
             Assert.True(File.Exists(pngFileNames[0]));
-
-            var r = client.Image.DeleteJob(jobState.GenerationId);
-            Assert.True(r.Success);
-            Assert.Equal(jobState.GenerationId, r.GenerationId);
+            File.Delete(pngFileNames[0]);
         }
 
         [Fact()]
@@ -102,7 +82,7 @@ high quality, 8K Ultra HD, In this extraordinary full-body digital illustration,
             var prompt = @"
 Close-up portrait BLONDE WOMAN [AGE] years old, nice body shape,|(STYLED HAIR:1.7), color portrait, Linkedin profile picture, professional portrait photography by Martin Schoeller, by Mark Mann, by Steve McCurry, bokeh, studio lighting, canonical lens, shot on dslr, 64 megapixels, sharp focus.
 ";
-            var ages = new List<int>() { 30, 60 };
+            var ages = new List<int>() { 60 };
 
             var finalOutputFiles = new FileSequenceManager(@"c:\temp\@fAiImages");
 

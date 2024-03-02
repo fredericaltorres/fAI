@@ -55,12 +55,12 @@ namespace fAI
             }
         }
 
-        public string Summarize(string text, TranslationLanguages sourceLangague) 
+        public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following text:") 
         {
             var prompt = new Prompt_GPT_35_TurboInstruct 
             {
                 Text = text,
-                PrePrompt = "Summarize the following text: \n===\n",
+                PrePrompt = $"{promptCommand} \n===\n",
                 PostPrompt = "\n===\nSummary:\n",
             };
 

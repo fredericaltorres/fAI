@@ -396,7 +396,19 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
             var client = new OpenAI();
             var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
-            Assert.NotEqual(null, summarization);
+            Assert.NotNull(summarization);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Summarize_EnglishText_InOneLine()
+        {
+            var client = new OpenAI();
+            var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English, 
+                                    promptCommand : "Summarize the following text in one line:");
+            var expected = "Introducing the \"SwiftGadget X\" - a revolutionary all-in-one gadget that will change your life.";
+            Assert.NotNull(summarization);
+            DS.Assert.Words(summarization, "Introducing & SwiftGadget & (revolutionary | revolutionize) ");
         }
 
         [Fact()]

@@ -149,7 +149,27 @@ namespace fAI
             v1_5,
             v2_1
         }
-            // https://docs.leonardo.ai/reference/creategeneration
+        // https://docs.leonardo.ai/reference/creategeneration
+
+        public List<string> WaitForImages(GenerationResponse requestJob, int timeOut = 1)
+        {
+            var r = new List<string>();
+            GenerationResultResponse jobState = null;
+            var jobSucceeded = Managers.TimeOutManager("Test", timeOut, () =>
+            {
+                jobState = this.GetJobStatus(requestJob.GenerationId);
+                return jobState.Completed;
+            });
+            if (jobSucceeded)
+                r = jobState.DownloadImages();
+            else 
+                throw new LeonardoException($"Image generation did not finish in {timeOut} minutes");
+
+            if(jobState != null)
+                this.DeleteJob(jobState.GenerationId);
+
+            return r; 
+        }
 
         public GenerationResponse Generate(string prompt,
             string negative_prompt = null,
