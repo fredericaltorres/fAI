@@ -28,6 +28,11 @@ namespace fAI.Tests
             Assert.True(userInfo.user_details[0].subscriptionGptTokens > 100);
             Assert.True(userInfo.user_details[0].subscriptionModelTokens > 1);
             Assert.True(userInfo.user_details[0].apiConcurrencySlots > 1);
+
+            var userId = userInfo.user_details[0].user.id;
+
+            var generations = client.Image.GetGenerationsByUserId(userInfo.user_details[0].user.id);
+            var pocoPrompt = generations.generations[0].GetPromptParametersInPocoFormat();
         }
 
         [Fact()]

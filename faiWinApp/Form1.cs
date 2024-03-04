@@ -535,5 +535,33 @@ a manifestation of the decadence of the human being, nature losing against human
             var sequenceFileName = @"C:\temp\@fAiImages\Decadence.Manual\sequence.md";
             BuildVideo(sequenceFileName);
         }
+
+        private void createImageToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            this.UserMessage("[Leonardo]Generating images, Boss Room...");
+            var prompt = @"final boss room entrance from dark fantasy";
+            var workFolder = @"C:\temp\@fAiImages\BossRoom";
+            var startSeed = 101852928;
+            var imageCount = 32;
+            var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
+            finalOutputFiles.CreateDirectory(workFolder);
+            finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
+            var startImageIndex = finalOutputFiles.FileNames.Count;
+            var client = new fAI.Leonardo();
+
+            for (var i = startImageIndex; i < imageCount; i++)
+            {
+                var seed = startSeed + i;
+                this.UserMessage($"[Leonardo]Seed:{seed}");
+                var fileName = client.Image.GenerateSync(prompt,
+                                                         size: fAI.OpenAIImage.ImageSize._1024x768,
+                                                         seed: seed,
+                                                         photoReal: true,
+                                                         //promptMagic: true,
+                                                         stabeDiffusionVersion: StableDiffusionVersion.v3,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
+        }
     }
 }

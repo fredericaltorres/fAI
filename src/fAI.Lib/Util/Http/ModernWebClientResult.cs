@@ -23,6 +23,19 @@ namespace fAI
         }
 
 
+        private static string GetWebExceptionJsonErrorObject(Exception ex)
+        {
+            if (ex is WebException)
+            {
+                var wex = ex as WebException;
+                using (StreamReader rr = new StreamReader(wex.Response.GetResponseStream()))
+                {
+                    return rr.ReadToEnd();
+                }
+            }
+            return null;
+        }
+
         public void SetException(string errorMessage)
         {
             if (_stopwatch.IsRunning)
@@ -34,6 +47,8 @@ namespace fAI
         {
             if (_stopwatch.IsRunning)
                 _stopwatch.Stop();
+
+            this.Text = GetWebExceptionJsonErrorObject(ex);
             this.Exception = ex;
         }
 

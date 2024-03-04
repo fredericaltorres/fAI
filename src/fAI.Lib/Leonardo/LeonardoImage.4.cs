@@ -28,6 +28,23 @@ namespace fAI
         }
 
 
+        public class LeonardoJsonError
+        {
+            public string error { get; set; }
+            public string path { get; set; }
+            public string code { get; set; }
+
+            public static LeonardoJsonError FromJson(string text)
+            {
+                return JsonUtils.FromJSON<LeonardoJsonError>(text);
+            }
+
+            public LeonardoException GetLeonardoException()
+            {
+                return new LeonardoException($"{error}, path={path}, code={code}");
+            }
+        }
+
     }
 }
 

@@ -2,7 +2,7 @@
 
 namespace fAI
 {
-    internal class LeonardoException : Exception
+    public class LeonardoException : Exception
     {
         public LeonardoException(string message)
             : base(message)
@@ -14,7 +14,7 @@ namespace fAI
         }
     }
 
-    internal class ChatGPTException : Exception
+    public class ChatGPTException : Exception
     {
         public ChatGPTException(string message)
             : base(message)
@@ -26,7 +26,7 @@ namespace fAI
         }
     }
 
-    internal class OpenAIAudioSpeechException : Exception
+    public class OpenAIAudioSpeechException : Exception
     {
         public OpenAIAudioSpeechException(string message)
             : base(message)

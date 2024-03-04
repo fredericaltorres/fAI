@@ -36,6 +36,18 @@ namespace fAI
 
         const string __urlGetUserInfo   = "https://cloud.leonardo.ai/api/rest/v1/me";
         const string __urlGeneations    = "https://cloud.leonardo.ai/api/rest/v1/generations";
+        const string __urlGetGeneationsInfo = "https://cloud.leonardo.ai/api/rest/v1/generations/user/[userId]";
+
+
+        public LeonardoGeneration GetGenerationsByUserId(string userId, int offSet = 0, int limit = 100)
+        {
+            var url = (__urlGetGeneationsInfo + $"?offset={offSet}&limit={limit}").Template(new { userId }, "[", "]");
+            var response = InitWebClient().GET(url);
+            if(response.Success)
+                return LeonardoGeneration.FromJson(response.Text);
+            else
+                throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
+        }
 
         public UserInformation GetUserInformation()
         {
@@ -90,7 +102,7 @@ namespace fAI
 
         public enum PresetStylePhotoRealOn
         {
-            MINIMALIST, CINEMATIC, CREATIVE, VIBRANT, NONE, 
+            MINIMALIST, CINEMATIC, CREATIVE, VIBRANT, NONE, LEONARDO
         }
 
         public enum PresetStyleAlchemyOff
@@ -147,7 +159,8 @@ namespace fAI
         public enum StableDiffusionVersion
         {
             v1_5,
-            v2_1
+            v2_1,
+            v3
         }
         // https://docs.leonardo.ai/reference/creategeneration
 
@@ -174,7 +187,7 @@ namespace fAI
         public GenerationResponse Generate(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,
-            StableDiffusionVersion stabeDiffusionVersion =  StableDiffusionVersion.v1_5,
+            StableDiffusionVersion stableDiffusionVersion =  StableDiffusionVersion.v1_5,
             int imageCount = 1, 
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
@@ -205,7 +218,7 @@ namespace fAI
                 prompt,
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
-                sd_version = stabeDiffusionVersion.ToString().Replace("v","").Replace("_","."),
+                sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,
                 width,
