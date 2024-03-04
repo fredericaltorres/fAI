@@ -408,8 +408,7 @@ namespace faiWinApp
                 }
                 else
                 {
-                    for (var f = 0; f < mp4FrameRate * imageDurationSecond; f++) // Fill 1 second of frame
-                        __pngFilesFinalBucket.Add(pngFile);
+                    __pngFilesFinalBucket.Add(pngFile);
                 }
             }
             //tfhZoomSequences.ForEach(tfhz => tfhz.Clean());
@@ -417,50 +416,80 @@ namespace faiWinApp
 
             if (generateTransition)
             {
-                var fadingSteps = mp4FrameRate*2;
-                notify($"Calculating Transition");
-                for (var z = 0; z < inputPngFiles.Count; z++) // For each image / zoom sequence, Bucket
+                if (zoomIn)
                 {
-                    var pngFile = inputPngFiles[z];
-                    notify($"Calculating Transistion {Path.GetFileName(pngFile)}");
-
-                    var tfsZoom = zoomSequences[z];
-                    var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
-
-                    if(z > 0) // We previously added/computed the first 16 images 
+                    var fadingSteps = mp4FrameRate * 2;
+                    notify($"Calculating Transition");
+                    for (var z = 0; z < inputPngFiles.Count; z++) // For each image / zoom sequence, Bucket
                     {
-                        firstSection = firstSection.Skip(fadingSteps).ToList(); 
-                    }
+                        var pngFile = inputPngFiles[z];
+                        notify($"Calculating Transistion {Path.GetFileName(pngFile)}");
 
-                    firstSection.ForEach(f => __pngFilesFinalBucket.Add(f));
+                        var tfsZoom = zoomSequences[z];
+                        var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
 
-                    var secondSection = tfsZoom.FileNames.Skip(tfsZoom.FileNames.Count - fadingSteps).ToList();
-                    var isThereANextImage = (z + 1) < inputPngFiles.Count;
-
-                    if (isThereANextImage)
-                    { 
-                        var tfsZoomNext = zoomSequences[z + 1];
-                        var firstSectionNext = tfsZoomNext.FileNames.Take(fadingSteps).ToList();
-                        var fadingValue = 0.99f / fadingSteps;
-
-                        for (var f = 0; f < fadingSteps; f++)
+                        if (z > 0) // We previously added/computed the first 16 images 
                         {
-                            var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
-                            __pngFilesFinalBucket.Add(transImg);
+                            firstSection = firstSection.Skip(fadingSteps).ToList();
+                        }
+
+                        firstSection.ForEach(f => __pngFilesFinalBucket.Add(f));
+
+                        var secondSection = tfsZoom.FileNames.Skip(tfsZoom.FileNames.Count - fadingSteps).ToList();
+                        var isThereANextImage = (z + 1) < inputPngFiles.Count;
+
+                        if (isThereANextImage)
+                        {
+                            var tfsZoomNext = zoomSequences[z + 1];
+                            var firstSectionNext = tfsZoomNext.FileNames.Take(fadingSteps).ToList();
+                            var fadingValue = 0.99f / fadingSteps;
+
+                            for (var f = 0; f < fadingSteps; f++)
+                            {
+                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
+                                __pngFilesFinalBucket.Add(transImg);
+                            }
+                        }
+                        else
+                        {
+                            var firstSection2 = tfsZoom.FileNames;
+                            firstSection2 = firstSection2.Skip(fadingSteps).ToList();
+                            //   firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
                         }
                     }
-                    else
+                }
+                else
+                {
+                    __pngFilesFinalBucket.Clear();
+                    for (var z = 0; z < inputPngFiles.Count; z++)
                     {
-                        var firstSection2 = tfsZoom.FileNames;
-                        firstSection2 = firstSection2.Skip(fadingSteps).ToList();
-                     //   firstSection2.ForEach(f => __pngFilesFinalBucket.Add(f));
+                        var firstImage = inputPngFiles[z];
+                        DS.Range(mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(firstImage)); // Create a 1 second static image
+
+                        var isThereANextImage = (z + 1) < inputPngFiles.Count;
+                        var secondImage = string.Empty;
+                        if (isThereANextImage)
+                            secondImage = inputPngFiles[z + 1]; // Next image
+                        else
+                            secondImage = inputPngFiles[0]; // Go back to the first image
+
+                        var fadingSteps = mp4FrameRate * 1;
+                        var fadingValue = 0.99f / fadingSteps;
+                        for (var f = 0; f < fadingSteps; f++)
+                        {
+                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Jpeg);
+                            __pngFilesFinalBucket.Add(transImg);
+                        }
                     }
                 }
             }
             else
             {
-                for (var z = 0; z < inputPngFiles.Count; z++) // For each image generate the zoom sequence
-                    zoomSequences[z].FileNames.ForEach(f => __pngFilesFinalBucket.Add(f));
+                __pngFilesFinalBucket.Clear();
+                for (var z = 0; z < inputPngFiles.Count; z++)
+                {
+                    DS.Range(mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(inputPngFiles[z])); // Create a 1 second static image
+                }
             }
 
             notify($"{__pngFilesFinalBucket.Count} images generated");

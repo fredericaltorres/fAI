@@ -78,30 +78,33 @@ namespace fAI
             }
             public string GetPromptParametersInPocoFormat() 
             {
-                var ignoreProperties = DS.List("id", "createdAt");
+                var ignoreProperties = DS.List("id", "createdAt", "generated_images", "generation_elements");
                 var sb = new System.Text.StringBuilder();
                 var d = DS.Dictionary(this);
                 sb.AppendLine("new {");
                 foreach(var k in d.Keys)
                 {
-                    if (!ignoreProperties.Contains(k)) 
+                    if (ignoreProperties.Contains(k))
+                        continue;
+
+                    var val = "";
+                    if (d[k] == null)
                     {
-                        var val = "";
-                        if (d[k] == null)
-                        {
-                            val = "null";
-                        }
-                        else if (d[k].GetType().Name == "String")
-                        {
-                            val = $@"""{ProcessJsonString(d[k])}""";
-                        }
-                        else
-                        {
-                            val = d[k].ToString();
-                        }
-                        
-                        sb.AppendLine($"{k} = {val}, ");
+                        val = "null";
                     }
+                    else if (d[k].GetType().Name == "String")
+                    {
+                        val = $@"""{ProcessJsonString(d[k])}""";
+                    }
+                    else if (d[k].GetType().Name == "Boolean")
+                    {
+                        val = d[k].ToString().ToLowerInvariant();
+                    }
+                    else
+                    {
+                        val = d[k].ToString();
+                    }
+                    sb.Append($"{k} = {val}, ");
                 }
                 sb.Remove(sb.Length - 2, 2);
                 sb.AppendLine("new }");

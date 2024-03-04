@@ -8,22 +8,23 @@ using System.Linq;
 using DynamicSugar;
 using static DynamicSugar.DS;
 using System.IO;
+using Newtonsoft.Json.Converters;
 
 namespace fAI
 {
 
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    public class LeonardoWebError
-    {
-        public string error { get; set; }
-        public string path { get; set; }
-        public string code { get; set; }
+    //public class LeonardoWebError
+    //{
+    //    public string error { get; set; }
+    //    public string path { get; set; }
+    //    public string code { get; set; }
 
-        public static LeonardoWebError FromJSON(string json)
-        {
-            return JsonConvert.DeserializeObject<LeonardoWebError>(json);
-        }
-    }
+    //    public static LeonardoWebError FromJSON(string json)
+    //    {
+    //        return JsonConvert.DeserializeObject<LeonardoWebError>(json);
+    //    }
+    //}
 
 
 
@@ -120,10 +121,17 @@ namespace fAI
             v2, v3
         }
 
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum Scheduler
+        {
+            LEONARDO
+        }
+
         public string GenerateSync(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,
-            StableDiffusionVersion stabeDiffusionVersion = StableDiffusionVersion.v1_5,
+            StableDiffusionVersion stableDiffusionVersion = StableDiffusionVersion.v1_5,
             int imageCount = 1,
             ImageSize size = ImageSize._1024x1024,
             bool isPublic = false,
@@ -135,11 +143,12 @@ namespace fAI
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
-            double promptMagicStrength = 0.5)
+            double promptMagicStrength = 0.5,
+            Scheduler scheduler = Scheduler.LEONARDO)
         {
-            Trace(new { prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+            Trace(new { prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler }, this);
 
-            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stabeDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
+            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
             {
@@ -158,6 +167,7 @@ namespace fAI
 
         public enum StableDiffusionVersion
         {
+            v0_9,
             v1_5,
             v2_1,
             v3
@@ -184,6 +194,27 @@ namespace fAI
             return r; 
         }
 
+        public GenerationResponse Generate(string jsonBody)
+        {
+            Trace(jsonBody, this);
+
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().POST(__urlGeneations, jsonBody);
+            sw.Stop();
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                var r = GenerationResponse.FromJson(response.Text);
+                r.Stopwatch = sw;
+                return r;
+            }
+            else
+            {
+                var erroInfo = LeonardoJsonError.FromJson(response.Text);
+                throw erroInfo.GetLeonardoException();
+            }
+        }
+
         public GenerationResponse Generate(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,
@@ -199,9 +230,11 @@ namespace fAI
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
-            double promptMagicStrength = 0.5)
+            double promptMagicStrength = 0.5,
+            Scheduler scheduler = Scheduler.LEONARDO
+            )
         {
-            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength }, this);
+            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler }, this);
 
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
@@ -216,6 +249,7 @@ namespace fAI
             var body = new
             {
                 prompt,
+                scheduler,
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
                 sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
@@ -247,8 +281,8 @@ namespace fAI
             }
             else
             {
-                //var erroInfo = LeonardoWebError.FromJSON(response.ServerErrorInfo);
-                throw new ChatGPTException($"{response.Exception.Message} - {response.ServerErrorInfo}", response.Exception);
+                var erroInfo = LeonardoJsonError.FromJson(response.Text);
+                throw erroInfo.GetLeonardoException();
             }
         }
     }

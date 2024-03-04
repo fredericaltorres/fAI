@@ -31,9 +31,38 @@ namespace fAI.Tests
 
             var userId = userInfo.user_details[0].user.id;
 
-            var generations = client.Image.GetGenerationsByUserId(userInfo.user_details[0].user.id);
+            var generations = client.Image.GetGenerationsByUserId(userInfo.user_details[0].user.id, limit: 16);
             var pocoPrompt = generations.generations[0].GetPromptParametersInPocoFormat();
         }
+
+
+
+
+        [Fact()]
+        public void Image_Generate_BaseOnJsonPrompt()
+        {
+            var client = new Leonardo();
+
+            var jsonBody = @"
+    {
+      ""modelId"": null,
+      ""prompt"": ""final boss room entrance from dark fantasy"",
+      ""height"": 576,
+      ""width"": 1024,
+      ""seed"": 756848896,
+      ""public"": true,
+      ""scheduler"": ""LEONARDO"",
+      ""presetStyle"": ""CINEMATIC"",
+      ""promptMagic"": false,
+      ""photoReal"": true
+    }
+";
+            var job = client.Image.Generate(jsonBody);
+            var pngFileNames = client.Image.WaitForImages(job);
+            pngFileNames.ForEach((f) => Assert.True(File.Exists(f)));
+            pngFileNames.ForEach((f) => File.Delete(f));
+        }
+
 
         [Fact()]
         public void Image_Generate_1()

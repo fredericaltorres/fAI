@@ -51,6 +51,8 @@
             this.decadenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createImageToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.buildVideoToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.bossRoomEntranceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createImageToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -77,8 +79,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.bossRoomEntranceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createImageToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoBossRoom = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -242,14 +243,14 @@
             // createImageToolStripMenuItem
             // 
             this.createImageToolStripMenuItem.Name = "createImageToolStripMenuItem";
-            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
             this.createImageToolStripMenuItem.Text = "Create Image";
             this.createImageToolStripMenuItem.Click += new System.EventHandler(this.createImageToolStripMenuItem_Click);
             // 
             // buildVideoToolStripMenuItem
             // 
             this.buildVideoToolStripMenuItem.Name = "buildVideoToolStripMenuItem";
-            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
             this.buildVideoToolStripMenuItem.Text = "Build Video";
             this.buildVideoToolStripMenuItem.Click += new System.EventHandler(this.buildVideoToolStripMenuItem_Click);
             // 
@@ -275,6 +276,22 @@
             this.buildVideoToolStripMenuItem1.Size = new System.Drawing.Size(180, 24);
             this.buildVideoToolStripMenuItem1.Text = "Build Video";
             this.buildVideoToolStripMenuItem1.Click += new System.EventHandler(this.buildVideoToolStripMenuItem1_Click);
+            // 
+            // bossRoomEntranceToolStripMenuItem
+            // 
+            this.bossRoomEntranceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createImageToolStripMenuItem2,
+            this.buildVideoBossRoom});
+            this.bossRoomEntranceToolStripMenuItem.Name = "bossRoomEntranceToolStripMenuItem";
+            this.bossRoomEntranceToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
+            this.bossRoomEntranceToolStripMenuItem.Text = "boss room entrance";
+            // 
+            // createImageToolStripMenuItem2
+            // 
+            this.createImageToolStripMenuItem2.Name = "createImageToolStripMenuItem2";
+            this.createImageToolStripMenuItem2.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem2.Text = "Create Image";
+            this.createImageToolStripMenuItem2.Click += new System.EventHandler(this.createImageToolStripMenuItem2_Click);
             // 
             // txtUserOutput
             // 
@@ -545,20 +562,12 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // bossRoomEntranceToolStripMenuItem
+            // buildVideoBossRoom
             // 
-            this.bossRoomEntranceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createImageToolStripMenuItem2});
-            this.bossRoomEntranceToolStripMenuItem.Name = "bossRoomEntranceToolStripMenuItem";
-            this.bossRoomEntranceToolStripMenuItem.Size = new System.Drawing.Size(209, 24);
-            this.bossRoomEntranceToolStripMenuItem.Text = "boss room entrance";
-            // 
-            // createImageToolStripMenuItem2
-            // 
-            this.createImageToolStripMenuItem2.Name = "createImageToolStripMenuItem2";
-            this.createImageToolStripMenuItem2.Size = new System.Drawing.Size(180, 24);
-            this.createImageToolStripMenuItem2.Text = "Create Image";
-            this.createImageToolStripMenuItem2.Click += new System.EventHandler(this.createImageToolStripMenuItem2_Click);
+            this.buildVideoBossRoom.Name = "buildVideoBossRoom";
+            this.buildVideoBossRoom.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoBossRoom.Text = "BuildVideo";
+            this.buildVideoBossRoom.Click += new System.EventHandler(this.buildVideoBossRoom_Click);
             // 
             // Form1
             // 
@@ -653,6 +662,7 @@
         private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem bossRoomEntranceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem buildVideoBossRoom;
     }
 }
 

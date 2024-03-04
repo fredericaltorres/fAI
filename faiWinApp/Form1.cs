@@ -464,7 +464,7 @@ In the depths of a darkwave soundscape, a celestial being emerges, embodying the
                 this.UserMessage("[Leonardo]Age:{seed}".Template(new { seed }));
                 var fileName = client.Image.GenerateSync(prompt,
                                                          size: fAI.OpenAIImage.ImageSize._768x1360,
-                                                         seed: seed, photoReal: true, stabeDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         seed: seed, photoReal: true, stableDiffusionVersion: StableDiffusionVersion.v2_1,
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
                 finalOutputFiles.AddFile(fileName, move: true);
             }
@@ -524,7 +524,7 @@ a manifestation of the decadence of the human being, nature losing against human
                                                          size: fAI.OpenAIImage.ImageSize._1024x576,
                                                          seed: seed, 
                                                          photoReal: true, 
-                                                         stabeDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         stableDiffusionVersion: StableDiffusionVersion.v2_1,
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
                 finalOutputFiles.AddFile(fileName, move: true);
             }
@@ -541,7 +541,7 @@ a manifestation of the decadence of the human being, nature losing against human
             this.UserMessage("[Leonardo]Generating images, Boss Room...");
             var prompt = @"final boss room entrance from dark fantasy";
             var workFolder = @"C:\temp\@fAiImages\BossRoom";
-            var startSeed = 101852928;
+            var startSeed = 344178432;//756848896;
             var imageCount = 32;
             var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
             finalOutputFiles.CreateDirectory(workFolder);
@@ -554,14 +554,32 @@ a manifestation of the decadence of the human being, nature losing against human
                 var seed = startSeed + i;
                 this.UserMessage($"[Leonardo]Seed:{seed}");
                 var fileName = client.Image.GenerateSync(prompt,
-                                                         size: fAI.OpenAIImage.ImageSize._1024x768,
+                                                         size: fAI.OpenAIImage.ImageSize._1024x576,
                                                          seed: seed,
                                                          photoReal: true,
-                                                         //promptMagic: true,
-                                                         stabeDiffusionVersion: StableDiffusionVersion.v3,
+                                                         promptMagic: false,
+                                                         isPublic: false,
+                                                         stableDiffusionVersion: StableDiffusionVersion.v0_9,
+                                                         scheduler: Scheduler.LEONARDO,
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC);
                 finalOutputFiles.AddFile(fileName, move: true);
             }
+        }
+
+        private void buildVideoBossRoom_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\BossRoom\sequence.md";
+            Action<string> notify = (m) => this.UserMessage(m);
+            var finalOutputFiles = new FileSequenceManager();
+            var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
+            ImageUtility.GenerateMP4Animation(notify,
+                finalOutputFiles.FileNames,
+                this.FinalOutputFileName,
+                mp4FrameRate: GetMp4FrameRate(),
+                imageDurationSecond: GetMp4FirstFrameDurationSecond(),
+                zoomInPercent: GetMp4ZoomPercent());
+
+            ViewFile(this.FinalOutputFileName);
         }
     }
 }

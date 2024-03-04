@@ -52,17 +52,6 @@ namespace fAI
             this.Exception = ex;
         }
 
-        public void SetException(WebException ex)
-        {
-            var responseStream = ex.Response.GetResponseStream();
-            if (responseStream != null)
-            {
-                using (var reader = new StreamReader(responseStream))
-                    this.ServerErrorInfo = reader.ReadToEnd();
-            }
-            SetException((Exception)ex);
-        }
-
         public void SetResult(byte[] buffer , string contentType)
         {
             if (_stopwatch.IsRunning)
