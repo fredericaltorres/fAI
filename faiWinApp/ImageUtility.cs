@@ -362,6 +362,7 @@ namespace faiWinApp
             string mp4OutputFile,
             int mp4FrameRate = 16,
             int imageDurationSecond = 2,
+            int transistionDurationSecond = 1,
             int zoomInPercent = -1,
             bool generateTransition = true)
         {
@@ -446,7 +447,7 @@ namespace faiWinApp
 
                             for (var f = 0; f < fadingSteps; f++)
                             {
-                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
+                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
                                 __pngFilesFinalBucket.Add(transImg);
                             }
                         }
@@ -463,9 +464,13 @@ namespace faiWinApp
                     __pngFilesFinalBucket.Clear();
                     for (var z = 0; z < inputPngFiles.Count; z++)
                     {
+                        notify($"Processing {z} / {inputPngFiles.Count}, Transition");
                         var firstImage = inputPngFiles[z];
-                        DS.Range(mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(firstImage)); // Create a 1 second static image
 
+                        // Create a x second static image
+                        DS.Range((imageDurationSecond- transistionDurationSecond) * mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(firstImage));
+
+                        // Compute the transition with next image
                         var isThereANextImage = (z + 1) < inputPngFiles.Count;
                         var secondImage = string.Empty;
                         if (isThereANextImage)
@@ -473,11 +478,11 @@ namespace faiWinApp
                         else
                             secondImage = inputPngFiles[0]; // Go back to the first image
 
-                        var fadingSteps = mp4FrameRate * 1;
+                        var fadingSteps = mp4FrameRate * transistionDurationSecond;
                         var fadingValue = 0.99f / fadingSteps;
                         for (var f = 0; f < fadingSteps; f++)
                         {
-                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Jpeg);
+                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Png);
                             __pngFilesFinalBucket.Add(transImg);
                         }
                     }
@@ -488,7 +493,7 @@ namespace faiWinApp
                 __pngFilesFinalBucket.Clear();
                 for (var z = 0; z < inputPngFiles.Count; z++)
                 {
-                    DS.Range(mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(inputPngFiles[z])); // Create a 1 second static image
+                    DS.Range(imageDurationSecond*mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(inputPngFiles[z])); // Create a 1 second static image
                 }
             }
 

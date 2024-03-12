@@ -575,11 +575,57 @@ a manifestation of the decadence of the human being, nature losing against human
             ImageUtility.GenerateMP4Animation(notify,
                 finalOutputFiles.FileNames,
                 this.FinalOutputFileName,
+                transistionDurationSecond: 2,
                 mp4FrameRate: GetMp4FrameRate(),
                 imageDurationSecond: GetMp4FirstFrameDurationSecond(),
                 zoomInPercent: GetMp4ZoomPercent());
 
             ViewFile(this.FinalOutputFileName);
+        }
+
+        private void getLeonardoImageGenerationInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var client = new fAI.Leonardo();
+
+            // var generation1 = client.Image.GetGenerationsById("cd31b33b-4d52-448d-abf9-1598c55415b2");
+            var generation = client.Image.GetGenerationsByUserId(null);
+            var tfh = new TestFileHelper();
+            var jsonFile = tfh.CreateTempFile(generation.Json, ".json");
+            this.UserMessage($"Json file: {jsonFile}");
+        }
+
+        private void celestialShimmeringCreateImage_Click(object sender, EventArgs e)
+        {
+            this.UserMessage("[Leonardo]Generating images, Celestial shimmering...");
+            var prompt = @"
+A delicately shimmering celestial artifact captured in a surreal pinhole photograph, the image main subject is a bright red translucent, ethereal figure with intricately flowing lines reminiscent of a ghostly apparition. This stunning photograph, taken with exceptional precision, showcases the artifact's enchanting radiance, refracting soft hues of opalescent light. The image possesses an otherworldly allure, inviting viewers to ponder the mystical origins of this captivating digital masterpiece, 4K.
+";
+            var workFolder = @"C:\temp\@fAiImages\CelestialShimmering";
+            var startSeed = 584643840;
+            var imageCount = 32;
+            var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
+            finalOutputFiles.CreateDirectory(workFolder);
+            finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
+            var startImageIndex = finalOutputFiles.FileNames.Count;
+            var client = new fAI.Leonardo();
+            var modelId = "1e60896f-3c26-4296-8ecc-53e2afecc132";
+
+            for (var i = startImageIndex; i < imageCount; i++)
+            {
+                var seed = startSeed + i;
+                this.UserMessage($"[Leonardo]Age:{seed}");
+                var fileName = client.Image.GenerateSync(prompt,
+                                                         size: fAI.OpenAIImage.ImageSize._1360x768,
+                                                         seed: seed,
+                                                         promptMagic: false,
+                                                         modelId: modelId,
+                                                         photoReal: true,
+                                                         stableDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
+                                                         elements: DS.List(GenerationElement.GetGlasscore())
+                                                         );
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
         }
     }
 }

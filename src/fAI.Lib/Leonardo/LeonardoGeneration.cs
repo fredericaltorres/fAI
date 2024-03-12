@@ -13,9 +13,13 @@ namespace fAI
     {
         public List<Generation> generations { get; set; }
 
+        public string Json { get; set; }
+
         public static LeonardoGeneration FromJson(string text)
         {
-            return JsonUtils.FromJSON<LeonardoGeneration>(text);
+            var o = JsonUtils.FromJSON<LeonardoGeneration>(text);
+            o.Json = text;
+            return o;
         }
 
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
@@ -39,6 +43,15 @@ namespace fAI
 
         public class Generation
         {
+            public string Json { get; set; }
+
+            public static Generation FromJson(string text)
+            {
+                var o = JsonUtils.FromJSON<Generation>(text);
+                o.Json = text;
+                return o;
+            }
+
             public List<GeneratedImage> generated_images { get; set; }
             public string modelId { get; set; }
             public object motion { get; set; }
@@ -126,13 +139,9 @@ namespace fAI
             public string description { get; set; }
             public string name { get; set; }
             public string urlImage { get; set; }
-            public int weightDefault { get; set; }
-            public int weightMax { get; set; }
-            public int weightMin { get; set; }
+            public double weightDefault { get; set; }
+            public double weightMax { get; set; }
+            public double weightMin { get; set; }
         }
-
-     
-
-
     }
 }

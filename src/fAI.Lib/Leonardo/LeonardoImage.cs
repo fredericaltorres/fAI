@@ -9,6 +9,7 @@ using DynamicSugar;
 using static DynamicSugar.DS;
 using System.IO;
 using Newtonsoft.Json.Converters;
+using static fAI.LeonardoGeneration;
 
 namespace fAI
 {
@@ -36,12 +37,28 @@ namespace fAI
         }
 
         const string __urlGetUserInfo   = "https://cloud.leonardo.ai/api/rest/v1/me";
-        const string __urlGeneations    = "https://cloud.leonardo.ai/api/rest/v1/generations";
+        const string __urlGeneration    = "https://cloud.leonardo.ai/api/rest/v1/generations";
         const string __urlGetGeneationsInfo = "https://cloud.leonardo.ai/api/rest/v1/generations/user/[userId]";
 
 
+        public Generation GetGenerationsById(string generationId)
+        {
+            var url = __urlGeneration + $"/{generationId}";
+            var response = InitWebClient().GET(url);
+            if (response.Success)
+                return Generation.FromJson(response.Text);
+            else
+                throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
+        }
+
         public LeonardoGeneration GetGenerationsByUserId(string userId, int offSet = 0, int limit = 100)
         {
+            if(userId == null)
+            {
+                var userInfo = this.GetUserInformation();
+                userId = userInfo.user_details[0].user.id;
+            }
+
             var url = (__urlGetGeneationsInfo + $"?offset={offSet}&limit={limit}").Template(new { userId }, "[", "]");
             var response = InitWebClient().GET(url);
             if(response.Success)
@@ -74,7 +91,7 @@ namespace fAI
             Trace(new { id }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().DELETE($"{__urlGeneations}/{id}");
+            var response = InitWebClient().DELETE($"{__urlGeneration}/{id}");
             sw.Stop();
             if (response.Success)
             {
@@ -90,7 +107,7 @@ namespace fAI
             Trace(new { id }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().GET($"{__urlGeneations}/{id}");
+            var response = InitWebClient().GET($"{__urlGeneration}/{id}");
             sw.Stop();
             if (response.Success)
             {
@@ -144,11 +161,12 @@ namespace fAI
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5,
-            Scheduler scheduler = Scheduler.LEONARDO)
+            Scheduler scheduler = Scheduler.LEONARDO, 
+            List<GenerationElement> elements = null)
         {
-            Trace(new { prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler }, this);
+            Trace(new { prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements }, this);
 
-            GenerationResponse job = Generate(prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength);
+            GenerationResponse job = GenerateSync2(prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
             {
@@ -199,7 +217,7 @@ namespace fAI
             Trace(jsonBody, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(__urlGeneations, jsonBody);
+            var response = InitWebClient().POST(__urlGeneration, jsonBody);
             sw.Stop();
             if (response.Success)
             {
@@ -215,7 +233,7 @@ namespace fAI
             }
         }
 
-        public GenerationResponse Generate(string prompt,
+        public GenerationResponse GenerateSync2(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,
             StableDiffusionVersion stableDiffusionVersion =  StableDiffusionVersion.v1_5,
@@ -231,7 +249,8 @@ namespace fAI
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5,
-            Scheduler scheduler = Scheduler.LEONARDO
+            Scheduler scheduler = Scheduler.LEONARDO,
+            List<GenerationElement> elements = null
             )
         {
             Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler }, this);
@@ -248,6 +267,7 @@ namespace fAI
 
             var body = new
             {
+                elements,
                 prompt,
                 scheduler,
                 negative_prompt,
@@ -268,9 +288,11 @@ namespace fAI
             };
 
             Trace(body, this);
+            var jsonBody = JsonConvert.SerializeObject(body);
+            Trace($"Body.Json:{jsonBody}", this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(__urlGeneations, JsonConvert.SerializeObject(body));
+            var response = InitWebClient().POST(__urlGeneration, jsonBody);
             sw.Stop();
             if (response.Success)
             {

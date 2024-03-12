@@ -23,7 +23,8 @@ namespace fAI
             _1024x768,
             _1024x576,
             _1792x1024,
-            _1024x1792
+            _1024x1792,
+            _1360x768,
         }
 
         // https://platform.openai.com/docs/api-reference/images/create
