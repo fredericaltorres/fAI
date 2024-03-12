@@ -233,6 +233,7 @@ namespace fAI
             }
         }
 
+        // https://docs.leonardo.ai/reference/creategeneration
         public GenerationResponse GenerateSync2(string prompt,
             string negative_prompt = null,
             string modelId = MODEL_ID,

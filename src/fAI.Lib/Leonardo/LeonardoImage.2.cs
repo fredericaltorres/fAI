@@ -19,6 +19,7 @@ namespace fAI
             public double weightDefault { get; set; }
             public double weightMax { get; set; }
             public double weightMin { get; set; }
+            public double weightApplied { get { return -0.6; } }
         }
 
         public class GenerationElement
