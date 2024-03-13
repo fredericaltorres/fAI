@@ -9,51 +9,53 @@ namespace fAI
 {
     public partial class LeonardoImage : HttpBase
     {
-        public class Lora
+        //public class Lora
+        //{
+        //    public string akUUID { get; set; }
+        //    public string baseModel { get; set; }
+        //    public string description { get; set; }
+        //    public string name { get; set; }
+        //    public string urlImage { get; set; }
+        //    public double weightDefault { get; set; }
+        //    public double weightMax { get; set; }
+        //    public double weightMin { get; set; }
+        //    public double weightApplied { get; set; } = -0.6;
+        //    public double weight { get; set; } = -0.6;
+        //}
+
+        public class GenerationElementRoot
         {
-            public string akUUID { get; set; }
-            public string baseModel { get; set; }
-            public string description { get; set; }
-            public string name { get; set; }
-            public string urlImage { get; set; }
-            public double weightDefault { get; set; }
-            public double weightMax { get; set; }
-            public double weightMin { get; set; }
-            public double weightApplied { get { return -0.6; } }
+            public List<GenerationElement> loras { get; set; }
+
+            public static GenerationElementRoot FromJson(string text)
+            {
+                return JsonUtils.FromJSON<GenerationElementRoot>(text);
+            }
         }
 
         public class GenerationElement
         {
-            public int id { get; set; }
-            public double weightApplied { get; set; }
-            public Lora lora { get; set; }
+            public string akUUID { get; set; }
+            public string name { get; set; }
+            public string description { get; set; }
+            public string urlImage { get; set; }
+            public string baseModel { get; set; }
+            public double weightDefault { get; set; }
+            
+            public double weightMin { get; set; }
+            public double weightMax { get; set; }
+            public string creatorName { get; set; }
 
-            public static GenerationElement FromJson(string text)
-            {
-                return JsonUtils.FromJSON<GenerationElement>(text);
-            }
+            //public static GenerationElement FromJson(string text)
+            //{
+            //    return JsonUtils.FromJSON<GenerationElement>(text);
+            //}
 
-            public static GenerationElement GetGlasscore()
+            public static List<GenerationElement> FromJson(string text)
             {
-                return FromJson(@" 
-                {
-                ""id"": 18278835,
-                ""weightApplied"": -0.6,
-                ""lora"": {
-                    ""akUUID"": ""a699f5da-f7f5-4afe-8473-c426b245c145"",
-                    ""baseModel"": ""SDXL_1_0"",
-                    ""description"": ""Craft realistic glass objects. Use \""glass\"" in the prompt with Leonardo Vision XL for best results."",
-                    ""name"": ""Glasscore"",
-                    ""urlImage"": ""https://cdn.leonardo.ai/element_thumbnails/a699f5da-f7f5-4afe-8473-c426b245c145/thumbnail.png"",
-                    ""weightDefault"": 1.0,
-                    ""weightMax"": 2.0,
-                    ""weightMin"": -2.0
-                    }
-                }
-                ");
+                return JsonUtils.FromJSON<List<GenerationElement>>(text);
             }
         }
-
 
         public class GenerationResponse : BaseHttpResponse
         {

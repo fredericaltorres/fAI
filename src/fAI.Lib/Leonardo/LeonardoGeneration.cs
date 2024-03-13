@@ -142,6 +142,7 @@ namespace fAI
             public double weightDefault { get; set; }
             public double weightMax { get; set; }
             public double weightMin { get; set; }
+            public double weight { get; set; } = 0.6;
         }
     }
 }

@@ -588,6 +588,7 @@ a manifestation of the decadence of the human being, nature losing against human
             var client = new fAI.Leonardo();
 
             // var generation1 = client.Image.GetGenerationsById("cd31b33b-4d52-448d-abf9-1598c55415b2");
+            var elements = client.Image.GetElements();
             var generation = client.Image.GetGenerationsByUserId(null);
             var tfh = new TestFileHelper();
             var jsonFile = tfh.CreateTempFile(generation.Json, ".json");
@@ -608,7 +609,8 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
             finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
             var startImageIndex = finalOutputFiles.FileNames.Count;
             var client = new fAI.Leonardo();
-            var modelId = "1e60896f-3c26-4296-8ecc-53e2afecc132";
+
+            var elements = client.Image.GetElements("Glasscore");
 
             for (var i = startImageIndex; i < imageCount; i++)
             {
@@ -618,11 +620,10 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
                                                          size: fAI.OpenAIImage.ImageSize._1360x768,
                                                          seed: seed,
                                                          promptMagic: false,
-                                                         modelId: modelId,
                                                          photoReal: true,
                                                          stableDiffusionVersion: StableDiffusionVersion.v2_1,
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
-                                                         elements: DS.List(GenerationElement.GetGlasscore())
+                                                         elements: elements
                                                          );
                 finalOutputFiles.AddFile(fileName, move: true);
             }

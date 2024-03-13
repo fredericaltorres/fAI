@@ -39,6 +39,7 @@ namespace fAI
         const string __urlGetUserInfo   = "https://cloud.leonardo.ai/api/rest/v1/me";
         const string __urlGeneration    = "https://cloud.leonardo.ai/api/rest/v1/generations";
         const string __urlGetGeneationsInfo = "https://cloud.leonardo.ai/api/rest/v1/generations/user/[userId]";
+        const string __urlGetElements = "https://cloud.leonardo.ai/api/rest/v1/elements";
 
 
         public Generation GetGenerationsById(string generationId)
@@ -63,6 +64,22 @@ namespace fAI
             var response = InitWebClient().GET(url);
             if(response.Success)
                 return LeonardoGeneration.FromJson(response.Text);
+            else
+                throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
+        }
+
+        public List<GenerationElement> GetElements(string name = null)
+        {
+            var url = __urlGetElements;
+            var response = InitWebClient().GET(url);
+            if (response.Success)
+            {
+                var rr = GenerationElementRoot.FromJson(response.Text);
+                var r = rr.loras;
+                if(name == null)
+                    return r;
+                return r.Where(e => e.name == name).ToList();
+            }
             else
                 throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
         }
@@ -154,7 +171,7 @@ namespace fAI
             bool isPublic = false,
             bool alchemy = true,
             bool photoReal = false,
-            float photoRealStrength = 0.55f,
+            float photoRealStrength = 0.5f,
             bool promptMagic = true,
             PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
@@ -266,9 +283,13 @@ namespace fAI
             else if(alchemy)
                 presetStyleStr = presetStyleAlchemyOn.ToString();
 
+            var elements2 = elements;
+            if(elements.Count == 0)
+                elements2 = null;
+
             var body = new
             {
-                elements,
+                elements = elements2,
                 prompt,
                 scheduler,
                 negative_prompt,
