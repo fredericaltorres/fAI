@@ -13,6 +13,9 @@ using static fAI.LeonardoGeneration;
 
 namespace fAI
 {
+    // https://docs.leonardo.ai/docs/api-faq
+    // https://docs.leonardo.ai/docs/api-error-messages
+    // https://docs.leonardo.ai/docs/elements-and-model-compatibility
 
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     //public class LeonardoWebError
@@ -283,8 +286,16 @@ namespace fAI
             else if(alchemy)
                 presetStyleStr = presetStyleAlchemyOn.ToString();
 
-            var elements2 = elements;
-            if(elements.Count == 0)
+            var elements2 = new List<GenerationElementForBody>();
+            if (elements != null)
+            {
+                elements.ForEach(e =>
+                {
+                    elements2.Add(GenerationElementForBody.FromJson(e));
+                });
+            }
+
+            if (elements != null && elements.Count == 0)
                 elements2 = null;
 
             var body = new
@@ -294,6 +305,7 @@ namespace fAI
                 scheduler,
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
+                ///////////sd_version = "SDXL_0_9",
                 sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,

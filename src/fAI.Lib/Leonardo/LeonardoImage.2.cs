@@ -46,16 +46,43 @@ namespace fAI
             public double weightMax { get; set; }
             public string creatorName { get; set; }
 
-            //public static GenerationElement FromJson(string text)
-            //{
-            //    return JsonUtils.FromJSON<GenerationElement>(text);
-            //}
-
             public static List<GenerationElement> FromJson(string text)
             {
                 return JsonUtils.FromJSON<List<GenerationElement>>(text);
             }
         }
+
+        public class GenerationElementForBody
+        {
+            public string akUUID { get; set; }
+            public double weight { get; set; }
+            //public string name { get; set; }
+            //public string description { get; set; }
+            //public string urlImage { get; set; }
+            //public string baseModel { get; set; }
+            //public double weightDefault { get; set; }
+
+            //public double weightMin { get; set; }
+            //public double weightMax { get; set; }
+            //public string creatorName { get; set; }
+
+            public static GenerationElementForBody FromJson(GenerationElement e)
+            {
+                return new GenerationElementForBody { 
+                    akUUID = e.akUUID, 
+                    weight = e.weightDefault
+                    //  name = e.name, 
+                    //description = e.description, 
+                    //urlImage = e.urlImage,
+                    //baseModel = e.baseModel, 
+                    //weightDefault = e.weightDefault, 
+                    //weightMin = e.weightMin, 
+                    //weightMax = e.weightMax, 
+                    // creatorName = e.creatorName 
+                };     
+            }
+        }
+
 
         public class GenerationResponse : BaseHttpResponse
         {

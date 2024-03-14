@@ -621,7 +621,7 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
                                                          seed: seed,
                                                          promptMagic: false,
                                                          photoReal: true,
-                                                         stableDiffusionVersion: StableDiffusionVersion.v2_1,
+                                                         stableDiffusionVersion: StableDiffusionVersion.v0_9,
                                                          presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
                                                          elements: elements
                                                          );
