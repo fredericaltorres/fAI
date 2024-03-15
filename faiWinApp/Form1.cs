@@ -1,5 +1,4 @@
-﻿
-using DynamicSugar;
+﻿using DynamicSugar;
 using ImageMagick;
 using LogViewer.Net;
 using System;
@@ -588,6 +587,9 @@ a manifestation of the decadence of the human being, nature losing against human
             var client = new fAI.Leonardo();
 
             // var generation1 = client.Image.GetGenerationsById("cd31b33b-4d52-448d-abf9-1598c55415b2");
+            var models = client.Image.GetModels();
+            models.ForEach(m => this.UserMessage(m.ToString()));
+
             var elements = client.Image.GetElements();
             var generation = client.Image.GetGenerationsByUserId(null);
             var tfh = new TestFileHelper();
@@ -602,13 +604,14 @@ a manifestation of the decadence of the human being, nature losing against human
 A delicately shimmering celestial artifact captured in a surreal pinhole photograph, the image main subject is a bright red translucent, ethereal figure with intricately flowing lines reminiscent of a ghostly apparition. This stunning photograph, taken with exceptional precision, showcases the artifact's enchanting radiance, refracting soft hues of opalescent light. The image possesses an otherworldly allure, inviting viewers to ponder the mystical origins of this captivating digital masterpiece, 4K.
 ";
             var workFolder = @"C:\temp\@fAiImages\CelestialShimmering";
-            var startSeed = 584643840;
+            var startSeed = 351786496;
             var imageCount = 32;
             var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
             finalOutputFiles.CreateDirectory(workFolder);
             finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
             var startImageIndex = finalOutputFiles.FileNames.Count;
             var client = new fAI.Leonardo();
+            var modelName = "Leonardo Diffusion XL";
 
             var elements = client.Image.GetElements("Glasscore");
 
@@ -617,16 +620,73 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
                 var seed = startSeed + i;
                 this.UserMessage($"[Leonardo]Age:{seed}");
                 var fileName = client.Image.GenerateSync(prompt,
-                                                         size: fAI.OpenAIImage.ImageSize._1360x768,
+                                                         size: fAI.OpenAIImage.ImageSize._768x1360,
+                                                         modelName: modelName,
                                                          seed: seed,
                                                          promptMagic: false,
-                                                         photoReal: true,
                                                          stableDiffusionVersion: StableDiffusionVersion.v0_9,
-                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
-                                                         elements: elements
+                                                         presetStyleAlchemyOn: PresetStyleAlchemyOn.CINEMATIC,
+                                                         elements: elements,
+                                                         elementWeight: -0.6
                                                          );
                 finalOutputFiles.AddFile(fileName, move: true);
             }
         }
     }
 }
+/*
+         {
+            "generated_images": [
+                {
+                    "url": "https://cdn.leonardo.ai/users/bda69047-2232-48b9-b4ac-2c43394e3f2e/generations/022b9d37-a150-4008-a20c-8615b7f38458/Default_A_delicately_shimmering_celestial_artifact_captured_in_0.jpg",
+                    "nsfw": false,
+                    "id": "c4d6b633-a0bd-498a-a53d-e6c3c106276e",
+                    "likeCount": 0,
+                    "motionMP4URL": null,
+                    "generated_image_variation_generics": []
+                }
+            ],
+            "modelId": "1e60896f-3c26-4296-8ecc-53e2afecc132",
+            "motion": null,
+            "motionModel": null,
+            "motionStrength": null,
+            "prompt": "A delicately shimmering celestial artifact captured in a surreal pinhole photograph, the image main subject is a bright red translucent, ethereal figure with intricately flowing lines reminiscent of a ghostly apparition. This stunning photograph, taken with exceptional precision, showcases the artifact's enchanting radiance, refracting soft hues of opalescent light. The image possesses an otherworldly allure, inviting viewers to ponder the mystical origins of this captivating digital masterpiece, 4K.",
+            "negativePrompt": "",
+            "imageHeight": 1360,
+            "imageToVideo": null,
+            "imageWidth": 768,
+            "inferenceSteps": null,
+            "seed": 351786496,
+            "public": true,
+            "scheduler": "LEONARDO",
+            "sdVersion": "SDXL_0_9",
+            "status": "COMPLETE",
+            "presetStyle": "CINEMATIC",
+            "initStrength": null,
+            "guidanceScale": null,
+            "id": "022b9d37-a150-4008-a20c-8615b7f38458",
+            "createdAt": "2024-03-12T03:55:35.235",
+            "promptMagic": false,
+            "promptMagicVersion": null,
+            "promptMagicStrength": null,
+            "photoReal": true,
+            "photoRealStrength": null,
+            "fantasyAvatar": null,
+            "generation_elements": [
+                {
+                    "id": 18280693,
+                    "weightApplied": -0.6,
+                    "lora": {
+                        "akUUID": "a699f5da-f7f5-4afe-8473-c426b245c145",
+                        "baseModel": "SDXL_1_0",
+                        "description": "Craft realistic glass objects. Use \"glass\" in the prompt with Leonardo Vision XL for best results.",
+                        "name": "Glasscore",
+                        "urlImage": "https://cdn.leonardo.ai/element_thumbnails/a699f5da-f7f5-4afe-8473-c426b245c145/thumbnail.png",
+                        "weightDefault": 1.0,
+                        "weightMax": 2.0,
+                        "weightMin": -2.0
+                    }
+                }
+            ]
+        },
+ */

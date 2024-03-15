@@ -34,7 +34,7 @@ namespace fAI
 
     public partial class LeonardoImage : HttpBase
     {
-        public const string MODEL_ID =  "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3";
+        public const string LEONARDO_CREATIVE_MODEL_ID =  "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3"; // "Leonardo Creative"
         public LeonardoImage(int timeOut = -1) : base(timeOut)
         {
         }
@@ -43,6 +43,7 @@ namespace fAI
         const string __urlGeneration    = "https://cloud.leonardo.ai/api/rest/v1/generations";
         const string __urlGetGeneationsInfo = "https://cloud.leonardo.ai/api/rest/v1/generations/user/[userId]";
         const string __urlGetElements = "https://cloud.leonardo.ai/api/rest/v1/elements";
+        const string __urlGetModels = "https://cloud.leonardo.ai/api/rest/v1/platformModels";
 
 
         public Generation GetGenerationsById(string generationId)
@@ -70,6 +71,24 @@ namespace fAI
             else
                 throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
         }
+
+        public List<CustomModel> GetModels(string name = null)
+        {
+            var url = __urlGetModels;
+            var response = InitWebClient().GET(url);
+            if (response.Success)
+            {
+                var rr = Models.FromJson(response.Text);
+                
+                if (name == null)
+                    return rr.custom_models;
+
+                return  rr.custom_models.Where(e => e.name == name).ToList();
+            }
+            else
+                throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
+        }
+
 
         public List<GenerationElement> GetElements(string name = null)
         {
@@ -150,7 +169,8 @@ namespace fAI
 
         public enum PresetStyleAlchemyOn
         {
-            ANIME, CREATIVE, DYNAMIC, ENVIRONMENT, GENERAL, ILLUSTRATION, PHOTOGRAPHY, RAYTRACED, RENDER_3D, SKETCH_BW, SKETCH_COLOR, NONE
+            ANIME, CREATIVE, DYNAMIC, ENVIRONMENT, GENERAL, ILLUSTRATION, PHOTOGRAPHY, RAYTRACED, RENDER_3D, SKETCH_BW, SKETCH_COLOR, NONE,
+            CINEMATIC
         }
 
         public enum PromptMagicVersion
@@ -167,7 +187,8 @@ namespace fAI
 
         public string GenerateSync(string prompt,
             string negative_prompt = null,
-            string modelId = MODEL_ID,
+            string modelId = null,
+            string modelName = null,
             StableDiffusionVersion stableDiffusionVersion = StableDiffusionVersion.v1_5,
             int imageCount = 1,
             ImageSize size = ImageSize._1024x1024,
@@ -182,11 +203,12 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5,
             Scheduler scheduler = Scheduler.LEONARDO, 
-            List<GenerationElement> elements = null)
+            List<GenerationElement> elements = null,
+            double elementWeight = 0)
         {
-            Trace(new { prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements }, this);
+            Trace(new {  modelId, modelName, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements, prompt, negative_prompt, elementWeight }, this);
 
-            GenerationResponse job = GenerateSync2(prompt, negative_prompt, modelId, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements);
+            GenerationResponse job = GenerateAsync(prompt, negative_prompt, modelId, modelName, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements, elementWeight);
 
             var jobState = Managers.TimeOutManager<GenerationResultResponse>("Test", 1, () =>
             {
@@ -195,7 +217,11 @@ namespace fAI
             }, sleepDuration: 6);
 
             var pngFileNames = jobState.DownloadImages();
+
+            var generationJson = this.GetGenerationsById(job.GenerationId);
+
             var r = this.DeleteJob(jobState.GenerationId);
+
             var tfh = new TestFileHelper();
             var newFileName = tfh.GetTempFileName(".jpg");
             File.Move(pngFileNames[0], newFileName);
@@ -254,9 +280,10 @@ namespace fAI
         }
 
         // https://docs.leonardo.ai/reference/creategeneration
-        public GenerationResponse GenerateSync2(string prompt,
+        public GenerationResponse GenerateAsync(string prompt,
             string negative_prompt = null,
-            string modelId = MODEL_ID,
+            string modelId = null,
+            string modelName = null,
             StableDiffusionVersion stableDiffusionVersion =  StableDiffusionVersion.v1_5,
             int imageCount = 1, 
             ImageSize size = ImageSize._1024x1024,
@@ -271,10 +298,16 @@ namespace fAI
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double promptMagicStrength = 0.5,
             Scheduler scheduler = Scheduler.LEONARDO,
-            List<GenerationElement> elements = null
+            List<GenerationElement> elements = null,
+            double elementWeight = 0
             )
         {
-            Trace(new { prompt, negative_prompt, modelId, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler }, this);
+            if (modelName != null)
+                modelId = this.GetModels(modelName)[0].id;
+            if (modelId == null)
+                modelId = LEONARDO_CREATIVE_MODEL_ID;
+
+            Trace(new { modelId, modelName, imageCount, size, isPublic, alchemy, photoReal, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, prompt, negative_prompt }, this);
 
             var dimensions = size.ToString().Replace("_", "").Split('x').ToList();
             var width = int.Parse(dimensions[0]);
@@ -291,7 +324,9 @@ namespace fAI
             {
                 elements.ForEach(e =>
                 {
-                    elements2.Add(GenerationElementForBody.FromJson(e));
+                    var ee = GenerationElementForBody.FromJson(e);
+                    ee.weight = elementWeight;
+                    elements2.Add(ee);
                 });
             }
 
@@ -305,7 +340,6 @@ namespace fAI
                 scheduler,
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
-                ///////////sd_version = "SDXL_0_9",
                 sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,

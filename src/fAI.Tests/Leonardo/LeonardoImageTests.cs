@@ -75,9 +75,10 @@ Wlop, unique detail, masterpiece
             var negativePrompt = @"Close up face, EasyNegative, (badv2:0.8), (badhandv4:1.18), (bad quality:1.3), (worst quality:1.3), watermark, (blurry), (cropped), (cleavage:1.3) canvas frame, cartoon, 3d, , ((bad art)), extra limbs)),((close up)),((b&w)), , signature, blurry, (((duplicate))), ((morbid)), ((mutilated)), [out of frame], extra fingers, mutated hands, ((poorly drawn hands)), ((poorly drawn face)), blurry,, ((extra limbs)), cloned face, out of frame, ugly, extra limbs, (malformed limbs), ((missing arms)), ((missing legs)), (((extra arms))), (((extra legs))), mutated hands, (fused fingers), (too many fingers), (((long neck))), tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, extra limbs, extra legs, extra arms, cross-eye, body out of frame, blurr";
 
             var client = new Leonardo();
-            var job = client.Image.Generate(
-                prompt, negative_prompt: negativePrompt, size: ImageSize._1024x1024
-                ,seed : 407795969
+            var job = client.Image.GenerateAsync(
+                prompt, negative_prompt: negativePrompt, 
+                size: ImageSize._1024x1024,
+                seed : 407795969
                 );
 
             var pngFileNames = client.Image.WaitForImages(job);
@@ -94,7 +95,7 @@ high quality, 8K Ultra HD, In this extraordinary full-body digital illustration,
             var negativePrompt = @"";
 
             var client = new Leonardo();
-            var job = client.Image.Generate(
+            var job = client.Image.GenerateAsync(
                 prompt, 
                 //negative_prompt: negativePrompt, 
                 size: ImageSize._512x984,

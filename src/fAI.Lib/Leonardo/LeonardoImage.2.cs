@@ -129,7 +129,40 @@ namespace fAI
             public int apiConcurrencySlots { get; set; }
         }
 
-       
+
+
+
+
+        public class CustomModel
+        {
+            public string id { get; set; }
+            public string name { get; set; }
+            public string description { get; set; }
+            public bool nsfw { get; set; }
+            public bool featured { get; set; }
+            public ModelGeneratedImage generated_image { get; set; }
+
+            public override string ToString()
+            {
+                return $"name:{name}, description:{description}";
+            }
+        }
+
+        public class ModelGeneratedImage
+        {
+            public string id { get; set; }
+            public string url { get; set; }
+        }
+
+        public class Models
+        {
+            public List<CustomModel> custom_models { get; set; }
+
+            public static Models FromJson(string text)
+            {
+                return JsonUtils.FromJSON<Models>(text);
+            }
+        }
     }
 }
 
