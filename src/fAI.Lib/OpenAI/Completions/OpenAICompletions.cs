@@ -125,7 +125,7 @@ namespace fAI
             string context = @"
                     Use the provided article delimited by triple quotes to answer the question.
                     Answer with a JSON object with the property 'answer'.
-                    If the answer cannot be found in the articles, write ""[NOT_FOUND]""
+                    If the answer cannot be found in the article, write ""[NOT_FOUND]""
             ",
             string answerNotFound = "I could not find an answer.")
         {
@@ -179,8 +179,7 @@ Question: {question}
             }
         }
 
-        public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Indiscriminate,Scattered,Casual";
-        public static string CreativeSynonym = @"Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
+        public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Indiscriminate,Scattered,Casual,Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
 
         public static string GetRandomWord(string words)
         {
@@ -189,34 +188,40 @@ Question: {question}
             return wordsArray[r.Next(0, wordsArray.Length)];
         }
 
-        public string GenerateMultiChoiceQuestionAboutText(
-           string text,
-           string context = @"
-                    Use the provided article delimited by triple quotes to 
-            ")
+        public Prompt_GPT_4 GetPromptForGenerateMultiChoiceQuestionAboutText(
+          string text,
+          string context)
         {
-
-            
             var data = $@"
 """"""
 {text} 
 """"""
-
-Generate one [random] and [creative], multi choice question about the article. 
-Mark the right answer with a character *.
 ";
-
-            data = data.Template(new { random = GetRandomWord(RandomSynonym), creative = GetRandomWord(CreativeSynonym) }, "[", "]");
-
+            context = context.Template(new { random = GetRandomWord(RandomSynonym) }, "[", "]");
             var client = new OpenAI();
             var p = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage>()
                 {
                     new GPTMessage{ Role =  MessageRole.system, Content = context },
-                    new GPTMessage{ Role =  MessageRole.user, Content = data }
+                    new GPTMessage{ Role =  MessageRole.user, Content = data },
                 }
             };
+            return p;
+        }
+
+        public string GenerateMultiChoiceQuestionAboutText(
+           int numberOfQuestions,
+           string text,
+           string context = @"
+                    Use the provided article delimited by triple quotes to 
+                    Generate [numberOfQuestions] [random] multi choice question about the article. 
+                    Mark the right answer with a character *.
+            ")
+        {
+            context = context.Template(new { numberOfQuestions }, "[", "]");
+            var p = GetPromptForGenerateMultiChoiceQuestionAboutText(text, context);
+            var client = new OpenAI();
             var response = client.Completions.Create(p);
             if (response.Success)
             {

@@ -18,6 +18,7 @@ namespace fAI
     public interface IChainable
     {
         string Invoke(string query);
+        void Randomize();
     }
 
     public partial class Chain 
@@ -32,17 +33,25 @@ namespace fAI
         {
         }
 
+        public string NULL => null as string;
+
         public string Text { get => response.Text; }
 
-        //public Chain Prompt(GPTPrompt prompt)
-        //{
-        //    this._prompt = prompt;
-        //    return this;
-        //}
         public Chain Invoke(IChainable chainable, object pocoQuery)
         {
             var parameters = DS.Dictionary(pocoQuery);
-            _invokedStack.Push(chainable.Invoke(parameters["Query"].ToString()));
+            if (parameters.ContainsKey("Query")) 
+            {
+                _invokedStack.Push(
+                    chainable.Invoke(
+                        parameters["Query"] == null ? null : parameters["Query"].ToString()
+                    )
+                );
+            }
+            if (parameters.ContainsKey("Randomize"))
+            {
+                chainable.Randomize();
+            }
             return this;
         }
 

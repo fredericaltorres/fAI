@@ -463,15 +463,14 @@ We can't hear anything at all";
             ""Louis XIII"" was king of France from 1610 to 1643.
             ""Louis XIV"" was king of France from 1643 to 1715.
             ""Louis XV"" was king of France from 1715 to 1774.
-            ""Louis XVI"" was king of France from 1774 to 1792.
-        ";
+            ""Louis XVI"" was king of France from 1774 to 1792.";
 
         [Fact()]
         [TestBeforeAfter]
         public void AnswerQuestionBasedOnText_Answered()
         {
             var client = new OpenAI();
-            var question = "Who was king of france in 1032? ";
+            var question = "Who was king of france in 1032?";
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("Henry I", answer);
         }
@@ -481,9 +480,25 @@ We can't hear anything at all";
         public void AnswerQuestionBasedOnText_AnswerNotFound()
         {
             var client = new OpenAI();
-            var question = "Who was king of france in 2016? ";
+            var question = "Who was king of france in 2016?";
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("I could not find an answer.", answer);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateMultiChoiceQuestionAboutText()
+        {
+            var dbFact = new FactDB();
+            dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
+
+            var client = new OpenAI();
+            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(1, dbFact.GetText());
+            var question = MultiChoiceQuestion.FromText(answer);
+
+            Assert.True(question.Text.Length > 0);
+            Assert.True(question.Answers.Count > 0);
+            Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
         }
 
         [Fact()]
@@ -500,18 +515,35 @@ We can't hear anything at all";
             Assert.Equal(2, q.CorrectAnswerIndex);
         }
 
+   
+
+        /*
         [Fact()]
         [TestBeforeAfter]
-        public void GenerateMultiChoiceQuestionAboutText()
+        public void GenerateMultiChoiceQuestionAboutText_Chain_DBFact()
         {
+            var dbFact = new FactDB();
+            dbFact.AddFacts(KingOfFrances);
+
+            IChainable factDB = dbFact;
+            var chain = new Chain();
             var client = new OpenAI();
-            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(KingOfFrances);
+            var prompt = client.Completions.GetPromptForGenerateMultiChoiceQuestionAboutText(string.Join(Environment.NewLine, dbFact.Facts.Values));
+
+            var answer = chain
+                            .Invoke(factDB, new { Randomize = true })
+                            .Invoke(factDB, new { Query = chain.NULL }) // Get all facts
+                            .Invoke(prompt, new {  }) // Context = chain.InvokedText, Question = ""
+                            .Text;
+
             var question = MultiChoiceQuestion.FromText(answer);
 
             Assert.True(question.Text.Length > 0);
             Assert.True(question.Answers.Count > 0);
             Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
+
         }
+*/
     }
 }
 
