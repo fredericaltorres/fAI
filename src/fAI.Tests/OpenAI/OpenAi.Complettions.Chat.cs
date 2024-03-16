@@ -428,5 +428,100 @@ We can't hear anything at all";
 
             DS.Assert.Words(summarization, "chaotic & morning & noise & cereal & grandmother");
         }
+
+        const string KingOfFrances = @"
+            ""Hugh Capet"" was king of France from 987 to 996.
+            ""Robert II"" was king of France from 996 to 1031.
+            ""Henry I"" was king of France from 1031 to 1060.
+            ""Philip I"" was king of France from 1060 to 1108.
+            ""Louis VI"" was king of France from 1108 to 1137.
+            ""Louis VII"" was king of France from 1137 to 1180.
+            ""Philip II"" was king of France from 1180 to 1223.
+            ""Louis VIII"" was king of France from 1223 to 1226.
+            ""Louis IX (Saint Louis)"" was king of France from 1226 to 1270.
+            ""Philip III"" was king of France from 1270 to 1285.
+            ""Philip IV"" was king of France from 1285 to 1314.
+            ""Louis X"" was king of France from 1314 to 1316.
+            ""John I"" was king of France from 1316 to 1316.
+            ""Philip V"" was king of France from 1316 to 1322.
+            ""Charles IV"" was king of France from 1322 to 1328.
+            ""Philip VI (Valois Branch)"" was king of France from 1328 to 1350.
+            ""John II"" was king of France from 1350 to 1364.
+            ""Charles V"" was king of France from 1364 to 1380.
+            ""Charles VI"" was king of France from 1380 to 1422.
+            ""Charles VII"" was king of France from 1422 to 1461.
+            ""Louis XI"" was king of France from 1461 to 1483.
+            ""Charles VIII"" was king of France from 1483 to 1498.
+            ""Louis XII"" was king of France from 1498 to 1515.
+            ""Francis I"" was king of France from 1515 to 1547.
+            ""Henry II"" was king of France from 1547 to 1559.
+            ""Francis II"" was king of France from 1559 to 1560.
+            ""Charles IX"" was king of France from 1560 to 1574.
+            ""Henry III"" was king of France from 1574 to 1589.
+            ""Henry IV (Bourbon Branch)"" was king of France from 1589 to 1610.
+            ""Louis XIII"" was king of France from 1610 to 1643.
+            ""Louis XIV"" was king of France from 1643 to 1715.
+            ""Louis XV"" was king of France from 1715 to 1774.
+            ""Louis XVI"" was king of France from 1774 to 1792.
+        ";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void AnswerQuestionBasedOnText_Answered()
+        {
+            var client = new OpenAI();
+            var question = "Who was king of france in 1032? ";
+            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Assert.Equal("Henry I", answer);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void AnswerQuestionBasedOnText_AnswerNotFound()
+        {
+            var client = new OpenAI();
+            var question = "Who was king of france in 2016? ";
+            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Assert.Equal("I could not find an answer.", answer);
+        }
     }
 }
+
+
+
+
+//const string KingOfFrances = @"
+//""Hugh Capet"" was king of France from 987 to 996.
+//""Robert II"" was king of France from 996 to 1031.
+//""Henry I"" was king of France from 1031 to 1060.
+//""Philip I"" was king of France from 1060 to 1108.
+//""Louis VI"" was king of France from 1108 to 1137.
+//""Louis VII"" was king of France from 1137 to 1180.
+//""Philip II"" was king of France from 1180 to 1223.
+//""Louis VIII"" was king of France from 1223 to 1226.
+//""Louis IX (Saint Louis)"" was king of France from 1226 to 1270.
+//""Philip III"" was king of France from 1270 to 1285.
+//""Philip IV"" was king of France from 1285 to 1314.
+//""Louis X"" was king of France from 1314 to 1316.
+//""John I"" was king of France from 1316 to 1316.
+//""Philip V"" was king of France from 1316 to 1322.
+//""Charles IV"" was king of France from 1322 to 1328.
+//""Philip VI (Valois Branch)"" was king of France from 1328 to 1350.
+//""John II"" was king of France from 1350 to 1364.
+//""Charles V"" was king of France from 1364 to 1380.
+//""Charles VI"" was king of France from 1380 to 1422.
+//""Charles VII"" was king of France from 1422 to 1461.
+//""Louis XI"" was king of France from 1461 to 1483.
+//""Charles VIII"" was king of France from 1483 to 1498.
+//""Louis XII"" was king of France from 1498 to 1515.
+//""Francis I"" was king of France from 1515 to 1547.
+//""Henry II"" was king of France from 1547 to 1559.
+//""Francis II"" was king of France from 1559 to 1560.
+//""Charles IX"" was king of France from 1560 to 1574.
+//""Henry III"" was king of France from 1574 to 1589.
+//""Henry IV (Bourbon Branch)"" was king of France from 1589 to 1610.
+//""Louis XIII"" was king of France from 1610 to 1643.
+//""Louis XIV"" was king of France from 1643 to 1715.
+//""Louis XV"" was king of France from 1715 to 1774.
+//""Louis XVI"" was king of France from 1774 to 1792.
+//";

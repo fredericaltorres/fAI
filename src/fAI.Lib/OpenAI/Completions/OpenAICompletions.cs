@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Threading;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
+using static DynamicSugar.DS;
+using DynamicSugar;
 
 namespace fAI
 {
@@ -28,6 +30,10 @@ namespace fAI
             }
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
+
+
+
+
 
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create(GPTPrompt p)
@@ -53,6 +59,19 @@ namespace fAI
             {
                 return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
             }
+        }
+
+        public string GenerateMultiChoiceQuestionAbout(string text,
+            string promptCommand = "Generate a multi choice questions about the text below,  mark with a * the right answer:")
+        {
+            var prompt = new Prompt_GPT_35_TurboInstruct
+            {
+                Text = text,
+                PrePrompt = $"{promptCommand} \n===\n",
+                PostPrompt = "\n===\nSummary:\n",
+            };
+
+            return Create(prompt).Text?.Trim();
         }
 
         public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following text:") 
@@ -99,7 +118,43 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
-       
+        // https://platform.openai.com/docs/guides/prompt-engineering/strategy-provide-reference-text
+        public string AnswerQuestionBasedOnText(
+            string text,
+            string question,
+            string context = @"
+                    Use the provided articles delimited by triple quotes to answer questions. 
+                    Answer with a JSON object with the property 'answer'.
+                    If the answer cannot be found in the articles, write ""[NOT_FOUND]""
+            ",
+            string answerNotFound = "I could not find an answer.")
+        {
+            context = context.Template(new { NOT_FOUND = answerNotFound }, "[", "]");
+
+            var dataAndQuestion = $@"
+""""""
+{text} 
+""""""
+
+Question: {question}
+";
+            var client = new OpenAI();
+            var p = new Prompt_GPT_4
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = context },
+                    new GPTMessage{ Role =  MessageRole.user, Content = dataAndQuestion }
+                }
+            };
+            var response = client.Completions.Create(p);
+            if (response.Success)
+            {
+                var answer = response.JsonObject["answer"];
+                return answer.ToString();
+            }
+            else return response.ErrorMessage;
+        }
 
         private bool IsValidJson<T>(string json)
         {
