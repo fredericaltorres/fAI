@@ -123,7 +123,7 @@ namespace fAI
             string text,
             string question,
             string context = @"
-                    Use the provided articles delimited by triple quotes to answer questions. 
+                    Use the provided article delimited by triple quotes to answer the question.
                     Answer with a JSON object with the property 'answer'.
                     If the answer cannot be found in the articles, write ""[NOT_FOUND]""
             ",
@@ -182,12 +182,11 @@ Question: {question}
         public string GenerateMultiChoiceQuestionAboutText(
            string text,
            string context = @"
-                    Use the provided articles delimited by triple quotes to 
-                    generate ONE multi choice question about the text. 
-                    Mark with a * the right answer.
+                    Use the provided article delimited by triple quotes to 
+                    generate one random multi choice question about the article. 
+                    Mark the right answer with a character *.
             ")
         {
-
             var data = $@"
 """"""
 {text} 
@@ -210,7 +209,6 @@ Question: {question}
             }
             else return response.ErrorMessage;
         }
-
 
         private bool IsValidJson<T>(string json)
         {

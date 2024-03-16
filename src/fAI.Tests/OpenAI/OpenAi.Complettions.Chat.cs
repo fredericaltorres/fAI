@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using DynamicSugar;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.Tests
 {
@@ -505,9 +506,12 @@ We can't hear anything at all";
         {
             var client = new OpenAI();
             var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(KingOfFrances);
-            Assert.Equal("I could not find an answer.", answer);
-        }
+            var question = MultiChoiceQuestion.FromText(answer);
 
+            Assert.True(question.Text.Length > 0);
+            Assert.True(question.Answers.Count > 0);
+            Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
+        }
     }
 }
 
