@@ -41,7 +41,7 @@ namespace fAI.Tests
 
         public Dictionary<int, string> Facts => _facts;
 
-        public void AddFacts(string text, bool randomizeOrder = false, bool clear = false)
+        public FactDB AddFacts(string text, bool randomizeOrder = false, bool clear = false)
         {
             if(clear)
                 _facts.Clear();
@@ -51,6 +51,8 @@ namespace fAI.Tests
 
             foreach (var line in lines)
                 _facts.Add(_facts.Count + 1000, line);
+
+            return this;
         }
 
         public string GetText(string regExg = null, string title = null)

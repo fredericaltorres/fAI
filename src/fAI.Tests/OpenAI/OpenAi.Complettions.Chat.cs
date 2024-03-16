@@ -494,30 +494,31 @@ We can't hear anything at all";
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
-            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
-            var question = MultiChoiceQuestion.FromText(answer, questionCount)[0];
+            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            Assert.Equal(questionCount, questions.Count);
 
+            var question = questions[0];
             Assert.True(question.Text.Length > 0);
             Assert.True(question.Answers.Count > 0);
             Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
         }
-
 
         [Fact()]
         [TestBeforeAfter]
         public void GenerateThreeMultiChoiceQuestionAboutText()
         {
             var questionCount = 3;
-            var dbFact = new FactDB();
-            dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
-
+            var dbFact = new FactDB().AddFacts(KingOfFrances, randomizeOrder: true);
             var client = new OpenAI();
-            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
-            var question = MultiChoiceQuestion.FromText(answer, questionCount)[0];
+            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            Assert.Equal(questionCount, questions.Count);
 
-            Assert.True(question.Text.Length > 0);
-            Assert.True(question.Answers.Count > 0);
-            Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
+            foreach (var question in questions)
+            {
+                Assert.True(question.Text.Length > 0);
+                Assert.True(question.Answers.Count > 0);
+                Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
+            }
         }
 
         [Fact()]
@@ -560,7 +561,7 @@ D. 1574 to 1589
             var questions = MultiChoiceQuestion.FromText(text, 3);
             Assert.Equal(3, questions.Count);
             var q = questions[0];
-            Assert.Equal("1. Who was the king of France from 1285 to 1314?", q.Text);
+            Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
             Assert.Equal("A. Louis XIII", q.Answers[0]);
             Assert.Equal("B. Philip IV", q.Answers[1]);
             Assert.Equal("C. Charles V", q.Answers[2]);
@@ -568,13 +569,12 @@ D. 1574 to 1589
             Assert.Equal(1, q.CorrectAnswerIndex);
 
             q = questions[2];
-            Assert.Equal("3. When did Louis XIV reign as king of France?", q.Text);
+            Assert.Equal("When did Louis XIV reign as king of France?", q.Text);
             Assert.Equal("A. 1643 to 1715", q.Answers[0]);
             Assert.Equal("B. 1515 to 1547", q.Answers[1]);
             Assert.Equal("C. 1285 to 1314", q.Answers[2]);
             Assert.Equal("D. 1574 to 1589", q.Answers[3]);
             Assert.Equal(0, q.CorrectAnswerIndex);
-
         }
 
         /*

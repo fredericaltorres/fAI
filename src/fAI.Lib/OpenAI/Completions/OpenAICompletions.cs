@@ -175,16 +175,20 @@ Question: {question}
                     var r = new MultiChoiceQuestion();
                     rr.Add(r);
                     r.Text = lines[lineIndex++];
+                    if(CompletionResponse.StartsWithANumberSection(r.Text))
+                        r.Text = CompletionResponse.RemoveSection(r.Text);
+
                     for (var i = 1; i <= maxAnswer; i++)
                     {
                         if (lines[lineIndex].Contains("*"))
-                            r.CorrectAnswerIndex = lineIndex - 1;
+                            r.CorrectAnswerIndex = i - 1;
                         r.Answers.Add(lines[lineIndex].Replace("*", ""));
                         lineIndex += 1;
                     }
                 }
                 return rr;
             }
+ 
         }
 
         public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Indiscriminate,Scattered,Casual,Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
@@ -218,7 +222,7 @@ Question: {question}
             return p;
         }
 
-        public string GenerateMultiChoiceQuestionAboutText(
+        public List<MultiChoiceQuestion> GenerateMultiChoiceQuestionAboutText(
            int numberOfQuestions,
            string text,
            string context = @"
@@ -227,16 +231,14 @@ Question: {question}
                     Mark the right answer with a character *.
             ")
         {
-            context = context.Template(new { numberOfQuestions }, "[", "]");
-            var p = GetPromptForGenerateMultiChoiceQuestionAboutText(text, context);
+            var contextPreProcessed = context.Template(new { numberOfQuestions }, "[", "]");
+            var p = GetPromptForGenerateMultiChoiceQuestionAboutText(text, contextPreProcessed);
             var client = new OpenAI();
             var response = client.Completions.Create(p);
             if (response.Success)
-            {
-                var answer = response.Text;
-                return answer.ToString();
-            }
-            else return response.ErrorMessage;
+                return MultiChoiceQuestion.FromText(response.Text, numberOfQuestions);
+            else 
+                return null;
         }
 
         private bool IsValidJson<T>(string json)

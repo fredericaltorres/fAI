@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using DynamicSugar;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace fAI
 {
@@ -148,7 +149,6 @@ namespace fAI
             return blogPost;
         }
 
-
         public string Answer
         {
             get
@@ -191,6 +191,24 @@ namespace fAI
         public string ErrorMessage => "Error"; // TODO: Implement
 
         public DateTime Created => DateTimeOffset.FromUnixTimeSeconds(created).DateTime;
+
+
+        public static string RemoveSection(string text)
+        {
+            return text.Substring(text.IndexOf(" ") + 1);
+        }
+
+        public static bool StartsWithANumberSection(string text)
+        {
+            var rx = new Regex(@"(^\d\. )|(^\d\) )"); // section  from 1..9
+            return rx.IsMatch(text);
+        }
+
+        public static bool StartsWithALetterSection(string text)
+        {
+            var rx = new Regex(@"(^\[A-Z]\. )|(^[A-Z]\) )");
+            return rx.IsMatch(text);
+        }
     }
 }
 
