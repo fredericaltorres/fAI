@@ -179,19 +179,35 @@ Question: {question}
             }
         }
 
+        public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Indiscriminate,Scattered,Casual";
+        public static string CreativeSynonym = @"Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
+
+        public static string GetRandomWord(string words)
+        {
+            var r = new Random();
+            var wordsArray = words.Split(',');
+            return wordsArray[r.Next(0, wordsArray.Length)];
+        }
+
         public string GenerateMultiChoiceQuestionAboutText(
            string text,
            string context = @"
                     Use the provided article delimited by triple quotes to 
-                    generate one random multi choice question about the article. 
-                    Mark the right answer with a character *.
             ")
         {
+
+            
             var data = $@"
 """"""
 {text} 
 """"""
+
+Generate one [random] and [creative], multi choice question about the article. 
+Mark the right answer with a character *.
 ";
+
+            data = data.Template(new { random = GetRandomWord(RandomSynonym), creative = GetRandomWord(CreativeSynonym) }, "[", "]");
+
             var client = new OpenAI();
             var p = new Prompt_GPT_4
             {
