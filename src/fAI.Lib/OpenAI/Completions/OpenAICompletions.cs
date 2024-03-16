@@ -156,6 +156,62 @@ Question: {question}
             else return response.ErrorMessage;
         }
 
+
+        public class MultiChoiceQuestion
+        {
+            public string Text { get; set; }
+            public List<string> Answers { get; set; } = new List<string>();
+            public int CorrectAnswerIndex { get; set; }
+
+            public static MultiChoiceQuestion FromText(string text)
+            {
+                var r = new MultiChoiceQuestion();
+                text = text.Replace(Environment.NewLine, "\n").Replace("\n\n", "\n");
+                var lines = text.Split('\n');
+                r.Text = lines[0];
+                for (var i = 1; i < lines.Length; i++)
+                {
+                    if (lines[i].Contains("*"))
+                        r.CorrectAnswerIndex = i - 1;
+                    r.Answers.Add(lines[i].Replace("*", ""));
+                }
+                return r;
+            }
+        }
+
+        public string GenerateMultiChoiceQuestionAboutText(
+           string text,
+           string context = @"
+                    Use the provided articles delimited by triple quotes to 
+                    generate ONE multi choice question about the text. 
+                    Mark with a * the right answer.
+            ")
+        {
+
+            var data = $@"
+""""""
+{text} 
+""""""
+";
+            var client = new OpenAI();
+            var p = new Prompt_GPT_4
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = context },
+                    new GPTMessage{ Role =  MessageRole.user, Content = data }
+                }
+            };
+            var response = client.Completions.Create(p);
+            if (response.Success)
+            {
+                var answer = response.Text;
+                return answer.ToString();
+            }
+            else return response.ErrorMessage;
+        }
+
+
         private bool IsValidJson<T>(string json)
         {
             try 

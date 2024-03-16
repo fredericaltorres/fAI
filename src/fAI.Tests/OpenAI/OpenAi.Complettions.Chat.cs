@@ -484,6 +484,30 @@ We can't hear anything at all";
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("I could not find an answer.", answer);
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void MultiChoiceQuestion_FromText()
+        {
+            var text = "Who was the king of France from 1285 to 1314?\n\nA) Louis IX\nB) Philip III\nC) Philip IV*\nD) Louis X";
+            var q = MultiChoiceQuestion.FromText(text);
+            Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
+            Assert.Equal("A) Louis IX", q.Answers[0]);
+            Assert.Equal("B) Philip III", q.Answers[1]);
+            Assert.Equal("C) Philip IV", q.Answers[2]);
+            Assert.Equal("D) Louis X", q.Answers[3]);
+            Assert.Equal(2, q.CorrectAnswerIndex);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateMultiChoiceQuestionAboutText()
+        {
+            var client = new OpenAI();
+            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(KingOfFrances);
+            Assert.Equal("I could not find an answer.", answer);
+        }
+
     }
 }
 
