@@ -264,125 +264,125 @@ End of text
             Assert.Equal("This is a test!", response.Text);
         }
 
-   
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_SpecialRules()
-        //{
-        //    var client = new OpenAI();
-        //    var text = "10%";
-        //    Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "10% cheaper";
-        //    Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialRules()
+        {
+            var client = new OpenAI();
+            var text = "10%";
+            Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "200K";
-        //    Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+            text = "10% cheaper";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "200K cheaper";
-        //    Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+            text = "200K";
+            Assert.False(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "$200K";
-        //    Assert.True (client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+            text = "200K cheaper";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "3,948";
-        //    Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+            text = "$200K";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //    text = "3,948,123";
-        //    Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
-        //}
+            text = "3,948";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_SpecialCase_NumberWithCommaAsThousandSeparator()
-        //{
-        //    var client = new OpenAI();
-        //    var text = "3,948";
-        //    var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.True(FlexStrCompare("3 948") == FlexStrCompare(translation));
-        //}
+            text = "3,948,123";
+            Assert.True(client.Completions.NeedToBeTranslated(text, TranslationLanguages.English, TranslationLanguages.French), $"NeedToBeTranslated text:{text}");
+        }
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_SpecialCase_Dollars200K()
-        //{
-        //    var client = new OpenAI();
-        //    var text = "$200K";
-        //    var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
-        //}
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_NumberWithCommaAsThousandSeparator()
+        {
+            var client = new OpenAI();
+            var text = "3,948";
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("3 948") == FlexStrCompare(translation));
+        }
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_SpecialCase_200K()
-        //{
-        //    var client = new OpenAI();
-        //    var text = "200K";
-        //    var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.True(FlexStrCompare(text) == FlexStrCompare(translation));
-        //}
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_Dollars200K()
+        {
+            var client = new OpenAI();
+            var text = "$200K";
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
+        }
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench()
-        //{
-        //    var client = new OpenAI();
-        //    var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.True(FlexStrCompare("Bonjour monde.") == FlexStrCompare(translation) ||
-        //                FlexStrCompare("Bonjour le monde.") == FlexStrCompare(translation));
-        //}
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_SpecialCase_200K()
+        {
+            var client = new OpenAI();
+            var text = "200K";
+            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare(text) == FlexStrCompare(translation));
+        }
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_Dictionary()
-        //{
-        //    var client = new OpenAI();
-        //    var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
-        //    var outputDictionary = client.Completions.Translate(inputDictionary, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.Equal(6, outputDictionary.Keys.Count);
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench()
+        {
+            var client = new OpenAI();
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.True(FlexStrCompare("Bonjour monde.") == FlexStrCompare(translation) ||
+                        FlexStrCompare("Bonjour le monde.") == FlexStrCompare(translation));
+        }
 
-        //    inputDictionary.Keys.ToList().ForEach(k => Assert.True(outputDictionary.ContainsKey(k)));
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_Dictionary()
+        {
+            var client = new OpenAI();
+            var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
+            var outputDictionary = client.Completions.Translate(inputDictionary, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(6, outputDictionary.Keys.Count);
 
-        //    Assert.Equal("Éducation", outputDictionary["(50,52)"]);
-        //    Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
-        //}
+            inputDictionary.Keys.ToList().ForEach(k => Assert.True(outputDictionary.ContainsKey(k)));
 
-        
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_List()
-        //{
-        //    var client = new OpenAI();
-        //    var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
-        //    var inputList = inputDictionary.Values.ToList();
+            Assert.Equal("Éducation", outputDictionary["(50,52)"]);
+            Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
+        }
 
-        //    var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.Equal(6, outputList.Count);
 
-        //    AssertWords(outputList[0], "personnes,important,domaine,activité");
-        //    //AssertWords(outputList[4], "Graphiques,entreprise");
-        //}
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_List()
+        {
+            var client = new OpenAI();
+            var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
+            var inputList = inputDictionary.Values.ToList();
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToFrench_ListOfNumber()
-        //{
-        //    var client = new OpenAI();
-        //    var inputList = DS.List(1, 2, 3, 4).Select(i => i.ToString()).ToList();
+            var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(6, outputList.Count);
 
-        //    var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
-        //    Assert.Equal(4, outputList.Count);
-        //    DS.Range(4).ForEach(i => Assert.Contains((i+1).ToString(), outputList[i]));
-        //}
+            AssertWords(outputList[0], "personnes,important,domaine,activité");
+            //AssertWords(outputList[4], "Graphiques,entreprise");
+        }
 
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Translate_EnglishToSpanish()
-        //{
-        //    var client = new OpenAI();
-        //    var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);
-        //    Assert.Equal("'Hola mundo.'", translation);
-        //}
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToFrench_ListOfNumber()
+        {
+            var client = new OpenAI();
+            var inputList = DS.List(1, 2, 3, 4).Select(i => i.ToString()).ToList();
+
+            var outputList = client.Completions.Translate(inputList, TranslationLanguages.English, TranslationLanguages.French);
+            Assert.Equal(4, outputList.Count);
+            DS.Range(4).ForEach(i => Assert.Contains((i + 1).ToString(), outputList[i]));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_EnglishToSpanish()
+        {
+            var client = new OpenAI();
+            var translation = client.Completions.Translate(ReferenceEnglishSentence, TranslationLanguages.English, TranslationLanguages.Spanish);
+            Assert.Equal("'Hola mundo.'", translation);
+        }
 
         const string ReferenceEnglishTextForSummarization = @"Hey there, everyone! I'm Jordan Lee, and I'm super excited to be here with you today because 
 I've got somethin to share with you that is going to blow your mind!
@@ -489,12 +489,31 @@ We can't hear anything at all";
         [TestBeforeAfter]
         public void GenerateMultiChoiceQuestionAboutText()
         {
+            var questionCount = 1;
             var dbFact = new FactDB();
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
-            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(1, dbFact.GetText());
-            var question = MultiChoiceQuestion.FromText(answer);
+            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var question = MultiChoiceQuestion.FromText(answer, questionCount)[0];
+
+            Assert.True(question.Text.Length > 0);
+            Assert.True(question.Answers.Count > 0);
+            Assert.True(question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < question.Answers.Count);
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateThreeMultiChoiceQuestionAboutText()
+        {
+            var questionCount = 3;
+            var dbFact = new FactDB();
+            dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
+
+            var client = new OpenAI();
+            var answer = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var question = MultiChoiceQuestion.FromText(answer, questionCount)[0];
 
             Assert.True(question.Text.Length > 0);
             Assert.True(question.Answers.Count > 0);
@@ -503,10 +522,10 @@ We can't hear anything at all";
 
         [Fact()]
         [TestBeforeAfter]
-        public void MultiChoiceQuestion_FromText()
+        public void MultiChoiceQuestion_FromText_OneAnswer()
         {
             var text = "Who was the king of France from 1285 to 1314?\n\nA) Louis IX\nB) Philip III\nC) Philip IV*\nD) Louis X";
-            var q = MultiChoiceQuestion.FromText(text);
+            var q = MultiChoiceQuestion.FromText(text, 1)[0];
             Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
             Assert.Equal("A) Louis IX", q.Answers[0]);
             Assert.Equal("B) Philip III", q.Answers[1]);
@@ -515,7 +534,48 @@ We can't hear anything at all";
             Assert.Equal(2, q.CorrectAnswerIndex);
         }
 
-   
+        [Fact()]
+        [TestBeforeAfter]
+        public void MultiChoiceQuestion_FromText_ThreeAnswer()
+        {
+            var text = @"
+1. Who was the king of France from 1285 to 1314?
+A. Louis XIII
+B. Philip IV*
+C. Charles V
+D. John II
+
+2. Which king ruled France from 1422 to 1461?
+A. Louis IX (Saint Louis)
+B. Charles VII*
+C. Henry IV (Bourbon Branch)
+D. Philip VI (Valois Branch)
+
+3. When did Louis XIV reign as king of France?
+A. 1643 to 1715*
+B. 1515 to 1547
+C. 1285 to 1314
+D. 1574 to 1589
+";
+            var questions = MultiChoiceQuestion.FromText(text, 3);
+            Assert.Equal(3, questions.Count);
+            var q = questions[0];
+            Assert.Equal("1. Who was the king of France from 1285 to 1314?", q.Text);
+            Assert.Equal("A. Louis XIII", q.Answers[0]);
+            Assert.Equal("B. Philip IV", q.Answers[1]);
+            Assert.Equal("C. Charles V", q.Answers[2]);
+            Assert.Equal("D. John II", q.Answers[3]);
+            Assert.Equal(1, q.CorrectAnswerIndex);
+
+            q = questions[2];
+            Assert.Equal("3. When did Louis XIV reign as king of France?", q.Text);
+            Assert.Equal("A. 1643 to 1715", q.Answers[0]);
+            Assert.Equal("B. 1515 to 1547", q.Answers[1]);
+            Assert.Equal("C. 1285 to 1314", q.Answers[2]);
+            Assert.Equal("D. 1574 to 1589", q.Answers[3]);
+            Assert.Equal(0, q.CorrectAnswerIndex);
+
+        }
 
         /*
         [Fact()]

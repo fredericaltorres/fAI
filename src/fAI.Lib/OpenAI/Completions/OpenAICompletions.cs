@@ -163,19 +163,27 @@ Question: {question}
             public List<string> Answers { get; set; } = new List<string>();
             public int CorrectAnswerIndex { get; set; }
 
-            public static MultiChoiceQuestion FromText(string text)
+            public static List<MultiChoiceQuestion> FromText(string text, int questionCount, int maxAnswer = 4)
             {
-                var r = new MultiChoiceQuestion();
+                var rr = new List<MultiChoiceQuestion>();
                 text = text.Replace(Environment.NewLine, "\n").Replace("\n\n", "\n");
-                var lines = text.Split('\n');
-                r.Text = lines[0];
-                for (var i = 1; i < lines.Length; i++)
+                var lines = text.SplitByCRLF(separator: "\n");
+                var lineIndex = 0;
+
+                for (var zi = 0; zi < questionCount; zi++)
                 {
-                    if (lines[i].Contains("*"))
-                        r.CorrectAnswerIndex = i - 1;
-                    r.Answers.Add(lines[i].Replace("*", ""));
+                    var r = new MultiChoiceQuestion();
+                    rr.Add(r);
+                    r.Text = lines[lineIndex++];
+                    for (var i = 1; i <= maxAnswer; i++)
+                    {
+                        if (lines[lineIndex].Contains("*"))
+                            r.CorrectAnswerIndex = lineIndex - 1;
+                        r.Answers.Add(lines[lineIndex].Replace("*", ""));
+                        lineIndex += 1;
+                    }
                 }
-                return r;
+                return rr;
             }
         }
 
