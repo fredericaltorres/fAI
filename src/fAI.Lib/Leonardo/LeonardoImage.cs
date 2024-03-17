@@ -178,13 +178,13 @@ namespace fAI
             v2, v3
         }
 
-
         [JsonConverter(typeof(StringEnumConverter))]
         public enum Scheduler
         {
             LEONARDO
         }
 
+        // https://docs.leonardo.ai/docs/elements-and-model-compatibility
         public string GenerateSync(string prompt,
             string negative_prompt = null,
             string modelId = null,
@@ -197,11 +197,11 @@ namespace fAI
             bool photoReal = false,
             float photoRealStrength = 0.5f,
             bool promptMagic = true,
-            PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
+            PromptMagicVersion? promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
-            double promptMagicStrength = 0.5,
+            double? promptMagicStrength = 0.5,
             Scheduler scheduler = Scheduler.LEONARDO, 
             List<GenerationElement> elements = null,
             double elementWeight = 0)
@@ -292,11 +292,11 @@ namespace fAI
             bool photoReal = false,
             float photoRealStrength = 0.55f,
             bool promptMagic = true,
-            PromptMagicVersion promptMagicVersion = PromptMagicVersion.v3,
+            PromptMagicVersion? promptMagicVersion = PromptMagicVersion.v3,
             int seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
-            double promptMagicStrength = 0.5,
+            double? promptMagicStrength = 0.5,
             Scheduler scheduler = Scheduler.LEONARDO,
             List<GenerationElement> elements = null,
             double elementWeight = 0
@@ -333,25 +333,26 @@ namespace fAI
             if (elements != null && elements.Count == 0)
                 elements2 = null;
 
+            double? nullDouble = null;
             var body = new
             {
                 elements = elements2,
                 prompt,
                 scheduler,
                 negative_prompt,
-                //modelId = photoReal ? null:modelId,
-                modelId,
+                modelId = photoReal ? null:modelId,
+                //modelId,
                 sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,
                 width,
                 height,
-                promptMagicStrength,
+                promptMagicStrength = promptMagicStrength.HasValue ? promptMagicStrength.Value : nullDouble,
                 alchemy,
                 photoReal,
                 /// photoRealStrength,
                 promptMagic,
-                promptMagicVersion = promptMagicVersion.ToString(),
+                promptMagicVersion = promptMagicVersion.HasValue ? promptMagicVersion.ToString() : null as string,
                 seed,
                 presetStyle = presetStyleStr,
             };
@@ -373,6 +374,7 @@ namespace fAI
             else
             {
                 var erroInfo = LeonardoJsonError.FromJson(response.Text);
+                TraceError(erroInfo.ToString(), this);
                 throw erroInfo.GetLeonardoException();
             }
         }

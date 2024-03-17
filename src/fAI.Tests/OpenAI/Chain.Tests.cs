@@ -40,7 +40,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Chain_JamesBond()
         {
-            var factDB = new FactDB();
+            var factDB = new DBFact();
             factDB.SetTextData();
             IChainable chainableFactDB  = factDB;
             var chain = new Chain();

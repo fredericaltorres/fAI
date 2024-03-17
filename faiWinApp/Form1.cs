@@ -617,16 +617,19 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
 
             for (var i = startImageIndex; i < imageCount; i++)
             {
-                var seed = startSeed + i;
+                var seed = startSeed + i-1;
                 this.UserMessage($"[Leonardo]Age:{seed}");
                 var fileName = client.Image.GenerateSync(prompt,
                                                          size: fAI.OpenAIImage.ImageSize._768x1360,
                                                          modelName: modelName,
                                                          seed: seed,
                                                          promptMagic: false,
-                                                         photoReal: false, // photoReal v1
+                                                         photoReal: !true, // photoReal v1
+                                                         promptMagicVersion:  null,
+                                                         promptMagicStrength: null,
                                                          stableDiffusionVersion: StableDiffusionVersion.v0_9,
                                                          presetStyleAlchemyOn: PresetStyleAlchemyOn.CINEMATIC,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
                                                          elements: elements,
                                                          elementWeight: -0.6
                                                          );

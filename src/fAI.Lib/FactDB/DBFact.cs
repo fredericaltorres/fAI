@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace fAI
 {
-    public class FactDB : IChainable
+    public class DBFact : IChainable
     {
         // List 5 facts about James bond and 5 fact about Elvis Presley, in a C# sharp dictionary use unique integer as key starting at 1000
         // List 5 facts about James bond and 5 fact about Elvis Presley in a JSON object use unique integer as key starting at 1000
@@ -35,7 +35,7 @@ namespace fAI
 
         public Dictionary<int, string> Facts => _facts;
 
-        public FactDB AddFacts(string text, bool randomizeOrder = false, bool clear = false)
+        public DBFact AddFacts(string text, bool randomizeOrder = false, bool clear = false)
         {
             if (clear)
                 _facts.Clear();
@@ -86,7 +86,7 @@ namespace fAI
             return GetText(query);
         }
 
-        public FactDB()
+        public DBFact()
         {
         }
     }

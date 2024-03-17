@@ -175,11 +175,8 @@ Question: {question}
                     var r = new MultiChoiceQuestion();
                     rr.Add(r);
                     r.Text = lines[lineIndex++];
-                    if (CompletionResponse.StartsWithANumberSection(r.Text) ||
-                        CompletionResponse.StartsWithALetterSection(r.Text) ||
-                        CompletionResponse.StartsWithWordSection(r.Text, "Question") ||
-                        CompletionResponse.StartsWithWordSection(r.Text, "Q")
-                        )
+                    if (CompletionResponse.StartsWithANumberSection(r.Text) || CompletionResponse.StartsWithALetterSection(r.Text) || 
+                        CompletionResponse.StartsWithWordSection(r.Text, DS.List("Question", "Q")))
                     {
                         r.Text = CompletionResponse.RemoveSection(r.Text);
                     }

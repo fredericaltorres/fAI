@@ -54,7 +54,7 @@ namespace fAIConsole
         static void Main(string[] args)
         {
             var questionCount = 1;
-            var dbFact = new FactDB();
+            var dbFact = new DBFact();
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();

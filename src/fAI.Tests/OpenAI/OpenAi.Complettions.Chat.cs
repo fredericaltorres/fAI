@@ -490,7 +490,7 @@ We can't hear anything at all";
         public void GenerateOneMultiChoiceQuestionAboutText()
         {
             var questionCount = 1;
-            var dbFact = new FactDB();
+            var dbFact = new DBFact();
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
@@ -508,7 +508,7 @@ We can't hear anything at all";
         public void GenerateThreeMultiChoiceQuestionAboutText()
         {
             var questionCount = 3;
-            var dbFact = new FactDB().AddFacts(KingOfFrances, randomizeOrder: true);
+            var dbFact = new DBFact().AddFacts(KingOfFrances, randomizeOrder: true);
             var client = new OpenAI();
             var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);

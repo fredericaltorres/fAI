@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using static fAI.OpenAIImage;
+using DynamicSugar;
 
 namespace fAI
 {
@@ -42,6 +43,11 @@ namespace fAI
             public LeonardoException GetLeonardoException()
             {
                 return new LeonardoException($"{error}, path={path}, code={code}");
+            }
+
+            public override string ToString()
+            {
+                return DS.Dictionary(this).Format();
             }
         }
 
