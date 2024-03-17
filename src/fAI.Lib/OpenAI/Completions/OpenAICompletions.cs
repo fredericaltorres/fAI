@@ -175,8 +175,14 @@ Question: {question}
                     var r = new MultiChoiceQuestion();
                     rr.Add(r);
                     r.Text = lines[lineIndex++];
-                    if(CompletionResponse.StartsWithANumberSection(r.Text))
+                    if (CompletionResponse.StartsWithANumberSection(r.Text) ||
+                        CompletionResponse.StartsWithALetterSection(r.Text) ||
+                        CompletionResponse.StartsWithWordSection(r.Text, "Question") ||
+                        CompletionResponse.StartsWithWordSection(r.Text, "Q")
+                        )
+                    {
                         r.Text = CompletionResponse.RemoveSection(r.Text);
+                    }
 
                     for (var i = 1; i <= maxAnswer; i++)
                     {
@@ -188,10 +194,9 @@ Question: {question}
                 }
                 return rr;
             }
- 
         }
 
-        public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Indiscriminate,Scattered,Casual,Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
+        public static string RandomSynonym = @"Radom,Arbitrary,Randomized,Unpredictable,Sporadic,Accidental,Incidental,Serendipitous,Unplanned,Aleatory,Casual,Creative,Inventive,Innovative,Imaginative,Original,Artistic,Inspired,Ingenious,Visionary,Inventive,Resourceful,Clever,Productive,Inventive,Expressive,Inventive";
 
         public static string GetRandomWord(string words)
         {
@@ -209,7 +214,6 @@ Question: {question}
 {text} 
 """"""
 ";
-            context = context.Template(new { random = GetRandomWord(RandomSynonym) }, "[", "]");
             var client = new OpenAI();
             var p = new Prompt_GPT_4
             {
@@ -231,7 +235,7 @@ Question: {question}
                     Mark the right answer with a character *.
             ")
         {
-            var contextPreProcessed = context.Template(new { numberOfQuestions }, "[", "]");
+            var contextPreProcessed = context.Template(new { numberOfQuestions, random = GetRandomWord(RandomSynonym) }, "[", "]");
             var p = GetPromptForGenerateMultiChoiceQuestionAboutText(text, contextPreProcessed);
             var client = new OpenAI();
             var response = client.Completions.Create(p);

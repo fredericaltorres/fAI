@@ -5,6 +5,7 @@ using System.Text;
 using DynamicSugar;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace fAI
 {
@@ -208,6 +209,16 @@ namespace fAI
         {
             var rx = new Regex(@"(^\[A-Z]\. )|(^[A-Z]\) )");
             return rx.IsMatch(text);
+        }
+
+        public static bool StartsWithWordSection(string text, string word)
+        {
+            return text.StartsWith($"{word}: ");
+        }
+
+        public static bool StartsWithWordSection(string text, List<string> words)
+        {
+            return words.Any(w => StartsWithWordSection(text, w));
         }
     }
 }

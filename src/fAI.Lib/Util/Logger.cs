@@ -8,6 +8,7 @@ namespace fAI
     public class Logger
     {
         public static bool TraceOn { get; set; } = true;
+        public static bool TraceToConsole { get; set; } = false;
 
         public const string DefaultLogFileName = @"c:\temp\fAI.log";
         public static string LogFileName = null;
@@ -36,7 +37,10 @@ namespace fAI
                     className = "";
 
                 var m = $"{DateTime.Now}|[{className}{methodName}()]{message}";
-                Console.WriteLine(m);
+
+                if(TraceToConsole)
+                    Console.WriteLine(m);
+
                 TraceToFile(m);
             }
 

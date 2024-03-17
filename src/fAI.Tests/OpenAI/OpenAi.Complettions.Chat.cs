@@ -487,7 +487,7 @@ We can't hear anything at all";
 
         [Fact()]
         [TestBeforeAfter]
-        public void GenerateMultiChoiceQuestionAboutText()
+        public void GenerateOneMultiChoiceQuestionAboutText()
         {
             var questionCount = 1;
             var dbFact = new FactDB();
