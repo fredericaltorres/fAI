@@ -54,6 +54,10 @@
             this.bossRoomEntranceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createImageToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.buildVideoBossRoom = new System.Windows.Forms.ToolStripMenuItem();
+            this.celestialShimmeringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.celestialShimmeringCreateImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.getLeonardoImageGenerationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -80,10 +84,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.getLeonardoImageGenerationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.celestialShimmeringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.celestialShimmeringCreateImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoCS = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -306,6 +307,34 @@
             this.buildVideoBossRoom.Size = new System.Drawing.Size(180, 24);
             this.buildVideoBossRoom.Text = "BuildVideo";
             this.buildVideoBossRoom.Click += new System.EventHandler(this.buildVideoBossRoom_Click);
+            // 
+            // celestialShimmeringToolStripMenuItem
+            // 
+            this.celestialShimmeringToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.celestialShimmeringCreateImage,
+            this.buildVideoCS});
+            this.celestialShimmeringToolStripMenuItem.Name = "celestialShimmeringToolStripMenuItem";
+            this.celestialShimmeringToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
+            this.celestialShimmeringToolStripMenuItem.Text = "Celestial shimmering ";
+            // 
+            // celestialShimmeringCreateImage
+            // 
+            this.celestialShimmeringCreateImage.Name = "celestialShimmeringCreateImage";
+            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(180, 24);
+            this.celestialShimmeringCreateImage.Text = "Create Image";
+            this.celestialShimmeringCreateImage.Click += new System.EventHandler(this.celestialShimmeringCreateImage_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(318, 6);
+            // 
+            // getLeonardoImageGenerationInfoToolStripMenuItem
+            // 
+            this.getLeonardoImageGenerationInfoToolStripMenuItem.Name = "getLeonardoImageGenerationInfoToolStripMenuItem";
+            this.getLeonardoImageGenerationInfoToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
+            this.getLeonardoImageGenerationInfoToolStripMenuItem.Text = "Get Leonardo Image Generation Info";
+            this.getLeonardoImageGenerationInfoToolStripMenuItem.Click += new System.EventHandler(this.getLeonardoImageGenerationInfoToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -576,32 +605,12 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // toolStripMenuItem2
+            // buildVideoCS
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(318, 6);
-            // 
-            // getLeonardoImageGenerationInfoToolStripMenuItem
-            // 
-            this.getLeonardoImageGenerationInfoToolStripMenuItem.Name = "getLeonardoImageGenerationInfoToolStripMenuItem";
-            this.getLeonardoImageGenerationInfoToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
-            this.getLeonardoImageGenerationInfoToolStripMenuItem.Text = "Get Leonardo Image Generation Info";
-            this.getLeonardoImageGenerationInfoToolStripMenuItem.Click += new System.EventHandler(this.getLeonardoImageGenerationInfoToolStripMenuItem_Click);
-            // 
-            // celestialShimmeringToolStripMenuItem
-            // 
-            this.celestialShimmeringToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.celestialShimmeringCreateImage});
-            this.celestialShimmeringToolStripMenuItem.Name = "celestialShimmeringToolStripMenuItem";
-            this.celestialShimmeringToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
-            this.celestialShimmeringToolStripMenuItem.Text = "Celestial shimmering ";
-            // 
-            // celestialShimmeringCreateImage
-            // 
-            this.celestialShimmeringCreateImage.Name = "celestialShimmeringCreateImage";
-            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(180, 24);
-            this.celestialShimmeringCreateImage.Text = "Create Image";
-            this.celestialShimmeringCreateImage.Click += new System.EventHandler(this.celestialShimmeringCreateImage_Click);
+            this.buildVideoCS.Name = "buildVideoCS";
+            this.buildVideoCS.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoCS.Text = "Build Video";
+            this.buildVideoCS.Click += new System.EventHandler(this.buildVideoCS_Click);
             // 
             // Form1
             // 
@@ -701,6 +710,7 @@
         private System.Windows.Forms.ToolStripMenuItem getLeonardoImageGenerationInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem celestialShimmeringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem celestialShimmeringCreateImage;
+        private System.Windows.Forms.ToolStripMenuItem buildVideoCS;
     }
 }
 

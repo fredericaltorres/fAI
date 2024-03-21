@@ -447,7 +447,7 @@ namespace faiWinApp
 
                             for (var f = 0; f < fadingSteps; f++)
                             {
-                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
+                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
                                 __pngFilesFinalBucket.Add(transImg);
                             }
                         }
@@ -482,7 +482,7 @@ namespace faiWinApp
                         var fadingValue = 0.99f / fadingSteps;
                         for (var f = 0; f < fadingSteps; f++)
                         {
-                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Png);
+                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Jpeg);
                             __pngFilesFinalBucket.Add(transImg);
                         }
                     }

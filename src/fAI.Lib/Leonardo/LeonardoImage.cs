@@ -46,12 +46,12 @@ namespace fAI
         const string __urlGetModels = "https://cloud.leonardo.ai/api/rest/v1/platformModels";
 
 
-        public Generation GetGenerationsById(string generationId)
+        public GenerationSub GetGenerationsById(string generationId)
         {
             var url = __urlGeneration + $"/{generationId}";
             var response = InitWebClient().GET(url);
             if (response.Success)
-                return Generation.FromJson(response.Text);
+                return GenerationsByPk2.FromJson(response.Text);
             else
                 throw LeonardoJsonError.FromJson(response.Text).GetLeonardoException();
         }

@@ -11,7 +11,7 @@ namespace fAI
 {
     public partial class LeonardoGeneration  
     {
-        public List<Generation> generations { get; set; }
+        public List<GenerationSub> generations { get; set; }
 
         public string Json { get; set; }
 
@@ -41,13 +41,27 @@ namespace fAI
             public string transformType { get; set; }
         }
 
-        public class Generation
+        public class GenerationsByPk2
         {
             public string Json { get; set; }
 
-            public static Generation FromJson(string text)
+            public GenerationSub generations_by_pk { get; set; }
+
+            public static GenerationSub FromJson(string text)
             {
-                var o = JsonUtils.FromJSON<Generation>(text);
+                var o = JsonUtils.FromJSON<GenerationsByPk2>(text);
+                o.Json = text;
+                return o.generations_by_pk;
+            }
+        }
+
+        public class GenerationSub
+        {
+            public string Json { get; set; }
+
+            public static GenerationSub FromJson(string text)
+            {
+                var o = JsonUtils.FromJSON<GenerationSub>(text);
                 o.Json = text;
                 return o;
             }

@@ -636,6 +636,23 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
                 finalOutputFiles.AddFile(fileName, move: true);
             }
         }
+
+        private void buildVideoCS_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\CelestialShimmering\sequence.md";
+            Action<string> notify = (m) => this.UserMessage(m);
+            var finalOutputFiles = new FileSequenceManager();
+            var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
+            ImageUtility.GenerateMP4Animation(notify,
+                finalOutputFiles.FileNames,
+                this.FinalOutputFileName,
+                transistionDurationSecond: 2,
+                mp4FrameRate: GetMp4FrameRate(),
+                imageDurationSecond: GetMp4FirstFrameDurationSecond(),
+                zoomInPercent: GetMp4ZoomPercent());
+
+            ViewFile(this.FinalOutputFileName);
+        }
     }
 }
 /*
