@@ -16,6 +16,25 @@ namespace fAIConsole
 {
     internal class Program
     {
+        private static void PlayAnswer(OpenAI client, string question, string answer, string notFoundAnswer)
+        {
+            var text = $@"{answer} {question.Replace("Who", "")}.";
+            if (answer == notFoundAnswer)
+                text = $@"{notFoundAnswer} to the question: {question}.";
+            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
+            AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
+            Thread.Sleep(1000 * 4);
+        }
+
+
+
+
+
+
+
+
+
+
         const string KingOfFrances = @"
             ""Hugh Capet"" was king of France from 987 to 996.
             ""Robert II"" was king of France from 996 to 1031.
@@ -52,16 +71,6 @@ namespace fAIConsole
             ""Louis XVI"" was king of France from 1774 to 1792.
         ";
 
-        private static void PlayAnswer(OpenAI client, string question, string answer, string notFoundAnswer)
-        {
-            var text = $@"{answer} {question.Replace("Who","")}.";
-            if(answer == notFoundAnswer)
-                text = $@"{notFoundAnswer} to the question: {question}.";   
-            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
-            AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
-            Thread.Sleep(1000*4);
-        }
-
         static void Main(string[] args)
         {
             var dbFact = new DBFact();
@@ -72,19 +81,6 @@ namespace fAIConsole
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
             Console.WriteLine($"Answer: {answer}"); // Henry I
-            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
-
-            question = "Who was king of france in 1775?";
-            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}"); // Louis XVI
-            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
-
-            question = "Who was king of france in 1812?";
-            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}"); // Louis XVI
-            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
 
             Console.ReadLine();
         }
