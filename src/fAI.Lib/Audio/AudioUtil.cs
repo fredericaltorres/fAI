@@ -19,6 +19,25 @@ namespace fAI
             public double DurationAsDouble { get; set; }
         }
 
+
+        public static bool PlayMp3WithWindowsPlayer(string mp3FileName)
+        {
+            try
+            {
+                var proc = new System.Diagnostics.Process();
+                proc.EnableRaisingEvents = false;
+                proc.StartInfo.FileName = mp3FileName;
+                proc.StartInfo.Arguments = "";
+                proc.StartInfo.UseShellExecute = true;
+                proc.Start();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static bool IsMp3File(string filename)
         {
             var ext = Path.GetExtension(filename).ToLower();

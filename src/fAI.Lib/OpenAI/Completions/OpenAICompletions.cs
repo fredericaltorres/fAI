@@ -118,25 +118,27 @@ namespace fAI
                 throw new ChatGPTException($"{nameof(IsThis)}() failed - {response.ErrorMessage}");
         }
 
+        public const string _answerNotFoundDefault = "I could not find an answer";
+
+        public string AnswerNotFoundDefault => _answerNotFoundDefault;
+
         // https://platform.openai.com/docs/guides/prompt-engineering/strategy-provide-reference-text
         public string AnswerQuestionBasedOnText(
             string text,
             string question,
             string context = @"
                     Use the provided article delimited by triple quotes to answer the question.
-                    Answer with a JSON object with the property 'answer'.
-                    If the answer cannot be found in the article, write ""[NOT_FOUND]""
+                    ""[question]"".
+                    - Answer with a JSON object with the property 'answer'.
+                    - If the answer cannot be found in the article, write ""[not_found]""
             ",
-            string answerNotFound = "I could not find an answer.")
+            string answerNotFound = _answerNotFoundDefault)
         {
-            context = context.Template(new { NOT_FOUND = answerNotFound }, "[", "]");
-
+            context = context.Template(new { question, not_found = answerNotFound }, "[", "]");
             var dataAndQuestion = $@"
 """"""
 {text} 
 """"""
-
-Question: {question}
 ";
             var client = new OpenAI();
             var p = new Prompt_GPT_4
@@ -150,6 +152,9 @@ Question: {question}
             var response = client.Completions.Create(p);
             if (response.Success)
             {
+                if(response.Text == answerNotFound)
+                    return answerNotFound;
+
                 var answer = response.JsonObject["answer"];
                 return answer.ToString();
             }

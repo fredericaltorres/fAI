@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static fAI.OpenAIImage;
 using static DynamicSugar.DS;
+using System.Threading;
 
 namespace fAIConsole
 {
@@ -51,7 +52,83 @@ namespace fAIConsole
             ""Louis XVI"" was king of France from 1774 to 1792.
         ";
 
+        private static void PlayAnswer(OpenAI client, string question, string answer, string notFoundAnswer)
+        {
+            var text = $@"{answer} {question.Replace("Who","")}.";
+            if(answer == notFoundAnswer)
+                text = $@"{notFoundAnswer} to the question: {question}.";   
+            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
+            AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
+            Thread.Sleep(1000*4);
+        }
+
         static void Main(string[] args)
+        {
+            var dbFact = new DBFact();
+            dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
+
+            var client = new OpenAI();
+            var question = "Who was king of france in 1032?";
+            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Console.WriteLine($"Question: {question}");
+            Console.WriteLine($"Answer: {answer}"); // Henry I
+            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
+
+            question = "Who was king of france in 1775?";
+            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Console.WriteLine($"Question: {question}");
+            Console.WriteLine($"Answer: {answer}"); // Louis XVI
+            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
+
+            question = "Who was king of france in 1812?";
+            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Console.WriteLine($"Question: {question}");
+            Console.WriteLine($"Answer: {answer}"); // Louis XVI
+            PlayAnswer(client, question, answer, client.Completions.AnswerNotFoundDefault);
+
+            Console.ReadLine();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        static void Main_GenerateQuestion(string[] args)
         {
             var questionCount = 1;
             var dbFact = new DBFact();
@@ -66,13 +143,48 @@ namespace fAIConsole
                     Console.WriteLine($"  {answer}");
 
                 Console.WriteLine();
-                Console.ReadLine(); 
+                Console.ReadLine();
             }
-
-            //Generate_Document(VictorHugoBooks, VictorHugoName, VictorHugoTitle, VictorHugoDescription);
-            //Generate_Document(new FyodorDostoevsky());
-            // Generate_HtmlWebSite();
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Generate_Document(VictorHugoBooks, VictorHugoName, VictorHugoTitle, VictorHugoDescription);
+        //Generate_Document(new FyodorDostoevsky());
+        // Generate_HtmlWebSite();
 
         public static void Generate_Document(AuthorData a)
         {
