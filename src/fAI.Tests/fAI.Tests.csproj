@@ -67,6 +67,7 @@
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
+    <Compile Include="OpenAI\OpenAi.Complettions.Facts.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Translate.cs" />
     <Compile Include="OpenAI\OpenAIIMage.cs" />
     <Compile Include="OpenAI\OpenAIEmbeddingsTests.cs" />

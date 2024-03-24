@@ -16,7 +16,7 @@ namespace fAIConsole
 {
     internal class Program
     {
-        private static void PlayAnswer(OpenAI client, string question, string answer, string notFoundAnswer)
+        private static void PlayAnswerWhoWasKingOfFrance(OpenAI client, string question, string answer, string notFoundAnswer)
         {
             var text = $@"{answer} {question.Replace("Who", "")}.";
             if (answer == notFoundAnswer)
@@ -25,15 +25,6 @@ namespace fAIConsole
             AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
             Thread.Sleep(1000 * 4);
         }
-
-
-
-
-
-
-
-
-
 
         const string KingOfFrances = @"
             ""Hugh Capet"" was king of France from 987 to 996.
@@ -71,60 +62,19 @@ namespace fAIConsole
             ""Louis XVI"" was king of France from 1774 to 1792.
         ";
 
+
         static void Main(string[] args)
         {
-            var dbFact = new DBFact();
-            dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
-
             var client = new OpenAI();
-            var question = "Who was king of france in 1032?";
+            var question = @"How many years was ""Louis XIV"" king?";
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}"); // Henry I
+            Console.WriteLine($"Answer: {answer}");
 
             Console.ReadLine();
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        static void Main_GenerateQuestion(string[] args)
+        static void Main_GenerateMultiChoiceQuestionAboutText(string[] args)
         {
             var questionCount = 1;
             var dbFact = new DBFact();
@@ -144,39 +94,23 @@ namespace fAIConsole
         }
 
 
+        static void Main_AskQuestion_WhoWasKingOfFrance(string[] args)
+        {
+            var client = new OpenAI();
+            var question = "Who was king of france in 1032?";
+            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Console.WriteLine($"Question: {question}");
+            Console.WriteLine($"Answer: {answer}"); // Henry I
+            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.Completions.AnswerNotFoundDefault);
 
+            question = "Who was king of france in 1812?";
+            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Console.WriteLine($"Question: {question}");
+            Console.WriteLine($"Answer: {answer}");
+            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.Completions.AnswerNotFoundDefault);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            Console.ReadLine();
+        }
 
         //Generate_Document(VictorHugoBooks, VictorHugoName, VictorHugoTitle, VictorHugoDescription);
         //Generate_Document(new FyodorDostoevsky());
