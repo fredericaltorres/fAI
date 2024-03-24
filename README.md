@@ -13,9 +13,7 @@
     - Text To Speech
     - Azure Search Index with Embeddings
  * Deepgram
-    - Speech To Text.
-    
-
+    - Speech To Text
 
 ![Logo ](fAI.1.50.png "Logo")
 
