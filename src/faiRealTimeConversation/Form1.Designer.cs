@@ -33,6 +33,10 @@
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.butTalk = new System.Windows.Forms.Button();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
+            this.cboInputDevices = new System.Windows.Forms.ComboBox();
+            this.cboOutputDevices = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,13 +63,13 @@
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(159, 24);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // butTalk
             // 
-            this.butTalk.Location = new System.Drawing.Point(465, 436);
+            this.butTalk.Location = new System.Drawing.Point(878, 415);
             this.butTalk.Name = "butTalk";
             this.butTalk.Size = new System.Drawing.Size(131, 78);
             this.butTalk.TabIndex = 1;
@@ -84,17 +88,58 @@
             this.txtUserOutput.Size = new System.Drawing.Size(985, 347);
             this.txtUserOutput.TabIndex = 2;
             // 
+            // cboInputDevices
+            // 
+            this.cboInputDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboInputDevices.FormattingEnabled = true;
+            this.cboInputDevices.Location = new System.Drawing.Point(149, 415);
+            this.cboInputDevices.Name = "cboInputDevices";
+            this.cboInputDevices.Size = new System.Drawing.Size(429, 27);
+            this.cboInputDevices.TabIndex = 4;
+            
+            // 
+            // cboOutputDevices
+            // 
+            this.cboOutputDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboOutputDevices.FormattingEnabled = true;
+            this.cboOutputDevices.Location = new System.Drawing.Point(149, 478);
+            this.cboOutputDevices.Name = "cboOutputDevices";
+            this.cboOutputDevices.Size = new System.Drawing.Size(429, 27);
+            this.cboOutputDevices.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(27, 415);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(63, 19);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Input:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(27, 481);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 19);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Output:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1053, 537);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cboOutputDevices);
+            this.Controls.Add(this.cboInputDevices);
             this.Controls.Add(this.txtUserOutput);
             this.Controls.Add(this.butTalk);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "fAI Real Time Conversation";
@@ -113,6 +158,10 @@
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.Button butTalk;
         private System.Windows.Forms.TextBox txtUserOutput;
+        private System.Windows.Forms.ComboBox cboInputDevices;
+        private System.Windows.Forms.ComboBox cboOutputDevices;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 
