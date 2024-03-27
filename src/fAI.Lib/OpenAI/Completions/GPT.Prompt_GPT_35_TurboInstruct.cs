@@ -50,5 +50,18 @@
             NewTokens = 400;
         }
     }
+
+    public class Groq_Prompt_Mistral : GPTPrompt
+    {
+        public Groq_Prompt_Mistral() : base()
+        {
+            Model = "mixtral-8x7b-32768";
+            Url = "https://api.groq.com/openai/v1/chat/completions";
+
+            MaxTokens = 1024;
+            NewTokens = 400;
+            Temperature = 0.5;
+        }
+    }
 }
 

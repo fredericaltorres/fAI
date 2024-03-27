@@ -16,16 +16,6 @@ namespace fAIConsole
 {
     internal class Program
     {
-        private static void PlayAnswerWhoWasKingOfFrance(OpenAI client, string question, string answer, string notFoundAnswer)
-        {
-            var text = $@"{answer} {question.Replace("Who", "")}.";
-            if (answer == notFoundAnswer)
-                text = $@"{notFoundAnswer} to the question: {question}.";
-            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
-            AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
-            Thread.Sleep(1000 * 4);
-        }
-
         const string KingOfFrances = @"
             ""Hugh Capet"" was king of France from 987 to 996.
             ""Robert II"" was king of France from 996 to 1031.
@@ -63,16 +53,50 @@ namespace fAIConsole
         ";
 
 
+
+
+
+
+
+
         static void Main(string[] args)
         {
+            var question = @"How many years was ""Louis XIV"" king of France?";
+
             var client = new OpenAI();
-            var question = @"How many years was ""Louis XIV"" king?";
             var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
             Console.WriteLine($"Answer: {answer}");
-
             Console.ReadLine();
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         static void Main_GenerateMultiChoiceQuestionAboutText(string[] args)
         {
@@ -260,6 +284,16 @@ It also highlights the brutality of slavery and the courage of those who fought 
             var generatedDocuments = GeneratedDocuments.Load(jsonInput);
             var templateGenerator = new StaticHtmlTemplateGenerator();
             templateGenerator.GenerateFile(generatedDocuments, htmlOutput, OpenAISpeech.Voices.onyx);
+        }
+
+        private static void PlayAnswerWhoWasKingOfFrance(OpenAI client, string question, string answer, string notFoundAnswer)
+        {
+            var text = $@"{answer} {question.Replace("Who", "")}.";
+            if (answer == notFoundAnswer)
+                text = $@"{notFoundAnswer} to the question: {question}.";
+            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
+            AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
+            Thread.Sleep(1000 * 4);
         }
     }
 }

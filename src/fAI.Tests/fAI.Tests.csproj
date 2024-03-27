@@ -61,12 +61,14 @@
   <ItemGroup>
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
+    <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.Presentation.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.CityAI.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
+    <Compile Include="OpenAI\OpenAi.Complettions.Chat.MultiImplementation.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Facts.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Translate.cs" />
     <Compile Include="OpenAI\OpenAIIMage.cs" />
@@ -99,6 +101,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>::: copy "$(ProjectDir)\MS.DLL\*.*" "$(TargetDir)"</PostBuildEvent>

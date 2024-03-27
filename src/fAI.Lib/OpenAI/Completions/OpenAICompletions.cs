@@ -13,7 +13,7 @@ using DynamicSugar;
 
 namespace fAI
 {
-    public partial class OpenAICompletions  : HttpBase
+    public partial class OpenAICompletions  : HttpBase, IOpenAICompletion
     {
         public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
         {
@@ -30,10 +30,6 @@ namespace fAI
             }
             else throw new ChatGPTException($"{nameof(GetModels)}() failed - {response.Exception.Message}", response.Exception);
         }
-
-
-
-
 
         // https://platform.openai.com/docs/guides/gpt
         public CompletionResponse Create(GPTPrompt p)
@@ -154,6 +150,9 @@ namespace fAI
             {
                 if(response.Text == answerNotFound)
                     return answerNotFound;
+
+                if(response.JsonObject == null)
+                    return $"Error parsing JSON answer:{response.Text}";
 
                 var answer = response.JsonObject["answer"];
                 return answer.ToString();

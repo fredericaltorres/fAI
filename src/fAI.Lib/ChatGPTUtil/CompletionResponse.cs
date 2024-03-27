@@ -63,7 +63,11 @@ namespace fAI
         {
             get
             {
-                return JObject.Parse(this.Text);
+                if(string.IsNullOrEmpty(this.Text))
+                    return null;
+                if(this.Text.StartsWith("{"))
+                    return JObject.Parse(this.Text);
+                return null;
             }
         }
 
