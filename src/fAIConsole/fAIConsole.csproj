@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Deepgram, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Deepgram.3.4.0\lib\netstandard2.0\Deepgram.dll</HintPath>
+    <Reference Include="Deepgram, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Deepgram.3.4.1\lib\netstandard2.0\Deepgram.dll</HintPath>
     </Reference>
     <Reference Include="DynamicSugarStandard, Version=1.0.25.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DynamicSugarStandard.1.0.25\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>

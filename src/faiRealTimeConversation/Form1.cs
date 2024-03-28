@@ -2,6 +2,7 @@
 using fAI;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static DynamicSugar.DS;
 using static faiRealTimeConversation.AudioHelper;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace faiRealTimeConversation
 {
@@ -51,10 +53,28 @@ namespace faiRealTimeConversation
             {
                 _audioHelper.StopRecording();
                 this.UserMessage("Done recording");
-                PlayAudio(_audioFileName);
                 var r = await GetTextFromAudio();
                 this.UserMessage(r.Text);
                 _recording = false;
+
+                var p = new Groq_Prompt_Mistral()
+                {
+                    Messages = new List<GPTMessage>()
+                    {
+                        new GPTMessage { Role =  MessageRole.system, Content = "As a content manager and software expert." },
+                        new GPTMessage { Role =  MessageRole.user,   Content = r.Text }
+                    }
+                };
+                var client = new Groq();
+                var response = client.Completions.Create(p);
+                if(response.Success)
+                {
+                    var answer = response.Text;
+                     this.UserMessage(answer);
+                    var openAIClient = new OpenAI();
+                    var mp3FileName = openAIClient.Audio.Speech.Create(answer, OpenAISpeech.Voices.echo);
+                    PlayAudio(mp3FileName);
+                }
             }
             else
             {
