@@ -20,8 +20,9 @@ namespace faiRealTimeConversation
     // https://markheath.net/post/30-days-naudio-docs
     public partial class Form1 : Form
     {
-        string _recordedAudio;
+        string _audioFileName;
         TestFileHelper _testFileHelper = new TestFileHelper();
+        AudioHelper _audioHelper = null;
 
         public Form1()
         {
@@ -41,60 +42,37 @@ namespace faiRealTimeConversation
             LoadOutputDevices();
         }
 
-        WaveFileWriter writer = null;
         bool closing = false;
-        WaveInEvent waveIn;
         bool _recording = false;
 
         private async void butTalk_Click(object sender, EventArgs e)
         {
             if (_recording)
             {
-                waveIn.StopRecording();
+                _audioHelper.StopRecording();
                 this.UserMessage("Done recording");
-                PlayAudio(_recordedAudio);
-                var client = new DeepgramAI();
-                var r = await client.Audio.Transcriptions.CreateAsync(_recordedAudio);
+                PlayAudio(_audioFileName);
+                var r = await GetTextFromAudio();
                 this.UserMessage(r.Text);
+                _recording = false;
             }
             else
             {
                 var deviceNumber = GetInputSelectedDeviceNumber();
+                _audioHelper = new AudioHelper();
                 _recording = true;
-                _recordedAudio = _testFileHelper.GetTempFileName(".faiRealTimeConversation.wav");
-
-                if (waveIn == null)
-                {
-                    waveIn = new NAudio.Wave.WaveInEvent
-                    {
-                        DeviceNumber = deviceNumber,
-                        WaveFormat = new NAudio.Wave.WaveFormat(rate: 44100, bits: 16, channels: 1),
-                        BufferMilliseconds = 40
-                    };
-                }
-                waveIn.DataAvailable += (s, a) =>
-                {
-                    writer.Write(a.Buffer, 0, a.BytesRecorded);
-                    if (writer.Position > waveIn.WaveFormat.AverageBytesPerSecond * 16)
-                    {
-                        waveIn.StopRecording();
-                    }
-                };
-                waveIn.RecordingStopped += (s, a) =>
-                {
-                    writer?.Dispose();
-                    writer = null;
-                    if (closing)
-                    {
-                        waveIn.Dispose();
-                    }
-                };
-                writer = new WaveFileWriter(_recordedAudio, waveIn.WaveFormat);
-                waveIn.StartRecording();
+                _audioFileName = _testFileHelper.GetTempFileName(".faiRealTimeConversation.wav");
+                _audioHelper.StartRecording(deviceNumber, _audioFileName);
                 this.UserMessage("Recording");
             }
         }
 
+        private async Task<DeepgramTranscriptionResult> GetTextFromAudio()
+        {
+            var client = new DeepgramAI();
+            var r = await client.Audio.Transcriptions.CreateAsync(_audioFileName);
+            return r;
+        }
 
         private void UserMessage(string m)
         {
