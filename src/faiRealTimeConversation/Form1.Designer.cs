@@ -37,6 +37,7 @@
             this.cboOutputDevices = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.butTest = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,7 +97,6 @@
             this.cboInputDevices.Name = "cboInputDevices";
             this.cboInputDevices.Size = new System.Drawing.Size(429, 27);
             this.cboInputDevices.TabIndex = 4;
-            
             // 
             // cboOutputDevices
             // 
@@ -125,11 +125,22 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Output:";
             // 
+            // butTest
+            // 
+            this.butTest.Location = new System.Drawing.Point(656, 415);
+            this.butTest.Name = "butTest";
+            this.butTest.Size = new System.Drawing.Size(131, 78);
+            this.butTest.TabIndex = 8;
+            this.butTest.Text = "Test";
+            this.butTest.UseVisualStyleBackColor = true;
+            this.butTest.Click += new System.EventHandler(this.butTest_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1053, 537);
+            this.Controls.Add(this.butTest);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cboOutputDevices);
@@ -162,6 +173,7 @@
         private System.Windows.Forms.ComboBox cboOutputDevices;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button butTest;
     }
 }
 

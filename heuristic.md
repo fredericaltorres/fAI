@@ -1,11 +1,15 @@
 https://www.almabetter.com/bytes/tutorials/artificial-intelligence/heuristic-function-in-ai
 
-As logic analyst, analyse  the following fact in triple quotes and answer the question in a JSON object with a property 'answer':
+As logic analyst, analyze the following variables in triple quotes and answer the question in a JSON object with a property 'answer':
 """
-Fact A is true.
-Fact B is true.
-If Fact A and Fact B are true then Fact C is true.
-If Fact B and Fact C are true then Fact D is true.
+variable A is set to true.
+variable B is set to true.
+variable C is set to true.
+variable D is set to false.
 
-Question: is Fact D true?
+If variable A is true and variable B is true then SET variable C to true.
+If variable B is true and variable C is true then SET variable D to true.
+
+Evaluate all the rules above and answer the question:
+Is the variable D true ?
 """

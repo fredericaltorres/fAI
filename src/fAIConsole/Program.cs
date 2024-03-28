@@ -61,6 +61,8 @@ namespace fAIConsole
 
         static void Main(string[] args)
         {
+
+
             var question = @"How many years was ""Louis XIV"" king of France?";
 
             var client = new OpenAI();

@@ -1,4 +1,5 @@
-﻿using fAI;
+﻿using DynamicSugar;
+using fAI;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
@@ -20,9 +21,11 @@ namespace faiRealTimeConversation
     public partial class Form1 : Form
     {
         string _recordedAudio;
+        TestFileHelper _testFileHelper = new TestFileHelper();
 
         public Form1()
         {
+            _testFileHelper.Clean();
             InitializeComponent();
         }
 
@@ -43,30 +46,25 @@ namespace faiRealTimeConversation
         WaveInEvent waveIn;
         bool _recording = false;
 
-        private void butTalk_Click(object sender, EventArgs e)
+        private async void butTalk_Click(object sender, EventArgs e)
         {
             if (_recording)
             {
                 waveIn.StopRecording();
                 this.UserMessage("Done recording");
-
-                var client = new DeepgramAI();
-                var r = client.Audio.Transcriptions.Create(_recordedAudio);
-                this.UserMessage(r.Text);
                 PlayAudio(_recordedAudio);
+                var client = new DeepgramAI();
+                var r = await client.Audio.Transcriptions.CreateAsync(_recordedAudio);
+                this.UserMessage(r.Text);
             }
             else
             {
                 var deviceNumber = GetInputSelectedDeviceNumber();
                 _recording = true;
-                var outputFolder = Path.Combine(@"c:\temp", "faiRealTimeConversation");
-                Directory.CreateDirectory(outputFolder);
-                _recordedAudio = Path.Combine(outputFolder, "recorded.wav");
-                if(waveIn == null)
-                {
-                    //var cap = NAudio.Wave.WaveIn.GetCapabilities(1);
-                    //waveIn = new WaveInEvent();
+                _recordedAudio = _testFileHelper.GetTempFileName(".faiRealTimeConversation.wav");
 
+                if (waveIn == null)
+                {
                     waveIn = new NAudio.Wave.WaveInEvent
                     {
                         DeviceNumber = deviceNumber,
@@ -110,7 +108,7 @@ namespace faiRealTimeConversation
         {
             var outputDevices = AudioHelper.GetOutputDevices();
 
-            var selectedInputDevice = outputDevices.FirstOrDefault(id => id.DeviceName.Contains("Captain"));
+            var selectedInputDevice = outputDevices.FirstOrDefault(id => id.DeviceName.Contains("Focus")); //"Captain"
             if (selectedInputDevice == null)
                 selectedInputDevice = outputDevices.FirstOrDefault(id => id.DeviceName.Contains("PnP Audio"));
 
@@ -133,7 +131,7 @@ namespace faiRealTimeConversation
         {
             var inputDevices = AudioHelper.GetInputDevices();
 
-            var selectedInputDevice = inputDevices.FirstOrDefault(id => id.DeviceName.Contains("Captain"));
+            var selectedInputDevice = inputDevices.FirstOrDefault(id => id.DeviceName.Contains("Captain=========="));
             if (selectedInputDevice == null)
                 selectedInputDevice = inputDevices.FirstOrDefault(id => id.DeviceName.Contains("PnP Audio"));
 
@@ -156,6 +154,12 @@ namespace faiRealTimeConversation
             else return false;
         }
 
-      
+        private async void butTest_Click(object sender, EventArgs e)
+        {
+            var client = new DeepgramAI();
+            var r = await client.Audio.Transcriptions.CreateAsync(@"C:\temp\faiRealTimeConversation\recorded.mp3");
+            this.UserMessage($"Text: {r.Duration }");
+            this.UserMessage($"Text: {r.Text}");
+        }
     }
 }
