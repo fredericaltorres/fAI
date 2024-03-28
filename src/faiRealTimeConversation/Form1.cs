@@ -25,6 +25,7 @@ namespace faiRealTimeConversation
         string _audioFileName;
         TestFileHelper _testFileHelper = new TestFileHelper();
         AudioHelper _audioHelper = null;
+        string _tts;
 
         public Form1()
         {
@@ -65,15 +66,12 @@ namespace faiRealTimeConversation
                         new GPTMessage { Role =  MessageRole.user,   Content = r.Text }
                     }
                 };
-                var client = new Groq();
-                var response = client.Completions.Create(p);
+                var response = new Groq().Completions.Create(p);
                 if(response.Success)
                 {
-                    var answer = response.Text;
-                     this.UserMessage(answer);
-                    var openAIClient = new OpenAI();
-                    var mp3FileName = openAIClient.Audio.Speech.Create(answer, OpenAISpeech.Voices.echo);
-                    PlayAudio(mp3FileName);
+                    this.UserMessage(response.Text);
+                    _tts = response.Text;
+                    this.tmr_TTS.Enabled = true;
                 }
             }
             else
@@ -154,10 +152,26 @@ namespace faiRealTimeConversation
 
         private async void butTest_Click(object sender, EventArgs e)
         {
-            var client = new DeepgramAI();
-            var r = await client.Audio.Transcriptions.CreateAsync(@"C:\temp\faiRealTimeConversation\recorded.mp3");
-            this.UserMessage($"Text: {r.Duration }");
-            this.UserMessage($"Text: {r.Text}");
+            //var client = new DeepgramAI();
+            //var r = await client.Audio.Transcriptions.CreateAsync(@"C:\temp\faiRealTimeConversation\recorded.mp3");
+            //this.UserMessage($"Text: {r.Duration }");
+            //this.UserMessage($"Text: {r.Text}");
+            await GenerateAudio("Tell me more abount Brainshark",  true);
+        }
+
+        private async Task GenerateAudio(string text, bool play)
+        {
+            var mp3 = _testFileHelper.GetTempFileName(".mp3");
+            var c = new DeepgramAI();
+            await c.Audio.TextToSpeech.CreateAsync(text, mp3);
+            if(play)
+                PlayAudio(mp3);
+        }
+
+        private void tmr_TTS_Tick(object sender, EventArgs e)
+        {
+            this.tmr_TTS.Enabled = false;
+            GenerateAudio(this._tts, true).GetAwaiter().GetResult();
         }
     }
 }

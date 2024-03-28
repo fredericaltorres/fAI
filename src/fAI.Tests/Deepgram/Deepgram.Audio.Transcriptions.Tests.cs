@@ -58,7 +58,7 @@ namespace fAI.Tests
                 var client = new DeepgramAI();
                 var text = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
                 var mp3 = tfh.GetTempFileName(".mp3");
-                client.Audio.TextToSpeech.Create(text, mp3).GetAwaiter().GetResult();
+                client.Audio.TextToSpeech.CreateAsync(text, mp3).GetAwaiter().GetResult();
                 PlayAudio(mp3);
             }
         }

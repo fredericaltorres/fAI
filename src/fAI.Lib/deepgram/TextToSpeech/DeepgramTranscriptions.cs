@@ -17,6 +17,8 @@ namespace fAI
 
     /// <summary>
     /// https://developers.deepgram.com/docs/text-to-speech
+    /// https://github.com/deepgram-devs/code-samples
+    /// NOTES https://github.com/deepgram-starters/text-to-speech-starter-node
     /// </summary>
     public class DeepgramTextToSpeech
     {
@@ -27,10 +29,22 @@ namespace fAI
             this._deepgramClient = deepgramClient;
         }
        
-        public async Task Create(string text, string filePath)
+        public const string DEFAULT_ENGLISH_MODEL = "aura-asteria-en";
+        public const string DEFAULT_VOICE_NAME_EN_US = "Orpheus";
+
+        
+
+        //
+        public async Task CreateAsync(string text, string filePath, 
+            string voiceName = DEFAULT_VOICE_NAME_EN_US,
+            string model = DEFAULT_ENGLISH_MODEL,
+            string encoding = "mp3",
+            int bitRate = 32000,
+            int sampleRate= 24000 // https://developers.deepgram.com/docs/tts-media-output-settings#audio-format-combinations
+            )
         {
             string json = $"{{\"text\": \"{text}\"}}";
-            string url = "https://api.deepgram.com/v1/speak";
+            string url = $"https://api.deepgram.com/v1/speak?model={model}&encoding={encoding}&bit_rate={bitRate}";
             string apiKey = DeepgramAI.GetKey();
 
             using (HttpClient httpClient = new HttpClient())

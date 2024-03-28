@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.butTest = new System.Windows.Forms.Button();
+            this.tmr_TTS = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +72,7 @@
             // 
             // butTalk
             // 
-            this.butTalk.Location = new System.Drawing.Point(878, 415);
+            this.butTalk.Location = new System.Drawing.Point(894, 399);
             this.butTalk.Name = "butTalk";
             this.butTalk.Size = new System.Drawing.Size(131, 78);
             this.butTalk.TabIndex = 1;
@@ -127,13 +129,17 @@
             // 
             // butTest
             // 
-            this.butTest.Location = new System.Drawing.Point(656, 415);
+            this.butTest.Location = new System.Drawing.Point(673, 399);
             this.butTest.Name = "butTest";
             this.butTest.Size = new System.Drawing.Size(131, 78);
             this.butTest.TabIndex = 8;
             this.butTest.Text = "Test";
             this.butTest.UseVisualStyleBackColor = true;
             this.butTest.Click += new System.EventHandler(this.butTest_Click);
+            // 
+            // tmr_TTS
+            // 
+            this.tmr_TTS.Tick += new System.EventHandler(this.tmr_TTS_Tick);
             // 
             // Form1
             // 
@@ -174,6 +180,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button butTest;
+        private System.Windows.Forms.Timer tmr_TTS;
     }
 }
 
