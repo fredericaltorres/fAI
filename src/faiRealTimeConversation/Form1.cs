@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static DynamicSugar.DS;
@@ -22,6 +23,9 @@ namespace faiRealTimeConversation
     // https://markheath.net/post/30-days-naudio-docs
     public partial class Form1 : Form
     {
+
+        const string about_brainshark = @"Brainshark is a software company that specializes in sales enablement and readiness solutions. Their platform provides a range of tools and resources to help sales teams be more effective, including content authoring, delivery, and analytics, as well as training and coaching solutions.\n\nBrainshark's content authoring tools allow users to create and distribute interactive and engaging content, such as presentations, sales demos, and training modules. The platform also includes features for tracking content engagement and measuring the impact of sales and marketing materials.\n\nIn addition to its content creation and delivery capabilities, Brainshark offers a range of training and coaching solutions to help sales teams develop the skills and knowledge they need to be successful. These solutions include on-demand video coaching, which allows sales reps to practice their pitch and receive feedback from managers and peers, as well as sales readiness assessments and analytics to identify areas for improvement.\n\nOverall, Brainshark's platform is designed to help organizations improve their sales enablement efforts by providing the tools and resources needed to create, deliver, and measure the impact of sales and marketing content, as well as train and coach sales teams to be more effective.";
+
         string _audioFileName;
         TestFileHelper _testFileHelper = new TestFileHelper();
         AudioHelper _audioHelper = null;
@@ -171,7 +175,21 @@ namespace faiRealTimeConversation
         private void tmr_TTS_Tick(object sender, EventArgs e)
         {
             this.tmr_TTS.Enabled = false;
-            GenerateAudio(this._tts, true).GetAwaiter().GetResult();
+            Task.Factory.StartNew(() =>
+            {
+                GenerateAudio(this._tts, true).GetAwaiter().GetResult();
+            });
+
+        }
+
+        private  void button1_Click(object sender, EventArgs e)
+        {
+            this._tts = about_brainshark;
+            Task.Factory.StartNew(() =>
+            {
+                GenerateAudio(this._tts, true).GetAwaiter().GetResult();
+            });
+            
         }
     }
 }

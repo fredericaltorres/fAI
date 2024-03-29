@@ -43,6 +43,9 @@ namespace fAI
             int sampleRate= 24000 // https://developers.deepgram.com/docs/tts-media-output-settings#audio-format-combinations
             )
         {
+            text = text.Replace(Environment.NewLine, " ").Replace("\r", " ").Replace("\n", " ");
+            text = text.Replace(@"""",@"\""");
+
             string json = $"{{\"text\": \"{text}\"}}";
             string url = $"https://api.deepgram.com/v1/speak?model={model}&encoding={encoding}&bit_rate={bitRate}";
             string apiKey = DeepgramAI.GetKey();
