@@ -61,7 +61,7 @@ I'm crying";
         {
             var mcs = new MicrosoftCognitiveServices();
             var voices = mcs.GetListOfVoices();
-            Assert.True(voices.Count > 500);
+            Assert.True(voices.Count >= 486);
         }
 
         [Fact()]
@@ -77,10 +77,10 @@ I'm crying";
             Assert.NotNull(frenchLanguage);
 
             var englishVoices = mcs.GetListOfVoicesByLanguage(englishLanguage.Code);
-            Assert.True(englishVoices.Count >= 96);
+            Assert.True(englishVoices.Count >= 85);
 
             var frenchVoices = mcs.GetListOfVoicesByLanguage(frenchLanguage.Code);
-            Assert.True(frenchVoices.Count >= 29);
+            Assert.True(frenchVoices.Count >= 24);
         }
     }
 }

@@ -493,7 +493,7 @@ We can't hear anything at all";
             var client = new OpenAI();
             var question = "Who was king of france in 2016?";
             var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Assert.Equal("I could not find an answer.", answer);
+            Assert.Equal(client.CompletionsEx.AnswerNotFoundDefault, answer);
         }
 
         [Fact()]
