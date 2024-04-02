@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using DynamicSugar;
 using static System.Net.Mime.MediaTypeNames;
+using static fAI.OpenAICompletionsEx;
 
 namespace fAI.Tests
 {
@@ -67,7 +68,7 @@ namespace fAI.Tests
         {
             var client = new OpenAI();
             var question = "Who was king of france in 1032?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("Henry I", answer);
         }
 
@@ -77,7 +78,7 @@ namespace fAI.Tests
         {
             var client = new OpenAI();
             var question = "Who was king of france in 2016?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("I could not find an answer.", answer);
         }
 
@@ -87,7 +88,7 @@ namespace fAI.Tests
         {
             var client = new OpenAI();
             var question = @"How many years was ""Louis XIV"" king?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("72", answer);
         }
 
@@ -100,7 +101,7 @@ namespace fAI.Tests
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
-            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);
 
             var question = questions[0];
@@ -116,7 +117,7 @@ namespace fAI.Tests
             var questionCount = 3;
             var dbFact = new DBFact().AddFacts(KingOfFrances, randomizeOrder: true);
             var client = new OpenAI();
-            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);
 
             foreach (var question in questions)

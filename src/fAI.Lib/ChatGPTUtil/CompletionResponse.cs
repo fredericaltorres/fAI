@@ -189,11 +189,11 @@ namespace fAI
         }
 
         // https://platform.openai.com/docs/api-reference/completions/object
-        public bool Success => Choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(Choices[0].finish_reason);
+        public bool Success => Choices != null && Choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(Choices[0].finish_reason);
 
         public bool NeedMoreToken => Choices.Count > 0 && ChatGPTSuccessfullReasons.Contains(NEED_MORE_TOKENS_RETURN_CODE);
 
-        public string ErrorMessage => "Error"; // TODO: Implement
+        public string ErrorMessage => this.Exception != null ? this.Exception.Message : "Unknown error";
 
         public DateTime Created => DateTimeOffset.FromUnixTimeSeconds(created).DateTime;
 

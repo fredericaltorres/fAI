@@ -11,11 +11,31 @@ using System.Threading.Tasks;
 using static fAI.OpenAIImage;
 using static DynamicSugar.DS;
 using System.Threading;
+using fAIConsole.RAG;
+using System.Runtime.Remoting.Contexts;
 
 namespace fAIConsole
 {
     internal class Program
     {
+        static void Main(string[] args)
+        {
+            var people = RandomPeople.FromFile(@".\rag\random_people_data.json");
+            var peopleData = RandomPeople.GenerateTextDataForPrompt(people);
+            var question = "I am looking for somebody that can repair a car in Florida.";
+
+            var client = new OpenAI();
+            while (true)
+            {
+                Console.Write($"Question: ");
+                question = Console.ReadLine();
+                if(question == "exit")
+                    break;
+                var answer = client.CompletionsEx.AnswerQuestionBasedOnText(peopleData, question);
+                Console.WriteLine($"Answer: {answer}");
+            }
+        }
+
         const string KingOfFrances = @"
             ""Hugh Capet"" was king of France from 987 to 996.
             ""Robert II"" was king of France from 996 to 1031.
@@ -52,52 +72,16 @@ namespace fAIConsole
             ""Louis XVI"" was king of France from 1774 to 1792.
         ";
 
-
-
-
-
-
-
-
-        static void Main(string[] args)
+        static void Main_HowManyYearsWasLouisXIVKing(string[] args)
         {
-
-
             var question = @"How many years was ""Louis XIV"" king of France?";
 
             var client = new OpenAI();
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
             Console.WriteLine($"Answer: {answer}");
             Console.ReadLine();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         static void Main_GenerateMultiChoiceQuestionAboutText(string[] args)
@@ -107,7 +91,7 @@ namespace fAIConsole
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
-            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             foreach (var q in questions)
             {
                 Console.WriteLine(q.Text);
@@ -124,16 +108,16 @@ namespace fAIConsole
         {
             var client = new OpenAI();
             var question = "Who was king of france in 1032?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
             Console.WriteLine($"Answer: {answer}"); // Henry I
-            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.Completions.AnswerNotFoundDefault);
+            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.CompletionsEx.AnswerNotFoundDefault);
 
             question = "Who was king of france in 1812?";
-            answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
             Console.WriteLine($"Answer: {answer}");
-            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.Completions.AnswerNotFoundDefault);
+            PlayAnswerWhoWasKingOfFrance(client, question, answer, client.CompletionsEx.AnswerNotFoundDefault);
 
             Console.ReadLine();
         }

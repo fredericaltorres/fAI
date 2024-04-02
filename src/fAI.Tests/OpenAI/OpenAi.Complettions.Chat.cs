@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using DynamicSugar;
 using static System.Net.Mime.MediaTypeNames;
+using static fAI.OpenAICompletionsEx;
 
 namespace fAI.Tests
 {
@@ -395,8 +396,18 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         public void Summarize_EnglishText()
         {
             var client = new OpenAI();
-            var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
+            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
             var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
+            Assert.NotNull(summarization);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Summarize_EnglishText_SematicFunction()
+        {
+            var client = new OpenAI();
+            var summarizeFunc = client.CompletionsEx.SemanticFunction("Summarize the following text:\r\n[text]");
+            var summarization = summarizeFunc(new { text = ReferenceEnglishTextForSummarization });
             Assert.NotNull(summarization);
         }
 
@@ -405,7 +416,7 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         public void Summarize_EnglishText_InOneLine()
         {
             var client = new OpenAI();
-            var summarization = client.Completions.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English, 
+            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English, 
                                     promptCommand : "Summarize the following text in one line:");
             var expected = "Introducing the \"SwiftGadget X\" - a revolutionary all-in-one gadget that will change your life.";
             Assert.NotNull(summarization);
@@ -423,7 +434,7 @@ We have to shout above the din of our rice crispies
 We can't hear anything at all";
 
             var client = new OpenAI();
-            var summarization = client.Completions.Summarize(text, TranslationLanguages.English);
+            var summarization = client.CompletionsEx.Summarize(text, TranslationLanguages.English);
             var result1 = "A chaotic morning in a suburban family where the grandmother is yelling and the noise of breakfast cereal makes it hard to hear anything.";
             var result2 = "The text describes a chaotic morning in a suburban family, with the grandmother yelling and the noise of their breakfast cereal making it difficult to hear anything.";
 
@@ -471,7 +482,7 @@ We can't hear anything at all";
         {
             var client = new OpenAI();
             var question = "Who was king of france in 1032?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("Henry I", answer);
         }
 
@@ -481,7 +492,7 @@ We can't hear anything at all";
         {
             var client = new OpenAI();
             var question = "Who was king of france in 2016?";
-            var answer = client.Completions.AnswerQuestionBasedOnText(KingOfFrances, question);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Assert.Equal("I could not find an answer.", answer);
         }
 
@@ -494,7 +505,7 @@ We can't hear anything at all";
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
-            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);
 
             var question = questions[0];
@@ -510,7 +521,7 @@ We can't hear anything at all";
             var questionCount = 3;
             var dbFact = new DBFact().AddFacts(KingOfFrances, randomizeOrder: true);
             var client = new OpenAI();
-            var questions = client.Completions.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);
 
             foreach (var question in questions)
