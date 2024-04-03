@@ -11,6 +11,15 @@ using System.Threading.Tasks;
 
 namespace fAI
 {
+    public class EssaiAICsvMapping : ClassMap<EssaiAI>
+    {
+        public EssaiAICsvMapping()
+        {
+            Map(m => m.Url).Name("Url");
+            Map(m => m.Title).Name("Title");
+        }
+    }
+
     public class PresentationAICsvMapping : ClassMap<PresentationAI>
     {
         public PresentationAICsvMapping()
@@ -35,6 +44,26 @@ namespace fAI
                 {
                     csv.Context.RegisterClassMap<PresentationAICsvMapping>();
                     return csv.GetRecords<T>().ToList();
+                }
+            }
+        }
+    }
+
+
+    public class CSVEssaiAILoader
+    {
+        public List<EssaiAI> Load(string fileName)
+        {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                NewLine = Environment.NewLine,
+            };
+            using (var reader = new StreamReader(fileName))
+            {
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<EssaiAICsvMapping>();
+                    return csv.GetRecords<EssaiAI>().ToList();
                 }
             }
         }

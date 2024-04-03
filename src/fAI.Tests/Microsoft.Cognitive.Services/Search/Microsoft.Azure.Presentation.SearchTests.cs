@@ -20,13 +20,16 @@ namespace fAI.Tests
     public class MicrosoftAzureSearchPresentationTests
     {
         const string serviceName = "fai-search";
-        const string csvFile = @"C:\a\PresentationAI.csv";
+        const string csvFile = @"C:\DVT\fAI\src\fAI.Tests\Microsoft.Cognitive.Services\Paul-Graham-Essays.csv";
+        // view-source:https://paulgraham.com/articles.html
 
         [Fact()]
         public void LoadFromCsv()
         {
-            var presentations = PresentationAI.LoadFromCsv(csvFile);
-            Assert.True(presentations.Count > 0);
+            var essays = EssaiAI.LoadFromCsv(csvFile);
+            Assert.True(essays.Count > 0);
+
+            essays.ForEach(e => e.LoadTextFromHtmlPage());
         }
 
         [Fact()]

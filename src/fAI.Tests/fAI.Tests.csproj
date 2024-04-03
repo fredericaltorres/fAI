@@ -101,7 +101,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Microsoft.Cognitive.Services\Paul-Graham-Essays.csv" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>::: copy "$(ProjectDir)\MS.DLL\*.*" "$(TargetDir)"</PostBuildEvent>
