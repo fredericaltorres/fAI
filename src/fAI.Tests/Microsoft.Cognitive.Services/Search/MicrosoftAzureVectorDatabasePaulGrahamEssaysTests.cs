@@ -17,19 +17,19 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class MicrosoftAzureSearchPresentationTests
+    public class MicrosoftAzureVectorDatabasePaulGrahamEssaysTests
     {
         const string serviceName = "fai-search";
         const string csvFile = @"C:\DVT\fAI\src\fAI.Tests\Microsoft.Cognitive.Services\Paul-Graham-Essays.csv";
         // view-source:https://paulgraham.com/articles.html
 
         [Fact()]
-        public void LoadFromCsv()
+        public void LoadFromCsvAndGenerateJsonFile()
         {
             var essays = EssaiAI.LoadFromCsv(csvFile);
             Assert.True(essays.Count > 0);
-
             essays.ForEach(e => e.LoadTextFromHtmlPage());
+            EssaiAI.ToJsonFile(essays, @"C:\DVT\fAI\src\fAI.Tests\Microsoft.Cognitive.Services\Paul-Graham-Essays.json");
         }
 
         [Fact()]

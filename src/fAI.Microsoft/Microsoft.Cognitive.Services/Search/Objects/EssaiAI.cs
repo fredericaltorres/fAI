@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using Deepgram.Models;
 using System.Threading;
+using HtmlAgilityPack;
 
 namespace fAI.Microsoft.Search
 {
@@ -86,6 +87,14 @@ namespace fAI.Microsoft.Search
             return searchIndex;
         }
 
+
+        public static List<EssaiAI> FromJsonFile(string fileName) => 
+            Newtonsoft.Json.JsonConvert.DeserializeObject<List<EssaiAI>>(System.IO.File.ReadAllText(fileName));
+
+        public static void ToJsonFile(List<EssaiAI> essays, string fileName) => 
+            System.IO.File.WriteAllText(fileName, 
+                Newtonsoft.Json.JsonConvert.SerializeObject(essays, Newtonsoft.Json.Formatting.Indented));
+
         public bool LoadTextFromHtmlPage()
         {
             var mc = new ModernWebClient(60);
@@ -93,6 +102,12 @@ namespace fAI.Microsoft.Search
             if (r.Success)
             {
                 var html = r.Text;
+
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(html);
+                var htmlBody = htmlDoc.DocumentNode.SelectSingleNode("//body");
+                this.Text = htmlBody.InnerText;
+
                 return true;
             }
             else return false;

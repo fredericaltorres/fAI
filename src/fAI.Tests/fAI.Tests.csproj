@@ -63,7 +63,7 @@
     <Compile Include="Deepgram\UnitTestBase.cs" />
     <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
-    <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.Presentation.SearchTests.cs" />
+    <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.CityAI.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
@@ -102,6 +102,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Microsoft.Cognitive.Services\Paul-Graham-Essays.json" />
     <None Include="Microsoft.Cognitive.Services\Paul-Graham-Essays.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
