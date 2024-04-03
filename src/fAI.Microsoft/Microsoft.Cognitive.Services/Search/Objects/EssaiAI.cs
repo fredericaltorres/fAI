@@ -8,6 +8,8 @@ using System.Linq;
 using Deepgram.Models;
 using System.Threading;
 using HtmlAgilityPack;
+using static DynamicSugar.DS;
+using System.Diagnostics;
 
 namespace fAI.Microsoft.Search
 {
@@ -35,7 +37,10 @@ namespace fAI.Microsoft.Search
         public string Id { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
-        public string Text { get; set; }
+        //public string Text { get; set; }
+        public List<string> Texts { get; set; }
+        public bool DataReady { get; set; }
+        public List<List<float>> Embedings { get; set; } = new List<List<float>>();
 
         private const string ModelName = "text-embedding-ada-002";
         private const int ModelDimensions = 1536;
@@ -95,22 +100,51 @@ namespace fAI.Microsoft.Search
             System.IO.File.WriteAllText(fileName, 
                 Newtonsoft.Json.JsonConvert.SerializeObject(essays, Newtonsoft.Json.Formatting.Indented));
 
-        public bool LoadTextFromHtmlPage()
+        public bool LoadTextFromHtmlPageAndComputeEmbeding()
         {
-            var mc = new ModernWebClient(60);
-            var r = mc.GET(this.Url);
-            if (r.Success)
+            try
             {
-                var html = r.Text;
-
-                var htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(html);
-                var htmlBody = htmlDoc.DocumentNode.SelectSingleNode("//body");
-                this.Text = htmlBody.InnerText;
-
-                return true;
+                var mc = new ModernWebClient(60);
+                var r = mc.GET(this.Url);
+                if (r.Success)
+                {
+                    var html = r.Text;
+                    var htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(html);
+                    var htmlBody = htmlDoc.DocumentNode.SelectSingleNode("//body");
+                    var text = htmlBody.InnerText.Replace(".  ", ". ");
+                    return this.ComputeEmbeding(text);
+                }
             }
-            else return false;
+            catch (Exception ex)
+            {
+                Debugger.Break();
+            }
+            return false;
+        }
+
+        public bool ComputeEmbeding(string text)
+        {
+            try
+            {
+
+                var client = new OpenAI();
+                var texts = client.Embeddings.BreakDownLongTextBasedOnDot(text);
+                foreach(var t in texts)
+                {
+                    var re = client.Embeddings.Create(t);
+                    if (re.Success)
+                    {
+                        this.Embedings.Add(re.Data[0].Embedding);
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
+            }
+            return false;
         }
 
         public static List<EssaiAI> LoadFromCsv(string fileName)

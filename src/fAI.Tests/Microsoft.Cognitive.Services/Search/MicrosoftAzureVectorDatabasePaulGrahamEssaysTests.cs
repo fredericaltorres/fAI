@@ -28,7 +28,7 @@ namespace fAI.Tests
         {
             var essays = EssaiAI.LoadFromCsv(csvFile);
             Assert.True(essays.Count > 0);
-            essays.ForEach(e => e.LoadTextFromHtmlPage());
+            essays.ForEach(e => e.LoadTextFromHtmlPageAndComputeEmbeding());
             EssaiAI.ToJsonFile(essays, @"C:\DVT\fAI\src\fAI.Tests\Microsoft.Cognitive.Services\Paul-Graham-Essays.json");
         }
 
