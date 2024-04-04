@@ -10,6 +10,8 @@ using System.Threading;
 using HtmlAgilityPack;
 using static DynamicSugar.DS;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.IO;
 
 namespace fAI.Microsoft.Search
 {
@@ -29,18 +31,41 @@ namespace fAI.Microsoft.Search
   "answers": "extractive|count-3",
   "queryLanguage": "en-US"
 }
-     
-     
      */
+    
+    public class EmbedingsData
+    {
+        public string Id { get; set; }
+        public List<string> Texts { get; set; } = new List<string>();
+        
+        public List<List<float>> Embedings { get; set; } = new List<List<float>>();
+
+        public void ToJsonFile(string parentFileName, string subFile)
+        {
+            string fileName = MakeFileName(parentFileName, subFile);
+            System.IO.File.WriteAllText(fileName,
+                               Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented));
+        }
+
+        public static string MakeFileName(string parentFileName, string subFile)
+        {
+            var p = Path.GetDirectoryName(parentFileName);
+            var f = Path.GetFileNameWithoutExtension(parentFileName);
+            var e = Path.GetExtension(parentFileName);
+            var fileName = Path.Combine(p, $"{f}.{subFile}.{e}");
+            return fileName;
+        }
+    }
+
     public partial class EssaiAI
     {
         public string Id { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
-        //public string Text { get; set; }
-        public List<string> Texts { get; set; }
         public bool DataReady { get; set; }
-        public List<List<float>> Embedings { get; set; } = new List<List<float>>();
+
+        [Newtonsoft.Json.JsonIgnore]
+        public List<EmbedingsData> EmbedingsData { get; set; } = new List<EmbedingsData>();
 
         private const string ModelName = "text-embedding-ada-002";
         private const int ModelDimensions = 1536;
@@ -96,9 +121,19 @@ namespace fAI.Microsoft.Search
         public static List<EssaiAI> FromJsonFile(string fileName) => 
             Newtonsoft.Json.JsonConvert.DeserializeObject<List<EssaiAI>>(System.IO.File.ReadAllText(fileName));
 
-        public static void ToJsonFile(List<EssaiAI> essays, string fileName) => 
-            System.IO.File.WriteAllText(fileName, 
+        public static void ToJsonFile(List<EssaiAI> essays, string fileName)
+        {
+            foreach(var e in essays)
+            {
+                foreach(var ed in e.EmbedingsData)
+                {
+                    ed.ToJsonFile(fileName, $"{e.Id}");
+                }
+            }
+
+            File.WriteAllText(fileName,
                 Newtonsoft.Json.JsonConvert.SerializeObject(essays, Newtonsoft.Json.Formatting.Indented));
+        }
 
         public bool LoadTextFromHtmlPageAndComputeEmbeding()
         {
@@ -127,18 +162,31 @@ namespace fAI.Microsoft.Search
         {
             try
             {
-
                 var client = new OpenAI();
                 var texts = client.Embeddings.BreakDownLongTextBasedOnDot(text);
-                foreach(var t in texts)
+
+                var e = new EmbedingsData()
+                {
+                    Id = this.Id,
+                };
+                this.EmbedingsData.Add(e);
+
+                foreach (var t in texts)
                 {
                     var re = client.Embeddings.Create(t);
                     if (re.Success)
                     {
-                        this.Embedings.Add(re.Data[0].Embedding);
+                        this.DataReady = true;
+                        e.Texts.Add(t);
+                        e.Embedings.Add(re.Data[0].Embedding);
+                    }
+                    else
+                    {
+                        Debugger.Break();
+                        this.DataReady = false;
+                        return false;
                     }
                 }
-                
             }
             catch (Exception ex)
             {
