@@ -14,6 +14,10 @@ namespace fAI.Pinecone.Model
         public string host { get; set; }
         public Spec spec { get; set; }
 
+        public CheckIndexPayload CheckIndexPayload { get; set; }
+
+        public int totalVectorCount => CheckIndexPayload == null ? 0 : CheckIndexPayload.totalVectorCount;
+
         public static PineconeIndex FromJson(string json) => 
             Newtonsoft.Json.JsonConvert.DeserializeObject<PineconeIndex>(json);
     }
@@ -87,7 +91,28 @@ namespace fAI.Pinecone.Model
 
         public static UpsetResponse FromJson(string json) =>
             Newtonsoft.Json.JsonConvert.DeserializeObject<UpsetResponse>(json);
-    }   
-    
+    }
+
+
+    public class Namespaces
+    {
+        public Ns1 ns1 { get; set; } // This should be dynamic and not typed
+    }
+
+    public class Ns1
+    {
+        public int vectorCount { get; set; }
+    }
+
+    public class CheckIndexPayload  
+    {
+        public Namespaces namespaces { get; set; }
+        public int dimension { get; set; }
+        public int indexFullness { get; set; }
+        public int totalVectorCount { get; set; }
+
+        public static CheckIndexPayload FromJson(string json) =>
+            Newtonsoft.Json.JsonConvert.DeserializeObject<CheckIndexPayload>(json);
+    }
 }
 

@@ -26,6 +26,8 @@ namespace fAI.VectorDB
         private const string DESCRIBE_INDEXES_URL   = "https://api.pinecone.io/indexes/";
 
         public string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
+        public string CHECK_INDEX_URL(string host) => $"https://{host}/describe_index_stats";
+
 
         protected ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
@@ -39,8 +41,6 @@ namespace fAI.VectorDB
 
             return mc;
         }
-
-       
 
         public PineconeIndex DescribeIndex(string indexName)
         {
@@ -58,6 +58,22 @@ namespace fAI.VectorDB
             {
                 return null;
             }
+        }
+
+        public PineconeIndex CheckIndex(PineconeIndex index)
+        {
+            var sw = Stopwatch.StartNew();
+            var mc = InitWebClient();
+            var response = mc.GET(CHECK_INDEX_URL(index.host));
+            sw.Stop();
+            if (response.Success)
+            {
+                OpenAI.Trace(new { response.Text }, this);
+                var r = CheckIndexPayload.FromJson(response.Text);
+                index.CheckIndexPayload = r;
+                return index;
+            }
+            else return null;
         }
 
         public bool CreateIndex(string indexName, int dimension = 1536, string metric = "cosine",
@@ -91,7 +107,7 @@ namespace fAI.VectorDB
             }
         }
 
-        public UpsetResponse AddVectors(
+        public UpsetResponse UpsertVectors(
             PineconeIndex index, 
             List<string> ids, 
             List<List<float>> vectors, 
