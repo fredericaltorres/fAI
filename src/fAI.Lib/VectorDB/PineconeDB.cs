@@ -22,8 +22,8 @@ namespace fAI.VectorDB
             _environment = Environment.GetEnvironmentVariable("PINECONE_ENVIRONMENT");
         }
 
-        private const string INDEXES_URL            = "https://api.pinecone.io/indexes/";
-        private const string DESCRIBE_INDEXES_URL   = "https://api.pinecone.io/indexes/";
+        private const string INDEXES_URL = "https://api.pinecone.io/indexes";
+        private const string DESCRIBE_INDEXES_URL = "https://api.pinecone.io/indexes/";
 
         public string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
         public string CHECK_INDEX_URL(string host) => $"https://{host}/describe_index_stats";
@@ -79,18 +79,20 @@ namespace fAI.VectorDB
         public bool DeleteIndex(string indexName)
         {
             var mc = InitWebClient();
-            var response = mc.DELETE(INDEXES_URL + indexName);
+            var response = mc.DELETE(INDEXES_URL + "/" + indexName);
             if (response.Success)
             {
                 OpenAI.Trace(new { response.Text }, this);
-                var r = CompletionResponse.FromJson(response.Text);
-                return r.Success;
+                return true;
             }
             else
                 return false;
         }
 
-        public bool CreateIndex(string indexName, int dimension = 1536, string metric = "cosine",
+        public PineconeIndex CreateIndex(
+            string indexName,
+            int dimension = 1536,
+            string metric = "cosine",
             CloudNames cloud = CloudNames.aws,
             string region = "us-east-1",
             string environment = "us-east4-gcp"
@@ -98,12 +100,12 @@ namespace fAI.VectorDB
         {
             var sw = Stopwatch.StartNew();
             var mc = InitWebClient();
-            var p = new CreateIndexInputPayload 
+            var p = new CreateIndexInputPayload
             {
                 name = indexName,
                 dimension = dimension,
                 metric = metric,
-                spec = new Spec { serverless = new Serverless { cloud = cloud.ToString(), region = region} }
+                spec = new Spec { serverless = new Serverless { cloud = cloud.ToString(), region = region } }
             };
             var response = mc.POST(INDEXES_URL, JsonConvert.SerializeObject(p));
             sw.Stop();
@@ -113,13 +115,20 @@ namespace fAI.VectorDB
                 OpenAI.Trace(new { response.Text }, this);
                 var r = CompletionResponse.FromJson(response.Text);
                 r.Stopwatch = sw;
-                return r.Success;
+                WaitForConsistency();
+                return CheckIndex(DescribeIndex(indexName));
             }
             else
             {
-                return false;
+                return null;
             }
         }
+
+        public void WaitForConsistency()
+        {
+            Thread.Sleep(1000 * 3); // Pinecone is eventually consistent
+        }
+
 
         public UpsetResponse UpsertVectors(
             PineconeIndex index, 

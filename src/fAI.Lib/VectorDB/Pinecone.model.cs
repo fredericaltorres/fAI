@@ -4,7 +4,6 @@ using System.Text;
 
 namespace fAI.Pinecone.Model
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class PineconeIndex
     {
         public string name { get; set; }
@@ -39,14 +38,6 @@ namespace fAI.Pinecone.Model
         public string state { get; set; }
     }
 
-
-
-
-
-
-
-
-
     public class CreateIndexInputPayload
     {
         public string name { get; set; }
@@ -54,17 +45,6 @@ namespace fAI.Pinecone.Model
         public string metric { get; set; }
         public Spec spec { get; set; }
     }
-
-    //public class Serverless
-    //{
-    //    public string cloud { get; set; }
-    //    public string region { get; set; }
-    //}
-
-    //public class Spec
-    //{
-    //    public Serverless serverless { get; set; }
-    //}
 
     public enum CloudNames
     {
@@ -92,7 +72,6 @@ namespace fAI.Pinecone.Model
         public static UpsetResponse FromJson(string json) =>
             Newtonsoft.Json.JsonConvert.DeserializeObject<UpsetResponse>(json);
     }
-
 
     public class Namespaces
     {

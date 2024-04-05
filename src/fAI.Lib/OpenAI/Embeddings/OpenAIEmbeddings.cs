@@ -25,6 +25,9 @@ namespace fAI
         const string __url = "https://api.openai.com/v1/embeddings";
 
 
+        public const string EmbeddingAda002 = "text-embedding-ada-002";
+        public const int EmbeddingAda002Dimension = 1536;
+
         const int MaxTextLength = 4096;
 
         // Break down text in string of 4096 characters
@@ -47,7 +50,7 @@ namespace fAI
             return r;
         }
         
-        public EmbeddingResponse Create(string input, string model= "text-embedding-ada-002")
+        public EmbeddingResponse Create(string input, string model = EmbeddingAda002)
         {
             var sw = Stopwatch.StartNew();
             var body = new { input, model };
