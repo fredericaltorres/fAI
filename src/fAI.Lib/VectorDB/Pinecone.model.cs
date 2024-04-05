@@ -70,8 +70,24 @@ namespace fAI.Pinecone.Model
 
     public class PineconeVector
     {
-        public string Id { get; set; }
-        public List<float> Values { get; set; }
-        public Dictionary<string, object> Metadata { get; set; }
+        public string id { get; set; }
+        public List<float> values { get; set; }
+        public Dictionary<string, object> metadata { get; set; }
     }
+
+    public class PineconeVectorContainer
+    {
+        public List<PineconeVector> vectors { get; set; }
+        public string @namespace { get; set; } = "ns1";
+    }
+
+    public class UpsetResponse
+    {
+        public int upsertedCount { get; set; }
+
+        public static UpsetResponse FromJson(string json) =>
+            Newtonsoft.Json.JsonConvert.DeserializeObject<UpsetResponse>(json);
+    }   
+    
 }
+

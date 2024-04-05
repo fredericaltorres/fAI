@@ -25,13 +25,20 @@ namespace fAI
 
         private static string GetWebExceptionJsonErrorObject(Exception ex)
         {
-            if (ex is WebException)
+            try
             {
-                var wex = ex as WebException;
-                using (StreamReader rr = new StreamReader(wex.Response.GetResponseStream()))
+                if (ex is WebException)
                 {
-                    return rr.ReadToEnd();
+                    var wex = ex as WebException;
+                    using (StreamReader rr = new StreamReader(wex.Response.GetResponseStream()))
+                    {
+                        return rr.ReadToEnd();
+                    }
                 }
+            }
+            catch (Exception ex2)
+            {
+                return ex2.Message;
             }
             return null;
         }

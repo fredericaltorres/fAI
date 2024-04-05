@@ -91,26 +91,30 @@ namespace fAI.VectorDB
             }
         }
 
-        public bool AddVectors(PineconeIndex index, List<string> ids, List<List<float>> vectors, List<Dictionary<string, object>> metadatas = null)
+        public UpsetResponse AddVectors(
+            PineconeIndex index, 
+            List<string> ids, 
+            List<List<float>> vectors, 
+            List<Dictionary<string, object>> metadatas = null, string nameSpace = "ns1")
         {
-            var sw = Stopwatch.StartNew();
-            var v = new List<PineconeVector>();
+            var vectorContainer = new PineconeVectorContainer { @namespace = nameSpace };
+            vectorContainer.vectors = new List<PineconeVector>();
             for(int i = 0; i < ids.Count; i++)
-                v.Add(new PineconeVector { Id = ids[i], Values = vectors[i],  Metadata = metadatas[i] });
+                vectorContainer.vectors.Add(new PineconeVector { id = ids[i], values = vectors[i],  
+                    metadata = (metadatas==null ? null : metadatas[i]) 
+                });
 
             var mc = InitWebClient();
-            var url = UPSET_URL(index.name);
-            var response = mc.POST(INDEXES_URL, JsonConvert.SerializeObject(v));
-            sw.Stop();
+            var url = UPSET_URL(index.host);
+            var response = mc.POST(url, JsonConvert.SerializeObject(vectorContainer));
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
-                var r = CompletionResponse.FromJson(response.Text);
-                r.Stopwatch = sw;
-                return r.Success;
+                var r = UpsetResponse.FromJson(response.Text);
+                return r;
             }
-            else return false;
+            else return new UpsetResponse();
         }
     }
 }
