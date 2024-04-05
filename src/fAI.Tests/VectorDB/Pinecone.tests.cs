@@ -54,7 +54,7 @@ namespace fAI.Tests
             index = client.CheckIndex(index);
             Assert.True(index.totalVectorCount > 0);
         }
-
+          
         [Fact()]
         [TestBeforeAfter]
         public void Upsert()
