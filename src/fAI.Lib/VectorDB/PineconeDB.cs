@@ -22,7 +22,7 @@ namespace fAI.VectorDB
             _environment = Environment.GetEnvironmentVariable("PINECONE_ENVIRONMENT");
         }
 
-        private const string INDEXES_URL            = "https://api.pinecone.io/indexes";
+        private const string INDEXES_URL            = "https://api.pinecone.io/indexes/";
         private const string DESCRIBE_INDEXES_URL   = "https://api.pinecone.io/indexes/";
 
         public string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
@@ -74,6 +74,20 @@ namespace fAI.VectorDB
                 return index;
             }
             else return null;
+        }
+
+        public bool DeleteIndex(string indexName)
+        {
+            var mc = InitWebClient();
+            var response = mc.DELETE(INDEXES_URL + indexName);
+            if (response.Success)
+            {
+                OpenAI.Trace(new { response.Text }, this);
+                var r = CompletionResponse.FromJson(response.Text);
+                return r.Success;
+            }
+            else
+                return false;
         }
 
         public bool CreateIndex(string indexName, int dimension = 1536, string metric = "cosine",
