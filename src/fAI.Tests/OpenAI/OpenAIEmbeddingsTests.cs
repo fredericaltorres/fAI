@@ -34,11 +34,23 @@ namespace fAI.Tests
         public void Embeddings_CreateTextVectors()
         {
             var client = new OpenAI();
-
             var input = "Hello world.";
             var r = client.Embeddings.Create(input);
-            Debug.WriteLine(r.GenerateCSharpCode("HelloWorld"));
-            Debug.WriteLine("");
+            Debug.WriteLine(r.GenerateCSharpCode(ToCSharpName(input)));
+
+            input = "Yesterday, all my troubles seemed so far away";
+            r = client.Embeddings.Create(input);
+            Debug.WriteLine(r.GenerateCSharpCode(ToCSharpName(input)));
+
+            input = "Take a sad song and make it better.";
+            r = client.Embeddings.Create(input);
+            Debug.WriteLine(r.GenerateCSharpCode(ToCSharpName(input)));
+
+        }
+
+        private static string ToCSharpName(string input)
+        {
+            return input.Replace(" ", "").Replace(".","");
         }
     }
 }

@@ -101,7 +101,8 @@ namespace fAI
             var vector = Data[0].ToFloatList();
             return $@"
 const string {variableName}_TEXT = ""{Text}"";
-List<float> {variableName}_VECTOR = new List<float>() {{ {vector} }};";
+List<float> {variableName}_VECTOR = new List<float>() {{ {vector} }};
+";
         }
         
     }
