@@ -66,7 +66,6 @@ namespace fAI.Tests
             OpenAI.TraceOn = true;
         }
 
-
         [Fact()]
         [TestBeforeAfter]
         public void DescribeIndex()
@@ -115,7 +114,6 @@ namespace fAI.Tests
             );
             Assert.Equal(1, r2.upsertedCount);
 
-
             var r3 = client.UpsertVectors(index,
                 DS.List("3"),
                 new List<List<float>>() {
@@ -128,10 +126,17 @@ namespace fAI.Tests
             );
             Assert.Equal(1, r3.upsertedCount);
 
-            client.WaitForConsistency();
+            var expectedCount = 3;
 
+            client.WaitForConsistency();
             index = client.CheckIndex(index);
-            Assert.Equal(3, index.totalVectorCount);
+            if(index.totalVectorCount != expectedCount)
+            {
+                client.WaitForConsistency();
+                index = client.CheckIndex(index);
+            }
+
+            Assert.Equal(expectedCount, index.totalVectorCount);
         }
     }
 }
