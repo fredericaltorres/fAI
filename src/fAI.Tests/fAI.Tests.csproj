@@ -78,6 +78,7 @@
     <Compile Include="OpenAI\OpenAi.Complettions.Chat.cs" />
     <Compile Include="OpenAI\TestBeforeAfter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VectorDB\Pinecone.tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\fAI.Lib\fAI.csproj">
@@ -102,8 +103,684 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Microsoft.Cognitive.Services\Paul-Graham-Essays.json" />
-    <None Include="Microsoft.Cognitive.Services\Paul-Graham-Essays.csv" />
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.AZURE.INDEX.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.008d9aa2-14a0-4162-b43e-ea17076cb9c3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.01152183-486d-40a6-86fb-28e826c95fa3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.025a7826-8554-4dce-aa28-48adf1f069b6..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.046b3092-ffd0-403a-a56a-81192dc6fa17..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.05aafcbd-7751-4326-bc0d-c6085ca83233..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.062d4975-ec79-4f32-a8a6-9c214d29dad3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.08726a6c-64cc-4345-8a0a-675e2fd2c74d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.08b93378-151d-462f-96e1-988a21fd3205..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.0cf5663e-3f97-4bff-a14f-653812cb186d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.0fccbf2f-6e18-407d-b69c-f0aad9f031d3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.11a6c15e-3279-4e66-9773-7105297e8383..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1249547e-9141-4353-940b-9904195ce00b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.12b520a0-d430-4c38-9c48-842f91767eb5..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.140ecc44-ef6d-46b2-93a1-58954a191287..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.189d8332-c568-413b-aa2b-d93a86c9b4d9..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.189fa448-b3af-4ad1-886f-367de0e08b1c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.19a8dfd6-9fe9-41d9-b03c-1f188db61389..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1ab26d36-69dd-4166-ba73-bebb1b5b17ba..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1acaa283-722e-4083-be67-dafd48a7a014..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1b276f4c-08ec-46ef-9c62-64e53d4a36b8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1d255f1a-1e76-4fa5-8c86-8c6036baf0e4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.1e58a85d-2e66-4777-bf19-a059c924dbf3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.209e6c35-b62f-4b27-8840-d38c0134f11a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2107d527-8422-48f3-89dd-cfbc74e35e5a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.216ea1cf-92a0-44c9-bbf4-8dff9361cceb..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.24ebc6d7-f2d2-47b0-ba25-5e49d0da9f18..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2548ebe5-6baf-462c-8b37-10ef88775859..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2a5aee57-fc9f-4800-b696-e66dbe7652ff..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2ad59174-00c9-4f1a-8849-410bd6a71968..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2bef2d61-2062-46ab-ab63-c3a84a04509b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2cf4d327-2125-4a69-86b7-0d6ab1e7e7ed..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.2f39eb1c-a0e3-4da7-803e-15f287ea8a2b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.31b30427-c36e-4cc2-b1a6-e15d7b1ed1f2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.32645f09-c301-40b1-800e-7f7030e85891..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.32787802-0fb4-471a-8dac-8a851d3c096e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.32b902ac-5218-4c88-a14d-19f1a54899f4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.331e59f7-87cc-4303-91aa-7e8e5e1dc9e8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.335b571d-3caa-441c-80c4-f3a82730aa62..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3494e115-4dc5-49b3-a002-44a384e2b5d1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.354ea6f3-b1ef-4fb5-b98b-d25915a1aab1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.35e75f78-3fee-4e7d-a340-3585608fff4b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3602693e-7fea-43d0-ab84-3fae74b2a585..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3624ec8b-444c-42c8-9427-0cd9f1bfd9b3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.37da2e99-3af6-45a2-8054-d0bff308fc2d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.38d077c0-07eb-4e62-b4f9-3cc13727290e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3974141a-46c0-4bfc-91ee-1ffc1fc81129..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.39f1fa17-288b-48cf-98b0-215dc1abfa37..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3adfc0f0-1c6c-4865-9f86-286ea69e7ea4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3c50afa0-d2d2-46b1-9c39-8a77093cb89f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.3d06165f-233a-48fa-9fe4-4a4679f19bb1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.403aca67-61ee-45ab-98ff-532fc4be4843..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.452b7ca2-a1c3-4f66-b90b-0c3f019122a9..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.463074e3-b2d0-43c6-a6ea-0d8c77770380..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.4910e18e-dc9f-45ea-a18b-0fd5f6cf1d42..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.49b9578f-3735-44d6-9945-2bbc0d45170e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.4c239321-8c38-4b6d-b2d1-4cb4639a571e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.4c53057c-a685-44fb-b182-a3924c20301c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.4e88cb4a-d667-4166-a8cd-9f585c6ec0ee..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.4f7860e5-3962-4853-ac47-3e653eba7d96..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.512dfdde-9b5e-415e-aef7-3c680f71854c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.52e07fdd-7bba-4c25-b33c-73944d73159a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.533babed-0e01-4529-b6b7-d447143817d5..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5441e154-8cba-46cd-8c4a-def91354beda..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.55f913fb-df01-4dce-8e5c-062c210d16fc..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5627f4d7-e0d9-4393-9605-f5af081d9b31..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.57392b5a-5a1d-453c-910a-96f6b2c9cf8c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.58ec5d0d-07fc-4dea-bc51-d9cd8c56564f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5be770a7-57fd-42e2-babb-765fad5d66ab..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5c94161f-bc1b-4bd7-a85a-95d836e7bba5..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5d33408d-4683-4bdf-8100-c8d2d9948fed..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5da3cd78-e9c6-49bd-b20c-d357ddadd301..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5f9c9258-0207-45e2-8015-a53fca614d49..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5fbfbc9e-1a3e-4947-82fe-66caeca49fa6..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.5fdb9d42-9cec-4654-a549-847b18af2812..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.613f6d44-d451-4575-b395-f0f73226e5dc..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.61872267-ec4a-47c3-a1d6-423ce54787f6..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6211c7b4-806a-46a6-91b1-448dda3ef995..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.644b71ac-5245-4bd0-bf9f-d8d2f784de94..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.656a9ed7-531e-4feb-b1b5-baaaf440b5a1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.65d999ef-b32b-4e34-9586-282186ea96a2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.66713496-7790-411b-8a89-6e908888463f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.66a32d81-7262-4219-b629-3277b51a6629..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6714bd3c-613c-410b-b7d4-ea499311357d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.67360327-d4dc-41ce-9164-9fa6e2620b80..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.67955e65-5b08-49c8-9f88-5a3b6cf56900..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.67d30226-d757-495e-95e3-240f22f78ff2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.69536601-d5f7-4f74-8ec4-e0a38993ee47..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6967f721-971b-4e8c-941c-3aa5733fff67..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6a54c19b-12a2-40ed-a886-680f7f16d16c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6a7c630e-cc4b-46fb-b44d-610c632f1bb8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6bf7a68d-e837-4c73-8798-8fa6b58b1419..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6d9487b7-93d9-40a0-9202-90d8080062b2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.6e1efca4-f846-4ca7-af51-f87b0f905b0f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7398c127-b3d1-4ccb-b7f5-b821d23a1eb4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.73c4c2a5-276c-4f7b-83a7-2347cd41fe26..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.73d98fe1-6e47-49b6-b875-9d9818d2833f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.74686297-7b70-4ff3-b4e2-47e836b61ed8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7491da1e-fbea-4f15-9c3d-5f26992bed61..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.74981795-24c2-4d39-b3f9-42c3282f54f3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.74fd7a32-3f73-418b-9ad9-f73bb25c6505..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.750816d9-a797-4aed-97cc-869f9f77bd10..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.75789d3c-048f-4a1f-93c7-436820ad9e97..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.759ba6ad-969e-4f21-b9c3-cf52eb75cff5..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.763e8f21-5f36-411a-bd38-c3dc9edf3d4b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7665c99d-56c9-41be-90e4-caee931df4cf..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.76fb63e3-f8b2-4930-b568-9397411f52c1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7708b8ca-5beb-41f2-8e4c-945a65d1b1d9..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7732884e-1d8d-4d2e-a342-92bfad89eb6d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.78368590-55eb-4273-94fc-781d0d5b414c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7ab76b34-e613-434e-b4d1-6af4449a409d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7c21cdb1-699a-4832-85a7-5e2f8e8c7cba..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7cd991a2-ec9c-46d6-9baa-48eed7d3374e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7d6293c4-91e1-40f1-b674-41aa0a130843..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7dcd56cd-4dcd-482f-acd2-7506c85b8cf2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7e01bcc4-e465-4917-81b4-7ab6f715cab2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7ef73a2c-eb69-4b2d-a113-cdf3d88efc89..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7f467e6c-8a50-4b87-b75b-ce100afe4f17..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.7faea530-a01e-40a4-8443-d49b7e120df4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.802f7dce-585e-4fc6-b2b3-532c5ffe0edd..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.80e52566-e4bb-4061-8017-aaf66f829993..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.811e5662-dd0b-4121-bca6-659bb4909561..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.82f71448-90e0-4d7d-9973-e9afd8a8c5a8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.82ff3a36-b61e-4c16-9783-7cda141581c7..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.85a16497-154f-45b7-86c5-a8246a65e986..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.86610dbe-142f-4c34-a3f6-a85880de44e8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.89564db7-3071-489d-8a99-6c106378312c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8a1d92ca-8069-4aae-895d-85ba5920eeef..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8a389534-50fb-485a-9eec-5b02c512bbc2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8b4db7f6-3bd5-436d-b185-5b9d61696ef1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8b67618e-86a8-4206-b8d5-d6f5a27c7d15..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8cfcfd89-74a0-42c5-991f-e41b78b0856b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8db9b32c-fb4b-4244-a2c8-01c7b010f1bd..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8e084e36-13f8-4f4f-9ac2-030062471896..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8e9aed9f-6ed0-4556-8501-5340fd198296..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.8f7316b3-2654-4685-a8b2-71e41a4a457d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.90390190-8b69-49fb-aa51-66a0a515e093..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.909d592f-70c3-4a0b-b3f5-58e0a1f61327..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.92ed0184-549b-455a-bdc5-1cffdc1bee5a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.93071996-a706-4220-89ab-a14ba43f1149..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.93c75464-5428-4b26-8e85-18b1cebf1734..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.94071fa3-2999-4dcd-afb4-42c740883664..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.9509fe3f-da06-40cd-a505-fae14890e823..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.95d39db7-c260-4751-abd7-af123d31c8dd..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.9a053fed-aea4-4db8-b53c-c1635020c2f4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.9aa36043-c17c-4afb-b4cd-ccbbf35ffdd4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.9e4c8354-1ee7-4f8a-a7a1-ddbe58a40d7d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a284e5d0-b820-48e1-a3d9-18a7a7cdfaa6..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a2962977-848a-471e-b515-c88afaaa081e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a38ccab1-31e5-479c-b607-821940eaf744..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a5ae46bd-85c0-445e-9756-13dc4a37d092..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a5c909ac-cc0b-4490-b49d-8ce74d586830..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a7e2b7a9-9e65-4557-b0c7-46bb24d691cb..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.a881a883-66b0-4ab3-a6ea-e5d1a15e22f6..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.aae73f96-098a-4327-80b7-9a498c58e2d5..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ac42f685-8164-4006-825e-75b4f5e3cd58..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ad2d64f0-f9de-429e-a4b7-e057529eae45..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ad3436a7-73fb-4253-9345-43f926d47973..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ad827a22-c053-4303-bd82-77d9882020d2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ade39c8d-5f56-4a10-bff0-c65d9549101e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.af62aafa-0672-42f2-8dad-1e50873486ec..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.afa2fef4-5120-4570-a563-3061208ea094..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b02e753c-793a-404c-93fc-c0967d52e51c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b197e4b6-4ca3-4771-91ed-f33433363944..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b1bc4bda-0c64-4775-af5f-cd1313a8b56b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b2fe4b79-c7cc-47c5-ae1a-df6e5c56749d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b32fec78-c371-4f34-bce2-5cb49436aa5b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b3c5cf5d-98ab-4c7e-aba5-921e1d7e76da..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b3dd1519-eb98-483e-9f76-fa9c3e2443cf..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b488f748-45d8-4459-ad0a-f362803b33ad..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b62ead3b-7c52-44ec-a22c-2ec1bc1bbeef..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.b8f81c38-70bf-4228-bf1e-b84f820e9a0b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bac3c805-f957-4ea3-919b-efee02c1f54b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bc22d9f1-6ec9-41cd-9297-deaadc8e2503..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bcb9e872-cf16-43ad-8a6a-018fa0313265..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bd75759e-2892-4f13-bf7d-5b22db52eb53..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.be781727-d7ab-4a62-bec4-b0414aa74364..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bebe82c5-78b5-415f-8e5f-984c92acecb4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.bffec356-da8c-4cdc-9ff3-259e2b8a116b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c0a2e184-597c-4fcc-8cfd-d8abdc67f57b..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c0a50130-80b0-4fb0-8fea-66819c03a95a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c0c4d476-ccdf-42f3-9929-5478aa3774c1..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c28e1ee3-af65-463f-aa4a-310528f9a948..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c349e555-c9f9-4e1d-910e-7a016b74fcdc..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c3ce12af-c7d6-4add-a9d0-f27f4931a7df..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c3eed58e-b07b-4354-a891-2ef7d00993bd..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c44f3817-f9db-4d3f-8774-c0aecd95fc59..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c6bc72ec-6059-4626-87e8-158534429e74..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c7fc61b5-7ac0-4d01-a192-ef82fbb89a7d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.c8f0097e-c20b-4530-8249-328bbeff4359..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.cacfc4a3-fe46-466e-adee-97680157f484..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.cb046b15-c2d7-4d6a-9a8b-b331009102b9..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.cce5cbdb-5886-4089-a50a-db4119bbc661..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.cd7fba28-bdb7-4e04-9b23-aa62ac44c1bb..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.cf3df9a8-847c-461b-a79a-923d3532cdf7..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d06c450c-bb83-44bf-b1d0-9eba1f10afc2..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d4c2f4f1-0924-4163-8657-6ace52315ad8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d572407e-d2bf-4ff7-ae32-3b6738f2975d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d70242ca-5f0c-4c6b-aabf-5201d71752d7..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d83d3e85-88a1-4266-8813-1b750d1e3cf8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.d8bb6dbd-72b8-41ff-97e7-5c30e552d190..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.da3ddea6-df8d-4595-9110-880700a4f9aa..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.db41e63d-aa27-425b-92c7-3685a90f55e9..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.dbcaa53b-7bdc-480e-a68b-775b9d204648..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.dc49c1c6-24aa-4a0e-bbb5-fbd2c81c77bf..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.dce06fc2-7887-4194-8ca5-c3aba22a6ec4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.de0a158e-cb17-4d69-a241-ba9ce34885d4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.e140dcfc-d8a6-4568-94c2-37e5f3b4187e..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.e459fae0-d7cc-4a0d-8a97-ff41ae696a72..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ebed6988-b707-4a7c-92ff-1ab82945b08f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ed2ee18c-f6ed-414b-9f66-db162afd25a8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.eebd3df4-41c5-4e30-8908-490c70a1b6d4..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f061ba52-49e5-4e06-b1b8-94b092352b81..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f1409066-db21-4988-a1a5-88f0750b60c3..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f15c7512-87d6-4d77-810a-98acd941bff8..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f220861a-e16c-4a93-a096-a27e9f12bc2f..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f6f3599f-cb15-4d2c-811a-5480d0ec4996..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f7eb0798-3e57-48ee-b3bb-cc8b8a301f3c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f8594eaf-43cc-43bd-99c4-d83df2bf9b70..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f867bad6-84c2-4984-a79a-1525f80b808d..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f9009fcb-d6bb-421f-9abb-c3050b18424c..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.f9d29bff-1860-4d4c-a9cd-c455c48a7dd7..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.fd83bbf6-58c6-4f5a-a008-accf466a472a..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ff94f88a-9cca-4a62-9bbc-6710e863e741..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

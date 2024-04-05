@@ -70,7 +70,7 @@ namespace fAI.Microsoft.Search
         private const string ModelName = "text-embedding-ada-002";
         private const int ModelDimensions = 1536;
         private const string SemanticSearchConfigName = "my-semantic-config";
-        public const string indexName = "fred-presentation-test-index";
+        public const string indexName = "fai-search-pg-essays";
 
         public static SearchIndex GetIndexMetaData()
         {
@@ -98,7 +98,7 @@ namespace fAI.Microsoft.Search
                 Fields = {
                 new SimpleField("id", SearchFieldDataType.String) { IsKey = true, IsFilterable = true, IsSortable = true, IsFacetable = true },
                 new SearchableField("title") { IsFilterable = true, IsSortable = true },
-                new SearchableField("description") { IsFilterable = true },
+                new SearchableField("url") { IsFilterable = true },
                 new SearchField("titleVector", SearchFieldDataType.Collection(SearchFieldDataType.Single))
                 {
                     IsSearchable = true,
