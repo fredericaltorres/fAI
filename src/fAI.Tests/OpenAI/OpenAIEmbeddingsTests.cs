@@ -7,6 +7,7 @@ using fAI;
 using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace fAI.Tests
 {
@@ -27,6 +28,17 @@ namespace fAI.Tests
             Assert.Equal(r.Data[0].EmbeddingMaxValue, r.Data[0].Embedding.Count);
             Assert.Equal(37, r.Usage.PromptTokens);
             Assert.Equal(37, r.Usage.TotalTokens);
+        }
+
+        [Fact()]
+        public void Embeddings_CreateTextVectors()
+        {
+            var client = new OpenAI();
+
+            var input = "Hello world.";
+            var r = client.Embeddings.Create(input);
+            Debug.WriteLine(r.GenerateCSharpCode("HelloWorld"));
+            Debug.WriteLine("");
         }
     }
 }

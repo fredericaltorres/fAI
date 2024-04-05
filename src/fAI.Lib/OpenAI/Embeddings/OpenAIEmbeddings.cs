@@ -57,6 +57,7 @@ namespace fAI
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var r = EmbeddingResponse.FromJson(response.Text);
+                r.Text = input; 
                 r.Stopwatch = sw;
                 return r;
             }

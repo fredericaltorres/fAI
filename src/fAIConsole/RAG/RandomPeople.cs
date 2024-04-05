@@ -43,6 +43,5 @@ I need the complete data in a json file.
             }
             return sb.ToString();
         }
-
     }
 }

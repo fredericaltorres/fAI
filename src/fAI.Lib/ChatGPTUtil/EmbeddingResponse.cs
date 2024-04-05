@@ -19,6 +19,14 @@ namespace fAI
         [JsonProperty(PropertyName = "embedding")]
         public List<float> Embedding { get; set; }
 
+        public string ToFloatList()
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var f in Embedding)
+                sb.Append(f.ToString() + "f, ");
+            return sb.ToString();
+        }
+
         public readonly int EmbeddingMaxValue = 1536;
 
     }
@@ -69,6 +77,8 @@ namespace fAI
 
     public class EmbeddingResponse : BaseHttpResponse
     {
+        public string Text{ get; set; }
+
         [JsonProperty(PropertyName = "object")]
         public string @Object { get; set; }
 
@@ -85,6 +95,15 @@ namespace fAI
         {
             return JsonUtils.FromJSON<EmbeddingResponse>(text);
         }
+
+        public string GenerateCSharpCode(string variableName)
+        {
+            var vector = Data[0].ToFloatList();
+            return $@"
+const string {variableName}_TEXT = ""{Text}"";
+List<float> {variableName}_VECTOR = new List<float>() {{ {vector} }};";
+        }
+        
     }
 
    
