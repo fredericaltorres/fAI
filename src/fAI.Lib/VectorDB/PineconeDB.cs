@@ -1,4 +1,5 @@
 ﻿using Deepgram.Models;
+using fAI.Pinecone.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading;
 namespace fAI.VectorDB
 {
     // https://docs.pinecone.io/guides/getting-started/quickstart
+    // https://docs.pinecone.io/guides/data/get-an-index-endpoint
     public class PineconeDB : Logger
     {
         private string _key;
@@ -20,7 +22,10 @@ namespace fAI.VectorDB
             _environment = Environment.GetEnvironmentVariable("PINECONE_ENVIRONMENT");
         }
 
-        private const string INDEXES_URL = "https://api.pinecone.io/indexes";
+        private const string INDEXES_URL            = "https://api.pinecone.io/indexes";
+        private const string DESCRIBE_INDEXES_URL   = "https://api.pinecone.io/indexes/";
+
+        public string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
 
         protected ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
@@ -31,30 +36,35 @@ namespace fAI.VectorDB
             if (addJsonContentType)
                 mc.AddHeader("Content-Type", "application/json")
                   .AddHeader("Accept", "application/json");
+
             return mc;
         }
 
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-        public class CreateIndexInputPayload
+       
+
+        public PineconeIndex DescribeIndex(string indexName)
         {
-            public string name { get; set; }
-            public int dimension { get; set; }
-            public string metric { get; set; }
-            public Spec spec { get; set; }
+            var sw = Stopwatch.StartNew();
+            var mc = InitWebClient();
+            var response = mc.GET(DESCRIBE_INDEXES_URL + indexName);
+            sw.Stop();
+            if (response.Success)
+            {
+                OpenAI.Trace(new { response.Text }, this);
+                var r = PineconeIndex.FromJson(response.Text);
+                return r;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        public class Serverless
-        {
-            public string cloud { get; set; }
-            public string region { get; set; }
-        }
-
-        public class Spec
-        {
-            public Serverless serverless { get; set; }
-        }
-
-        public bool CreateIndex(string indexName, int dimension = 1536, string metric = "cosine", string cloud = "aws", string region = "us-east4-gcp")
+        public bool CreateIndex(string indexName, int dimension = 1536, string metric = "cosine",
+            CloudNames cloud = CloudNames.aws,
+            string region = "us-east-1",
+            string environment = "us-east4-gcp"
+        )
         {
             var sw = Stopwatch.StartNew();
             var mc = InitWebClient();
@@ -63,7 +73,7 @@ namespace fAI.VectorDB
                 name = indexName,
                 dimension = dimension,
                 metric = metric,
-                spec = new Spec { serverless = new Serverless { cloud = cloud, region = region /*"us-west-2"*/ } }
+                spec = new Spec { serverless = new Serverless { cloud = cloud.ToString(), region = region} }
             };
             var response = mc.POST(INDEXES_URL, JsonConvert.SerializeObject(p));
             sw.Stop();
@@ -77,14 +87,30 @@ namespace fAI.VectorDB
             }
             else
             {
-                //return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
                 return false;
             }
         }
 
-        public void AddVectors(string indexName, List<string> ids, List<float[]> vectors, List<Dictionary<string, object>> metadatas)
+        public bool AddVectors(PineconeIndex index, List<string> ids, List<List<float>> vectors, List<Dictionary<string, object>> metadatas = null)
         {
-           
+            var sw = Stopwatch.StartNew();
+            var v = new List<PineconeVector>();
+            for(int i = 0; i < ids.Count; i++)
+                v.Add(new PineconeVector { Id = ids[i], Values = vectors[i],  Metadata = metadatas[i] });
+
+            var mc = InitWebClient();
+            var url = UPSET_URL(index.name);
+            var response = mc.POST(INDEXES_URL, JsonConvert.SerializeObject(v));
+            sw.Stop();
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+                var r = CompletionResponse.FromJson(response.Text);
+                r.Stopwatch = sw;
+                return r.Success;
+            }
+            else return false;
         }
     }
 }
