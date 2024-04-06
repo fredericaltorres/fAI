@@ -43,6 +43,11 @@ namespace fAI.VectorDB
             return mc;
         }
 
+        public bool ExistsIndex(string indexName)
+        {
+            return DescribeIndex(indexName) != null;
+        }
+
         public PineconeIndex DescribeIndex(string indexName)
         {
             var mc = InitWebClient();
@@ -59,13 +64,20 @@ namespace fAI.VectorDB
             }
         }
 
-        public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, string query, int topK, bool includeValues = true, string @namespace = "ns1")
+        public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, string query, int topK, bool includeValues = true, string @namespace = "ns1", float minimumScore = -1)
         {
             var client = new OpenAI();
             var ebs = new List<EmbeddingRecord>();
             var r = client.Embeddings.Create(query);
             if(r.Success)
-                return SimilaritySearch(index, r.Data[0].Embedding, topK, includeValues, @namespace);
+            {
+                var rr = SimilaritySearch(index, r.Data[0].Embedding, topK, includeValues, @namespace);
+                if (minimumScore != -1)
+                {
+                    rr.matches = rr.matches.FindAll(m => m.score >= minimumScore);
+                }
+                return rr;
+            }
             else
                 return new SimilaritySearchPayLoad { Exception = new PineconeException("Failed to get embedding", r.Exception) };
         }
