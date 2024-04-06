@@ -781,6 +781,9 @@
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ff94f88a-9cca-4a62-9bbc-6710e863e741..json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="VectorDB\Revolver.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

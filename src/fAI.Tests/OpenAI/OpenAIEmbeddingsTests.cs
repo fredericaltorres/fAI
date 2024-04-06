@@ -535,14 +535,21 @@ Of the beginning, of the beginning
         [Fact()]
         public void Embeddings_CreateTextVectors()
         {
+            var title = Revolver.Keys.First();
             var client = new OpenAI();
             var ebs = new List<EmbeddingRecord>();
-            foreach (var kvp in Revolver)
+            var itemIndex = 0;
+            foreach (var e in Revolver)
             {
-                var r = client.Embeddings.Create(kvp.Value);
-                ebs.Add(r.GenerateEmbeddingRecord(ToCSharpName(kvp.Key)));
+                var r = client.Embeddings.Create(e.Value);
+                var id = $"{title} - {e.Key}";
+                if(itemIndex == 0) 
+                    id = $"{title}"; // the first item is a summary of the album
+
+                ebs.Add(r.GenerateEmbeddingRecord(id));
+                itemIndex += 1;
             }
-            EmbeddingRecord.ToJsonFile(ebs, @"c:\temp\Revolver.json");
+            EmbeddingRecord.ToJsonFile(ebs, @"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
 
             //var input = "Hello world.";
             //var r = client.Embeddings.Create(input);
@@ -555,7 +562,6 @@ Of the beginning, of the beginning
             //input = "Take a sad song and make it better.";
             //r = client.Embeddings.Create(input);
             //Debug.WriteLine(r.GenerateCSharpCode(ToCSharpName(input)));
-
         }
 
         private static string ToCSharpName(string input)

@@ -111,7 +111,6 @@ namespace fAI.Tests
             }
 
             Assert.Equal(expectedCount, index.totalVectorCount);
-
             var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1);
         }
 
@@ -122,6 +121,27 @@ namespace fAI.Tests
             var client = new PineconeDB();
             var index = client.GetIndex(MyFixture.indexName);
             var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1, includeValues: !false);
+        }
+        // EmbeddingRecord.ToJsonFile(ebs, @"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Beatles_Revolver_CreateIndex()
+        {
+            var indexName = "beetles-revolver";
+            var client = new PineconeDB();
+            var index = client.CreateIndex(indexName);
+            
+            Assert.True(index.totalVectorCount == 0);
+
+            var e = EmbeddingRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
+
+            foreach(var er in e)
+            {
+                var pv = new PineconeVector { id = er.Id, values = er.Embedding, metadata = DS.Dictionary(new { text = er.Text })};
+                var r1 = client.UpsertVectors(index, new List<PineconeVector> { pv });
+                Assert.Equal(1, r1.upsertedCount);
+            }
         }
     }
 }
