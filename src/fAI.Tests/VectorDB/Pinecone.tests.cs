@@ -136,8 +136,22 @@ namespace fAI.Tests
             var client = new PineconeDB();
             var index = client.GetIndex(BeatlesRevolverIndexName);
             var query = "taxation policy in england";
-
             var rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
+
+            query = "under the influence of drugs";
+            rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
+
+            query = "Rock and roll";
+            rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
+
+            query = "Drugs and medecine";
+            rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
+
+            query = "People and love";
+            rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
+
+            query = "People and job";
+            rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
         }
     }
 }
