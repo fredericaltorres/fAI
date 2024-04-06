@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 
@@ -25,9 +26,9 @@ namespace fAI.VectorDB
         private const string INDEXES_URL = "https://api.pinecone.io/indexes";
         private const string DESCRIBE_INDEXES_URL = "https://api.pinecone.io/indexes/";
 
-        public string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
-        public string CHECK_INDEX_URL(string host) => $"https://{host}/describe_index_stats";
-
+        private string UPSET_URL(string host) => $"https://{host}/vectors/upsert";
+        private string CHECK_INDEX_URL(string host) => $"https://{host}/describe_index_stats";
+        private string QUEY_INDEX_URL(string host) => $"https://{host}/query";
 
         protected ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
@@ -44,10 +45,8 @@ namespace fAI.VectorDB
 
         public PineconeIndex DescribeIndex(string indexName)
         {
-            var sw = Stopwatch.StartNew();
             var mc = InitWebClient();
             var response = mc.GET(DESCRIBE_INDEXES_URL + indexName);
-            sw.Stop();
             if (response.Success)
             {
                 OpenAI.Trace(new { response.Text }, this);
@@ -58,6 +57,37 @@ namespace fAI.VectorDB
             {
                 return null;
             }
+        }
+
+        public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, List<float> vector, int topK, bool includeValues = true, string @namespace = "ns1")
+        {
+            var sw = Stopwatch.StartNew();
+            var mc = InitWebClient();
+            var payload = new {
+                @namespace,
+                vector,
+                topK,
+                includeValues
+            };
+            var response = mc.POST(QUEY_INDEX_URL(index.host), JsonConvert.SerializeObject(payload));
+            sw.Stop();
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+                var r = SimilaritySearchPayLoad.FromJson(response.Text);
+                r.Stopwatch = sw;
+                return r;
+            }
+            else
+            {
+                return new SimilaritySearchPayLoad { Exception = new PineconeException($"{response.Exception.Message}", response.Exception) };
+            }
+        }
+
+        public PineconeIndex GetIndex(string indexName)
+        {
+            return this.CheckIndex(this.DescribeIndex(indexName));
         }
 
         public PineconeIndex CheckIndex(PineconeIndex index)
@@ -85,8 +115,7 @@ namespace fAI.VectorDB
                 OpenAI.Trace(new { response.Text }, this);
                 return true;
             }
-            else
-                return false;
+            else return false;
         }
 
         public PineconeIndex CreateIndex(
@@ -118,10 +147,7 @@ namespace fAI.VectorDB
                 WaitForConsistency();
                 return CheckIndex(DescribeIndex(indexName));
             }
-            else
-            {
-                return null;
-            }
+            else return null;
         }
 
         public void WaitForConsistency()
@@ -129,20 +155,14 @@ namespace fAI.VectorDB
             Thread.Sleep(1000 * 3); // Pinecone is eventually consistent
         }
 
-
         public UpsetResponse UpsertVectors(
-            PineconeIndex index, 
-            List<string> ids, 
-            List<List<float>> vectors, 
-            List<Dictionary<string, object>> metadatas = null, string nameSpace = "ns1")
+            PineconeIndex index,
+            List<PineconeVector> pineconeVectors,
+            string nameSpace = "ns1")
         {
             var vectorContainer = new PineconeVectorContainer { @namespace = nameSpace };
-            vectorContainer.vectors = new List<PineconeVector>();
-            for(int i = 0; i < ids.Count; i++)
-                vectorContainer.vectors.Add(new PineconeVector { id = ids[i], values = vectors[i],  
-                    metadata = (metadatas==null ? null : metadatas[i]) 
-                });
-
+            vectorContainer.vectors = pineconeVectors;
+            
             var mc = InitWebClient();
             var url = UPSET_URL(index.host);
             var response = mc.POST(url, JsonConvert.SerializeObject(vectorContainer));
@@ -153,7 +173,7 @@ namespace fAI.VectorDB
                 var r = UpsetResponse.FromJson(response.Text);
                 return r;
             }
-            else return new UpsetResponse();
+            else return new UpsetResponse { Exception = new PineconeException($"{response.Exception.Message}", response.Exception) };
         }
     }
 }

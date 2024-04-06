@@ -37,6 +37,20 @@ namespace fAI
         {
         }
     }
+
+    public class PineconeException : Exception
+    {
+        public PineconeException(string message)
+            : base(message)
+        {
+        }
+        public PineconeException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
 }
+
+
 
 

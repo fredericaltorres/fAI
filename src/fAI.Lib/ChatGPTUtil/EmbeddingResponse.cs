@@ -75,6 +75,24 @@ namespace fAI
         }
     }
 
+    public class EmbeddingRecord
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+        public List<float> Embedding { get; set; }
+
+        public static void ToJsonFile(List<EmbeddingRecord> embeddingRecords, string fileName)
+        {
+            var json = JsonUtils.ToJSON(embeddingRecords);
+            File.WriteAllText(fileName, json);
+        }
+        public static List<EmbeddingRecord> FromJsonFile(string fileName)
+        {
+            var json = File.ReadAllText(fileName);
+            return JsonUtils.FromJSON<List<EmbeddingRecord>>(json);
+        }
+    }
+
     public class EmbeddingResponse : BaseHttpResponse
     {
         public string Text{ get; set; }
@@ -96,17 +114,23 @@ namespace fAI
             return JsonUtils.FromJSON<EmbeddingResponse>(text);
         }
 
-        public string GenerateCSharpCode(string variableName)
+        private string CleanString(string s)
         {
-            var vector = Data[0].ToFloatList();
-            return $@"
-const string {variableName}_TEXT = ""{Text}"";
-List<float> {variableName}_VECTOR = new List<float>() {{ {vector} }};
-";
+            return s.Replace(Environment.NewLine, ". ").Replace("\n", ". ").Replace("\r", ". ").Replace("..", ".").Replace(". . ", ". ");
         }
-        
+
+        public EmbeddingRecord GenerateEmbeddingRecord(string id)
+        {
+            var er = new EmbeddingRecord();
+            er.Text = Text;
+            er.Embedding = Data[0].Embedding;
+            er.Id = id;
+            return er;
+//            var vector = Data[0].ToFloatList();
+//            return $@"
+//const string {variableName}_TEXT = ""{CleanString(Text)}"";
+//List<float> {variableName}_VECTOR = new List<float>() {{ {vector} }};
+//";
+        }
     }
-
-   
-
 }

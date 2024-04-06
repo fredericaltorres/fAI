@@ -65,7 +65,7 @@ namespace fAI.Pinecone.Model
         public string @namespace { get; set; } = "ns1";
     }
 
-    public class UpsetResponse
+    public class UpsetResponse : BaseHttpResponse
     {
         public int upsertedCount { get; set; }
 
@@ -93,5 +93,34 @@ namespace fAI.Pinecone.Model
         public static CheckIndexPayload FromJson(string json) =>
             Newtonsoft.Json.JsonConvert.DeserializeObject<CheckIndexPayload>(json);
     }
+
+
+
+
+
+
+    public class Match
+    {
+        public string id { get; set; }
+        public double score { get; set; }
+        public List<double> values { get; set; }
+    }
+
+    public class SimilaritySearchPayLoad : BaseHttpResponse
+    {
+        public List<object> results { get; set; }
+        public List<Match> matches { get; set; }
+        public string @namespace { get; set; }
+        public Usage usage { get; set; }
+
+        public static SimilaritySearchPayLoad FromJson(string json) => Newtonsoft.Json.JsonConvert.DeserializeObject<SimilaritySearchPayLoad>(json);
+    }
+
+    public class Usage
+    {
+        public int readUnits { get; set; }
+    }
+
+
 }
 

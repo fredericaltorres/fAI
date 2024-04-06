@@ -16,6 +16,7 @@ using fAI.VectorDB;
 using static Azure.Search.Documents.Indexes.Models.LexicalAnalyzerName;
 using Azure;
 using System.Threading;
+using fAI.Pinecone.Model;
 
 namespace fAI.Tests
 {
@@ -25,23 +26,22 @@ namespace fAI.Tests
 
         public MyFixture()
         {
-            DeleteIndex();
-            var client = new PineconeDB();
-            client.WaitForConsistency();
-            var index = client.CreateIndex(indexName);
-            Assert.True(index.totalVectorCount == 0);
+            //DeleteIndex();
+            //var client = new PineconeDB();
+            //client.WaitForConsistency();
+            //var index = client.CreateIndex(indexName);
+            //Assert.True(index.totalVectorCount == 0);
         }
 
         public void Dispose()
         {
-            DeleteIndex();
+            //DeleteIndex();
         }
 
         private static void DeleteIndex()
         {
             var client = new PineconeDB();
             client.DeleteIndex(MyFixture.indexName);
-            
         }
 
         // Add methods, properties etc., that you want to use in your tests
@@ -90,41 +90,15 @@ namespace fAI.Tests
         {
             var client = new PineconeDB();
             var index = client.DescribeIndex(MyFixture.indexName);
-            var r1 = client.UpsertVectors(index,
-                DS.List("1"),
-                new List<List<float>>() {
-                    Helloworld_VECTOR
-                },
-                new List<Dictionary<string, object>>()
-                {
-                    DS.Dictionary(new { text = Helloworld_TEXT  })
-                }
-            ); ;
-            Assert.Equal(1, r1.upsertedCount);
+            var pineconeVectors = new List<PineconeVector>() 
+            {
+                new PineconeVector { id = "1", values = Helloworld_VECTOR, metadata = DS.Dictionary(new { text = Helloworld_TEXT })},
+                new PineconeVector { id = "2", values = Yesterdayallmytroublesseemedsofaraway_VECTOR, metadata = DS.Dictionary(new { text = Yesterdayallmytroublesseemedsofaraway_TEXT })},
+                new PineconeVector { id = "3", values = Takeasadsongandmakeitbetter_VECTOR, metadata = DS.Dictionary(new { text = Takeasadsongandmakeitbetter_TEXT })},
+            };
 
-            var r2 = client.UpsertVectors(index,
-                DS.List("2"),
-                new List<List<float>>() {
-                    Yesterdayallmytroublesseemedsofaraway_VECTOR
-                },
-                new List<Dictionary<string, object>>()
-                {
-                    DS.Dictionary(new { text = Yesterdayallmytroublesseemedsofaraway_TEXT  })
-                }
-            );
-            Assert.Equal(1, r2.upsertedCount);
-
-            var r3 = client.UpsertVectors(index,
-                DS.List("3"),
-                new List<List<float>>() {
-                    Takeasadsongandmakeitbetter_VECTOR
-                },
-                new List<Dictionary<string, object>>()
-                {
-                    DS.Dictionary(new { text = Takeasadsongandmakeitbetter_TEXT  })
-                }
-            );
-            Assert.Equal(1, r3.upsertedCount);
+            var r1 = client.UpsertVectors(index, pineconeVectors);
+            Assert.Equal(3, r1.upsertedCount);
 
             var expectedCount = 3;
 
@@ -137,6 +111,17 @@ namespace fAI.Tests
             }
 
             Assert.Equal(expectedCount, index.totalVectorCount);
+
+            var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void SimilaritySearch()
+        {
+            var client = new PineconeDB();
+            var index = client.GetIndex(MyFixture.indexName);
+            var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1, includeValues: !false);
         }
     }
 }
