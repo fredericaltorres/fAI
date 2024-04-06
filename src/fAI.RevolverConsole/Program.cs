@@ -54,7 +54,13 @@ namespace fAI.RevolverConsole
             var message = "Enter search criteria about the lyrics of the Beatles' Album Revolver ?";
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
-            while(true)
+
+            var client = new PineconeDB();
+            var index = client.GetIndex(BeatlesRevolverIndexName);
+            var minimumScore = 0.75f;
+            var maxEntry = 3;
+
+            while (true)
             {
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit")
@@ -62,10 +68,7 @@ namespace fAI.RevolverConsole
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var client = new PineconeDB();
-                    var index = client.GetIndex(BeatlesRevolverIndexName);
-                    var minimumScore = 0.75f;
-                    var response = client.SimilaritySearch(index, criteria, 3, minimumScore: minimumScore);
+                    var response = client.SimilaritySearch(index, criteria, maxEntry, minimumScore: minimumScore);
                     foreach (var r in response.matches)
                         WriteAnswer($"Id: {r.id}, {r.score}");
                     Console.WriteLine($"");
