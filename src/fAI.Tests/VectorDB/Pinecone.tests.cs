@@ -1,22 +1,10 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System;
-using fAI;
 using Xunit;
-using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Newtonsoft.Json;
 using DynamicSugar;
-using static System.Net.Mime.MediaTypeNames;
-using static fAI.OpenAICompletionsEx;
 using fAI.VectorDB;
-using static Azure.Search.Documents.Indexes.Models.LexicalAnalyzerName;
-using Azure;
-using System.Threading;
 using fAI.Pinecone.Model;
+using System.Linq;
 
 namespace fAI.Tests
 {
@@ -26,16 +14,16 @@ namespace fAI.Tests
 
         public MyFixture()
         {
-            //DeleteIndex();
-            //var client = new PineconeDB();
-            //client.WaitForConsistency();
-            //var index = client.CreateIndex(indexName);
-            //Assert.True(index.totalVectorCount == 0);
+            DeleteIndex();
+            var client = new PineconeDB();
+            client.WaitForConsistency();
+            var index = client.CreateIndex(indexName);
+            Assert.True(index.totalVectorCount == 0);
         }
 
         public void Dispose()
         {
-            //DeleteIndex();
+            DeleteIndex();
         }
 
         private static void DeleteIndex()
@@ -43,9 +31,6 @@ namespace fAI.Tests
             var client = new PineconeDB();
             client.DeleteIndex(MyFixture.indexName);
         }
-
-        // Add methods, properties etc., that you want to use in your tests
-        public int ComputeValue() => 42;
     }
 
     [Collection("Sequential")]
@@ -70,8 +55,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void DescribeIndex()
         {
-            var client = new PineconeDB();
-            var index = client.DescribeIndex(MyFixture.indexName);
+            var index = new PineconeDB().DescribeIndex(MyFixture.indexName);
         }
 
         [Fact()]
@@ -122,15 +106,16 @@ namespace fAI.Tests
             var index = client.GetIndex(MyFixture.indexName);
             var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1, includeValues: !false);
         }
-        // EmbeddingRecord.ToJsonFile(ebs, @"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
+
+        const string BeatlesRevolverIndexName = "beetles-revolver";
 
         [Fact()]
         [TestBeforeAfter]
         public void Beatles_Revolver_CreateIndex()
         {
-            var indexName = "beetles-revolver";
+            
             var client = new PineconeDB();
-            var index = client.CreateIndex(indexName);
+            var index = client.CreateIndex(BeatlesRevolverIndexName);
             
             Assert.True(index.totalVectorCount == 0);
 
@@ -142,6 +127,17 @@ namespace fAI.Tests
                 var r1 = client.UpsertVectors(index, new List<PineconeVector> { pv });
                 Assert.Equal(1, r1.upsertedCount);
             }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Beatles_Revolver_SimilaritySearch()
+        {
+            var client = new PineconeDB();
+            var index = client.GetIndex(BeatlesRevolverIndexName);
+            var query = "taxation policy in england";
+
+            var rrr = client.SimilaritySearch(index, query, 3, includeValues: !false);
         }
     }
 }
