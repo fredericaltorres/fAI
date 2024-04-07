@@ -57,22 +57,30 @@ namespace fAI.RevolverConsole
 
             var client = new PineconeDB();
             var index = client.GetIndex(BeatlesRevolverIndexName);
-            var minimumScore = 0.75f;
-            var maxEntry = 3;
+            var minimumScore = 0.75f/3;
+            var topK = 3;
+
+            var inMemoryEmbeddingRecords = EmbeddingRecord.FromJsonFile(@".\Revolver.json");
 
             while (true)
             {
                 var criteria = Console.ReadLine().Trim();
-                if (criteria == "exit")
+                if (criteria == "exit" || criteria == "quit")
                     break;
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var response = client.SimilaritySearch(index, criteria, maxEntry, minimumScore: minimumScore);
+                    var response = client.SimilaritySearch(index, criteria, topK, minimumScore: minimumScore);
                     foreach (var r in response.matches)
                         WriteAnswer($"Id: {r.id}, {r.score}");
                     Console.WriteLine($"");
+
+                    var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(client.LastQuery, inMemoryEmbeddingRecords, topK, minimumScore);
+                    foreach (var r in inMemoryResponse)
+                        WriteAnswer($"Id: {r.Id}, {r.Score}");
+                    Console.WriteLine($"");
                 }
+
                 WriteQuestion(message);
             }
         }
