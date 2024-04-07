@@ -57,7 +57,7 @@ namespace fAI.RevolverConsole
 
             var client = new PineconeDB();
             var index = client.GetIndex(BeatlesRevolverIndexName);
-            var minimumScore = 0.75f/3;
+            var minimumScore = 0.75f;
             var topK = 3;
 
             var inMemoryEmbeddingRecords = EmbeddingRecord.FromJsonFile(@".\Revolver.json");
