@@ -5,6 +5,7 @@ using System.Text;
 
 namespace fAI.VectorDB
 {
+    // https://en.wikipedia.org/wiki/Cosine_similarity
     public static class SimilaritySearchEngine
     {
         public static List<EmbeddingRecord> SimilaritySearch(
@@ -37,17 +38,13 @@ namespace fAI.VectorDB
 
         private static double DotProduct(float[] vecA, float[] vecB)
         {
-            // I'm not validating inputs here for simplicity.            
             double dotProduct = 0;
             for (var i = 0; i < vecA.Length; i++)
-            {
                 dotProduct += (vecA[i] * vecB[i]);
-            }
 
             return dotProduct;
         }
-
-        // Magnitude of the vector is the square root of the dot product of the vector with itself.
+        
         private static double Magnitude(float[] vector)
         {
             return Math.Sqrt(DotProduct(vector, vector));
