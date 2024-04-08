@@ -60,8 +60,6 @@ namespace fAI.RevolverConsole
             var minimumScore = 0.75f;
             var topK = 3;
 
-            var inMemoryEmbeddingRecords = EmbeddingRecord.FromJsonFile(@".\Revolver.json");
-
             while (true)
             {
                 var criteria = Console.ReadLine().Trim();
@@ -74,11 +72,6 @@ namespace fAI.RevolverConsole
                     foreach (var r in response.matches)
                         WriteAnswer($"Id: {r.id}, {r.score}");
                     Console.WriteLine($"");
-
-                    var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(client.LastQuery, inMemoryEmbeddingRecords, topK, minimumScore);
-                    foreach (var r in inMemoryResponse)
-                        WriteAnswer($"Id: {r.Id}, {r.Score}");
-                    Console.WriteLine($"");
                 }
 
                 WriteQuestion(message);
@@ -86,3 +79,14 @@ namespace fAI.RevolverConsole
         }
     }
 }
+/*
+ 
+var inMemoryEmbeddingRecords = EmbeddingRecord.FromJsonFile(@".\Revolver.json");
+
+
+var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), inMemoryEmbeddingRecords, topK, minimumScore);
+foreach (var r in inMemoryResponse)
+WriteAnswer($"Id: {r.Id}, {r.Score}");
+Console.WriteLine($"");
+ 
+ */

@@ -67,13 +67,15 @@ namespace fAI
             string text,
             string question,
             string context = @"
-                    Use the provided article delimited by triple quotes to answer the question.
+                    Use the provided article delimited by triple quotes to answer the question:
                     ""[question]"".
                     - Answer with a JSON object with the property 'answer'.
                     - If the answer cannot be found in the article, write ""[not_found]""
             ",
-            string answerNotFound = _answerNotFoundDefault)
+            string answerNotFound = _answerNotFoundDefault,
+            bool gpt35 = false)
         {
+
             context = context.Template(new { question, not_found = answerNotFound }, "[", "]");
             var dataAndQuestion = $@"
 """"""
@@ -81,7 +83,8 @@ namespace fAI
 """"""
 ";
             var client = new OpenAI();
-            var p = new Prompt_GPT_4
+
+            GPTPrompt p = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage>()
                 {
@@ -89,6 +92,21 @@ namespace fAI
                     new GPTMessage{ Role =  MessageRole.user, Content = dataAndQuestion }
                 }
             };
+
+            if (gpt35)
+            {
+                p = new Prompt_GPT_35_Turbo// Prompt_GPT_35_Turbo
+                {
+                    //PrePrompt = context,
+                    //Text = dataAndQuestion,
+                    Messages = new List<GPTMessage>()
+                    {
+                        new GPTMessage{ Role =  MessageRole.system, Content = context },
+                        new GPTMessage{ Role =  MessageRole.user, Content = dataAndQuestion }
+                    }
+                };
+            }
+
             var response = client.Completions.Create(p);
             if (response.Success)
             {

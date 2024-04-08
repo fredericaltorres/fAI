@@ -11,12 +11,25 @@
         }
     }
 
+    
+
     public class Prompt_GPT_35_Turbo : GPTPrompt
     {
         public Prompt_GPT_35_Turbo() : base()
         {
             Model = "gpt-3.5-turbo";
             Url = "https://api.openai.com/v1/chat/completions";
+            MaxTokens = 2000;
+            NewTokens = 400;
+        }
+    }
+
+    public class Prompt_GPT_35_DaVinci : GPTPrompt
+    {
+        public Prompt_GPT_35_DaVinci() : base()
+        {
+            Model = "davinci-002";
+            Url = "https://api.openai.com/v1/engines/davinci-002/completions";
             MaxTokens = 2000;
             NewTokens = 400;
         }

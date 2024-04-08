@@ -64,25 +64,31 @@ namespace fAI.VectorDB
             }
         }
 
-        public List<float> LastQuery { get; set; }
+        public List<float> ToVector(string text)
+        {
+            var client = new OpenAI();
+            var r = client.Embeddings.Create(text);
+            if (r.Success)
+            {
+                return r.Data[0].Embedding;
+            }
+            else
+                return null;
+        }
 
         public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, string query, int topK, bool includeValues = false, string @namespace = "ns1", float minimumScore = -1)
         {
             var client = new OpenAI();
             var ebs = new List<EmbeddingRecord>();
-            var r = client.Embeddings.Create(query);
-            if(r.Success)
+            var queryVector = ToVector(query);
+            if (queryVector != null)
             {
-                LastQuery = r.Data[0].Embedding;
-                var rr = SimilaritySearch(index, r.Data[0].Embedding, topK, includeValues, @namespace);
+                var rr = SimilaritySearch(index, queryVector, topK, includeValues, @namespace);
                 if (minimumScore != -1)
-                {
                     rr.matches = rr.matches.FindAll(m => m.score >= minimumScore);
-                }
                 return rr;
             }
-            else
-                return new SimilaritySearchPayLoad { Exception = new PineconeException("Failed to get embedding", r.Exception) };
+            else return new SimilaritySearchPayLoad { Exception = new PineconeException("Failed to get embedding") };
         }
 
         public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, List<float> vector, int topK, bool includeValues = true, string @namespace = "ns1")

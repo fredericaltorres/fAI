@@ -6,8 +6,21 @@ using System.Text;
 namespace fAI.VectorDB
 {
     // https://en.wikipedia.org/wiki/Cosine_similarity
+    // https://cookbook.openai.com/
     public static class SimilaritySearchEngine
     {
+        public static List<float> ToVector(string text)
+        {
+            var client = new OpenAI();
+            var r = client.Embeddings.Create(text);
+            if (r.Success)
+            {
+                return r.Data[0].Embedding;
+            }
+            else
+                return null;
+        }
+
         public static List<EmbeddingRecord> SimilaritySearch(
             List<float> queryVector, 
             List<EmbeddingRecord> embeddingRecords, int topK = 3, double minimumScore = 0.75)
