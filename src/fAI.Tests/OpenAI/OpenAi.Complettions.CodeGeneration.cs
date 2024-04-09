@@ -40,11 +40,11 @@ namespace fAI.Tests
             };
             var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
-            DS.Assert.Words(response.Text, "python & Hello & Word");
+            DS.Assert.Words(response.Text, "python & Hello & World");
 
             var sourceCode = response.SourceCode;
             Assert.Equal("python", sourceCode.Language);
-            DS.Assert.Words(sourceCode.Code, "print & Hello & Word");
+            DS.Assert.Words(sourceCode.Code, "print & Hello & World");
         }
     }
 }
