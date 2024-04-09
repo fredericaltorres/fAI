@@ -64,6 +64,18 @@
         }
     }
 
+    public class Prompt_GPT_3_5_CodeGeneration : GPTPrompt
+    {
+        public Prompt_GPT_3_5_CodeGeneration() : base()
+        {
+            Model = "gpt-3.5-turbo-instruct";
+            Url = "https://api.openai.com/v1/completions";
+
+            MaxTokens = 2000;
+            NewTokens = 400;
+        }
+    }
+
     public class Groq_Prompt_Mistral : GPTPrompt
     {
         public Groq_Prompt_Mistral() : base()

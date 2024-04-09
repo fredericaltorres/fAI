@@ -36,9 +36,9 @@ namespace fAI
                 if (className.StartsWith("<"))
                     className = "";
 
-                var m = $"{DateTime.Now}|[{className}{methodName}()]{message}";
+                var m = $"{DateTime.Now}|[{className}{methodName}()]{message}".Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
 
-                if(TraceToConsole)
+                if (TraceToConsole)
                     Console.WriteLine(m);
 
                 TraceToFile(m);
@@ -59,6 +59,16 @@ namespace fAI
             s = s.Replace("\n", "");
             s = s.Replace("\r", "");
             return Trace(s, This, methodName);
+        }
+
+        public static T Trace<T>(T ex)
+        {
+            if (ex is Exception)
+            {
+                var e = ex as Exception;
+                TraceError(e.Message, e);
+            }
+            return ex;
         }
     }
 }

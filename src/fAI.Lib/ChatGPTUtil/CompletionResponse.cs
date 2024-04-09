@@ -71,6 +71,34 @@ namespace fAI
             }
         }
 
+        public class CodeGeneratedInformation
+        {
+            public string Code { get; set; }
+            public string Language { get; set; }
+        }
+
+        public CodeGeneratedInformation SourceCode
+        {
+            get
+            {
+                if(!this.Text.IsNullOrEmpty())
+                {
+                    var rx = new Regex(@"```(.*?)```", RegexOptions.Singleline);
+                    var m = rx.Match(this.Text);
+                    if(m.Success)
+                    {
+                        var r = m.Groups[1].Value;
+                        var lines = r.Split('\n');
+                        return new CodeGeneratedInformation {
+                            Language = lines[0].Trim(),
+                            Code = string.Join(Environment.NewLine, lines.Skip(1))
+                        };
+                    }
+                }
+                return null;
+            }
+        }
+
         public string Text {
             get
             {

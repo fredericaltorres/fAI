@@ -53,7 +53,7 @@ namespace fAI
             }
             else
             {
-                return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
+                return new CompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
             }
         }
 
