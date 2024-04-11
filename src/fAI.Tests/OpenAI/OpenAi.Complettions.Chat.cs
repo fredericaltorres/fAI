@@ -116,8 +116,7 @@ namespace fAI.Tests
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced software developer."      },
                     new GPTMessage { Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
-                },
-                Url = "https://api.openai.com/v1/chat/completions"
+                }
             };
             var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
@@ -189,7 +188,7 @@ End of text
 
         [Fact()]
         [TestBeforeAfter]
-        public void Complettion_Chat_Hello()
+        public void Completion_Chat_Hello()
         {
             var client = new OpenAI();
             var p = new Prompt_GPT_4
@@ -198,8 +197,7 @@ End of text
                 {
                     new GPTMessage{ Role =  MessageRole.system, Content = "You are a helpful assistant." },
                     new GPTMessage{ Role =  MessageRole.user, Content = "Hello!" }
-                },
-                Url = "https://api.openai.com/v1/chat/completions"
+                }
             };
             var response = client.Completions.Create(p);
             Assert.True(response.Success);
@@ -208,7 +206,10 @@ End of text
             p.Messages.Add(new GPTMessage { Role = MessageRole.user, Content = "What time is it?" });
             response = client.Completions.Create(p);
             Assert.Contains("real-time", response.Text);
+            DS.Assert.Words(response.Text, "real-time & capabilities");
         }
+
+
 
         [Fact()]
         [TestBeforeAfter]

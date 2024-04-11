@@ -74,8 +74,8 @@ namespace fAI
                     new GPTMessage{ Role =  MessageRole.system, Content = systemContent },
                     new GPTMessage{ Role =  MessageRole.user, Content = $"{yesNoQuestion}{forceAnswerToYesNo}{Environment.NewLine}{dataText}" }
                 },
-                Url = "https://api.openai.com/v1/chat/completions"
-            };
+                //Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS
+        };
             var response = this.Create(prompt);
             if (response.Success)
             {

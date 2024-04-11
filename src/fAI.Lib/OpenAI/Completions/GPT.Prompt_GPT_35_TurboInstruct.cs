@@ -5,9 +5,7 @@
         public Prompt_GPT_35_TurboInstruct() : base()
         {
             Model = "gpt-3.5-turbo-instruct";
-            Url = "https://api.openai.com/v1/completions";
-            MaxTokens = 2000;
-            NewTokens = 400;
+            Url = GPTPrompt.OPENAI_URL_V1_COMPLETIONS;
         }
     }
 
@@ -18,9 +16,7 @@
         public Prompt_GPT_35_Turbo() : base()
         {
             Model = "gpt-3.5-turbo";
-            Url = "https://api.openai.com/v1/chat/completions";
-            MaxTokens = 2000;
-            NewTokens = 400;
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
         }
     }
 
@@ -30,8 +26,6 @@
         {
             Model = "davinci-002";
             Url = "https://api.openai.com/v1/engines/davinci-002/completions";
-            MaxTokens = 2000;
-            NewTokens = 400;
         }
     }
 
@@ -45,9 +39,7 @@
         public Prompt_GPT_35_Turbo_JsonAnswer() : base()
         {
             Model = "gpt-3.5-turbo-1106";
-            Url = "https://api.openai.com/v1/chat/completions";
-            MaxTokens = 2000;
-            NewTokens = 400;
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
             response_format = new JsonResponseFormat();
         }
     }
@@ -57,10 +49,7 @@
         public Prompt_GPT_4() : base()
         {
             Model = "gpt-4";
-            Url = "https://api.openai.com/v1/chat/completions";
-
-            MaxTokens = 2000;
-            NewTokens = 400;
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
         }
     }
 
@@ -69,10 +58,7 @@
         public Prompt_GPT_3_5_CodeGeneration() : base()
         {
             Model = "gpt-3.5-turbo-instruct";
-            Url = "https://api.openai.com/v1/completions";
-
-            MaxTokens = 2000;
-            NewTokens = 400;
+            Url = GPTPrompt.OPENAI_URL_V1_COMPLETIONS;
         }
     }
 
@@ -83,9 +69,6 @@
             Model = "mixtral-8x7b-32768";
             Url = "https://api.groq.com/openai/v1/chat/completions";
 
-            MaxTokens = 4096;
-            NewTokens = 512;
-            Temperature = 0.5;
         }
     }
 }

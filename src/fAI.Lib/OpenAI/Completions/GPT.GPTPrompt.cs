@@ -30,15 +30,39 @@ namespace fAI
 
     public class GPTPrompt
     {
+
+        public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
+        public const string OPENAI_URL_V1_COMPLETIONS = "https://api.openai.com/v1/completions";
+
+
         public JsonResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }
         public string Text { get; set; }
         public List<GPTMessage> Messages { get; set; } = new List<GPTMessage>();
 
+        public string PrePrompt { get; set; }
+        public string PostPrompt { get; set; }
+        public string Model { get; set; }
+        public int _MaxTokens { get; set; } = 4000;
+        //public int NewTokens { get; set; } = 500;
+
+        const double DEFAULT_TEMPERATURE = 0.1;
+
+        /*
+            Low Temperature (Close to 0): At low temperatures, the model's responses are more deterministic and less random. This means it will choose the most likely next word or phrase based on its training. The responses tend to be more conservative and less varied. If you set the temperature very low, the model might repeat more predictable or common phrases.
+            High Temperature (Closer to 1): At higher temperatures, the model introduces more randomness into its choices. This can lead to more creative, diverse, and sometimes unexpected responses. It's more likely to produce unique or less common outputs, but there's also a higher chance of nonsensical or irrelevant responses.
+            Temperature Range: The temperature usually ranges from 0 to 1. A temperature of 0 means the model will always choose the most likely next word, while a temperature of 1 allows for maximum randomness in word selection.
+            Use Cases: Lower temperatures are typically used when you want more accurate, reliable, and coherent responses. Higher temperatures are used when you want the model to generate more creative, diverse, or less obvious outputs.
+            Balance: Finding the right temperature often involves balancing between creativity and coherence. A moderate temperature value (like 0.7) is a common choice for a mix of reliability and inventiveness in responses.
+            Lower values for temperature result in more consistent outputs  https://platform.openai.com/docs/guides/text-generation/how-should-i-set-the-temperature-parameter
+        */
+        public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
+
+
         public CompletionResponse Response { get; set; }
         public GPTPrompt UnprocessPrompt { get; set; } // allow to back up the current prompt before being processed.
 
-        public GPTPrompt Clone()
+        public GPTPrompt Clone() // Make sure we clone all property
         {
             var p = new GPTPrompt();
             p.response_format = this.response_format;
@@ -61,7 +85,6 @@ namespace fAI
             }
         }
 
-
         public string GetPromptString()
         {
             var sb = new System.Text.StringBuilder();
@@ -72,22 +95,7 @@ namespace fAI
             return sb.ToString();
         }
 
-        public string PrePrompt { get; set; }
-        public string PostPrompt { get; set; }
-        public string Model { get; set; }
-        public int MaxTokens { get; set; } = 4000;
-        public int NewTokens { get; set; } = 500;
-
-        const double DEFAULT_TEMPERATURE = 0.1;
-
-        /*
-            Low Temperature (Close to 0): At low temperatures, the model's responses are more deterministic and less random. This means it will choose the most likely next word or phrase based on its training. The responses tend to be more conservative and less varied. If you set the temperature very low, the model might repeat more predictable or common phrases.
-            High Temperature (Closer to 1): At higher temperatures, the model introduces more randomness into its choices. This can lead to more creative, diverse, and sometimes unexpected responses. It's more likely to produce unique or less common outputs, but there's also a higher chance of nonsensical or irrelevant responses.
-            Temperature Range: The temperature usually ranges from 0 to 1. A temperature of 0 means the model will always choose the most likely next word, while a temperature of 1 allows for maximum randomness in word selection.
-            Use Cases: Lower temperatures are typically used when you want more accurate, reliable, and coherent responses. Higher temperatures are used when you want the model to generate more creative, diverse, or less obvious outputs.
-            Balance: Finding the right temperature often involves balancing between creativity and coherence. A moderate temperature value (like 0.7) is a common choice for a mix of reliability and inventiveness in responses.
-        */
-        public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
+       
 
         public string FullPrompt
         {
@@ -129,7 +137,7 @@ namespace fAI
                 {
                     model = Model,
                     messages = Messages,
-                    max_tokens = MaxTokens,
+                    max_tokens = _MaxTokens,
                     temperature = Temperature,
                     response_format = response_format,
                 });
@@ -140,7 +148,7 @@ namespace fAI
                 {
                     model = Model,
                     prompt = FullPrompt,
-                    max_tokens = MaxTokens,
+                    max_tokens = _MaxTokens,
                     temperature = Temperature
                 });
             }
