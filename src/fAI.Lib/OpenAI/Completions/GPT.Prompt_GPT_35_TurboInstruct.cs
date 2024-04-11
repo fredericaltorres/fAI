@@ -9,8 +9,6 @@
         }
     }
 
-    
-
     public class Prompt_GPT_35_Turbo : GPTPrompt
     {
         public Prompt_GPT_35_Turbo() : base()
@@ -20,14 +18,14 @@
         }
     }
 
-    public class Prompt_GPT_35_DaVinci : GPTPrompt
-    {
-        public Prompt_GPT_35_DaVinci() : base()
-        {
-            Model = "davinci-002";
-            Url = "https://api.openai.com/v1/engines/davinci-002/completions";
-        }
-    }
+    //public class Prompt_GPT_35_DaVinci : GPTPrompt
+    //{
+    //    public Prompt_GPT_35_DaVinci() : base()
+    //    {
+    //        Model = "davinci-002";
+    //        Url = "https://api.openai.com/v1/engines/davinci-002/completions";
+    //    }
+    //}
 
     public class JsonResponseFormat
     {
@@ -68,7 +66,6 @@
         {
             Model = "mixtral-8x7b-32768";
             Url = "https://api.groq.com/openai/v1/chat/completions";
-
         }
     }
 }
