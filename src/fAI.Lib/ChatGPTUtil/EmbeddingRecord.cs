@@ -23,4 +23,10 @@ namespace fAI
             return JsonUtils.FromJSON<List<EmbeddingRecord>>(json);
         }
     }
+
+    public class EmbeddingSongRecord : EmbeddingRecord
+    {
+        public string Album { get; set; }
+        public string Title { get; set; }
+    }
 }
