@@ -65,7 +65,7 @@ namespace fAI.Beetles.All
         {
             var r = new List<EmbeddingSongRecord>();
             if (File.Exists(JsonOutputFilename))
-                r.AddRange(EmbeddingRecord.FromJsonFile(JsonOutputFilename).Select(r => r as EmbeddingSongRecord));
+                r.AddRange(EmbeddingRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
             return r;
         }
 
@@ -73,13 +73,37 @@ namespace fAI.Beetles.All
         { 
             if(File.Exists(JsonOutputFilename))
                 File.Delete(JsonOutputFilename);
-            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), );
+            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), JsonOutputFilename);
+        }
+
+        private static string RemoveParenthesis(string line)
+        {
+            var startPos = line.IndexOf('(');
+            if (startPos == -1)
+                return line;
+            var endPos = line.IndexOf(')', startPos);
+            if (endPos == -1)
+                return line;
+            return line.Substring(0, startPos) + line.Substring(endPos + 1);
+        }
+
+        private static int ExtractYearInParenthesis(string line)
+        {
+            var startPos = line.IndexOf('(');
+            if (startPos == -1)
+                return 0;
+            var endPos = line.IndexOf(')', startPos);
+            if (endPos == -1)
+                return 0;
+            var year = line.Substring(startPos + 1, endPos - startPos - 1);
+            return int.Parse(year);
         }
 
         static void Main(string[] args)
         {
             Trace("Aquiring All Beetles Lyrics");
             var album = string.Empty;
+            var year = 1960;
             var webSiteRootUrl = "https://www.azlyrics.com/lyrics";
             var v = string.Empty;
             var lines = File.ReadAllText(@".\All.Beetles.txt").SplitByCRLF();
@@ -99,7 +123,8 @@ namespace fAI.Beetles.All
                 v = ExtractTag(line, "album:");
                 if (v != null)
                 {
-                    album = v;
+                    album = RemoveParenthesis(v);
+                    year = ExtractYearInParenthesis(v);
                     Trace(line);
                     continue;
                 }
@@ -110,7 +135,6 @@ namespace fAI.Beetles.All
                     var url = $"{webSiteRootUrl}{parts[0]}";
                     var songTitle = parts[2];
                     var titleMarker = $@"""{songTitle}""";
-
                     var id = $"Beatles - {album} - {songTitle}";
 
                     var exists = embeddingSongRecord.FirstOrDefault(r => r.Id == id) != null;
