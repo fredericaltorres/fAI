@@ -18,7 +18,7 @@ namespace fAI.Beetles.All
             return null;
         }
 
-        static void Trace (string message, ConsoleColor color = ConsoleColor.Cyan)
+        static void Trace(string message, ConsoleColor color = ConsoleColor.Cyan)
         {
             ConsoleColor originalColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
@@ -33,10 +33,10 @@ namespace fAI.Beetles.All
             var innerText = doc.DocumentNode.InnerText;
 
             var startPos = innerText.IndexOf(titleMarker);
-            if(startPos == -1)
+            if (startPos == -1)
                 return null;
 
-            var startPos2 = innerText.IndexOf(titleMarker, startPos+1);
+            var startPos2 = innerText.IndexOf(titleMarker, startPos + 1);
 
             var text = innerText.Substring(startPos2);
 
@@ -45,7 +45,7 @@ namespace fAI.Beetles.All
 
             text = text.Substring(0, endPos);
 
-            text = text.Replace(Environment.NewLine+ Environment.NewLine, Environment.NewLine);
+            text = text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
             text = text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
             text = text.Trim();
 
@@ -59,6 +59,23 @@ namespace fAI.Beetles.All
             System.Threading.Thread.Sleep(sleepTime);
         }
 
+        const string JsonOutputFilename = @".\Beatles.All.json";
+
+        private static List<EmbeddingSongRecord> LoadEmbeddingSongRecord()
+        {
+            var r = new List<EmbeddingSongRecord>();
+            if (File.Exists(JsonOutputFilename))
+                r.AddRange(EmbeddingRecord.FromJsonFile(JsonOutputFilename).Select(r => r as EmbeddingSongRecord));
+            return r;
+        }
+
+        private static void SaveEmbeddingSongRecord(List<EmbeddingSongRecord> embeddingSongRecord) 
+        { 
+            if(File.Exists(JsonOutputFilename))
+                File.Delete(JsonOutputFilename);
+            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), );
+        }
+
         static void Main(string[] args)
         {
             Trace("Aquiring All Beetles Lyrics");
@@ -67,7 +84,7 @@ namespace fAI.Beetles.All
             var v = string.Empty;
             var lines = File.ReadAllText(@".\All.Beetles.txt").SplitByCRLF();
 
-            var embeddingSongRecord = new List<EmbeddingSongRecord>();
+            var embeddingSongRecord = LoadEmbeddingSongRecord();
 
             foreach (var line in lines)
             {
@@ -93,25 +110,35 @@ namespace fAI.Beetles.All
                     var url = $"{webSiteRootUrl}{parts[0]}";
                     var songTitle = parts[2];
                     var titleMarker = $@"""{songTitle}""";
-                    Trace($"Loading {url}", ConsoleColor.White);
-                    var text = ExtractTextFromHtmlUrl(url, titleMarker);
 
-                    if(text == null)
-                        Trace($"Failed to load {url}", ConsoleColor.Red);
+                    var id = $"Beatles - {album} - {songTitle}";
 
-                    embeddingSongRecord.Add(new EmbeddingSongRecord {
-                        Id = $"Beatles - {album} - {songTitle}",
-                        Album = album,
-                        Title = songTitle,
-                        Text = text,
-                        Embedding = new List<float>()
-                    });
+                    var exists = embeddingSongRecord.FirstOrDefault(r => r.Id == id) != null;
 
-                    SleepForRandomTime();
+                    if (!exists)
+                    {
+                        Trace($"Loading {url}", ConsoleColor.White);
+                        var text = ExtractTextFromHtmlUrl(url, titleMarker);
+
+                        if (text == null)
+                            Trace($"Failed to load {url}", ConsoleColor.Red);
+
+                        embeddingSongRecord.Add(new EmbeddingSongRecord
+                        {
+                            Id = id,
+                            Album = album,
+                            Title = songTitle,
+                            Text = text,
+                            Embedding = new List<float>()
+                        });
+
+                        SaveEmbeddingSongRecord(embeddingSongRecord);
+                        SleepForRandomTime();
+                    }
                     continue;
                 }
             }
-            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), @".\Beatles.All.json");
+            
             Trace("Done");
             Console.ReadLine();
         }
