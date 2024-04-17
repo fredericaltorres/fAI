@@ -55,7 +55,7 @@ namespace fAI.Beetles.All
         static void SleepForRandomTime()
         {
             var r = new Random();
-            var sleepTime = r.Next(1000, 6000);
+            var sleepTime = r.Next(5000, 10000);
             System.Threading.Thread.Sleep(sleepTime);
         }
 
