@@ -2,7 +2,7 @@
 
 website: https://www.azlyrics.com
 
-album: "Please Please Me" (1963)
+album: Please Please Me (1963)
 /lyrics/beatles/isawherstandingthere.html,lyrics,I Saw Her Standing There
 /lyrics/beatles/misery.html,lyrics,Misery
 /lyrics/beatles/annagotohim.html,lyrics,Anna (Go To Him)
@@ -18,7 +18,7 @@ album: "Please Please Me" (1963)
 /lyrics/beatles/theresaplace.html,lyrics,There's A Place
 /lyrics/beatles/twistandshout.html,lyrics,Twist And Shout
 
-album: "With The Beatles" (1963)
+album: With The Beatles (1963)
 /lyrics/beatles/itwontbelong.html,lyrics,It Won't Be Long
 /lyrics/beatles/allivegottodo.html,lyrics,All I've Got To Do
 /lyrics/beatles/allmyloving.html,lyrics,All My Loving
@@ -34,7 +34,7 @@ album: "With The Beatles" (1963)
 /lyrics/beatles/notasecondtime.html,lyrics,Not A Second Time
 /lyrics/beatles/moneythatswhatiwant.html,lyrics,Money (That's What I Want)
 
-album: "A Hard Day's Night" (1964)
+album: A Hard Day's Night (1964)
 /lyrics/beatles/aharddaysnight.html,lyrics,A Hard Day's Night
 /lyrics/beatles/ishouldhaveknownbetter.html,lyrics,I Should Have Known Better
 /lyrics/beatles/ififell.html,lyrics,If I Fell
@@ -49,14 +49,14 @@ album: "A Hard Day's Night" (1964)
 /lyrics/beatles/youcantdothat.html,lyrics,You Can't Do That
 /lyrics/beatles/illbeback.html,lyrics,I'll Be Back
 
-album: "Beatles For Sale" (1964)
+album: Beatles For Sale (1964)
 /lyrics/beatles/noreply.html,lyrics,No Reply
 /lyrics/beatles/imaloser.html,lyrics,I'm A Loser
 /lyrics/beatles/babysinblack.html,lyrics,Baby's In Black
 /lyrics/beatles/rockandrollmusic.html,lyrics,Rock And Roll Music
 /lyrics/beatles/illfollowthesun.html,lyrics,I'll Follow The Sun
 /lyrics/beatles/mrmoonlight.html,lyrics,Mr. Moonlight
-/lyrics/beatles/medleykansascityheyheyheyhey.html,lyrics,"Medley: Kansas City / Hey, Hey, Hey, Hey"
+/lyrics/beatles/medleykansascityheyheyheyhey.html,lyrics,Medley: Kansas City / Hey; Hey; Hey; Hey
 /lyrics/beatles/eightdaysaweek.html,lyrics,Eight Days A Week
 /lyrics/beatles/wordsoflove.html,lyrics,Words Of Love
 /lyrics/beatles/honeydont.html,lyrics,Honey Don't
@@ -65,7 +65,7 @@ album: "Beatles For Sale" (1964)
 /lyrics/beatles/whatyouredoing.html,lyrics,What You're Doing
 /lyrics/beatles/everybodystryingtobemybaby.html,lyrics,Everybody's Trying To Be My Baby
 
-album: "Help!" (1965)
+album: Help! (1965)
 /lyrics/beatles/help.html,lyrics,Help!
 /lyrics/beatles/thenightbefore.html,lyrics,The Night Before
 /lyrics/beatles/youvegottohideyourloveaway.html,lyrics,You've Got To Hide Your Love Away
@@ -81,7 +81,7 @@ album: "Help!" (1965)
 /lyrics/beatles/yesterday.html,lyrics,Yesterday
 /lyrics/beatles/dizzymisslizzy.html,lyrics,Dizzy Miss Lizzy
 
-album: "Rubber Soul" (1965)
+album: Rubber Soul (1965)
 /lyrics/beatles/drivemycar.html,lyrics,Drive My Car
 /lyrics/beatles/norwegianwoodthisbirdhasflown.html,lyrics,Norwegian Wood (This Bird Has Flown)
 /lyrics/beatles/youwontseeme.html,lyrics,You Won't See Me
@@ -97,14 +97,14 @@ album: "Rubber Soul" (1965)
 /lyrics/beatles/ifineededsomeone.html,lyrics,If I Needed Someone
 /lyrics/beatles/runforyourlife.html,lyrics,Run For Your Life
 
-album: "Revolver" (1966)
+album: Revolver (1966)
 /lyrics/beatles/taxman.html,lyrics,Taxman
 /lyrics/beatles/eleanorrigby.html,lyrics,Eleanor Rigby
 /lyrics/beatles/imonlysleeping.html,lyrics,I'm Only Sleeping
 /lyrics/beatles/loveyouto.html,lyrics,Love You To
-/lyrics/beatles/herethereandeverywhere.html,lyrics,"Here, There And Everywhere"
+/lyrics/beatles/herethereandeverywhere.html,lyrics,Here; There And Everywhere
 /lyrics/beatles/yellowsubmarine.html,lyrics,Yellow Submarine
-/lyrics/beatles/shesaidshesaid.html,lyrics,"She Said, She Said"
+/lyrics/beatles/shesaidshesaid.html,lyrics,She Said; She Said
 /lyrics/beatles/gooddaysunshine.html,lyrics,Good Day Sunshine
 /lyrics/beatles/andyourbirdcansing.html,lyrics,And Your Bird Can Sing
 /lyrics/beatles/fornoone.html,lyrics,For No One
@@ -113,7 +113,7 @@ album: "Revolver" (1966)
 /lyrics/beatles/gottogetyouintomylife.html,lyrics,Got To Get You Into My Life
 /lyrics/beatles/tomorrowneverknows.html,lyrics,Tomorrow Never Knows
 
-album: "Sgt. Pepper's Lonely Hearts Club Band" (1967)
+album: Sgt. Pepper's Lonely Hearts Club Band (1967)
 /lyrics/beatles/sgtpepperslonelyheartsclubband.html,lyrics,Sgt. Pepper's Lonely Hearts Club Band
 /lyrics/beatles/withalittlehelpfrommyfriends.html,lyrics,With A Little Help From My Friends
 /lyrics/beatles/lucyintheskywithdiamonds.html,lyrics,Lucy In The Sky With Diamonds
@@ -124,28 +124,28 @@ album: "Sgt. Pepper's Lonely Hearts Club Band" (1967)
 /lyrics/beatles/withinyouwithoutyou.html,lyrics,Within You Without You
 /lyrics/beatles/whenimsixtyfour.html,lyrics,When I'm Sixty Four
 /lyrics/beatles/lovelyrita.html,lyrics,Lovely Rita
-/lyrics/beatles/goodmorninggoodmorning.html,lyrics,"Good Morning, Good Morning"
+/lyrics/beatles/goodmorninggoodmorning.html,lyrics,Good Morning; Good Morning
 /lyrics/beatles/sgtpepperslonelyheartsclubbandreprise.html,lyrics,Sgt. Pepper's Lonely Hearts Club Band (Reprise)
 /lyrics/beatles/adayinthelife.html,lyrics,A Day In The Life
 
-album: "Magical Mystery Tour" (1967)
+album: Magical Mystery Tour (1967)
 /lyrics/beatles/magicalmysterytour.html,lyrics,Magical Mystery Tour
 /lyrics/beatles/thefoolonthehill.html,lyrics,The Fool On The Hill
 /lyrics/beatles/flying.html,lyrics,Flying
 /lyrics/beatles/bluejayway.html,lyrics,Blue Jay Way
 /lyrics/beatles/yourmothershouldknow.html,lyrics,Your Mother Should Know
 /lyrics/beatles/iamthewalrus.html,lyrics,I Am The Walrus
-/lyrics/beatles/hellogoodbye.html,lyrics,"Hello, Goodbye"
+/lyrics/beatles/hellogoodbye.html,lyrics,Hello; Goodbye
 /lyrics/beatles/strawberryfieldsforever.html,lyrics,Strawberry Fields Forever
 /lyrics/beatles/pennylane.html,lyrics,Penny Lane
-/lyrics/beatles/babyyourearichman.html,lyrics,"Baby, You're A Rich Man"
+/lyrics/beatles/babyyourearichman.html,lyrics,Baby; You're A Rich Man
 /lyrics/beatles/allyouneedislove.html,lyrics,All You Need Is Love
 
-album: "The Beatles" (1968)
+album: The Beatles (1968)
 /lyrics/beatles/backintheussr.html,lyrics,Back In The U.S.S.R.
 /lyrics/beatles/dearprudence.html,lyrics,Dear Prudence
 /lyrics/beatles/glassonion.html,lyrics,Glass Onion
-/lyrics/beatles/obladioblada.html,lyrics,"Ob-La-Di, Ob-La-Da"
+/lyrics/beatles/obladioblada.html,lyrics,Ob-La-Di; Ob-La-Da
 /lyrics/beatles/wildhoneypie.html,lyrics,Wild Honey Pie
 /lyrics/beatles/thecontinuingstoryofbungalowbill.html,lyrics,The Continuing Story Of Bungalow Bill
 /lyrics/beatles/whilemyguitargentlyweeps.html,lyrics,While My Guitar Gently Weeps
@@ -165,7 +165,7 @@ album: "The Beatles" (1968)
 /lyrics/beatles/everybodysgotsomethingtohideexceptmeandmymonkey.html,lyrics,Everybody's Got Something To Hide Except Me And My Monkey
 /lyrics/beatles/sexysadie.html,lyrics,Sexy Sadie
 /lyrics/beatles/helterskelter.html,lyrics,Helter Skelter
-/lyrics/beatles/longlonglong.html,lyrics,"Long, Long, Long"
+/lyrics/beatles/longlonglong.html,lyrics,Long; Long; Long
 /lyrics/beatles/revolution1.html,lyrics,Revolution 1
 /lyrics/beatles/honeypie.html,lyrics,Honey Pie
 /lyrics/beatles/savoytruffle.html,lyrics,Savoy Truffle
@@ -173,7 +173,7 @@ album: "The Beatles" (1968)
 /lyrics/beatles/revolution9.html,lyrics,Revolution 9
 /lyrics/beatles/goodnight.html,lyrics,Good Night
 
-album: "Yellow Submarine" (1969)
+album: Yellow Submarine (1969)
 /lyrics/beatles/yellowsubmarine.html,lyrics,Yellow Submarine
 /lyrics/beatles/onlyanorthernsong.html,lyrics,Only A Northern Song
 /lyrics/beatles/alltogethernow.html,lyrics,All Together Now
@@ -181,7 +181,7 @@ album: "Yellow Submarine" (1969)
 /lyrics/beatles/itsalltoomuch.html,lyrics,It's All Too Much
 /lyrics/beatles/allyouneedislove.html,lyrics,All You Need Is Love
 
-album: "Abbey Road" (1969)
+album: Abbey Road (1969)
 /lyrics/beatles/cometogether.html,lyrics,Come Together
 /lyrics/beatles/something-abbey.html,lyrics,Something
 /lyrics/beatles/maxwellssilverhammer.html,lyrics,Maxwell's Silver Hammer
@@ -201,7 +201,7 @@ album: "Abbey Road" (1969)
 /lyrics/beatles/hermajesty.html,lyrics,Her Majesty
 /lyrics/beatles/thelongone.html,lyrics,The Long One
 
-album: "Let It Be" (1970)
+album: Let It Be (1970)
 /lyrics/beatles/twoofus.html,lyrics,Two Of Us
 /lyrics/beatles/digapony.html,lyrics,Dig A Pony
 /lyrics/beatles/acrosstheuniverse.html,lyrics,Across The Universe

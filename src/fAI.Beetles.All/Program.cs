@@ -65,7 +65,7 @@ namespace fAI.Beetles.All
         {
             var r = new List<EmbeddingSongRecord>();
             if (File.Exists(JsonOutputFilename))
-                r.AddRange(EmbeddingRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
+                r.AddRange(EmbeddingSongRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
             return r;
         }
 
@@ -123,7 +123,7 @@ namespace fAI.Beetles.All
                 v = ExtractTag(line, "album:");
                 if (v != null)
                 {
-                    album = RemoveParenthesis(v);
+                    album = RemoveParenthesis(v).Trim();
                     year = ExtractYearInParenthesis(v);
                     Trace(line);
                     continue;
@@ -133,7 +133,7 @@ namespace fAI.Beetles.All
                 {
                     var parts = line.Split(',');
                     var url = $"{webSiteRootUrl}{parts[0]}";
-                    var songTitle = parts[2];
+                    var songTitle = parts[2].Replace(";", ",");
                     var titleMarker = $@"""{songTitle}""";
                     var id = $"Beatles - {album} - {songTitle}";
 
