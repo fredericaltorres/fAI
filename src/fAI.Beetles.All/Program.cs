@@ -150,6 +150,7 @@ namespace fAI.Beetles.All
                         embeddingSongRecord.Add(new EmbeddingSongRecord
                         {
                             Id = id,
+                            Year = year,
                             Album = album,
                             Title = songTitle,
                             Text = text,
