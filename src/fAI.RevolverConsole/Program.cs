@@ -60,7 +60,7 @@ namespace fAI.RevolverConsole
             var index = client.GetIndex(BeatlesRevolverIndexName);
             var minimumScore = 0.75f;
             var topK = 3;
-
+                
             while (true)
             {
                 var criteria = Console.ReadLine().Trim();

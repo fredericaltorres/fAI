@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A4314D8-4944-4F8F-973A-5051AE52C9E6}</ProjectGuid>
+    <ProjectGuid>{FC4EC426-AD05-4402-A2BA-7B770005EBB5}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>fAI.RevolverConsole</RootNamespace>
-    <AssemblyName>fAI.RevolverConsole</AssemblyName>
+    <RootNamespace>fAI.Beetles.All</RootNamespace>
+    <AssemblyName>fAI.Beetles.All</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -36,6 +36,12 @@
     <Reference Include="DynamicSugarStandard, Version=1.0.25.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\DynamicSugarStandard.1.0.25\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.60.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.11.60\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,19 +58,18 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Revolver.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Revolver.Query.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="All.Beetles.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\DynamicSugar2.Logo.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\fAI.Lib\fAI.csproj">
       <Project>{cf5fef6e-d407-4f9f-a409-501d176fa62d}</Project>
       <Name>fAI</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="images\DynamicSugar2.Logo.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

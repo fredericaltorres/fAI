@@ -1,6 +1,6 @@
 ﻿URL,Domain,Anchor
 
-https://www.azlyrics.com/lyrics/
+website: https://www.azlyrics.com
 
 album: "Please Please Me" (1963)
 /lyrics/beatles/isawherstandingthere.html,lyrics,I Saw Her Standing There
