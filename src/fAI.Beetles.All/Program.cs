@@ -6,11 +6,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using static DynamicSugar.DS;
 
 namespace fAI.Beetles.All
 {
     internal class Program
     {
+        static void Main(string[] args)
+        {
+            ///WebScrapLyrics();
+            var embeddingSongRecords = LoadEmbeddingSongRecord();
+            var client = new OpenAI();
+            var i = 0;
+            foreach (var e in embeddingSongRecords)
+            {
+                Console.WriteLine($"{i} - {e.Album} - {e.Title}");
+                if (e.Embedding.Count == 0)
+                {
+                    var r = client.Embeddings.Create(e.Text);
+                    e.Embedding = r.Data[0].Embedding;
+
+                    if (i++ % 4 == 0)
+                        SaveEmbeddingSongRecord(embeddingSongRecords);
+                }
+            }
+            SaveEmbeddingSongRecord(embeddingSongRecords);
+        }
+
         static string ExtractTag(string line, string tag)
         {
             if (line.StartsWith(tag))
@@ -99,7 +121,7 @@ namespace fAI.Beetles.All
             return int.Parse(year);
         }
 
-        static void Main(string[] args)
+        static void WebScrapLyrics()
         {
             Trace("Aquiring All Beetles Lyrics");
             var album = string.Empty;
