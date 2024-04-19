@@ -141,7 +141,7 @@ album: Magical Mystery Tour (1967)
 /lyrics/beatles/babyyourearichman.html,lyrics,Baby; You're A Rich Man
 /lyrics/beatles/allyouneedislove.html,lyrics,All You Need Is Love
 
-album: The Beatles (1968)
+album: The White Beatles (1968)
 /lyrics/beatles/backintheussr.html,lyrics,Back In The U.S.S.R.
 /lyrics/beatles/dearprudence.html,lyrics,Dear Prudence
 /lyrics/beatles/glassonion.html,lyrics,Glass Onion

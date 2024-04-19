@@ -7,30 +7,63 @@ using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using static DynamicSugar.DS;
+using fAI.VectorDB;
 
 namespace fAI.Beetles.All
 {
     internal class Program
     {
+        static void Write(string message, ConsoleColor color)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(message);
+            Console.ForegroundColor = originalColor;
+        }
+
+        static void WriteLine(string message, ConsoleColor color)
+        {
+            Write(message, color);
+            Console.WriteLine();
+        }
+
+        static void WriteQuestion(string message) => WriteLine(message, ConsoleColor.Yellow);
+        static void WriteInformation(string message) => WriteLine(message, ConsoleColor.White);
+        static void WriteAnswer(string message) => WriteLine(message, ConsoleColor.Green);
+
         static void Main(string[] args)
         {
+            Console.Clear();
             ///WebScrapLyrics();
+            //ComputeEmbedding()
             var embeddingSongRecords = LoadEmbeddingSongRecord();
-            var client = new OpenAI();
-            var i = 0;
-            foreach (var e in embeddingSongRecords)
-            {
-                Console.WriteLine($"{i} - {e.Album} - {e.Title}");
-                if (e.Embedding.Count == 0)
-                {
-                    var r = client.Embeddings.Create(e.Text);
-                    e.Embedding = r.Data[0].Embedding;
 
-                    if (i++ % 4 == 0)
-                        SaveEmbeddingSongRecord(embeddingSongRecords);
+            var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
+
+            var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
+
+            var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
+            WriteQuestion(message);
+            WriteInformation("Enter 'exit' to quit.");
+
+            var minimumScore = 0.75f;
+            var topK = 3;
+
+            while (true)
+            {
+                var criteria = Console.ReadLine().Trim();
+                if (criteria == "exit" || criteria == "quit")
+                    break;
+
+                if (!criteria.IsNullOrEmpty())
+                {
+                    var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), embeddingRecords, topK, minimumScore);
+                    foreach (var r in inMemoryResponse)
+                        WriteAnswer($"Id: {r.Id}, {r.Score}");
+                    Console.WriteLine($"");
                 }
+                WriteQuestion(message);
             }
-            SaveEmbeddingSongRecord(embeddingSongRecords);
         }
 
         static string ExtractTag(string line, string tag)
@@ -188,6 +221,27 @@ namespace fAI.Beetles.All
             
             Trace("Done");
             Console.ReadLine();
+        }
+
+        static void ComputeEmbedding()
+        {
+            ///WebScrapLyrics();
+            var embeddingSongRecords = LoadEmbeddingSongRecord();
+            var client = new OpenAI();
+            var i = 0;
+            foreach (var e in embeddingSongRecords)
+            {
+                Console.WriteLine($"{i} - {e.Album} - {e.Title}");
+                if (e.Embedding.Count == 0)
+                {
+                    var r = client.Embeddings.Create(e.Text);
+                    e.Embedding = r.Data[0].Embedding;
+
+                    if (i++ % 4 == 0)
+                        SaveEmbeddingSongRecord(embeddingSongRecords);
+                }
+            }
+            SaveEmbeddingSongRecord(embeddingSongRecords);
         }
     }
 }

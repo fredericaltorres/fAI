@@ -61,6 +61,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Beatles.Query.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="All.Beetles.txt">
