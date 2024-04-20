@@ -16,10 +16,12 @@ namespace fAI.WebApi.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private IConfiguration _configuration;
 
-        public EmbeddingController(ILogger<WeatherForecastController> logger)
+        public EmbeddingController(ILogger<WeatherForecastController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
 
@@ -32,7 +34,10 @@ namespace fAI.WebApi.Controllers
         [HttpPost(Name = "ComputeEmbedding")]
         public IEnumerable<float> ComputeEmbedding([FromBody] string text)
         {
-            var client = new OpenAI();
+            var key = _configuration.GetValue<string>("OPENAI_API_KEY");
+            var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
+
+            var client = new OpenAI( openAiKey: key , openAiOrg: org);
             var r = client.Embeddings.Create(text);
             if (r.Success)
             {
