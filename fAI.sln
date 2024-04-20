@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.RevolverConsole", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.Beetles.All", "src\fAI.Beetles.All\fAI.Beetles.All.csproj", "{FC4EC426-AD05-4402-A2BA-7B770005EBB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.WebApi", "src\fAI.WebApi\fAI.WebApi.csproj", "{46EC5261-50D2-46CF-AE78-F68E7D801004}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{FC4EC426-AD05-4402-A2BA-7B770005EBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC4EC426-AD05-4402-A2BA-7B770005EBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC4EC426-AD05-4402-A2BA-7B770005EBB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46EC5261-50D2-46CF-AE78-F68E7D801004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46EC5261-50D2-46CF-AE78-F68E7D801004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46EC5261-50D2-46CF-AE78-F68E7D801004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46EC5261-50D2-46CF-AE78-F68E7D801004}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
