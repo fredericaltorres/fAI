@@ -3,8 +3,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.WebApi.Controllers
 {
-    // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/ftorres/providers/Microsoft.Web/sites/fAIWebApi/appServices
-    // KUDU https://faiwebapi.scm.azurewebsites.net/
+    // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/ftorres/providers/Microsoft.Web/sites/fAIWebApi/configuration
+    // KUDU https://faiwebapi.scm.azurewebsites.net/Env.cshtml
     // https://faiwebapi.azurewebsites.net/Embedding
     [ApiController]
     [Route("[controller]")]
@@ -22,8 +22,8 @@ namespace fAI.WebApi.Controllers
         {
             _logger = logger;
             _configuration = configuration;
+            fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
-
 
         [HttpGet(Name = "GetEmbedding")]
         public IEnumerable<float> GetEmbedding()
@@ -34,8 +34,8 @@ namespace fAI.WebApi.Controllers
         [HttpPost(Name = "ComputeEmbedding")]
         public IEnumerable<float> ComputeEmbedding([FromBody] string text)
         {
-            var key = _configuration.GetValue<string>("OPENAI_API_KEY");
             var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
+            var key = _configuration.GetValue<string>("OPENAI_API_KEY");
 
             var client = new OpenAI( openAiKey: key , openAiOrg: org);
             var r = client.Embeddings.Create(text);

@@ -10,7 +10,7 @@ namespace fAI
         public static bool TraceOn { get; set; } = true;
         public static bool TraceToConsole { get; set; } = false;
 
-        public const string DefaultLogFileName = @"c:\temp\fAI.log";
+        public static string DefaultLogFileName = @"c:\temp\fAI.log";
         public static string LogFileName = null;
 
         private static void TraceToFile(string message)
