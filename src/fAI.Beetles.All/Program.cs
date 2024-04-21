@@ -59,7 +59,7 @@ namespace fAI.Beetles.All
                 {
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), embeddingRecords, topK, minimumScore);
                     foreach (var r in inMemoryResponse)
-                        WriteAnswer($"Id: {r.Id}, {r.Score}");
+                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
                     Console.WriteLine($"");
                 }
                 WriteQuestion(message);

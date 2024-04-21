@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Deepgram.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ namespace fAI.VectorDB
                 var score = CalculateCosineSimilarity(queryVector, er.Embedding);
                 if (score > minimumScore)
                 {
-                    er.Score = score;
+                    er.Score = (float)Math.Round(score, 4);
                     r.Add(er);
                 }
             }

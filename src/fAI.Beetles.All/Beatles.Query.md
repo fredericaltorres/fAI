@@ -1,25 +1,20 @@
 ﻿sailing
+in the navy
 medecine and pills
-sad people in temple
 sad people in church
 endless love
-IRS
+irs
 Tibetan Book of the Dead
 Timothy Leary
-Dancing
-
-
-laughing
-life and death
-Tibetan Book
-Tibetan Book of the Dead
-Psychedelic Experience
-Timothy Leary
-    Timothy Leary around 1962/1964 wrote a book
-    The Psychedelic Experience: A Manual Based on The Tibetan Book of the Dead 
-Meditation
-LSD
-bright light
+animals
+anniversary
+chuck berry
+streets of Liverpool
+letters sent by mail
+bolsheviks
+soviet
+mikhail gorbachev
+vladimir lenin
 
 https://www.azlyrics.com/b/beatles.html
 
