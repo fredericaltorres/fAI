@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.WebApi.Controllers
@@ -6,22 +7,20 @@ namespace fAI.WebApi.Controllers
     // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/ftorres/providers/Microsoft.Web/sites/fAIWebApi/configuration
     // KUDU https://faiwebapi.scm.azurewebsites.net/Env.cshtml
     // https://faiwebapi.azurewebsites.net/Embedding
+
     [ApiController]
     [Route("[controller]")]
     public class EmbeddingController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IMemoryCache _memoryCache;
+
         private IConfiguration _configuration;
 
-        public EmbeddingController(ILogger<WeatherForecastController> logger, IConfiguration configuration)
+        public EmbeddingController(IConfiguration configuration, IMemoryCache memoryCache)
         {
-            _logger = logger;
             _configuration = configuration;
+            _memoryCache = memoryCache;
             fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
 
@@ -34,17 +33,33 @@ namespace fAI.WebApi.Controllers
         [HttpPost(Name = "ComputeEmbedding")]
         public IEnumerable<float> ComputeEmbedding([FromBody] string text)
         {
-            var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
-            var key = _configuration.GetValue<string>("OPENAI_API_KEY");
-
-            var client = new OpenAI( openAiKey: key , openAiOrg: org);
-            var r = client.Embeddings.Create(text);
-            if (r.Success)
+            if (GetCallCounter() < 10) // avoid crazy calling my api costing me money
             {
-                return r.Data[0].Embedding;
+                var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
+                var key = _configuration.GetValue<string>("OPENAI_API_KEY");
+
+                var client = new OpenAI(openAiKey: key, openAiOrg: org);
+                var r = client.Embeddings.Create(text);
+                if (r.Success)
+                {
+                    return r.Data[0].Embedding;
+                }
+                else
+                    return new List<float>();
             }
-            else
-                return new List<float>();
+            else return new List<float>();
+        }
+
+        private int GetCallCounter()
+        {
+            var remoteIpAddress = base.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            int callCounter = 0;
+            _memoryCache.TryGetValue(remoteIpAddress, out callCounter);
+            callCounter += 1;
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+            _memoryCache.Set(remoteIpAddress, callCounter, cacheEntryOptions);
+
+            return callCounter;
         }
     }
 }

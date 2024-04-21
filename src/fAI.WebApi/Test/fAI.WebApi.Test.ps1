@@ -101,15 +101,14 @@ cls
 traceBanner "fAI.WebAp.Test`r`n"
 
 $hostName = "localhost:7009"
-$hostName = "faiwebapi.azurewebsites.net"
+##$hostName = "faiwebapi.azurewebsites.net"
 $url = "https://$hostName/Embedding";
 
 $headers = getHeaders
 
-write-output $url
-$response = Invoke-WebRequest -Uri $url -Method GET -Headers $headers
-write-output $response.Content
-
+# write-output $url
+# $response = Invoke-WebRequest -Uri $url -Method GET -Headers $headers
+# write-output $response.Content
 
 write-output $url
 $response = Invoke-WebRequest -Uri $url -Method POST -Headers $headers -body '"sailing"'
