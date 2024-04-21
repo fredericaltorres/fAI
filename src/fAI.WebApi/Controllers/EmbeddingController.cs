@@ -47,7 +47,7 @@ namespace fAI.WebApi.Controllers
                 else
                     return new List<float>();
             }
-            else return new List<float>();
+            else throw new Exception("Too many calls");
         }
 
         private int GetCallCounter()

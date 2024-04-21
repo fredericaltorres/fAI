@@ -101,7 +101,7 @@ cls
 traceBanner "fAI.WebAp.Test`r`n"
 
 $hostName = "localhost:7009"
-##$hostName = "faiwebapi.azurewebsites.net"
+$hostName = "faiwebapi.azurewebsites.net"
 $url = "https://$hostName/Embedding";
 
 $headers = getHeaders
