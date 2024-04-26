@@ -73,7 +73,7 @@ namespace fAI
         {
             var r = JsonUtils.FromJSON<CompletionResponse>(json);
 
-            if(r.AnthropicContent.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
+            if(r.AnthropicContent != null && r.AnthropicContent.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
             {
                 r.Choices = new List<CompletionChoiceResponse>();
                 r.AnthropicContent.ForEach(c =>
@@ -93,7 +93,10 @@ namespace fAI
                 if(string.IsNullOrEmpty(this.Text))
                     return null;
                 if(this.Text.StartsWith("{"))
-                    return JObject.Parse(this.Text);
+                {
+                    var jsons = ReFormatJsonString(this.Text, "{", "}", justExtract: true, extractAndFormat: false);
+                    return JObject.Parse(jsons[0]);
+                }
                 return null;
             }
         }
@@ -278,6 +281,95 @@ namespace fAI
         public static bool StartsWithWordSection(string text, List<string> words)
         {
             return words.Any(w => StartsWithWordSection(text, w));
+        }
+
+        public List<string> ExtractJsonString(string text, bool justExtract = false, bool extractAndFormat = false)
+        {
+            var r = new List<string>();
+            r = ReFormatJsonString(text, "{", "}", justExtract, extractAndFormat);
+            if (r.Count == 0)
+                r = ReFormatJsonString(text, "[", "]", justExtract, extractAndFormat);
+            return r;
+        }
+
+
+        public object Parse(string json)
+        {
+            try
+            {
+                var o = JsonConvert.DeserializeObject(json);
+                return o;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // This function only detect a piece of json in a string and re-format it and does not extract it 
+        public List<string> ReFormatJsonString(string text, string jsonStartChar = "{", string jsonEndChar = "}", bool justExtract = false, bool extractAndFormat = false)
+        {
+            if (text.Contains("`r"))
+                text = text.Replace("`r", "");
+            if (text.Contains("`n"))
+                text = text.Replace("`n", "");
+
+            var r = new List<string>();
+            try
+            {
+                var startSearchIndex = 0;
+                var endSearchIndex = text.Length;
+                var loop1Counter = 0;
+                if (loop1Counter++ == 100) return r;
+
+                var beforeText = string.Empty;
+                var afterText = string.Empty;
+
+                var xStart = text.IndexOf(jsonStartChar, startSearchIndex);
+                if (xStart != -1)
+                {
+                    if (xStart > 0) // We found some non json text before the {
+                    {
+                        beforeText = text.Substring(0, xStart);
+                    }
+
+                    var xEnd = text.LastIndexOf(jsonEndChar, endSearchIndex);
+                    if (xEnd != -1)
+                    {
+                        if (xEnd < text.Length) // We found some non json text after the }
+                        {
+                            afterText = text.Substring(xEnd + 1);
+                        }
+
+                        var charCountToGrab = xEnd - xStart + 1;
+                        if (charCountToGrab <= 0)
+                            return r; // Invalid json ]1,2,3[
+
+                        var json = text.Substring(xStart, charCountToGrab);
+                        var o = Parse(json);
+                        if (o != null) // We find a valid JSON block
+                        {
+                            if (justExtract)
+                            {
+                               r.Add(json);
+                            }
+                            else
+                            {
+                                r.Add($"{beforeText}{o}{afterText}");
+                            }
+                            return r;
+                        }
+                        else
+                        {
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            return r;
         }
     }
 }

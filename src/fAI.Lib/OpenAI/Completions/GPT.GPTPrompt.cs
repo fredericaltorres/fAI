@@ -136,11 +136,23 @@ namespace fAI
             {
                 if (IsClaude)
                 {
+                    // With Anthropic, we need to send the system message as a specific field
+                    var systemMessage = string.Empty;
+                    var systemMessages = this.Messages.Where(m => m.Role == MessageRole.system).ToList();
+                    if(systemMessages.Count > 0)
+                    {
+                        systemMessage = systemMessages[0].Content;
+                    }
+
+                    var nonSystemMessages = this.Messages.Where(m => m.Role != MessageRole.system).ToList();
+
                     return JsonConvert.SerializeObject(new
                     {
+                        system = string.IsNullOrEmpty(systemMessage) ? null : systemMessage,
                         model = Model,
-                        messages = Messages,
+                        messages = nonSystemMessages,
                         max_tokens = _MaxTokens,
+                        temperature = Temperature,
                     });
                 }
                 else

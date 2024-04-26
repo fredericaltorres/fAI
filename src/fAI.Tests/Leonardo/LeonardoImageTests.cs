@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿//#define LEONARDO_ENABLED 
+using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -12,13 +13,18 @@ using DynamicSugar;
 using System.Threading;
 using static fAI.LeonardoImage;
 
+
+
 namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class LeonardoImageTests
     {
+
+#if LEONARDO_ENABLED
         [Fact()]
+#endif
         public void GetUserInformation()
         {
             var client = new Leonardo();
@@ -35,10 +41,9 @@ namespace fAI.Tests
             var pocoPrompt = generations.generations[0].GetPromptParametersInPocoFormat();
         }
 
-
-
-
+#if LEONARDO_ENABLED
         [Fact()]
+#endif
         public void Image_Generate_BaseOnJsonPrompt()
         {
             var client = new Leonardo();
@@ -64,7 +69,10 @@ namespace fAI.Tests
         }
 
 
+
+#if LEONARDO_ENABLED
         [Fact()]
+#endif
         public void Image_Generate_1()
         {
             var prompt = @"
@@ -86,7 +94,9 @@ Wlop, unique detail, masterpiece
             pngFileNames.ForEach((f) => File.Delete(f));
         }
 
+#if LEONARDO_ENABLED
         [Fact()]
+#endif
         public void Image_Generate_photoReal_on()
         {
             var prompt = @"
@@ -111,7 +121,9 @@ high quality, 8K Ultra HD, In this extraordinary full-body digital illustration,
             File.Delete(pngFileNames[0]);
         }
 
+#if LEONARDO_ENABLED
         [Fact()]
+#endif
         public void Image_Generate_WomanAtDifferentAge()
         {
             var prompt = @"
