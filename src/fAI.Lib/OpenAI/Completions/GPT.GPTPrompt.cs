@@ -43,7 +43,7 @@ namespace fAI
         public string PrePrompt { get; set; }
         public string PostPrompt { get; set; }
         public string Model { get; set; }
-        public int _MaxTokens { get; set; } = 4000;
+        public int MaxTokens { get; set; } = 4000;
         //public int NewTokens { get; set; } = 500;
 
         const double DEFAULT_TEMPERATURE = 0.1;
@@ -121,51 +121,23 @@ namespace fAI
                 return this.FullPrompt;
             return string.Join("\r\n", this.Messages);
         }
-        
 
         public bool Success => Response.Success;
-
         public string Answer => (this.Response!= null && string.IsNullOrEmpty(this.Response.Text)) ? null : Response.Text.Trim();
         public string Error => Response.ErrorMessage;
 
-        private bool IsClaude => this.Model.Contains("claude");
-
-        public string GetPostBody()
+        public virtual string GetPostBody()
         {
             if (this.Messages != null && this.Messages.Count > 0)
             {
-                if (IsClaude)
+                return JsonConvert.SerializeObject(new
                 {
-                    // With Anthropic, we need to send the system message as a specific field
-                    var systemMessage = string.Empty;
-                    var systemMessages = this.Messages.Where(m => m.Role == MessageRole.system).ToList();
-                    if(systemMessages.Count > 0)
-                    {
-                        systemMessage = systemMessages[0].Content;
-                    }
-
-                    var nonSystemMessages = this.Messages.Where(m => m.Role != MessageRole.system).ToList();
-
-                    return JsonConvert.SerializeObject(new
-                    {
-                        system = string.IsNullOrEmpty(systemMessage) ? null : systemMessage,
-                        model = Model,
-                        messages = nonSystemMessages,
-                        max_tokens = _MaxTokens,
-                        temperature = Temperature,
-                    });
-                }
-                else
-                {
-                    return JsonConvert.SerializeObject(new
-                    {
-                        model = Model,
-                        messages = Messages,
-                        max_tokens = _MaxTokens,
-                        temperature = Temperature,
-                        response_format = response_format,
-                    });
-                }
+                    model = Model,
+                    messages = Messages,
+                    max_tokens = MaxTokens,
+                    temperature = Temperature,
+                    response_format = response_format,
+                });
             }
             else
             {
@@ -173,7 +145,7 @@ namespace fAI
                 {
                     model = Model,
                     prompt = FullPrompt,
-                    max_tokens = _MaxTokens,
+                    max_tokens = MaxTokens,
                     temperature = Temperature
                 });
             }

@@ -1,4 +1,7 @@
-﻿namespace fAI
+﻿using Newtonsoft.Json;
+using System.Linq;
+
+namespace fAI
 {
     public class Prompt_GPT_35_TurboInstruct : GPTPrompt
     {
@@ -42,7 +45,7 @@
         }
     }
 
-    public class Prompt_GPT_4  : GPTPrompt
+    public class Prompt_GPT_4 : GPTPrompt
     {
         public Prompt_GPT_4() : base()
         {
@@ -74,9 +77,34 @@
         public Anthropic_Prompt_Claude_3_Opus() : base()
         {
             Model = "claude-3-opus-20240229";
-            _MaxTokens = 1024;
+            MaxTokens = 1024;
             Url = "https://api.anthropic.com/v1/messages";
+        }
+
+        public override string GetPostBody()
+        {
+            if (this.Messages != null && this.Messages.Count > 0)
+            {
+                // With Anthropic, we need to send the system message as a specific field
+                var systemMessage = string.Empty;
+                var systemMessages = this.Messages.Where(m => m.Role == MessageRole.system).ToList();
+                if (systemMessages.Count > 0)
+                {
+                    systemMessage = systemMessages[0].Content;
+                }
+
+                var nonSystemMessages = this.Messages.Where(m => m.Role != MessageRole.system).ToList();
+
+                return JsonConvert.SerializeObject(new
+                {
+                    system = string.IsNullOrEmpty(systemMessage) ? null : systemMessage,
+                    model = Model,
+                    messages = nonSystemMessages,
+                    max_tokens = MaxTokens,
+                    temperature = Temperature,
+                });
+            }
+            else throw new System.Exception("No messages to send");
         }
     }
 }
-
