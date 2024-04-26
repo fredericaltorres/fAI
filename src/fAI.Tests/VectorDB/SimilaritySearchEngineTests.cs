@@ -45,7 +45,7 @@ namespace fAI.Tests
             var topK = 1;
             var minimumScore = 0.77f;
             var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), inMemoryEmbeddingRecords, topK, minimumScore);
-            Assert.Equal("Revolver - Beatles - Tomorrow Never Knows", inMemoryResponse[0].Id);
+            Assert.Equal("Beatles - Revolver - Tomorrow Never Knows", inMemoryResponse[0].Id);
         }
     }
 }

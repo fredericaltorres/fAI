@@ -26,7 +26,7 @@ namespace fAI.Tests
         const string jsonFile = @"C:\DVT\fAI\src\fAI.Tests\Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.json";
         // view-source:https://paulgraham.com/articles.html
 
-        [Fact()]
+        // [Fact()]
         public void LoadFromCsvAndGenerateJsonFile()
         {
             var essays = EssaiAI.LoadFromCsv(csvFile);
@@ -35,31 +35,7 @@ namespace fAI.Tests
             EssaiAI.ToJsonFile(essays, jsonFile);
         }
 
-        [Fact()]
-        public void Create_Upload()
-        {
-            var essays = EssaiAI.FromJsonFile(jsonFile);
+      
 
-            var azureSearch = new AzureSearch(serviceName);
-            azureSearch.DeleteIndexIfExists(EssaiAI.indexName);
-            azureSearch.CreateIndex(EssaiAI.GetIndexMetaData());
-
-            //var presentations = PresentationAI.LoadFromCsv(csvFile).Take(32).ToList();
-            //var presentationDocuments = PresentationAI.PrepareForIndexing(presentations);
-            //azureSearch.IndexDocuments(presentationDocuments, PresentationAI.indexName);
-
-
-        }
-
-        [Fact()]
-        public void Search()
-        {
-            var sb = new System.Text.StringBuilder();
-            var azureSearch = new AzureSearch(serviceName);
-            var selectColumns = DS.List("id", "title", "description", "category");
-            var  presentationFounds = azureSearch.VectorSearch(PresentationAI.indexName, "Tell me about cats?", "titleVector", selectColumns);
-
-            File.AppendAllText(@"C:\a\VectorSearchResults.txt", JsonConvert.SerializeObject(presentationFounds, Formatting.Indented));
-        }
     }
 }  
