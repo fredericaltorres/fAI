@@ -1,16 +1,5 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System;
-using fAI;
+﻿using System.Collections.Generic;
 using Xunit;
-using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Newtonsoft.Json;
-using DynamicSugar;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.Tests
 {

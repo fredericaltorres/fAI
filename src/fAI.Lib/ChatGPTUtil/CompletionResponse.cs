@@ -6,6 +6,7 @@ using DynamicSugar;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace fAI
 {
@@ -17,6 +18,12 @@ namespace fAI
         public object logprobs { get; set; }
         public string finish_reason { get; set; }
         public GPTMessage message { get; set; }
+    }
+
+    public class AnthropicCompletionContentResponse
+    {
+        public string text { get; set; }
+        public string type { get; set; }
     }
 
     public class Usage
@@ -51,13 +58,33 @@ namespace fAI
         [JsonProperty(PropertyName = "choices")]
         public List<CompletionChoiceResponse> Choices { get; set; }
 
+        [JsonProperty(PropertyName = "content")]
+        public List<AnthropicCompletionContentResponse> AnthropicContent { get; set; }
+
+
+
         [JsonProperty(PropertyName = "message")]
         public List<GPTMessage> Message { get; set; }
 
         [JsonProperty(PropertyName = "usage")]
         public Usage Usage { get; set; }
 
-        public static CompletionResponse FromJson(string json) => JsonUtils.FromJSON<CompletionResponse>(json);
+        public static CompletionResponse FromJson(string json)
+        {
+            var r = JsonUtils.FromJSON<CompletionResponse>(json);
+
+            if(r.AnthropicContent.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
+            {
+                r.Choices = new List<CompletionChoiceResponse>();
+                r.AnthropicContent.ForEach(c =>
+                {
+                    if (c.type == "text")
+                        r.Choices.Add(new CompletionChoiceResponse { text = c.text, finish_reason = "stop" });
+                });
+            }
+            
+            return r;
+        }
 
         public JObject JsonObject
         {

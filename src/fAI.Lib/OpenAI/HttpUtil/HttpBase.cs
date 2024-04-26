@@ -54,7 +54,7 @@ namespace fAI
                 _openAiOrg = openAiOrg;
         }
 
-        protected ModernWebClient InitWebClient(bool addJsonContentType = true)
+        protected virtual ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
             var mc = new ModernWebClient(_timeout);
             mc.AddHeader("Authorization", $"Bearer {_key}")

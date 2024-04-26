@@ -121,7 +121,6 @@ namespace fAI
                 return this.FullPrompt;
             return string.Join("\r\n", this.Messages);
         }
-
         
 
         public bool Success => Response.Success;
@@ -129,18 +128,32 @@ namespace fAI
         public string Answer => (this.Response!= null && string.IsNullOrEmpty(this.Response.Text)) ? null : Response.Text.Trim();
         public string Error => Response.ErrorMessage;
 
+        private bool IsClaude => this.Model.Contains("claude");
+
         public string GetPostBody()
         {
             if (this.Messages != null && this.Messages.Count > 0)
             {
-                return JsonConvert.SerializeObject(new
+                if (IsClaude)
                 {
-                    model = Model,
-                    messages = Messages,
-                    max_tokens = _MaxTokens,
-                    temperature = Temperature,
-                    response_format = response_format,
-                });
+                    return JsonConvert.SerializeObject(new
+                    {
+                        model = Model,
+                        messages = Messages,
+                        max_tokens = _MaxTokens,
+                    });
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        model = Model,
+                        messages = Messages,
+                        max_tokens = _MaxTokens,
+                        temperature = Temperature,
+                        response_format = response_format,
+                    });
+                }
             }
             else
             {

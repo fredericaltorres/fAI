@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
+    <Compile Include="Anthropic\Anthropic.Complettions.Chat.cs" />
     <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />
