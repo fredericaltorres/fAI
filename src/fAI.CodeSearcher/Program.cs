@@ -36,32 +36,40 @@ namespace fAI.Beetles.All
             Console.Clear();
             var embeddingSourceCodeRecords = LoadEmbeddingSourceCodeRecord();
 
-            //embeddingSourceCodeRecords = EmbeddingSourceCodeRecord.LoadSourceCodeList(@"C:\a\platform.txt", 4);
+            //var news = EmbeddingSourceCodeRecord.LoadSourceCodeList(@"c:\a\monitors.txt", 5);
+            //news.ForEach(n => n.Project = $"Monitor\\{n.Project}");
+            //embeddingSourceCodeRecords.AddRange(news);
             //SaveEmbeddingSourceCodeRecord(embeddingSourceCodeRecords);
-            ComputeEmbedding();
-            Environment.Exit(0);
-
+            //ComputeEmbedding();
+            //Environment.Exit(0);
 
             var embeddingRecords = embeddingSourceCodeRecords.Select(e => e as EmbeddingRecord).ToList();
-
-            var message = $"{embeddingSourceCodeRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
+            var message = $"{embeddingSourceCodeRecords.Count} Source File / Chunk . Enter search criteria about the source code";
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
 
             var minimumScore = 0.75f;
-            var topK = 3;
+            var topK = 10;
 
             while (true)
             {
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit" || criteria == "quit")
                     break;
+                if (criteria == "cls")
+                {
+                    Console.Clear();
+                    continue;
+                }
 
                 if (!criteria.IsNullOrEmpty())
                 {
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), embeddingRecords, topK, minimumScore);
                     foreach (var r in inMemoryResponse)
-                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
+                    {
+                        var rr = r as EmbeddingSourceCodeRecord;
+                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000},  Prj: {rr.Project}, File: {rr.ShorterFileName(4)} {rr.TextLengthKb} Kb, Chunk: {rr.ChunkIndex}");
+                    }
                     Console.WriteLine($"");
                 }
                 WriteQuestion(message);

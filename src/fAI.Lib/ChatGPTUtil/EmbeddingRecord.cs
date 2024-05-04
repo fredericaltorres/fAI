@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace fAI
 {
@@ -10,6 +11,8 @@ namespace fAI
         public string Text { get; set; }
         public List<float> Embedding { get; set; }
         public int TextLength => this.Text.Length;
+        public int TextLengthKb => this.Text.Length / 1024;
+
 
         [Newtonsoft.Json.JsonIgnore]
         public double Score { get; set; }
@@ -47,8 +50,18 @@ namespace fAI
         public int ChunkIndex { get; set; } = 1;// When a file is split into chunks
         public string Project { get; set; }
         public string FileNameOnly => Path.GetFileName(FileName);
-
-
+        public string ShorterFileName(int projectLocationIndex)
+        {
+            var parts = FileName.Split('\\');
+            var sb = new System.Text.StringBuilder();
+            for (var i = projectLocationIndex; i < parts.Length; i++)
+            {
+                sb.Append(parts[i]);
+                if (i < parts.Length - 1)
+                    sb.Append("\\");
+            }
+            return sb.ToString();
+        }
 
         public EmbeddingSourceCodeRecord Clone()
         {

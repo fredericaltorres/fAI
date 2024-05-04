@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Code Search Query.md" />
     <None Include="packages.config" />
     <None Include="source.code.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
