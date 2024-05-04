@@ -24,6 +24,13 @@ namespace fAI.WebApi.Controllers
             fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
 
+        [HttpGet("clear")]
+        public void Clear()
+        {
+            var remoteIpAddress = base.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            _memoryCache.Remove(remoteIpAddress);
+        }
+
         [HttpGet(Name = "GetEmbedding")]
         public IEnumerable<float> GetEmbedding()
         {

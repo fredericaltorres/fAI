@@ -1,36 +1,26 @@
-﻿sailing
-in the navy
-medecine and pills
+﻿in the navy
 sad people in church
 endless love
 parenting
 irs
+lady
 Tibetan Book of the Dead
 Timothy Leary
 animals
 anniversary
 chuck berry
-streets of Liverpool
 letters sent by mail
-bolsheviks
 soviet
 mikhail gorbachev
-vladimir lenin
+
+ronald reagen
+donald trump
+luke skywalker
+Johannes Brahms died 1897 in Vienna
+Johann Sebastian Bach died 1750 in Leipzig
+
 
 https://www.azlyrics.com/b/beatles.html
-
-
-tutti frutti
-
-Ludwig van Beethoven died 1827
-Johann Sebastian Bach died 1750
-
-peter fonda
-luke skywalker
-ronald reagen
-mikhail gorbachev
-King Charles
-Queen elisabeth
 
 Semantic Search
 Recommendations
