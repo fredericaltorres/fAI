@@ -56,6 +56,7 @@
             this.buildVideoBossRoom = new System.Windows.Forms.ToolStripMenuItem();
             this.celestialShimmeringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.celestialShimmeringCreateImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoCS = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.getLeonardoImageGenerationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
@@ -84,7 +85,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.buildVideoCS = new System.Windows.Forms.ToolStripMenuItem();
+            this.cgdreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mysticalCreatureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -95,7 +97,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.leonardoToolStripMenuItem});
+            this.leonardoToolStripMenuItem,
+            this.cgdreamToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
@@ -297,14 +300,14 @@
             // createImageToolStripMenuItem2
             // 
             this.createImageToolStripMenuItem2.Name = "createImageToolStripMenuItem2";
-            this.createImageToolStripMenuItem2.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem2.Size = new System.Drawing.Size(167, 24);
             this.createImageToolStripMenuItem2.Text = "Create Image";
             this.createImageToolStripMenuItem2.Click += new System.EventHandler(this.createImageToolStripMenuItem2_Click);
             // 
             // buildVideoBossRoom
             // 
             this.buildVideoBossRoom.Name = "buildVideoBossRoom";
-            this.buildVideoBossRoom.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoBossRoom.Size = new System.Drawing.Size(167, 24);
             this.buildVideoBossRoom.Text = "BuildVideo";
             this.buildVideoBossRoom.Click += new System.EventHandler(this.buildVideoBossRoom_Click);
             // 
@@ -320,9 +323,16 @@
             // celestialShimmeringCreateImage
             // 
             this.celestialShimmeringCreateImage.Name = "celestialShimmeringCreateImage";
-            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(180, 24);
+            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(167, 24);
             this.celestialShimmeringCreateImage.Text = "Create Image";
             this.celestialShimmeringCreateImage.Click += new System.EventHandler(this.celestialShimmeringCreateImage_Click);
+            // 
+            // buildVideoCS
+            // 
+            this.buildVideoCS.Name = "buildVideoCS";
+            this.buildVideoCS.Size = new System.Drawing.Size(167, 24);
+            this.buildVideoCS.Text = "Build Video";
+            this.buildVideoCS.Click += new System.EventHandler(this.buildVideoCS_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -605,12 +615,20 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // buildVideoCS
+            // cgdreamToolStripMenuItem
             // 
-            this.buildVideoCS.Name = "buildVideoCS";
-            this.buildVideoCS.Size = new System.Drawing.Size(180, 24);
-            this.buildVideoCS.Text = "Build Video";
-            this.buildVideoCS.Click += new System.EventHandler(this.buildVideoCS_Click);
+            this.cgdreamToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mysticalCreatureToolStripMenuItem});
+            this.cgdreamToolStripMenuItem.Name = "cgdreamToolStripMenuItem";
+            this.cgdreamToolStripMenuItem.Size = new System.Drawing.Size(80, 24);
+            this.cgdreamToolStripMenuItem.Text = "cgdream";
+            // 
+            // mysticalCreatureToolStripMenuItem
+            // 
+            this.mysticalCreatureToolStripMenuItem.Name = "mysticalCreatureToolStripMenuItem";
+            this.mysticalCreatureToolStripMenuItem.Size = new System.Drawing.Size(190, 24);
+            this.mysticalCreatureToolStripMenuItem.Text = "mystical creature";
+            this.mysticalCreatureToolStripMenuItem.Click += new System.EventHandler(this.mysticalCreatureToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -711,6 +729,8 @@
         private System.Windows.Forms.ToolStripMenuItem celestialShimmeringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem celestialShimmeringCreateImage;
         private System.Windows.Forms.ToolStripMenuItem buildVideoCS;
+        private System.Windows.Forms.ToolStripMenuItem cgdreamToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mysticalCreatureToolStripMenuItem;
     }
 }
 

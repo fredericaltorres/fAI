@@ -148,9 +148,12 @@ namespace faiWinApp
 
         public static string GetNewImageFileName(ImageFormat imageFormat, string tmpFolder, string imageFileNamePrefix = "")
         {
+            var imageFormatStr = imageFormat.ToString().ToLower();
+            if(imageFormatStr == "jpeg")
+                imageFormatStr = "jpg";
             var folder = (string.IsNullOrEmpty(tmpFolder) ? Path.GetTempPath() : tmpFolder);
             imageFileNamePrefix = imageFileNamePrefix == "" ? "fai_" : imageFileNamePrefix;
-            var f = Path.Combine(folder, $"{imageFileNamePrefix}{(string.IsNullOrEmpty(imageFileNamePrefix) ? "" : "." )}{Environment.TickCount}.{imageFormat}");
+            var f = Path.Combine(folder, $"{imageFileNamePrefix}{(string.IsNullOrEmpty(imageFileNamePrefix) ? "" : "." )}{Environment.TickCount}.{imageFormatStr}");
             Thread.Sleep(2);
             _fileToCleanUp.Add(f);
             return f;
@@ -468,7 +471,8 @@ namespace faiWinApp
                         var firstImage = inputPngFiles[z];
 
                         // Create a x second static image
-                        DS.Range((imageDurationSecond- transistionDurationSecond) * mp4FrameRate).ForEach(f => __pngFilesFinalBucket.Add(firstImage));
+                        DS.Range((imageDurationSecond - transistionDurationSecond) * mp4FrameRate)
+                            .ForEach(f => __pngFilesFinalBucket.Add(firstImage));
 
                         // Compute the transition with next image
                         var isThereANextImage = (z + 1) < inputPngFiles.Count;
