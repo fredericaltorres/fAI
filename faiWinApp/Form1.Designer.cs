@@ -59,6 +59,8 @@
             this.buildVideoCS = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.getLeonardoImageGenerationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cgdreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mysticalCreatureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -85,8 +87,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.cgdreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mysticalCreatureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkAndEerieWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -345,6 +346,22 @@
             this.getLeonardoImageGenerationInfoToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
             this.getLeonardoImageGenerationInfoToolStripMenuItem.Text = "Get Leonardo Image Generation Info";
             this.getLeonardoImageGenerationInfoToolStripMenuItem.Click += new System.EventHandler(this.getLeonardoImageGenerationInfoToolStripMenuItem_Click);
+            // 
+            // cgdreamToolStripMenuItem
+            // 
+            this.cgdreamToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mysticalCreatureToolStripMenuItem,
+            this.darkAndEerieWorldToolStripMenuItem});
+            this.cgdreamToolStripMenuItem.Name = "cgdreamToolStripMenuItem";
+            this.cgdreamToolStripMenuItem.Size = new System.Drawing.Size(80, 24);
+            this.cgdreamToolStripMenuItem.Text = "cgdream";
+            // 
+            // mysticalCreatureToolStripMenuItem
+            // 
+            this.mysticalCreatureToolStripMenuItem.Name = "mysticalCreatureToolStripMenuItem";
+            this.mysticalCreatureToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
+            this.mysticalCreatureToolStripMenuItem.Text = "mystical creature";
+            this.mysticalCreatureToolStripMenuItem.Click += new System.EventHandler(this.mysticalCreatureToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -615,20 +632,12 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // cgdreamToolStripMenuItem
+            // darkAndEerieWorldToolStripMenuItem
             // 
-            this.cgdreamToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mysticalCreatureToolStripMenuItem});
-            this.cgdreamToolStripMenuItem.Name = "cgdreamToolStripMenuItem";
-            this.cgdreamToolStripMenuItem.Size = new System.Drawing.Size(80, 24);
-            this.cgdreamToolStripMenuItem.Text = "cgdream";
-            // 
-            // mysticalCreatureToolStripMenuItem
-            // 
-            this.mysticalCreatureToolStripMenuItem.Name = "mysticalCreatureToolStripMenuItem";
-            this.mysticalCreatureToolStripMenuItem.Size = new System.Drawing.Size(190, 24);
-            this.mysticalCreatureToolStripMenuItem.Text = "mystical creature";
-            this.mysticalCreatureToolStripMenuItem.Click += new System.EventHandler(this.mysticalCreatureToolStripMenuItem_Click);
+            this.darkAndEerieWorldToolStripMenuItem.Name = "darkAndEerieWorldToolStripMenuItem";
+            this.darkAndEerieWorldToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
+            this.darkAndEerieWorldToolStripMenuItem.Text = "dark and eerie world";
+            this.darkAndEerieWorldToolStripMenuItem.Click += new System.EventHandler(this.darkAndEerieWorldToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -731,6 +740,7 @@
         private System.Windows.Forms.ToolStripMenuItem buildVideoCS;
         private System.Windows.Forms.ToolStripMenuItem cgdreamToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mysticalCreatureToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem darkAndEerieWorldToolStripMenuItem;
     }
 }
 

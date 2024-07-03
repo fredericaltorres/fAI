@@ -262,11 +262,18 @@ namespace faiWinApp
 
         public static string ZoomIntoBitmap(string fileName, Rectangle zoomArea, ImageFormat ImageFormat)
         {
-            Bitmap originalBitmap = new Bitmap(fileName);
-            var b = ZoomIntoBitmap(originalBitmap, zoomArea);
-            var newFileName = GetNewImageFileName(ImageFormat, Path.GetTempPath());
-            b.Save(newFileName, ImageFormat);
-            return newFileName;
+            try
+            {
+                Bitmap originalBitmap = new Bitmap(fileName);
+                var b = ZoomIntoBitmap(originalBitmap, zoomArea);
+                var newFileName = GetNewImageFileName(ImageFormat, Path.GetTempPath());
+                b.Save(newFileName, ImageFormat);
+                return newFileName;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Error ZoomIntoBitmap: {ex.Message}, zoomArea:({zoomArea.X}, {zoomArea.Y}, {zoomArea.Width}, {zoomArea.Height}), top:{zoomArea.Top}, left:{zoomArea.Left}");
+            }
         }
 
         public static string BlendBitmaps(string imageFileName1, string imageFileName2, float blendLevel, ImageFormat imageFormat)
@@ -450,7 +457,7 @@ namespace faiWinApp
 
                             for (var f = 0; f < fadingSteps; f++)
                             {
-                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Jpeg);
+                                var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
                                 __pngFilesFinalBucket.Add(transImg);
                             }
                         }
@@ -486,7 +493,7 @@ namespace faiWinApp
                         var fadingValue = 0.99f / fadingSteps;
                         for (var f = 0; f < fadingSteps; f++)
                         {
-                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Jpeg);
+                            var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Png);
                             __pngFilesFinalBucket.Add(transImg);
                         }
                     }
@@ -508,7 +515,13 @@ namespace faiWinApp
             var tfh = new TestFileHelper();
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
-            var cmd = $@"  -loglevel debug -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r {mp4FrameRate} -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
+
+//        C:\Brainshark\scripts\ffmpeg\v6.1.1\bin\ffmpeg.exe - f concat - safe 0 - i "C:\Users\ftorres\AppData\Local\Temp\tmp97C9.tmp.txt" - framerate 16 - c:v libx264 -pix_fmt yuv420p "C:\temp\@fAiImages\dark and eerie world\Animated.mp4"
+
+            //var cmd = $@"  -loglevel debug -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r {mp4FrameRate} -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
+
+            var cmd = $@"  -loglevel debug -f concat -safe 0 -i  ""{inputFileName}"" -framerate {mp4FrameRate} -c:v libx264 -pix_fmt yuv420p ""{mp4OutputFile}""  ";
+
             notify($@"""{ffmpeg}"" {cmd}");
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
 
@@ -526,7 +539,7 @@ namespace faiWinApp
             var zoomSlowDownImageCount = 1;
             for (var pZoom = 1; pZoom <= zoomImageCount; pZoom++)
             {
-                zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Jpeg);
+                zoomImage = ZoomIntoBitmap(pngFile, new Rectangle(zoomPixel, zoomPixel, refWidth - (zoomPixel * 2), refHeight - (zoomPixel * 2)), ImageFormat.Png);
                 zoomPixel += zoomPixelStep;
                 for (var f = 0; f < zoomSlowDownImageCount; f++)
                     pngImages.Add(zoomImage);

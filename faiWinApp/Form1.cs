@@ -670,6 +670,23 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
 
             ViewFile(this.FinalOutputFileName);
         }
+
+        private void darkAndEerieWorldToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\dark and eerie world\sequence.md";
+            Action<string> notify = (m) => this.UserMessage(m);
+            var finalOutputFiles = new FileSequenceManager();
+            var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
+            ImageUtility.GenerateMP4Animation(notify,
+                finalOutputFiles.FileNames,
+                this.FinalOutputFileName,
+                transistionDurationSecond: 2,
+                mp4FrameRate: GetMp4FrameRate(),
+                imageDurationSecond: GetMp4FirstFrameDurationSecond(),
+                zoomInPercent: GetMp4ZoomPercent());
+
+            ViewFile(this.FinalOutputFileName);
+        }
     }
 }
 /*
