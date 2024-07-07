@@ -384,7 +384,7 @@ namespace faiWinApp
             int widthBeforeZoom = 0;
             int widthAfterZoom = 0;
             int zoomPixelStep = 0;
-            int zoomImageCount = (int)((imageDurationSecond - zoomInFrame1Duration) * mp4FrameRate);
+            int zoomImageCount = (int)((imageDurationSecond / 2 ) * mp4FrameRate); // Zoom last half of the image duration
             var (refWidth, refHeight) = GetImageWidthAndHeight(inputPngFiles[0]);
             if (zoomIn)
             {
@@ -397,9 +397,8 @@ namespace faiWinApp
             }
 
             var tfh2 = new TestFileHelper();
-            var zoomSequences = new List<FileSequenceManager>();
+            var zoomFileSequences = new List<FileSequenceManager>();
             var __pngFilesFinalBucket = new List<string>();
-
             var tmpParentFolder = tfh2.GetTempFolder($"fAI.GenerateMP4Animation");
 
             // For each image generate the zoom sequence in a speparate sequence/bucket
@@ -410,12 +409,15 @@ namespace faiWinApp
                 if(zoomIn)
                 {
                     notify($"Calculating zoom {Path.GetFileName(pngFile)}");
-                    zoomSequences.Add(new FileSequenceManager(Path.Combine(tmpParentFolder, Environment.TickCount.ToString())));
-                    var tfsZoomSequence = zoomSequences.Last();
+                    zoomFileSequences.Add(new FileSequenceManager(Path.Combine(tmpParentFolder, Environment.TickCount.ToString())));
+                    var zoomFileSequence = zoomFileSequences.Last();
 
-                    tfsZoomSequence.AddFile(pngFile, move: false); // Add the first image
+                    zoomFileSequence.AddFile(pngFile, move: false); // Add the first image
                     var tmpPngFilesForFrames = ExecuteZoomSequence(zoomPixelStep, zoomImageCount, refWidth, refHeight, pngFile);
-                    tmpPngFilesForFrames.ForEach(f => tfsZoomSequence.AddFile(f, move: true));
+                    tmpPngFilesForFrames.ForEach(f => zoomFileSequence.AddFile(f, move: true));
+
+                    notify($"zoomFileSequence: {zoomFileSequence.FileNames.Count} files");
+                    notify($"zoomFileSequences: {zoomFileSequences.Count} sequences");
                 }
                 else
                 {
@@ -436,10 +438,10 @@ namespace faiWinApp
                         var pngFile = inputPngFiles[z];
                         notify($"Calculating Transistion {Path.GetFileName(pngFile)}");
 
-                        var tfsZoom = zoomSequences[z];
+                        var tfsZoom = zoomFileSequences[z];
                         var firstSection = tfsZoom.FileNames.Take(tfsZoom.FileNames.Count - fadingSteps).ToList();
 
-                        if (z > 0) // We previously added/computed the first 16 images 
+                        if (z > 0) // We previously added/computed the first fadingSteps images 
                         {
                             firstSection = firstSection.Skip(fadingSteps).ToList();
                         }
@@ -451,7 +453,7 @@ namespace faiWinApp
 
                         if (isThereANextImage)
                         {
-                            var tfsZoomNext = zoomSequences[z + 1];
+                            var tfsZoomNext = zoomFileSequences[z + 1];
                             var firstSectionNext = tfsZoomNext.FileNames.Take(fadingSteps).ToList();
                             var fadingValue = 0.99f / fadingSteps;
 
@@ -460,6 +462,7 @@ namespace faiWinApp
                                 var transImg = BlendBitmaps(secondSection[f], firstSectionNext[f], (f + 1) * fadingValue, ImageFormat.Png);
                                 __pngFilesFinalBucket.Add(transImg);
                             }
+                            notify($"Blending Zoom {__pngFilesFinalBucket.Count} images computed");
                         }
                         else
                         {
@@ -496,6 +499,7 @@ namespace faiWinApp
                             var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Png);
                             __pngFilesFinalBucket.Add(transImg);
                         }
+                        notify($"Blending Only {__pngFilesFinalBucket.Count} images computed");
                     }
                 }
             }
@@ -525,7 +529,9 @@ namespace faiWinApp
             notify($@"""{ffmpeg}"" {cmd}");
             var intExitCode = RunFFMPEG(cmd, mp4OutputFile);
 
-            // CleanUpTempFiles();
+            zoomFileSequences.ForEach(action => action.Clean());
+            CleanUpTempFiles();
+            
             notify($"Done");
 
             return intExitCode == 0;
