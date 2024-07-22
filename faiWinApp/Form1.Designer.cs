@@ -61,6 +61,7 @@
             this.getLeonardoImageGenerationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cgdreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mysticalCreatureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkAndEerieWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,7 +88,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.darkAndEerieWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womanCucumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -351,7 +352,8 @@
             // 
             this.cgdreamToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mysticalCreatureToolStripMenuItem,
-            this.darkAndEerieWorldToolStripMenuItem});
+            this.darkAndEerieWorldToolStripMenuItem,
+            this.womanCucumberToolStripMenuItem});
             this.cgdreamToolStripMenuItem.Name = "cgdreamToolStripMenuItem";
             this.cgdreamToolStripMenuItem.Size = new System.Drawing.Size(80, 24);
             this.cgdreamToolStripMenuItem.Text = "cgdream";
@@ -362,6 +364,13 @@
             this.mysticalCreatureToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
             this.mysticalCreatureToolStripMenuItem.Text = "mystical creature";
             this.mysticalCreatureToolStripMenuItem.Click += new System.EventHandler(this.mysticalCreatureToolStripMenuItem_Click);
+            // 
+            // darkAndEerieWorldToolStripMenuItem
+            // 
+            this.darkAndEerieWorldToolStripMenuItem.Name = "darkAndEerieWorldToolStripMenuItem";
+            this.darkAndEerieWorldToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
+            this.darkAndEerieWorldToolStripMenuItem.Text = "dark and eerie world";
+            this.darkAndEerieWorldToolStripMenuItem.Click += new System.EventHandler(this.darkAndEerieWorldToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -632,12 +641,12 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // darkAndEerieWorldToolStripMenuItem
+            // womanCucumberToolStripMenuItem
             // 
-            this.darkAndEerieWorldToolStripMenuItem.Name = "darkAndEerieWorldToolStripMenuItem";
-            this.darkAndEerieWorldToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
-            this.darkAndEerieWorldToolStripMenuItem.Text = "dark and eerie world";
-            this.darkAndEerieWorldToolStripMenuItem.Click += new System.EventHandler(this.darkAndEerieWorldToolStripMenuItem_Click);
+            this.womanCucumberToolStripMenuItem.Name = "womanCucumberToolStripMenuItem";
+            this.womanCucumberToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
+            this.womanCucumberToolStripMenuItem.Text = "woman cucumber";
+            this.womanCucumberToolStripMenuItem.Click += new System.EventHandler(this.womanCucumberToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -741,6 +750,7 @@
         private System.Windows.Forms.ToolStripMenuItem cgdreamToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mysticalCreatureToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem darkAndEerieWorldToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem womanCucumberToolStripMenuItem;
     }
 }
 
