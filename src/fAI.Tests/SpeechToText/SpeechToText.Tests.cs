@@ -15,13 +15,31 @@ namespace fAI.Tests
     public class SpeechToTextEngineTests
     {
         [Fact()]
-        public void SpeechToText()
+        public void SpeechToText_mp3_file()
         {
             var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
             var s = new SpeechToTextEngine();
-            var result = s.ExtractTextFromFile(mp3FileName, "en");
+            var result = s.ExtractText(mp3FileName, "en", true);
             var expected = "I am he as you are. He. As you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+            Assert.True(result.Success);
             Assert.Equal(expected, result.Text);
+            Assert.True(result.Captions.Length > 100);
+            Assert.Contains("-->", result.Captions);
+            Assert.Contains("WEBVTT", result.Captions);
+        }
+
+        [Fact()]
+        public void SpeechToText_mp4_file()
+        {
+            var mp4FileName = Path.Combine(".", "TestFiles", "I am Frederic Torres.mp4");
+            var s = new SpeechToTextEngine();
+            var result = s.ExtractText(mp4FileName, "en", true);
+            var expected = "I am Fredrik Torres. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer. I.";
+            Assert.True(result.Success);
+            Assert.Equal(expected, result.Text);
+            Assert.True(result.Captions.Length > 100);
+            Assert.Contains("-->", result.Captions);
+            Assert.Contains("WEBVTT", result.Captions);
         }
     }
 }
