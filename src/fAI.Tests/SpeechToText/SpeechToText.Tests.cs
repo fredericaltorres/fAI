@@ -41,5 +41,19 @@ namespace fAI.Tests
             Assert.Contains("-->", result.Captions);
             Assert.Contains("WEBVTT", result.Captions);
         }
+
+        [Fact()]
+        public void SpeechToText_Mp4_Url()
+        {
+            var mp4Url = "https://fredcloud.blob.core.windows.net/public/Fred.Video/I%20am%20Frederic%20Torres.mp4";
+            var s = new SpeechToTextEngine();
+            var result = s.ExtractText(mp4Url, "en", true);
+            var expected = "I am Fredrik Torres. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer. I.";
+            Assert.True(result.Success);
+            Assert.Equal(expected, result.Text);
+            Assert.True(result.Captions.Length > 100);
+            Assert.Contains("-->", result.Captions);
+            Assert.Contains("WEBVTT", result.Captions);
+        }
     }
 }
