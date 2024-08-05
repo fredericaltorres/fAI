@@ -7,8 +7,7 @@ using System.Threading;
 
 namespace fAI
 {
-
-    public partial class SpeechToTextEngine 
+    public class SpeechToTextEngine 
     {
         const string SpeechToTextServiceUrl = "https://api.rev.ai/speechtotext/v1/jobs";
         const string CaptionServiceUrl = "https://api.rev.ai/speechtotext/v1/jobs/[JOBID]/captions";
@@ -32,21 +31,18 @@ namespace fAI
 
         private string GetVTTText(string jobId)
         {
-            var mc = WebClient().AddHeader("Accept", "text/vtt");
-            var response = mc.GET(CaptionServiceUrl.TokenReplacer(new { jobId }));
+            //var mc = WebClient().AddHeader("Accept", "text/vtt");
+            var response = WebClient().AddHeader("Accept", "text/vtt").GET(CaptionServiceUrl.TokenReplacer(new { jobId }));
             if (response.Success)
-            {
-                var text = response.Text;
-                return text;
-            }
-            else throw new SpeechToTextException(response.Exception.Message, response.Exception);
+                return response.Text;
+            else 
+                throw new SpeechToTextException(response.Exception.Message, response.Exception);
         }
 
         private string GetTranscriptResult(string jobId)
         {
-            var mc = WebClient().AddHeader("Accept", "text/plain");
-
-            var response = mc.GET($"{SpeechToTextServiceUrl}/[JOBID]/transcript".TokenReplacer(new { jobId }));
+            //var mc = WebClient().AddHeader("Accept", "text/plain");
+            var response = WebClient().AddHeader("Accept", "text/plain").GET($"{SpeechToTextServiceUrl}/[JOBID]/transcript".TokenReplacer(new { jobId }));
             if (response.Success)
             {
                 var text = response.Text;
@@ -69,31 +65,10 @@ namespace fAI
                 {
                     var r = SpeechToTextResponse.FromJSON(response.Text);
                     if (r.Success)
-                    {
                         return new SpeechToTextResult { Text = GetTranscriptResult(workId), Captions = execCaption ? GetVTTText(workId) : null };
-                    }
                 }
                 return null;
             });
-
-            //    var timeIncrement = 10;
-            //for (var time = 0; time < timeOut; time += timeIncrement)
-            //{
-            //    Thread.Sleep(timeIncrement * 1000);
-            //    var response = WebClient().GET($"{SpeechToTextServiceUrl}/[WORKID]".TokenReplacer(new { workId }));
-            //    if (response.Success)
-            //    {
-            //        var r = SpeechToTextResponse.FromJSON(response.Text);
-            //        if (r.Success)
-            //        {
-            //            var vtt = execCaption ? GetVTTText(workId) : null;
-            //            var text = GetTranscriptResult(workId);
-
-            //            return new SpeechToTextResult { Text = text, VTT = vtt };
-            //        }
-            //    }
-            //}
-            //throw new SpeechToTextException($"workId:{workId} timed out after {timeOut} seconds");
         }
 
         public class SourceConfig
@@ -102,7 +77,7 @@ namespace fAI
             public string Url { get; set; }
         }
 
-        private SpeechToTextResult ExtractText(Uri uri, string languageIsoCode, bool captioning)
+        private SpeechToTextResult ExtractText(Uri uri, string languageIsoCode, bool extractCaptions)
         {
             var jsonPayload = new SpeechToTextTranscriptionOptions(languageIsoCode: languageIsoCode, url: uri.ToString()).ToJson();
             var response = WebClient().POST(SpeechToTextServiceUrl, jsonPayload);
@@ -110,13 +85,13 @@ namespace fAI
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var revAiResponse = SpeechToTextResponse.FromJSON(response.Text);
-                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, captioning);
+                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, extractCaptions);
                 r.Language = languageIsoCode;
                 RemoveWork(revAiResponse.Id);
                 if (string.IsNullOrEmpty(r.Text))
                     throw new SpeechToTextException($"Transciption failed");
 
-                if (captioning && string.IsNullOrEmpty(r.Captions))
+                if (extractCaptions && string.IsNullOrEmpty(r.Captions))
                     throw new SpeechToTextException($"Transciption failed, Empty VTT");
 
                 return r;
@@ -128,29 +103,29 @@ namespace fAI
             }
         }
 
-        public SpeechToTextResult ExtractText(string fileName, string languageIsoCode, bool captioning)
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions)
         {
-            if (IsUrl(fileName))
-                return ExtractText(new Uri(fileName), languageIsoCode, captioning);
+            if (IsUrl(fileNameOrUrl))
+                return ExtractText(new Uri(fileNameOrUrl), languageIsoCode, extractCaptions);
 
-            if (!File.Exists(fileName))
-                throw new ArgumentException($"File name {fileName} not found");
+            if (!File.Exists(fileNameOrUrl))
+                throw new ArgumentException($"File name {fileNameOrUrl} not found");
 
             var options = new Dictionary<string, string>
             {
                 ["options"] = new SpeechToTextTranscriptionOptions(languageIsoCode: languageIsoCode).ToJson()
             };
 
-            var response = WebClient().POST(SpeechToTextServiceUrl,  fileName , options, streamName: "media");
+            var response = WebClient().POST(SpeechToTextServiceUrl,  fileNameOrUrl , options, streamName: "media");
             if (response.Success)
             {
                 var revAiResponse = SpeechToTextResponse.FromJSON(response.Text);
-                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, captioning);
+                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, extractCaptions);
                 r.Language = languageIsoCode;
                 RemoveWork(revAiResponse.Id);
                 if (string.IsNullOrEmpty(r.Text))
                     throw new SpeechToTextException($"Transcription failed");
-                if (captioning && string.IsNullOrEmpty(r.Captions))
+                if (extractCaptions && string.IsNullOrEmpty(r.Captions))
                     throw new SpeechToTextException($"Transcription failed, empty vtt response");
 
                 return r;
