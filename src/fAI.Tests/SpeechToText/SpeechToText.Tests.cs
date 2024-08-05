@@ -15,7 +15,7 @@ namespace fAI.Tests
     public class SpeechToTextEngineTests
     {
         [Fact()]
-        public void SpeechToText_mp3_file()
+        public void SpeechToText_Mp3_File()
         {
             var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
             var s = new SpeechToTextEngine();
@@ -29,7 +29,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        public void SpeechToText_mp4_file()
+        public void SpeechToText_Mp4_File()
         {
             var mp4FileName = Path.Combine(".", "TestFiles", "I am Frederic Torres.mp4");
             var s = new SpeechToTextEngine();
