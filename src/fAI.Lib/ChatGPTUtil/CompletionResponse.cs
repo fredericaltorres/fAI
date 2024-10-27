@@ -255,7 +255,6 @@ namespace fAI
 
         public DateTime Created => DateTimeOffset.FromUnixTimeSeconds(created).DateTime;
 
-
         public static string RemoveSection(string text)
         {
             return text.Substring(text.IndexOf(" ") + 1);
@@ -273,14 +272,14 @@ namespace fAI
             return rx.IsMatch(text);
         }
 
-        public static bool StartsWithWordSection(string text, string word)
+        public static bool StartsWithWordSection(string text, string word, char sectionChar = ':')
         {
-            return text.StartsWith($"{word}: ");
+            return text.StartsWith($"{sectionChar}: ");
         }
 
-        public static bool StartsWithWordSection(string text, List<string> words)
+        public static bool StartsWithWordSection(string text, List<string> words, char sectionChar = ':')
         {
-            return words.Any(w => StartsWithWordSection(text, w));
+            return words.Any(w => StartsWithWordSection(text, w, sectionChar));
         }
 
         public List<string> ExtractJsonString(string text, bool justExtract = false, bool extractAndFormat = false)

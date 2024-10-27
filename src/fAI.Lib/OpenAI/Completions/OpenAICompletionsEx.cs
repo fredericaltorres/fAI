@@ -129,6 +129,36 @@ namespace fAI
             public List<string> Answers { get; set; } = new List<string>();
             public int CorrectAnswerIndex { get; set; }
 
+            public MultiChoiceQuestion()
+            {
+            }
+
+            private void CleanText()
+            {
+                this.Text = CleanTextReceivedFromGPTForQuestionGeneration(this.Text);
+                this.Answers = Answers.Select(a => CleanTextReceivedFromGPTForQuestionGeneration(a)).ToList();
+            }
+
+            static string CleanTextReceivedFromGPTForQuestionGeneration(string text)
+            {
+                text = text.Trim();
+
+                if (text[1] == ')' || text[1] == '.')
+                    text = text.Substring(2);
+                if (text.StartsWith(@"Question:"))
+                    text = text.Substring(9);
+                if (text.StartsWith(@"Q:"))
+                    text = text.Substring(2);
+                if (text.StartsWith(@""""))
+                    text = text.Substring(1);
+                if (text.EndsWith(@""""))
+                    text = text.Substring(0, text.Length - 1);
+
+                text = text.Trim();
+
+                return text;
+            }
+
             public static List<MultiChoiceQuestion> FromText(string text, int questionCount, int maxAnswer = 4)
             {
                 var rr = new List<MultiChoiceQuestion>();
@@ -141,6 +171,12 @@ namespace fAI
                     var r = new MultiChoiceQuestion();
                     rr.Add(r);
                     r.Text = lines[lineIndex++];
+                    if (r.Text.TrimStart().StartsWith(@""""))
+                        r.Text = r.Text.TrimStart().Substring(1);
+
+                    if (r.Text.TrimStart().EndsWith(@""""))
+                        r.Text = r.Text.TrimStart().Substring(0, r.Text.Length - 1);
+
                     if (CompletionResponse.StartsWithANumberSection(r.Text) || CompletionResponse.StartsWithALetterSection(r.Text) || 
                         CompletionResponse.StartsWithWordSection(r.Text, DS.List("Question", "Q")))
                     {
@@ -154,7 +190,9 @@ namespace fAI
                         r.Answers.Add(lines[lineIndex].Replace("*", ""));
                         lineIndex += 1;
                     }
+                    r.CleanText();
                 }
+
                 return rr;
             }
         }
@@ -189,25 +227,58 @@ namespace fAI
             return p;
         }
 
+        //string CleanTextReceivedFromGPTForQuestionGeneration (string text)
+        //{
+        //    text = text.Trim();
+
+        //    if (text[1] == ')' || text[1] == '.')
+        //        text = text.Substring(2);
+        //    if (text.StartsWith(@"Question:"))
+        //        text = text.Substring(9);
+        //    if (text.StartsWith(@"Q:"))
+        //        text = text.Substring(2);
+        //    if (text.StartsWith(@""""))
+        //        text = text.Substring(1);
+        //    if (text.EndsWith(@""""))
+        //        text = text.Substring(0, text.Length - 1);
+
+        //    text = text.Trim();
+
+        //    return text;
+        //}
+
         public List<MultiChoiceQuestion> GenerateMultiChoiceQuestionAboutText(
            int numberOfQuestions,
            string text,
            string context = @"
                     Use the provided article delimited by triple quotes to 
                     Generate [numberOfQuestions] [random] multi choice question about the article. 
-                    Mark the right answer with a character *.
-            ")
+                    Mark the right answer with a character * in the same line of the answer.
+            ",
+           Func<string, string> preProcessTextReceivedFn = null,
+           bool insertRandomizedWord = true)
         {
-            var contextPreProcessed = context.Template(new { numberOfQuestions, random = GetRandomWord(RandomSynonym) }, "[", "]");
+            var contextPreProcessed = context.Template(new { 
+                numberOfQuestions, 
+                random =(insertRandomizedWord ?GetRandomWord(RandomSynonym)  : "")
+            }, "[", "]");
+
             var p = GetPromptForGenerateMultiChoiceQuestionAboutText(text, contextPreProcessed);
             var client = new OpenAI();
             var response = client.Completions.Create(p);
-            if (response.Success)
-                return MultiChoiceQuestion.FromText(response.Text, numberOfQuestions);
+            if (response.Success) 
+            {
+                var responseText = response.Text;
+                if (preProcessTextReceivedFn != null)
+                {
+                    responseText = preProcessTextReceivedFn(response.Text);
+                    OpenAI.Trace(new { preProcessTextReceivedFn = responseText }, this);
+                }
+                return MultiChoiceQuestion.FromText(responseText, numberOfQuestions);
+            }
             else 
                 return null;
         }
-
     }
 }
 

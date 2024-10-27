@@ -13,6 +13,7 @@ using static DynamicSugar.DS;
 using System.Threading;
 using fAIConsole.RAG;
 using System.Runtime.Remoting.Contexts;
+using HtmlAgilityPack;
 
 namespace fAIConsole
 {
@@ -20,6 +21,11 @@ namespace fAIConsole
     {
         static void Main(string[] args)
         {
+            Main_GenerateMultiChoiceQuestionAboutKingsOfFrance(args);
+            //Main_GenerateMultiChoiceQuestionAboutText(@"");
+
+            return;
+
             var people = RandomPeople.FromFile(@".\rag\random_people_data.json");
             var peopleData = RandomPeople.GenerateTextDataForPrompt(people);
             var question = "I am looking for somebody that can repair a car in Florida.";
@@ -83,24 +89,84 @@ namespace fAIConsole
             Console.ReadLine();
         }
 
-
-        static void Main_GenerateMultiChoiceQuestionAboutText(string[] args)
+        static string GetNodePath(HtmlNode node)
         {
-            var questionCount = 1;
+            return node.ParentNode == null ? node.Name : GetNodePath(node.ParentNode) + "\\" + node.Name;
+        }
+
+        static string ExtractNode(HtmlNode node)
+        {
+            if (node .ParentNode.Name == "a") // No links
+                return "";
+
+            var nodePath = GetNodePath(node); // No header or footer
+            if (nodePath.Contains(@"\footer\")|| nodePath.Contains(@"\header\"))
+                return "";
+
+            return Environment.NewLine + $"[{GetNodePath(node)}] " + node.InnerText.Trim() + Environment.NewLine ; // + "`.` "
+        }
+
+        static void Main_GenerateMultiChoiceQuestionAboutText(string text2)
+        {
+            var html = @"https://www.bigtincan.com/content/";
+            var web = new HtmlWeb();
+            var doc = web.Load(html);
+
+            // Remove script and style elements
+            var nodestoRemove = doc.DocumentNode.SelectNodes("//script|//style");
+            if (nodestoRemove != null)
+            {
+                foreach (var node in nodestoRemove)
+                {
+                    node.Remove();
+                }
+            }
+
+            // Get text content
+            var text3 = doc.DocumentNode
+                .SelectNodes("//text()[normalize-space()]")
+                .Select(node => ExtractNode(node))
+                .Where(text => !string.IsNullOrWhiteSpace(text))
+                //.Select(text => text.Replace("\t", " ").Replace("\n", " ").Replace("\r", " "))
+                .Select(text => System.Text.RegularExpressions.Regex.Replace(text, @"\s+", " "))
+                .Aggregate((current, next) => current + $"{Environment.NewLine} " + next);
+
+            text3 = text3.Replace("`.` ", $@".{Environment.NewLine}");
+            //text3 = text3.Replace($@".{Environment.NewLine}"+ $@".{Environment.NewLine}", $@".{Environment.NewLine}");
+            //text3 = text3.Replace("..", $@".");
+            Console.WriteLine(text3);
+
+            //var node = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
+            //Console.WriteLine("Node Name: " + node.Name + "\n" + node.InnerText);
+
+            //var bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
+            //Console.WriteLine("Node Name: " + node.Name + "\n" + bodyNode.InnerText);
+            //Console.WriteLine("Node Name: " + node.Name + "\n" + bodyNode.InnerHtml);
+        }
+
+
+        static void Main_GenerateMultiChoiceQuestionAboutKingsOfFrance(string[] args)
+        {
+            var questionCount = 3;
             var dbFact = new DBFact();
             dbFact.AddFacts(KingOfFrances, randomizeOrder: true);
 
             var client = new OpenAI();
             var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
+            var questionIndex = 0;
             foreach (var q in questions)
             {
-                Console.WriteLine(q.Text);
+                Console.WriteLine($"{questionIndex+1} - {q.Text}");
+                var answerIndex = 0;
                 foreach (var answer in q.Answers)
-                    Console.WriteLine($"  {answer}");
-
-                Console.WriteLine();
-                Console.ReadLine();
+                {
+                    Console.WriteLine($"{answerIndex+1} - {answer} - rightAnswer: {q.CorrectAnswerIndex == answerIndex}");
+                    answerIndex++;
+                }
+                questionIndex++;
             }
+            Console.WriteLine();
+            Console.ReadLine();
         }
 
 
