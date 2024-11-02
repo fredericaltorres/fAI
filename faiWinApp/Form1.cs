@@ -704,6 +704,62 @@ A delicately shimmering celestial artifact captured in a surreal pinhole photogr
 
             ViewFile(this.FinalOutputFileName);
         }
+
+        private void createImageToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            this.UserMessage("[Leonardo]Generating Rail way track");
+            var prompt = @"
+ realistic, Image: Creepy old railway tracks leading into dense, misty woods--q 2 --v 5.2 --ar 16:9
+";
+            var workFolder = @"C:\temp\@fAiImages\RailWayTrack";
+            int startSeed = 629455447;
+            var imageCount = 64;
+            var finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false);
+            finalOutputFiles.CreateDirectory(workFolder);
+            finalOutputFiles = new FileSequenceManager(workFolder, reCreateIfExists: false, sequence: finalOutputFiles.FileNames.Count);
+            var startImageIndex = finalOutputFiles.FileNames.Count;
+            var client = new fAI.Leonardo();
+            var modelName = "AlbedoBase XL";
+            //var elements = client.Image.GetElements("Glasscore");
+
+            for (var i = startImageIndex; i < imageCount; i++)
+            {
+                var seed = startSeed + i - 1;
+                this.UserMessage($"[Leonardo]Age:{seed}");
+                var fileName = client.Image.GenerateSync(prompt,
+                                                         size: fAI.OpenAIImage.ImageSize._768x1360,
+                                                         modelName: modelName,
+                                                         seed: seed,
+                                                         promptMagic: false,
+                                                         photoReal: false, // photoReal v1
+                                                         promptMagicVersion: null,
+                                                         promptMagicStrength: null,
+                                                         stableDiffusionVersion: StableDiffusionVersion.v0_9,
+                                                         presetStyleAlchemyOn: PresetStyleAlchemyOn.CINEMATIC,
+                                                         presetStylePhotoRealOn: PresetStylePhotoRealOn.LEONARDO //,
+                                                         //elements: elements,
+                                                         //elementWeight: -0.6
+                                                         );
+                finalOutputFiles.AddFile(fileName, move: true);
+            }
+        }
+
+        private void buildVideoToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            var sequenceFileName = @"C:\temp\@fAiImages\RailWayTrack\sequence.md";
+            Action<string> notify = (m) => this.UserMessage(m);
+            var finalOutputFiles = new FileSequenceManager();
+            var error = finalOutputFiles.LoadSequenceFile(sequenceFileName, true);
+            ImageUtility.GenerateMP4Animation(notify,
+                finalOutputFiles.FileNames,
+                this.FinalOutputFileName,
+                transistionDurationSecond: 2,
+                mp4FrameRate: GetMp4FrameRate(),
+                imageDurationSecond: GetMp4FirstFrameDurationSecond(),
+                zoomInPercent: GetMp4ZoomPercent());
+
+            ViewFile(this.FinalOutputFileName);
+        }
     }
 }
 /*

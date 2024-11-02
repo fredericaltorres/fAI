@@ -293,7 +293,7 @@ namespace fAI
             float photoRealStrength = 0.55f,
             bool promptMagic = true,
             PromptMagicVersion? promptMagicVersion = PromptMagicVersion.v3,
-            int seed = 407795968,
+            long seed = 407795968,
             PresetStyleAlchemyOn presetStyleAlchemyOn = PresetStyleAlchemyOn.DYNAMIC,
             PresetStylePhotoRealOn presetStylePhotoRealOn = PresetStylePhotoRealOn.NONE,
             double? promptMagicStrength = 0.5,

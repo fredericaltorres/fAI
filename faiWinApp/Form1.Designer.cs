@@ -54,6 +54,9 @@
             this.bossRoomEntranceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createImageToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.buildVideoBossRoom = new System.Windows.Forms.ToolStripMenuItem();
+            this.railWayTrackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createImageToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildVideoToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.celestialShimmeringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.celestialShimmeringCreateImage = new System.Windows.Forms.ToolStripMenuItem();
             this.buildVideoCS = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,6 +65,7 @@
             this.cgdreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mysticalCreatureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.darkAndEerieWorldToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womanCucumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtUserOutput = new System.Windows.Forms.TextBox();
             this.WorkFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -88,7 +92,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.PasteFileName = new System.Windows.Forms.TextBox();
             this.butSortFileNames = new System.Windows.Forms.Button();
-            this.womanCucumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -231,6 +234,7 @@
             this.decadenceToolStripMenuItem,
             this.bossRoomEntranceToolStripMenuItem,
             this.celestialShimmeringToolStripMenuItem,
+            this.railWayTrackToolStripMenuItem,
             this.toolStripMenuItem2,
             this.getLeonardoImageGenerationInfoToolStripMenuItem});
             this.leonardoToolStripMenuItem.Name = "leonardoToolStripMenuItem";
@@ -313,6 +317,29 @@
             this.buildVideoBossRoom.Text = "BuildVideo";
             this.buildVideoBossRoom.Click += new System.EventHandler(this.buildVideoBossRoom_Click);
             // 
+            // railWayTrackToolStripMenuItem
+            // 
+            this.railWayTrackToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createImageToolStripMenuItem3,
+            this.buildVideoToolStripMenuItem2});
+            this.railWayTrackToolStripMenuItem.Name = "railWayTrackToolStripMenuItem";
+            this.railWayTrackToolStripMenuItem.Size = new System.Drawing.Size(321, 24);
+            this.railWayTrackToolStripMenuItem.Text = "Rail way track";
+            // 
+            // createImageToolStripMenuItem3
+            // 
+            this.createImageToolStripMenuItem3.Name = "createImageToolStripMenuItem3";
+            this.createImageToolStripMenuItem3.Size = new System.Drawing.Size(180, 24);
+            this.createImageToolStripMenuItem3.Text = "Create Image";
+            this.createImageToolStripMenuItem3.Click += new System.EventHandler(this.createImageToolStripMenuItem3_Click);
+            // 
+            // buildVideoToolStripMenuItem2
+            // 
+            this.buildVideoToolStripMenuItem2.Name = "buildVideoToolStripMenuItem2";
+            this.buildVideoToolStripMenuItem2.Size = new System.Drawing.Size(180, 24);
+            this.buildVideoToolStripMenuItem2.Text = "Build Video";
+            this.buildVideoToolStripMenuItem2.Click += new System.EventHandler(this.buildVideoToolStripMenuItem2_Click);
+            // 
             // celestialShimmeringToolStripMenuItem
             // 
             this.celestialShimmeringToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -325,14 +352,14 @@
             // celestialShimmeringCreateImage
             // 
             this.celestialShimmeringCreateImage.Name = "celestialShimmeringCreateImage";
-            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(167, 24);
+            this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(180, 24);
             this.celestialShimmeringCreateImage.Text = "Create Image";
             this.celestialShimmeringCreateImage.Click += new System.EventHandler(this.celestialShimmeringCreateImage_Click);
             // 
             // buildVideoCS
             // 
             this.buildVideoCS.Name = "buildVideoCS";
-            this.buildVideoCS.Size = new System.Drawing.Size(167, 24);
+            this.buildVideoCS.Size = new System.Drawing.Size(180, 24);
             this.buildVideoCS.Text = "Build Video";
             this.buildVideoCS.Click += new System.EventHandler(this.buildVideoCS_Click);
             // 
@@ -371,6 +398,13 @@
             this.darkAndEerieWorldToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
             this.darkAndEerieWorldToolStripMenuItem.Text = "dark and eerie world";
             this.darkAndEerieWorldToolStripMenuItem.Click += new System.EventHandler(this.darkAndEerieWorldToolStripMenuItem_Click);
+            // 
+            // womanCucumberToolStripMenuItem
+            // 
+            this.womanCucumberToolStripMenuItem.Name = "womanCucumberToolStripMenuItem";
+            this.womanCucumberToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
+            this.womanCucumberToolStripMenuItem.Text = "woman cucumber";
+            this.womanCucumberToolStripMenuItem.Click += new System.EventHandler(this.womanCucumberToolStripMenuItem_Click);
             // 
             // txtUserOutput
             // 
@@ -641,13 +675,6 @@
             this.butSortFileNames.UseVisualStyleBackColor = true;
             this.butSortFileNames.Click += new System.EventHandler(this.butSortFileNames_Click);
             // 
-            // womanCucumberToolStripMenuItem
-            // 
-            this.womanCucumberToolStripMenuItem.Name = "womanCucumberToolStripMenuItem";
-            this.womanCucumberToolStripMenuItem.Size = new System.Drawing.Size(215, 24);
-            this.womanCucumberToolStripMenuItem.Text = "woman cucumber";
-            this.womanCucumberToolStripMenuItem.Click += new System.EventHandler(this.womanCucumberToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -751,6 +778,9 @@
         private System.Windows.Forms.ToolStripMenuItem mysticalCreatureToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem darkAndEerieWorldToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem womanCucumberToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem railWayTrackToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createImageToolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem buildVideoToolStripMenuItem2;
     }
 }
 

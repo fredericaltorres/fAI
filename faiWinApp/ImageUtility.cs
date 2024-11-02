@@ -492,12 +492,19 @@ namespace faiWinApp
                         else
                             secondImage = inputPngFiles[0]; // Go back to the first image
 
+                        transistionDurationSecond = 1; /////////////////////////////////////////////////////////
+
                         var fadingSteps = mp4FrameRate * transistionDurationSecond;
                         var fadingValue = 0.99f / fadingSteps;
                         for (var f = 0; f < fadingSteps; f++)
                         {
                             var transImg = BlendBitmaps(firstImage, secondImage, (f + 1) * fadingValue, ImageFormat.Png);
                             __pngFilesFinalBucket.Add(transImg);
+
+                            if (f == fadingSteps - 1) // When done with the transistion, add the last image for 1 more seconds
+                            {
+                                DS.Range(mp4FrameRate/4*3).ForEach(ff => __pngFilesFinalBucket.Add(secondImage)); // Add the last image (secondImage
+                            }
                         }
                         notify($"Blending Only {__pngFilesFinalBucket.Count} images computed");
                     }
