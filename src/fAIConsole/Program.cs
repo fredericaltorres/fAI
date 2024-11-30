@@ -14,6 +14,7 @@ using System.Threading;
 using fAIConsole.RAG;
 using System.Runtime.Remoting.Contexts;
 using HtmlAgilityPack;
+using System.Reflection;
 
 namespace fAIConsole
 {
@@ -21,6 +22,12 @@ namespace fAIConsole
     {
         static void Main(string[] args)
         {
+            //Generate_Document(new VictorHugo());
+            // Generate_Document(new FyodorDostoevsky());
+            Generate_HtmlWebSite();
+
+            return;
+
             Main_GenerateMultiChoiceQuestionAboutKingsOfFrance(args);
             //Main_GenerateMultiChoiceQuestionAboutText(@"");
 
@@ -327,15 +334,18 @@ It also highlights the brutality of slavery and the courage of those who fought 
 
         public static void Generate_HtmlWebSite()
         {
-            var jsonInput = @".\VictorHugoPresentation\VictorHugo.Documents.json";
-            var htmlOutput = @".\VictorHugoPresentation\VictorHugo.Documents.3.html";
+            var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var jsonInput = $@"{exePath}\VictorHugoPresentation\VictorHugo.Documents.json";
+            var htmlOutput = $@"{exePath}\VictorHugoPresentation\VictorHugo.Documents.3.html";
 
-            jsonInput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json";
-            htmlOutput = @".\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html";
+            jsonInput = $@"{exePath}\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.json";
+            htmlOutput = $@"{exePath}\Fyodor Dostoevsky\Fyodor Dostoevsky.Documents.3.html";
 
             var generatedDocuments = GeneratedDocuments.Load(jsonInput);
             var templateGenerator = new StaticHtmlTemplateGenerator();
-            templateGenerator.GenerateFile(generatedDocuments, htmlOutput, OpenAISpeech.Voices.onyx);
+            //templateGenerator.GenerateFile(generatedDocuments, htmlOutput, OpenAISpeech.Voices.onyx);
+            templateGenerator.GenerateVideo(generatedDocuments, OpenAISpeech.Voices.onyx);
+            // Fyodor Dostoevsky
         }
 
         private static void PlayAnswerWhoWasKingOfFrance(OpenAI client, string question, string answer, string notFoundAnswer)

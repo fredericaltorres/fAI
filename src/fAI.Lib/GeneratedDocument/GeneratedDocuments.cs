@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using DynamicSugar;
+using System.Runtime.CompilerServices;
 
 namespace fAI
 {
@@ -30,6 +31,10 @@ namespace fAI
     {
         public GeneratedDocumentProperties Properties { get; set; } = new GeneratedDocumentProperties();
 
+        public string FileName { get; set; }
+        public string ParentFolder => Path.GetDirectoryName(this.FileName);
+        public string ParentFolderNameOnly => Path.GetFileName(this.ParentFolder);
+
         public GeneratedDocumentDetail Add(string title)
         {
             var d = new GeneratedDocumentDetail { Title = title };
@@ -54,6 +59,7 @@ namespace fAI
 
         public static GeneratedDocuments Load(string fileName)
         {
+            
             var json = File.ReadAllText(fileName);
             var lines = json.SplitByCRLF();
 
@@ -65,6 +71,7 @@ namespace fAI
 
             var r =  JsonUtils.FromJSON<GeneratedDocuments>(newJson);
             r.Properties = properties;
+            r.FileName = fileName;  
             return r;
         }
     }

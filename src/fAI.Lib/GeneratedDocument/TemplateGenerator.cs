@@ -47,6 +47,24 @@ namespace fAI
             }
         }
 
+        public void GenerateVideo(GeneratedDocuments generatedDocuments, OpenAISpeech.Voices? voice = null)
+        {
+            //if (voice.HasValue)
+            //    this.GenerateNarration(generatedDocuments, voice.Value);
+
+            foreach (var gdd in generatedDocuments)
+            {
+                var image = Path.Combine(generatedDocuments.ParentFolder, "images", Path.GetFileNameWithoutExtension(gdd.LocalImage) + ".png");
+                var mp3File = Path.Combine(generatedDocuments.ParentFolder, "audio", Path.GetFileNameWithoutExtension(gdd.LocalImage) + ".mp3");
+                var videoFolder = Path.Combine(generatedDocuments.ParentFolder, "video");
+                new TestFileHelper().CreateDirectory(videoFolder);
+                var outputMp4File = Path.Combine(videoFolder, Path.GetFileNameWithoutExtension(gdd.LocalImage) + ".mp4");
+                var command = $@"--image ""{image}"" --audio ""{mp3File}"" --outputVideo ""{outputMp4File}""";
+                Console.WriteLine(command);
+                Logger.Trace(command, this);
+            }
+        }
+
         public void GenerateFile(GeneratedDocuments generatedDocuments, string htmlStaticOutputFile, OpenAISpeech.Voices? voice = null)
         {
             if (voice.HasValue)
