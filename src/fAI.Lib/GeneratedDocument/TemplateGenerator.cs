@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using DynamicSugar;
 
 namespace fAI
@@ -62,6 +63,18 @@ namespace fAI
                 var command = $@"--image ""{image}"" --audio ""{mp3File}"" --outputVideo ""{outputMp4File}""";
                 Console.WriteLine(command);
                 Logger.Trace(command, this);
+
+                var fmsComversionConsoleexe = @"C:\DVT\finux\fms\fmsComversionConsole\fmsComversionConsole\bin\x64\Debug\fmsComversionConsole.exe";
+                var sb = new StringBuilder();
+                sb.AppendLine($@" generateVideoBasedOnImageAndMp3 --imageFileName ""{image}""  --audioFileName ""{mp3File}"" --outputVideoFileName ""{outputMp4File}"" ");
+
+                var exitCode = 0;
+                var r = ExecuteProgramUtilty.ExecProgram(fmsComversionConsoleexe, sb.ToString(), ref exitCode);
+                var ok = r && exitCode == 0;
+                if(ok)
+                    Logger.Trace($"Video generated for {gdd.Id}, ({outputMp4File})", this);
+                else
+                    Logger.TraceError($"Error generating video for {gdd.Id}", this);
             }
         }
 
