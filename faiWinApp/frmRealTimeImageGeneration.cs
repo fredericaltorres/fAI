@@ -76,7 +76,7 @@ namespace faiWinApp
                     modelName: modelName,
                     size: fAI.OpenAIImage.ImageSize._512x512,
                     seed: startSeed,
-                    photoReal: true,
+                    photoReal: false,
                     stableDiffusionVersion: StableDiffusionVersion.v2_1,
                     presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
                     timeoutManagerSleepTime: 3);
