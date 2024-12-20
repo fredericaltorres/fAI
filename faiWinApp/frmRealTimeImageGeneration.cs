@@ -73,11 +73,14 @@ namespace faiWinApp
             try
             {
                 var fileName = _leoClient.Image.GenerateSync(prompt,
+                    
                     modelName: modelName,
+                    stableDiffusionVersion: StableDiffusionVersion.None,
                     size: fAI.OpenAIImage.ImageSize._512x512,
                     seed: startSeed,
-                    photoReal: false,
-                    stableDiffusionVersion: StableDiffusionVersion.v2_1,
+                    alchemy: this.chkAlchemy.Checked,
+                    photoReal: this.chkPhotoReal.Checked,
+                    promptMagic: this.chkPhotoReal.Checked,
                     presetStylePhotoRealOn: PresetStylePhotoRealOn.CINEMATIC,
                     timeoutManagerSleepTime: 3);
 
@@ -95,6 +98,11 @@ namespace faiWinApp
         private void cboModels_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.lblModelDescription.Text = GetSelectedModel().description;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

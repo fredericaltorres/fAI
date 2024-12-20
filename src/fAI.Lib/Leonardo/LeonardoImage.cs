@@ -232,6 +232,7 @@ namespace fAI
 
         public enum StableDiffusionVersion
         {
+            None,
             v0_9,
             v1_5,
             v2_1,
@@ -343,7 +344,7 @@ namespace fAI
                 negative_prompt,
                 modelId = photoReal ? null:modelId,
                 //modelId,
-                sd_version = stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
+                sd_version = stableDiffusionVersion == StableDiffusionVersion.None ? null: stableDiffusionVersion.ToString().Replace("v","").Replace("_","."),
                 num_images = imageCount,
                 @public = isPublic,
                 width,

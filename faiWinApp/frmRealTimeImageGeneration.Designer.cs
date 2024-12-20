@@ -42,6 +42,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cboModels = new System.Windows.Forms.ComboBox();
             this.lblModelDescription = new System.Windows.Forms.Label();
+            this.chkAlchemy = new System.Windows.Forms.CheckBox();
+            this.chkPhotoReal = new System.Windows.Forms.CheckBox();
+            this.chkPromptMagic = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -49,7 +52,7 @@
             // txtUserOutput
             // 
             this.txtUserOutput.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUserOutput.Location = new System.Drawing.Point(19, 604);
+            this.txtUserOutput.Location = new System.Drawing.Point(15, 613);
             this.txtUserOutput.Margin = new System.Windows.Forms.Padding(6);
             this.txtUserOutput.Multiline = true;
             this.txtUserOutput.Name = "txtUserOutput";
@@ -60,7 +63,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 567);
+            this.label4.Location = new System.Drawing.Point(17, 588);
             this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(72, 19);
@@ -70,7 +73,7 @@
             // txtPrompt
             // 
             this.txtPrompt.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPrompt.Location = new System.Drawing.Point(21, 158);
+            this.txtPrompt.Location = new System.Drawing.Point(15, 186);
             this.txtPrompt.Margin = new System.Windows.Forms.Padding(6);
             this.txtPrompt.Multiline = true;
             this.txtPrompt.Name = "txtPrompt";
@@ -82,12 +85,13 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 133);
+            this.label1.Location = new System.Drawing.Point(21, 143);
             this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(72, 19);
             this.label1.TabIndex = 18;
             this.label1.Text = "Prompt:";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // menuStrip1
             // 
@@ -128,7 +132,7 @@
             // 
             this.renderImage.Name = "renderImage";
             this.renderImage.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.renderImage.Size = new System.Drawing.Size(180, 24);
+            this.renderImage.Size = new System.Drawing.Size(149, 24);
             this.renderImage.Text = "Render";
             this.renderImage.Click += new System.EventHandler(this.renderImage_Click);
             // 
@@ -172,11 +176,44 @@
             this.lblModelDescription.TabIndex = 23;
             this.lblModelDescription.Text = "Model Description";
             // 
+            // chkAlchemy
+            // 
+            this.chkAlchemy.AutoSize = true;
+            this.chkAlchemy.Location = new System.Drawing.Point(25, 117);
+            this.chkAlchemy.Name = "chkAlchemy";
+            this.chkAlchemy.Size = new System.Drawing.Size(91, 23);
+            this.chkAlchemy.TabIndex = 24;
+            this.chkAlchemy.Text = "Alchemy";
+            this.chkAlchemy.UseVisualStyleBackColor = true;
+            // 
+            // chkPhotoReal
+            // 
+            this.chkPhotoReal.AutoSize = true;
+            this.chkPhotoReal.Location = new System.Drawing.Point(122, 117);
+            this.chkPhotoReal.Name = "chkPhotoReal";
+            this.chkPhotoReal.Size = new System.Drawing.Size(109, 23);
+            this.chkPhotoReal.TabIndex = 25;
+            this.chkPhotoReal.Text = "PhotoReal";
+            this.chkPhotoReal.UseVisualStyleBackColor = true;
+            // 
+            // chkPromptMagic
+            // 
+            this.chkPromptMagic.AutoSize = true;
+            this.chkPromptMagic.Location = new System.Drawing.Point(237, 117);
+            this.chkPromptMagic.Name = "chkPromptMagic";
+            this.chkPromptMagic.Size = new System.Drawing.Size(127, 23);
+            this.chkPromptMagic.TabIndex = 26;
+            this.chkPromptMagic.Text = "PromptMagic";
+            this.chkPromptMagic.UseVisualStyleBackColor = true;
+            // 
             // frmRealTimeImageGeneration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1380, 936);
+            this.Controls.Add(this.chkPromptMagic);
+            this.Controls.Add(this.chkPhotoReal);
+            this.Controls.Add(this.chkAlchemy);
             this.Controls.Add(this.lblModelDescription);
             this.Controls.Add(this.cboModels);
             this.Controls.Add(this.label2);
@@ -216,5 +253,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cboModels;
         private System.Windows.Forms.Label lblModelDescription;
+        private System.Windows.Forms.CheckBox chkAlchemy;
+        private System.Windows.Forms.CheckBox chkPhotoReal;
+        private System.Windows.Forms.CheckBox chkPromptMagic;
     }
 }
