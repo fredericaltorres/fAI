@@ -129,10 +129,6 @@ namespace fAI
             public int apiConcurrencySlots { get; set; }
         }
 
-
-
-
-
         public class CustomModel
         {
             public string id { get; set; }
@@ -144,7 +140,7 @@ namespace fAI
 
             public override string ToString()
             {
-                return $"name:{name}, description:{description}";
+                return $"{name}";
             }
         }
 

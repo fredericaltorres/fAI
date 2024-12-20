@@ -204,7 +204,8 @@ namespace fAI
             double? promptMagicStrength = 0.5,
             Scheduler scheduler = Scheduler.LEONARDO, 
             List<GenerationElement> elements = null,
-            double elementWeight = 0)
+            double elementWeight = 0,
+            int timeoutManagerSleepTime = 6)
         {
             Trace(new {  modelId, modelName, stableDiffusionVersion, imageCount, size, isPublic, alchemy, photoReal, photoRealStrength, promptMagic, promptMagicVersion, seed, presetStyleAlchemyOn, presetStylePhotoRealOn, promptMagicStrength, scheduler, elements, prompt, negative_prompt, elementWeight }, this);
 
@@ -214,7 +215,7 @@ namespace fAI
             {
                 var jobS = this.GetJobStatus(job.GenerationId);
                 return  jobS.Completed ? jobS : null;
-            }, sleepDuration: 6);
+            }, sleepDuration: timeoutManagerSleepTime);
 
             var pngFileNames = jobState.DownloadImages();
 
