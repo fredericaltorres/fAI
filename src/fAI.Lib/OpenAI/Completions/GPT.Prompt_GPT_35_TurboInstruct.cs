@@ -72,6 +72,10 @@ namespace fAI
         }
     }
 
+    // https://docs.anthropic.com/en/docs/
+    // https://console.anthropic.com/dashboard API KEY
+    // https://github.com/anthropics/anthropic-cookbook
+    // https://github.com/anthropics/anthropic-cookbook/blob/main/multimodal/getting_started_with_vision.ipynb
     public class Anthropic_Prompt_Claude_3_Opus : GPTPrompt
     {
         public Anthropic_Prompt_Claude_3_Opus() : base()
@@ -102,6 +106,28 @@ namespace fAI
                     messages = nonSystemMessages,
                     max_tokens = MaxTokens,
                     temperature = Temperature,
+                });
+            }
+            else throw new System.Exception("No messages to send");
+        }
+    }
+
+    public class Anthropic_Image_Prompt_Claude_3_Opus : AnthropicPrompt
+    {
+        public Anthropic_Image_Prompt_Claude_3_Opus() : base()
+        {
+        }
+
+        public string GetPostBody()
+        {
+            if (this.Messages != null && this.Messages.Count > 0)
+            {
+
+                return JsonConvert.SerializeObject(new
+                {
+                    model = Model,
+                    messages = this.Messages,
+                    max_tokens = MaxTokens,
                 });
             }
             else throw new System.Exception("No messages to send");

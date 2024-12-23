@@ -58,6 +58,38 @@ namespace fAI.Tests
             var answer = response.JsonObject["answer"];
             Assert.Equal("C", answer);
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_UploadImage()
+        {
+            string imageFileName = @"c:\a\veracode.question.png";
+
+            var p = new Anthropic_Image_Prompt_Claude_3_Opus()
+            {
+                Messages = new  List<AnthropicMessage>()
+                {
+                    new AnthropicMessage { Role =  MessageRole.user, 
+                         Content = new List<AnthropicContentMessage> 
+                         {
+                             new AnthropicContentMessage { 
+                                 Type = AnthropicContentMessageType.image, 
+                                 Source = DS.Dictionary(new { 
+                                     type = "base64",
+                                     media_type = "image/jpeg", // or
+                                     data = Convert.ToBase64String(File.ReadAllBytes(imageFileName))
+                                 })
+                             },
+                             new AnthropicContentMessage {
+                                 Type = AnthropicContentMessageType.text,
+                                 Text = "What's in this image?"
+                             }
+                         }
+                    },
+                }
+            };
+            OpenAiCompletionsChatMultiImplementation.Virtual_Completion_JsonMode_WorldCup(new Anthropic().Completions, p, "winner");
+        }
     }
 }
 

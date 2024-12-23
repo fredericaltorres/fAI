@@ -12,6 +12,40 @@ namespace fAI
         assistant, 
         function
     }
+
+    public enum AnthropicContentMessageType
+    {
+        text,
+        image
+    }
+
+    public class AnthropicContentMessage
+    {
+        [JsonProperty(PropertyName =  "type")]
+        public AnthropicContentMessageType Type { get; set; }
+
+        [JsonProperty(PropertyName = "text")]
+        public string Text { get; set; }
+
+        [JsonProperty(PropertyName = "source")]
+        public Dictionary<string, object> Source { get; set; }
+    }
+
+    public class AnthropicMessage
+    {
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "role")]
+        public MessageRole Role { get; set; }
+
+        [JsonProperty(PropertyName = "content")]
+        public List<AnthropicContentMessage> Content { get; set; }
+
+        public override string ToString()
+        {
+            return $"Role:{this.Role}, Content:{this.Content.Count} Contents";
+        }
+    }
+
     public class GPTMessage
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -28,12 +62,18 @@ namespace fAI
         }
     }
 
+    public class AnthropicPrompt
+    {
+        public string Url { get; set; }
+        public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
+        public string Model { get; set; }
+        public int MaxTokens { get; set; } = 4000;
+    }
+
     public class GPTPrompt
     {
-
         public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
         public const string OPENAI_URL_V1_COMPLETIONS = "https://api.openai.com/v1/completions";
-
 
         public JsonResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }
@@ -95,8 +135,6 @@ namespace fAI
             return sb.ToString();
         }
 
-       
-
         public string FullPrompt
         {
             get
@@ -151,6 +189,5 @@ namespace fAI
             }
         }
     }
-   
 }
 
