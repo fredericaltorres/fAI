@@ -108,6 +108,9 @@
     <Content Include="TestFiles\TestFile.01.48Khz.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestFiles\code.question.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.AZURE.INDEX.json">

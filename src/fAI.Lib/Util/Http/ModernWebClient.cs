@@ -136,10 +136,20 @@ namespace fAI
                 var buffer = this.UploadData(url, "POST", System.Text.Encoding.UTF8.GetBytes(body));
                 r.SetResult(buffer, this.GetResponseContentType());
             }
-            catch (WebException wex)
+            catch (WebException ex)
             {
-                // TODO: Get detailed error message from the response
-                r.SetException(wex);
+                if (ex.Response != null)
+                {
+                    using (var stream = ex.Response.GetResponseStream())
+                    using (var reader = new StreamReader(stream))
+                    {
+                        string errorMessage = reader.ReadToEnd();
+                        var newEx = new Exception(errorMessage);
+                        r.SetException(newEx);
+                        r.SetText(errorMessage, "application/json");
+                    }
+                }
+                else r.SetException(ex);
             }
             catch (Exception ex)
             {

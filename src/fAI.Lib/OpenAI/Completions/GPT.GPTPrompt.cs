@@ -23,7 +23,7 @@ namespace fAI
     {
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "type")]
-        public AnthropicContentMessageType Type { get; set; }
+        public AnthropicContentMessageType Type { get; set; } = AnthropicContentMessageType.text;
     }
 
     public class AnthropicContentMessageSource: AnthropicContentMessage
@@ -36,6 +36,20 @@ namespace fAI
     {
         [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
+
+        public AnthropicContentMessageText()
+        {
+
+        }
+        public AnthropicContentMessageText(string text)
+        {
+            Text = text;
+        }
+
+        public override string ToString()
+        {
+            return $"Text:{this.Text}";
+        }
     }
 
     public class AnthropicMessage
@@ -69,19 +83,6 @@ namespace fAI
         }
     }
 
-    public class AnthropicPrompt
-    {
-        public string Url { get; set; }
-        public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
-        public string Model { get; set; }
-        public int MaxTokens { get; set; } = 4000;
-
-        public virtual string GetPostBody()
-        {
-            return null;
-        }
-    }
-
     public class GPTPrompt
     {
         public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
@@ -109,8 +110,6 @@ namespace fAI
             Lower values for temperature result in more consistent outputs  https://platform.openai.com/docs/guides/text-generation/how-should-i-set-the-temperature-parameter
         */
         public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
-
-
         public CompletionResponse Response { get; set; }
         public GPTPrompt UnprocessPrompt { get; set; } // allow to back up the current prompt before being processed.
 
