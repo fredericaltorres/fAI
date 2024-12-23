@@ -138,6 +138,7 @@ namespace fAI
             }
             catch (WebException wex)
             {
+                // TODO: Get detailed error message from the response
                 r.SetException(wex);
             }
             catch (Exception ex)

@@ -21,14 +21,21 @@ namespace fAI
 
     public class AnthropicContentMessage
     {
-        [JsonProperty(PropertyName =  "type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "type")]
         public AnthropicContentMessageType Type { get; set; }
+    }
 
-        [JsonProperty(PropertyName = "text")]
-        public string Text { get; set; }
-
+    public class AnthropicContentMessageSource: AnthropicContentMessage
+    {
         [JsonProperty(PropertyName = "source")]
         public Dictionary<string, object> Source { get; set; }
+    }
+
+    public class AnthropicContentMessageText : AnthropicContentMessage
+    {
+        [JsonProperty(PropertyName = "text")]
+        public string Text { get; set; }
     }
 
     public class AnthropicMessage
@@ -68,6 +75,11 @@ namespace fAI
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
         public string Model { get; set; }
         public int MaxTokens { get; set; } = 4000;
+
+        public virtual string GetPostBody()
+        {
+            return null;
+        }
     }
 
     public class GPTPrompt

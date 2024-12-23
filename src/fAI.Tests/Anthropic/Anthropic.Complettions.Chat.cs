@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using DynamicSugar;
 using static System.Net.Mime.MediaTypeNames;
+using MimeTypes;
 
 namespace fAI.Tests
 {
@@ -72,15 +73,15 @@ namespace fAI.Tests
                     new AnthropicMessage { Role =  MessageRole.user, 
                          Content = new List<AnthropicContentMessage> 
                          {
-                             new AnthropicContentMessage { 
+                             new AnthropicContentMessageSource { 
                                  Type = AnthropicContentMessageType.image, 
                                  Source = DS.Dictionary(new { 
                                      type = "base64",
-                                     media_type = "image/jpeg", // or
+                                     media_type = MimeTypeMap.GetMimeType(imageFileName),
                                      data = Convert.ToBase64String(File.ReadAllBytes(imageFileName))
                                  })
                              },
-                             new AnthropicContentMessage {
+                             new AnthropicContentMessageText {
                                  Type = AnthropicContentMessageType.text,
                                  Text = "What's in this image?"
                              }
@@ -88,7 +89,8 @@ namespace fAI.Tests
                     },
                 }
             };
-            OpenAiCompletionsChatMultiImplementation.Virtual_Completion_JsonMode_WorldCup(new Anthropic().Completions, p, "winner");
+            var response = new Anthropic().Completions.Create(p);
+            Assert.True(response.Success);
         }
     }
 }

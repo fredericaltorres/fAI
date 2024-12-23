@@ -116,9 +116,12 @@ namespace fAI
     {
         public Anthropic_Image_Prompt_Claude_3_Opus() : base()
         {
+            Model = "claude-3-opus-20240229";
+            MaxTokens = 1024;
+            Url = "https://api.anthropic.com/v1/messages";
         }
 
-        public string GetPostBody()
+        public override string GetPostBody()
         {
             if (this.Messages != null && this.Messages.Count > 0)
             {

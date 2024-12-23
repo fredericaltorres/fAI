@@ -58,6 +58,31 @@ namespace fAI
                 return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
             }
         }
+
+        public CompletionResponse Create(AnthropicPrompt p)
+        {
+            OpenAI.Trace(new { p.Url }, this);
+            OpenAI.Trace(new { Prompt = p }, this);
+            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
+
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().POST(p.Url, p.GetPostBody());
+            sw.Stop();
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+
+                var r = CompletionResponse.FromJson(response.Text);
+                //r.GPTPrompt = p;
+                r.Stopwatch = sw;
+                return r;
+            }
+            else
+            {
+                return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
+            }
+        }
     }
 }
 
