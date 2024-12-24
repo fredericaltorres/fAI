@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace fAI.Tests
 {
-    public class PineconeTestFixture : OpenAiCompletionsBase, IDisposable 
+    public class PineconeTestFixture : OpenAIUnitTestsBase, IDisposable 
     {
         public const string indexName = "unit-test-index";
 

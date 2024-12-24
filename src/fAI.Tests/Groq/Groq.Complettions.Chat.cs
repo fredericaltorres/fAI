@@ -17,7 +17,7 @@ namespace fAI.Tests
    
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class GroqAiCompletionsChat : OpenAiCompletionsBase
+    public class GroqAiCompletionsChat : OpenAIUnitTestsBase
     {
         public GroqAiCompletionsChat()
         {

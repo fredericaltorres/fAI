@@ -15,7 +15,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletionsTranslate : OpenAiCompletionsBase
+    public class OpenAiCompletionsTranslate : OpenAIUnitTestsBase
     {
         public OpenAiCompletionsTranslate()
         {

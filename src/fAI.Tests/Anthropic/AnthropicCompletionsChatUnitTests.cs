@@ -18,11 +18,10 @@ namespace fAI.Tests
 
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class AnthropicCompletionsChat : OpenAiCompletionsBase
+    public class AnthropicCompletionsChatUnitTests : OpenAIUnitTestsBase
     {
-        public AnthropicCompletionsChat()
+        public AnthropicCompletionsChatUnitTests()
         {
-            OpenAI.TraceOn = true;
         }
 
         [Fact()]
@@ -72,7 +71,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Completion_UploadImage_WhatIsInImage()
         {
-            var imageFileName = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "code.question.jpg");
+            var imageFileName = base.GetTestFile("code.question.1.jpg");
             Assert.True(File.Exists(imageFileName));
 
             var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
@@ -99,9 +98,9 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_UploadImage_AskToAnswerTheQuestionInImage()
+        public void Completion_UploadImage_AskToAnswerTheQuestion01InImage()
         {
-            var imageFileName = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "code.question.jpg");
+            var imageFileName = base.GetTestFile("code.question.1.jpg");
             Assert.True(File.Exists(imageFileName));
 
             var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
@@ -118,6 +117,30 @@ namespace fAI.Tests
             var response = new Anthropic().Completions.Create(prompt);
             Assert.True(response.Success);
             Assert.Contains(@"The correct answer to the question ""Use a controlled mechanism like Azure Key Vault to store secrets in the production environment", response.Text);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_UploadImage_AskToAnswerTheQuestion02InImage()
+        {
+            var imageFileName = base.GetTestFile("code.question.2.jpg");
+            Assert.True(File.Exists(imageFileName));
+
+            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            {
+                Messages = new AnthropicMessages(
+                    new AnthropicMessage(
+                        MessageRole.user,
+                        new AnthropicContentImage(imageFileName),
+                        new AnthropicContentText("Answer the question in the image.")
+                    )
+                )
+            };
+
+            var response = new Anthropic().Completions.Create(prompt);
+            Assert.True(response.Success);
+            Assert.Contains(@"Developer Exception", response.Text);
+            Assert.Contains(@"Database Error Page", response.Text);
         }
     }
 }

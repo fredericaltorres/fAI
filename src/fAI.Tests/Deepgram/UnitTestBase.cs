@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 
 namespace fAI.Tests
 {
-    public class UnitTestBase
+    public class UnitTestBase 
     {
         protected string FlexStrCompare(string s)
         {
@@ -21,5 +22,16 @@ namespace fAI.Tests
             AssertWords(text, words.Split(',').ToList());
         }
 
+        public string GetTestFile(string fileName)
+        {
+            var imageFileName = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", fileName);
+            Assert.True(File.Exists(imageFileName));
+            return imageFileName;
+        }
+
+        public UnitTestBase()
+        {
+            OpenAI.TraceOn = true;
+        }
     }
 }

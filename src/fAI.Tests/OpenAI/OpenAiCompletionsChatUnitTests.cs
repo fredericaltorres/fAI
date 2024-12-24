@@ -1,49 +1,23 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System;
-using fAI;
 using Xunit;
 using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using DynamicSugar;
-using static System.Net.Mime.MediaTypeNames;
 using static fAI.OpenAICompletionsEx;
 
 namespace fAI.Tests
 {
-    public class OpenAiCompletionsBase : UnitTestBase
-    {
-        public const string ReferenceEnglishSentence = "Hello world.";
-
-        public const string ReferenceEnglishJsonDictionary = @"{
-        ""(50,51)"": ""There are people who have a significant number of followers in every business domain. There are people who have a significant number of followers in every business domain."",
-        ""(50,52)"": ""Education "",
-        ""(53,54)"": ""Classroom 01"",
-        ""(53,55)"": ""Classroom 02"",
-        ""(56,57)"": ""Business Charts"",
-        ""(56,58)"": ""Is a great way to visualize information about users""
-      }";
-
-
-        public OpenAiCompletionsBase()
-        {
-            OpenAI.TraceOn = true;
-        }
-    }
-
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletionsChat : OpenAiCompletionsBase
+    public class OpenAiCompletionsChatUnitTests : OpenAIUnitTestsBase
     {
-        public OpenAiCompletionsChat()
+        public OpenAiCompletionsChatUnitTests()
         {
             OpenAI.TraceOn = true;
         }
-            
+
         [Fact()]
         [TestBeforeAfter]
         public void GetModels()
@@ -82,7 +56,7 @@ namespace fAI.Tests
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4
             {
-                Messages = new List<GPTMessage> 
+                Messages = new List<GPTMessage>
                 {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful assistant." },
                     new GPTMessage { Role =  MessageRole.user, Content = $"08/02/2021 15:00 Meeting with Eric." },
@@ -112,7 +86,8 @@ namespace fAI.Tests
         public void Completion_Chat_AnalyseLogError()
         {
             var client = new OpenAI();
-            var prompt = new Prompt_GPT_4 {
+            var prompt = new Prompt_GPT_4
+            {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced software developer."      },
                     new GPTMessage { Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
@@ -254,8 +229,8 @@ End of text
         public void Completion_ThisIsATest()
         {
             var client = new OpenAI();
-            var p = new Prompt_GPT_35_Turbo 
-            { 
+            var p = new Prompt_GPT_35_Turbo
+            {
                 Messages = new List<GPTMessage>()
                 {
                     new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
@@ -417,8 +392,8 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         public void Summarize_EnglishText_InOneLine()
         {
             var client = new OpenAI();
-            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English, 
-                                    promptCommand : "Summarize the following text in one line:");
+            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English,
+                                    promptCommand: "Summarize the following text in one line:");
             var expected = "Introducing the \"SwiftGadget X\" - a revolutionary all-in-one gadget that will change your life.";
             Assert.NotNull(summarization);
             DS.Assert.Words(summarization, "Introducing & SwiftGadget & (revolutionary | revolutionize) ");

@@ -12,12 +12,12 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAIAudioTranscriptionsTests
+    public class OpenAIAudioTranscriptionsTests : UnitTestBase
     {
         [Fact()]
         public void SpeechToText()
         {
-            var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
+            var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
             var client = new OpenAI();
             var text = client.Audio.Transcriptions.Create(mp3FileName);
             var expected = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";

@@ -12,12 +12,12 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class SpeechToTextEngineTests
+    public class SpeechToTextEngineTests : UnitTestBase
     {
         [Fact()]
         public void SpeechToText_Mp3_File()
         {
-            var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
+            var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
             var s = new SpeechToTextEngine();
             var result = s.ExtractText(mp3FileName, "en", true);
             var expected = "I am he as you are. He. As you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
@@ -31,7 +31,7 @@ namespace fAI.Tests
         [Fact()]
         public void SpeechToText_Mp4_File()
         {
-            var mp4FileName = Path.Combine(".", "TestFiles", "I am Frederic Torres.mp4");
+            var mp4FileName = base.GetTestFile("I am Frederic Torres.mp4");
             var s = new SpeechToTextEngine();
             var result = s.ExtractText(mp4FileName, "en", true);
             var expected = "I am Fredrik Torres. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer. I.";

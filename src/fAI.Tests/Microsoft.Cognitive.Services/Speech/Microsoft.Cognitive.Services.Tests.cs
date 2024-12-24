@@ -13,7 +13,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class MicrosoftCognitiveServicesTests
+    public class MicrosoftCognitiveServicesTests : UnitTestBase
     {
         const string EnglishTest01 = @"I am he as you are he as you are me
 And we are all together.
@@ -48,7 +48,7 @@ I'm crying";
         public void ExecuteSTT()
         {
             var mcs = new MicrosoftCognitiveServices();
-            var mp3FileName = Path.Combine(".", "TestFiles", "TestFile.01.48Khz.mp3");
+            var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
 
             var sttResult = mcs.ExecuteSTT(mp3FileName).GetAwaiter().GetResult();
 

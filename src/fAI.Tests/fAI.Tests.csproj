@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
-    <Compile Include="Anthropic\Anthropic.Complettions.Chat.cs" />
+    <Compile Include="Anthropic\AnthropicCompletionsChatUnitTests.cs" />
     <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />
@@ -69,6 +69,7 @@
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
+    <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
     <Compile Include="SpeechToText\SpeechToText.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.CodeGeneration.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Chat.MultiImplementation.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="OpenAI\OpenAIEmbeddingsTests.cs" />
     <Compile Include="OpenAI\OpenAI.Audio.Transcriptions.Tests.cs" />
     <Compile Include="OpenAI\OpenAI.Audio.Speech.Tests.cs" />
-    <Compile Include="OpenAI\OpenAi.Complettions.Chat.cs" />
+    <Compile Include="OpenAI\OpenAIUnitTestsBase.cs" />
     <Compile Include="OpenAI\TestBeforeAfter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VectorDB\SimilaritySearchEngineTests.cs" />
@@ -102,13 +103,16 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+    <Content Include="TestFiles\code.question.2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestFiles\I am Frederic Torres.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\TestFile.01.48Khz.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\code.question.jpg">
+    <Content Include="TestFiles\code.question.1.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

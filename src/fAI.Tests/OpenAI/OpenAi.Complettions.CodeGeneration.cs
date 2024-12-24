@@ -19,7 +19,7 @@ namespace fAI.Tests
 
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletionsCodeGeneration : OpenAiCompletionsBase
+    public class OpenAiCompletionsCodeGeneration : OpenAIUnitTestsBase
     {
         public OpenAiCompletionsCodeGeneration()
         {

@@ -5,7 +5,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletionsChatMultiImplementation : OpenAiCompletionsBase
+    public class OpenAiCompletionsChatMultiImplementation : OpenAIUnitTestsBase
     {
         public OpenAiCompletionsChatMultiImplementation()
         {
