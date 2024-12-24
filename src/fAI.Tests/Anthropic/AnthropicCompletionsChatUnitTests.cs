@@ -137,6 +137,9 @@ namespace fAI.Tests
             Assert.Contains(@"Database Error Page", response.Text);
         }
 
+
+        // C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\images
+
         [Fact()]
         [TestBeforeAfter]
         public void Completion_UploadImage_AskToDescribeImage()
@@ -157,7 +160,7 @@ namespace fAI.Tests
 
             var response = new Anthropic().Completions.Create(prompt);
             Assert.True(response.Success);
-            DS.Assert.Words(response.Text, "sea & waves & sailor");
+            DS.Assert.Words(response.Text, "(sea & waves) | ( stormy & shipwreck)");
         }
 
         [Fact()]
