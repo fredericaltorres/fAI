@@ -32,11 +32,15 @@ namespace fAI.Tests
             {
                 Messages = new List<GPTMessage>()
                 {
-                    new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful assistant designed to output JSON." },
+                    new GPTMessage { Role =  MessageRole.system, Content = "Answer the question in JSON format with a property 'winner'" },
                     new GPTMessage { Role =  MessageRole.user,   Content = "Who won the soccer world cup in 1998?" }
                 }
             };
-            OpenAiCompletionsChatMultiImplementation.Virtual_Completion_JsonMode_WorldCup(new Groq().Completions, p, "winning_team");
+
+            var response = new Groq().Completions.Create(p);
+            Assert.True(response.Success);
+            var answer = response.JsonObject["winner"];
+            Assert.Equal("France", answer);
         }
     }
 }
