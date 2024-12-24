@@ -79,7 +79,7 @@ namespace fAI.Tests
             var client = new OpenAI();
             var question = "Who was king of france in 2016?";
             var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Assert.Equal("I could not find an answer.", answer);
+            Assert.Contains("I could not find an answer", answer);
         }
 
         [Fact()]

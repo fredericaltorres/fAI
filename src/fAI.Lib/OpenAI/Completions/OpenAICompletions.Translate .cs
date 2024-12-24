@@ -94,11 +94,15 @@ namespace fAI
             {
                 Text = $"Translate from {sourceLangague} to {targetLanguage} the following JSON blob:\r\n{json}",
             };
-            var responseJson = Create(prompt).Text.Trim();
-            if (IsValidJson<Dictionary<string, string>>(responseJson))
-                return JsonConvert.DeserializeObject<Dictionary<string, string>>(responseJson);
-            else
-                throw new ChatGPTException($"{nameof(Translate)}(), failed to translate dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{responseJson}");
+            var completionResponse = Create(prompt);
+            if (completionResponse.Success)
+            {
+                if (IsValidJson<Dictionary<string, string>>(completionResponse.Text.Trim()))
+                    return JsonConvert.DeserializeObject<Dictionary<string, string>>(completionResponse.Text.Trim());
+                else 
+                    throw new ChatGPTException($"{nameof(Translate)}(), failed  dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{completionResponse}");
+            }
+            throw new ChatGPTException($"{nameof(Translate)}(), failed to translate dictionary sourceLangague:{sourceLangague}, json:{json}, targetLanguage:{targetLanguage}, response:{completionResponse}");
         }
 
 

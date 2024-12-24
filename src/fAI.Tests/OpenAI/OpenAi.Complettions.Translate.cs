@@ -109,13 +109,14 @@ namespace fAI.Tests
         {
             var client = new OpenAI();
             var inputDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(ReferenceEnglishJsonDictionary);
-            var outputDictionary = client.Completions.Translate(inputDictionary, TranslationLanguages.English, TranslationLanguages.French);
-            Assert.Equal(6, outputDictionary.Keys.Count);
 
+            var outputDictionary = client.Completions.Translate(inputDictionary, TranslationLanguages.English, TranslationLanguages.French);
+
+            Assert.Equal(6, outputDictionary.Keys.Count);
             inputDictionary.Keys.ToList().ForEach(k => Assert.True(outputDictionary.ContainsKey(k)));
 
-            Assert.Equal("Éducation", outputDictionary["(50,52)"]);
-            Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
+            Assert.Equal("Éducation", outputDictionary["2"]);
+            Assert.Equal("Salle de classe 01", outputDictionary["3"]);
         }
 
         [Fact()]

@@ -12,12 +12,12 @@ namespace fAI.Tests
         public const string ReferenceEnglishSentence = "Hello world.";
 
         public const string ReferenceEnglishJsonDictionary = @"{
-            ""(50,51)"": ""There are people who have a significant number of followers in every business domain. There are people who have a significant number of followers in every business domain."",
-            ""(50,52)"": ""Education "",
-            ""(53,54)"": ""Classroom 01"",
-            ""(53,55)"": ""Classroom 02"",
-            ""(56,57)"": ""Business Charts"",
-            ""(56,58)"": ""Is a great way to visualize information about users""
+            ""1"": ""There are people who have a significant number of followers in every business domain."",
+            ""2"": ""Education"",
+            ""3"": ""Classroom 01"",
+            ""4"": ""Classroom 02"",
+            ""5"": ""Business Charts"",
+            ""6"": ""Is a great way to visualize information about users""
         }";
 
         public OpenAIUnitTestsBase()
