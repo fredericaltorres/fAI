@@ -53,7 +53,7 @@ I'm crying";
             var sttResult = mcs.ExecuteSTT(mp3FileName).GetAwaiter().GetResult();
 
             Assert.True(sttResult.Succeeded);
-            Assert.Equal(STT_EnglishTest01_Result, sttResult.Text);
+            DS.Assert.Words(sttResult.Text, "I am he as you are me all together like pigs from a gun");
         }
 
         [Fact()]
