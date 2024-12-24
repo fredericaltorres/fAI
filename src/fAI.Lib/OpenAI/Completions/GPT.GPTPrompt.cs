@@ -1,6 +1,8 @@
 ﻿using DynamicSugar;
+using MimeTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,60 +13,6 @@ namespace fAI
         user, 
         assistant, 
         function
-    }
-
-    public enum AnthropicContentMessageType
-    {
-        text,
-        image
-    }
-
-    public class AnthropicContentMessage
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "type")]
-        public AnthropicContentMessageType Type { get; set; } = AnthropicContentMessageType.text;
-    }
-
-    public class AnthropicContentMessageSource: AnthropicContentMessage
-    {
-        [JsonProperty(PropertyName = "source")]
-        public Dictionary<string, object> Source { get; set; }
-    }
-
-    public class AnthropicContentMessageText : AnthropicContentMessage
-    {
-        [JsonProperty(PropertyName = "text")]
-        public string Text { get; set; }
-
-        public AnthropicContentMessageText()
-        {
-
-        }
-        public AnthropicContentMessageText(string text)
-        {
-            Text = text;
-        }
-
-        public override string ToString()
-        {
-            return $"Text:{this.Text}";
-        }
-    }
-
-    public class AnthropicMessage
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "role")]
-        public MessageRole Role { get; set; }
-
-        [JsonProperty(PropertyName = "content")]
-        public List<AnthropicContentMessage> Content { get; set; }
-
-        public override string ToString()
-        {
-            return $"Role:{this.Role}, Content:{this.Content.Count} Contents";
-        }
     }
 
     public class GPTMessage

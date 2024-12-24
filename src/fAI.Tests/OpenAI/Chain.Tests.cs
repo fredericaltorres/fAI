@@ -31,10 +31,11 @@ namespace fAI.Tests
                     new GPTMessage { Role =  MessageRole.user, Content = "Tell Three Interresting Fact About [Subject]" },
                 }
             };
-            var text = chain.Invoke(prompt, new { Subject = "Elvis" }) .Text;
-            Assert.Contains("Elvis", text);
+            var text = chain.Invoke(prompt, new { Subject = "Elvis Presley" }) .Text;
+            Assert.Contains("king", text.ToLower());
+            Assert.Contains("rock", text.ToLower());
+            Assert.Contains("roll", text.ToLower());
         }
-
 
         [Fact()]
         [TestBeforeAfter]

@@ -14,7 +14,7 @@ using DynamicSugar;
 namespace fAI
 {
 
-    public partial class AnthropicCompletions : HttpBase, IOpenAICompletion
+    public partial class AnthropicCompletions : HttpBase//, IOpenAICompletion
     {
         public AnthropicCompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
         {
@@ -32,54 +32,27 @@ namespace fAI
             return mc;
         }
 
-        // https://docs.anthropic.com/claude/reference/messages_post
-        // https://docs.anthropic.com/claude/reference/messages-examples
-        public CompletionResponse Create(GPTPrompt p)
-        {
-            OpenAI.Trace(new { p.Url }, this);
-            OpenAI.Trace(new { Prompt = p }, this);
-            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
-
-            var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(p.Url, p.GetPostBody());
-            sw.Stop();
-            if (response.Success)
-            {
-                response.SetText(response.Buffer, response.ContenType);
-                OpenAI.Trace(new { response.Text }, this);
-
-                var r = CompletionResponse.FromJson(response.Text);
-                r.GPTPrompt = p;
-                r.Stopwatch = sw;
-                return r;
-            }
-            else
-            {
-                return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
-            }
-        }
-
         public CompletionResponse Create(AnthropicPrompt p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
-            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
+            var body = p.GetPostBody();
+            OpenAI.Trace(new { BodyLenght = body.Length, Body = body }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(p.Url, p.GetPostBody());
+            var response = InitWebClient().POST(p.Url, body);
             sw.Stop();
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
-
                 var r = CompletionResponse.FromJson(response.Text);
-                //r.GPTPrompt = p;
                 r.Stopwatch = sw;
                 return r;
             }
             else
             {
+                OpenAI.TraceError(response.Exception.Message, this);
                 return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
             }
         }

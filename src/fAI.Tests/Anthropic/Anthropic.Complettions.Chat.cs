@@ -29,15 +29,22 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Completion_JsonMode_WorldCup()
         {
-        //    var p = new Anthropic_Prompt_Claude_3_Opus()
-        //    {
-        //        Messages = new List<GPTMessage>()
-        //        {
-        //            new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful assistant designed to output JSON." },
-        //            new GPTMessage { Role =  MessageRole.user,   Content = "Who won the soccer world cup in 1998?" }
-        //        }
-        //    };
-        //    OpenAiCompletionsChatMultiImplementation.Virtual_Completion_JsonMode_WorldCup(new Anthropic().Completions, p, "winner");
+            var p = new Anthropic_Prompt_Claude_3_Opus()
+            {
+                Messages = new List<AnthropicMessage>()
+                {
+                    new AnthropicMessage { Role =  MessageRole.user,
+                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(
+                             @"Who won the soccer world cup in 1998?
+                               Answer the question in JSON only using a property 'winner'."))
+                    }
+                }
+            };
+
+            var response = new Anthropic().Completions.Create(p);
+            Assert.True(response.Success);
+            var answer = response.JsonObject["winner"];
+            Assert.Equal("France", answer);
         }
 
         [Fact()]
@@ -49,7 +56,7 @@ namespace fAI.Tests
                 Messages = new List<AnthropicMessage>()
                 {
                     new AnthropicMessage { Role =  MessageRole.user,
-                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentMessageText(
+                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(
                              @"What is latin for Ant? (A) Apoidea, (B) Rhopalocera, (C) Formicidae? Please respond with just the letter of the correct answer in JSON format."))
                     }
                 }
@@ -63,40 +70,54 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_UploadImage()
+        public void Completion_UploadImage_WhatIsInImage()
         {
-            string imageFileName = @".\TestFiles\code.question.jpg"; // Must be a jpg
-            imageFileName = @"c:\a\veracode.question.jpg";
+            var imageFileName = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "code.question.jpg");
             Assert.True(File.Exists(imageFileName));
 
-            var p = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
             {
-                Messages = new  List<AnthropicMessage>()
-                {
-                    new AnthropicMessage { Role =  MessageRole.user, 
-                         Content = new List<AnthropicContentMessage> 
-                         {
-                             new AnthropicContentMessageSource { 
-                                 Type = AnthropicContentMessageType.image, 
-                                 Source = DS.Dictionary(new { 
-                                     type = "base64",
-                                     media_type = MimeTypeMap.GetMimeType(imageFileName),
-                                     data = Convert.ToBase64String(File.ReadAllBytes(imageFileName))
-                                 })
-                             },
-                             new AnthropicContentMessageText("What's in this image?")
-                         }
-                    },
-                }
+                Messages = new AnthropicMessages(
+                    new AnthropicMessage(
+                        MessageRole.user,
+                        new AnthropicContentImage(imageFileName),
+                        new AnthropicContentText("What's in this image?")
+                    )
+                )
             };
-            var response = new Anthropic().Completions.Create(p);
+
+            var response = new Anthropic().Completions.Create(prompt);
             Assert.True(response.Success);
             Assert.True(
                 response.Text.Contains("The image shows a quiz question") ||
-                response.Text.Contains("The image shows an online quiz")
-                );
+                response.Text.Contains("The image shows an online quiz")  ||
+                response.Text.Contains("The image shows a screenshot of an online quiz")
+            );
 
             Assert.Contains("Secure Coding for .NET - Data Protection", response.Text);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_UploadImage_AskToAnswerTheQuestionInImage()
+        {
+            var imageFileName = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles", "code.question.jpg");
+            Assert.True(File.Exists(imageFileName));
+
+            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            {
+                Messages = new AnthropicMessages(
+                    new AnthropicMessage(
+                        MessageRole.user,
+                        new AnthropicContentImage(imageFileName),
+                        new AnthropicContentText("Answer the question in the image.")
+                    )
+                )
+            };
+
+            var response = new Anthropic().Completions.Create(prompt);
+            Assert.True(response.Success);
+            Assert.Contains(@"The correct answer to the question ""Use a controlled mechanism like Azure Key Vault to store secrets in the production environment", response.Text);
         }
     }
 }
