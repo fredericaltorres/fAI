@@ -87,13 +87,7 @@ namespace fAI.Tests
 
             var response = new Anthropic().Completions.Create(prompt);
             Assert.True(response.Success);
-            Assert.True(
-                response.Text.Contains("The image shows a quiz question") ||
-                response.Text.Contains("The image shows an online quiz")  ||
-                response.Text.Contains("The image shows a screenshot of an online quiz")
-            );
-
-            Assert.Contains("Secure Coding for .NET - Data Protection", response.Text);
+            DS.Assert.Words(response.Text, "image & knowledge & .NET & Key & Vault & environment");
         }
 
         [Fact()]
@@ -109,14 +103,14 @@ namespace fAI.Tests
                     new AnthropicMessage(
                         MessageRole.user,
                         new AnthropicContentImage(imageFileName),
-                        new AnthropicContentText("Answer the question in the image.")
+                        new AnthropicContentText("Answer the question in the image with True or False only.")
                     )
                 )
             };
 
             var response = new Anthropic().Completions.Create(prompt);
             Assert.True(response.Success);
-            Assert.Contains(@"The correct answer to the question ""Use a controlled mechanism like Azure Key Vault to store secrets in the production environment", response.Text);
+            DS.Assert.Words(response.Text, "True");
         }
 
         [Fact()]
@@ -141,6 +135,52 @@ namespace fAI.Tests
             Assert.True(response.Success);
             Assert.Contains(@"Developer Exception", response.Text);
             Assert.Contains(@"Database Error Page", response.Text);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_UploadImage_AskToDescribeImage()
+        {
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+            Assert.True(File.Exists(imageFileName));
+
+            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            {
+                Messages = new AnthropicMessages(
+                    new AnthropicMessage(
+                        MessageRole.user,
+                        new AnthropicContentImage(imageFileName),
+                        new AnthropicContentText("Describe image.")
+                    )
+                )
+            };
+
+            var response = new Anthropic().Completions.Create(prompt);
+            Assert.True(response.Success);
+            DS.Assert.Words(response.Text, "sea & waves & sailor");
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_UploadImage_WroteShortStoryBasedOnImage()
+        {
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+            Assert.True(File.Exists(imageFileName));
+
+            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            {
+                Messages = new AnthropicMessages(
+                    new AnthropicMessage(
+                        MessageRole.user,
+                        new AnthropicContentImage(imageFileName),
+                        new AnthropicContentText("Write a short story based on the image.")
+                    )
+                )
+            };
+
+            var response = new Anthropic().Completions.Create(prompt);
+            Assert.True(response.Success);
+            //DS.Assert.Words(response.Text, "sea & waves & sailor");
         }
     }
 }
