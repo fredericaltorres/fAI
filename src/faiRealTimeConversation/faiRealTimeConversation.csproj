@@ -38,8 +38,8 @@
     <Reference Include="Deepgram, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Deepgram.3.4.1\lib\netstandard2.0\Deepgram.dll</HintPath>
     </Reference>
-    <Reference Include="DynamicSugarStandard, Version=1.0.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DynamicSugarStandard.1.0.25\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
+    <Reference Include="DynamicSugarStandard, Version=1.0.45.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DynamicSugarStandard.1.0.45\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -170,13 +170,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="images\DynamicSugar2.Logo.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\fAI.Lib\fAI.csproj">
       <Project>{cf5fef6e-d407-4f9f-a409-501d176fa62d}</Project>
       <Name>fAI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\DynamicSugar2.Logo.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('..\..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />

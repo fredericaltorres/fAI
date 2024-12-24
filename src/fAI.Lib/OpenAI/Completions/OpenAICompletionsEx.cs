@@ -32,26 +32,28 @@ namespace fAI
             return Create(prompt).Text?.Trim();
         }
 
-        public Func<object, string> SemanticFunction(string parameterizedPrompt) 
-        {
-            return new Func<object, string>((poco) =>
-            {
-                var prompt = new Prompt_GPT_35_TurboInstruct
-                {
-                    Text = parameterizedPrompt.Template(poco, "[","]" ),
-                };
+        //public Func<object, string> SemanticFunction(string parameterizedPrompt) 
+        //{
+        //    return new Func<object, string>((poco) =>
+        //    {
+        //        var prompt = new Prompt_GPT_35_TurboInstruct
+        //        {
+        //            Text = parameterizedPrompt.Template(poco, "[","]" ),
+        //        };
 
-                return Create(prompt).Text?.Trim();
-            });
-        }
+        //        return Create(prompt).Text?.Trim();
+        //    });
+        //}
 
         public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following text:") 
         {
-            var prompt = new Prompt_GPT_35_TurboInstruct 
+            var prompt = new Prompt_GPT_4_Turbo //Prompt_GPT_35_TurboInstruct
             {
-                Text = text,
-                PrePrompt = $"{promptCommand} \n===\n",
-                PostPrompt = "\n===\nSummary:\n",
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = promptCommand },
+                    new GPTMessage{ Role =  MessageRole.user, Content = text }
+                }
             };
 
             return Create(prompt).Text?.Trim();

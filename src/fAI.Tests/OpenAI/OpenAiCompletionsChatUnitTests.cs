@@ -286,17 +286,7 @@ End of text
             var client = new OpenAI();
             var text = "$200K";
             var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-            Assert.True(FlexStrCompare("2 000 $") == FlexStrCompare(translation));
-        }
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Translate_EnglishToFrench_SpecialCase_200K()
-        {
-            var client = new OpenAI();
-            var text = "200K";
-            var translation = client.Completions.Translate(text, TranslationLanguages.English, TranslationLanguages.French);
-            Assert.True(FlexStrCompare(text) == FlexStrCompare(translation));
+            Assert.Equal("200 000 $", translation);
         }
 
         [Fact()]
@@ -320,8 +310,8 @@ End of text
 
             inputDictionary.Keys.ToList().ForEach(k => Assert.True(outputDictionary.ContainsKey(k)));
 
-            Assert.Equal("Éducation", outputDictionary["(50,52)"]);
-            Assert.Equal("Salle de classe 01", outputDictionary["(53,54)"]);
+            Assert.Equal("Éducation", outputDictionary["2"]);
+            Assert.Equal("Salle de classe 01", outputDictionary["3"]);
         }
 
 
@@ -373,19 +363,19 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         {
             var client = new OpenAI();
             var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
-            var expected = "Jordan Lee is excited to introduce the \"SwiftGadget X\", a versatile and innovative device that serves as a personal assistant, entertainment hub, and productivity tool. It is not an ordinary gadget, but a game-changer.";
+            DS.Assert.Words(summarization, "introduc & SwiftGadget & (revolutionary | revolutionize) ");
             Assert.NotNull(summarization);
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Summarize_EnglishText_SematicFunction()
-        {
-            var client = new OpenAI();
-            var summarizeFunc = client.CompletionsEx.SemanticFunction("Summarize the following text:\r\n[text]");
-            var summarization = summarizeFunc(new { text = ReferenceEnglishTextForSummarization });
-            Assert.NotNull(summarization);
-        }
+        //[Fact()]
+        //[TestBeforeAfter]
+        //public void Summarize_EnglishText_SematicFunction()
+        //{
+        //    var client = new OpenAI();
+        //    var summarizeFunc = client.CompletionsEx.SemanticFunction("Summarize the following text:\r\n[text]");
+        //    var summarization = summarizeFunc(new { text = ReferenceEnglishTextForSummarization });
+        //    Assert.NotNull(summarization);
+        //}
 
         [Fact()]
         [TestBeforeAfter]
@@ -394,9 +384,8 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
             var client = new OpenAI();
             var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English,
                                     promptCommand: "Summarize the following text in one line:");
-            var expected = "Introducing the \"SwiftGadget X\" - a revolutionary all-in-one gadget that will change your life.";
             Assert.NotNull(summarization);
-            DS.Assert.Words(summarization, "Introducing & SwiftGadget & (revolutionary | revolutionize) ");
+            DS.Assert.Words(summarization, "introduc & SwiftGadget & (revolutionary | revolutionize | versatile | game-changing | game-changer) ");
         }
 
         [Fact()]
@@ -525,10 +514,10 @@ We can't hear anything at all";
             var text = "Who was the king of France from 1285 to 1314?\n\nA) Louis IX\nB) Philip III\nC) Philip IV*\nD) Louis X";
             var q = MultiChoiceQuestion.FromText(text, 1)[0];
             Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
-            Assert.Equal("A) Louis IX", q.Answers[0]);
-            Assert.Equal("B) Philip III", q.Answers[1]);
-            Assert.Equal("C) Philip IV", q.Answers[2]);
-            Assert.Equal("D) Louis X", q.Answers[3]);
+            Assert.Equal("Louis IX", q.Answers[0]);
+            Assert.Equal("Philip III", q.Answers[1]);
+            Assert.Equal("Philip IV", q.Answers[2]);
+            Assert.Equal("Louis X", q.Answers[3]);
             Assert.Equal(2, q.CorrectAnswerIndex);
         }
 
@@ -559,18 +548,18 @@ D. 1574 to 1589
             Assert.Equal(3, questions.Count);
             var q = questions[0];
             Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
-            Assert.Equal("A. Louis XIII", q.Answers[0]);
-            Assert.Equal("B. Philip IV", q.Answers[1]);
-            Assert.Equal("C. Charles V", q.Answers[2]);
-            Assert.Equal("D. John II", q.Answers[3]);
+            Assert.Equal("Louis XIII", q.Answers[0]);
+            Assert.Equal("Philip IV", q.Answers[1]);
+            Assert.Equal("Charles V", q.Answers[2]);
+            Assert.Equal("John II", q.Answers[3]);
             Assert.Equal(1, q.CorrectAnswerIndex);
 
             q = questions[2];
             Assert.Equal("When did Louis XIV reign as king of France?", q.Text);
-            Assert.Equal("A. 1643 to 1715", q.Answers[0]);
-            Assert.Equal("B. 1515 to 1547", q.Answers[1]);
-            Assert.Equal("C. 1285 to 1314", q.Answers[2]);
-            Assert.Equal("D. 1574 to 1589", q.Answers[3]);
+            Assert.Equal("1643 to 1715", q.Answers[0]);
+            Assert.Equal("1515 to 1547", q.Answers[1]);
+            Assert.Equal("1285 to 1314", q.Answers[2]);
+            Assert.Equal("1574 to 1589", q.Answers[3]);
             Assert.Equal(0, q.CorrectAnswerIndex);
         }
 

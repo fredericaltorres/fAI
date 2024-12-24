@@ -45,6 +45,15 @@ namespace fAI
         }
     }
 
+    public class Prompt_GPT_4_Turbo : GPTPrompt
+    {
+        public Prompt_GPT_4_Turbo() : base()
+        {
+            Model = "gpt-4-turbo";
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+        }
+    }
+
     public class Prompt_GPT_4 : GPTPrompt
     {
         public Prompt_GPT_4() : base()

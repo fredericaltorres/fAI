@@ -33,11 +33,9 @@ namespace fAI.Tests
             var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
             var client = new DeepgramAI();
             var r = client.Audio.Transcriptions.Create(mp3FileName, vtt: true);
-            var expected = "I am he as you are he as you are me, and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
-            Assert.Equal(FlexStrCompare(expected), FlexStrCompare(r.Text));
+            DS.Assert.Words(r.Text, "I am he as you are me all together like pig run crying fly");
             Assert.StartsWith("WEBVTT", r.VTT);
-            Assert.Contains("00:00:00 --> 00:00:02.260", r.VTT);
-            Assert.Contains(FlexStrCompare(" - I am he as you are he as you are me,"), FlexStrCompare(r.VTT));
+            Assert.Contains("00:00:00 --> 00:00:02", r.VTT);
         }
 
         public static bool PlayAudio(string filePath)

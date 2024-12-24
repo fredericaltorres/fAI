@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Search.Documents" Version="11.5.0" />
     <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="DynamicSugarStandard" Version="1.0.25" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.45" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.33.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
