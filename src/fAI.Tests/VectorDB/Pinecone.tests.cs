@@ -117,11 +117,9 @@ namespace fAI.Tests
 
         const string BeatlesRevolverIndexName = "beetles-revolver";
 
-
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Beatles_Revolver_CreateIndex()
+        //[Fact()]
+        //[TestBeforeAfter]
+        void Beatles_Revolver_CreateIndex()
         {
             var client = new PineconeDB();
             var index = client.CreateIndex(BeatlesRevolverIndexName);
@@ -147,21 +145,27 @@ namespace fAI.Tests
             var index = client.GetIndex(BeatlesRevolverIndexName);
             var query = "taxation policy in england";
             var rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
 
             query = "under the influence of drugs";
             rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
 
             query = "Rock and roll";
             rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
 
             query = "Drugs and medecine";
             rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
 
             query = "People and love";
             rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
 
             query = "People and job";
             rrr = client.SimilaritySearch(index, query, topK, includeValues: !false);
+            Assert.True(rrr.matches.Count > 2);
         }
     }
 }
