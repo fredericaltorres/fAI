@@ -82,7 +82,7 @@ namespace fAI.Tests
         {
             var client = new PineconeDB();
             var index = client.DescribeIndex(PineconeTestFixture.indexName);
-            var pineconeVectors = new List<PineconeVector>() 
+            var pineconeVectors = new List<PineconeVector>()
             {
                 new PineconeVector { id = "1", values = Helloworld_VECTOR, metadata = DS.Dictionary(new { text = Helloworld_TEXT })},
                 new PineconeVector { id = "2", values = Yesterdayallmytroublesseemedsofaraway_VECTOR, metadata = DS.Dictionary(new { text = Yesterdayallmytroublesseemedsofaraway_TEXT })},
@@ -91,20 +91,20 @@ namespace fAI.Tests
 
             var r1 = client.UpsertVectors(index, pineconeVectors);
             Assert.Equal(3, r1.upsertedCount);
-
             var expectedCount = 3;
 
-            client.WaitForConsistency();
-            index = client.CheckIndex(index);
-            if(index.totalVectorCount != expectedCount)
-            {
-                client.WaitForConsistency();
+            var isDataReady = Managers.TimeOutManager<bool>("WaitForConsistency", 1, () => {
                 index = client.CheckIndex(index);
-            }
+                return (index.totalVectorCount == expectedCount);
+            });
 
-            Assert.Equal(expectedCount, index.totalVectorCount);
-            var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1);
-            Assert.Equal(1, rrr.matches.Count);
+            if (isDataReady)
+            {
+                Assert.Equal(expectedCount, index.totalVectorCount);
+                var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1);
+                Assert.Single(rrr.matches);
+            }
+            else Assert.True(false, "Pinecone upsert failed");
         }
 
         [Fact()]

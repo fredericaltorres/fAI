@@ -184,7 +184,7 @@ namespace fAI.VectorDB
 
         public void WaitForConsistency()
         {
-            Thread.Sleep(1000 * 3); // Pinecone is eventually consistent
+            Thread.Sleep(1000 * 4); // Pinecone is eventually consistent
         }
 
         public UpsetResponse UpsertVectors(
