@@ -104,6 +104,7 @@ namespace fAI.Tests
 
             Assert.Equal(expectedCount, index.totalVectorCount);
             var rrr = client.SimilaritySearch(index, Helloworld_VECTOR, 1);
+            Assert.Equal(1, rrr.matches.Count);
         }
 
         [Fact()]
