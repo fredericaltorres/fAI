@@ -117,6 +117,7 @@ namespace fAI
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
         public string Model { get; set; }
         public int MaxTokens { get; set; } = 4000;
+        public string System { get; set; }
 
         public virtual string GetPostBody()
         {
@@ -145,6 +146,7 @@ namespace fAI
     // https://console.anthropic.com/dashboard API KEY
     // https://github.com/anthropics/anthropic-cookbook
     // https://github.com/anthropics/anthropic-cookbook/blob/main/multimodal/getting_started_with_vision.ipynb
+    // https://docs.anthropic.com/en/prompt-library
     public class Anthropic_Prompt_Claude_3_Opus : AnthropicPrompt
     {
         public Anthropic_Prompt_Claude_3_Opus() : base()

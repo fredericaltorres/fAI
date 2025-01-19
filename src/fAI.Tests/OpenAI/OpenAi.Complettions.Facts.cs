@@ -135,10 +135,10 @@ namespace fAI.Tests
             var text = "Who was the king of France from 1285 to 1314?\n\nA) Louis IX\nB) Philip III\nC) Philip IV*\nD) Louis X";
             var q = MultiChoiceQuestion.FromText(text, 1)[0];
             Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
-            Assert.Equal("A) Louis IX", q.Answers[0]);
-            Assert.Equal("B) Philip III", q.Answers[1]);
-            Assert.Equal("C) Philip IV", q.Answers[2]);
-            Assert.Equal("D) Louis X", q.Answers[3]);
+            Assert.Equal("Louis IX", q.Answers[0]);
+            Assert.Equal("Philip III", q.Answers[1]);
+            Assert.Equal("Philip IV", q.Answers[2]);
+            Assert.Equal("Louis X", q.Answers[3]);
             Assert.Equal(2, q.CorrectAnswerIndex);
         }
 
@@ -169,18 +169,18 @@ D. 1574 to 1589
             Assert.Equal(3, questions.Count);
             var q = questions[0];
             Assert.Equal("Who was the king of France from 1285 to 1314?", q.Text);
-            Assert.Equal("A. Louis XIII", q.Answers[0]);
-            Assert.Equal("B. Philip IV", q.Answers[1]);
-            Assert.Equal("C. Charles V", q.Answers[2]);
-            Assert.Equal("D. John II", q.Answers[3]);
+            Assert.Equal("Louis XIII", q.Answers[0]);
+            Assert.Equal("Philip IV", q.Answers[1]);
+            Assert.Equal("Charles V", q.Answers[2]);
+            Assert.Equal("John II", q.Answers[3]);
             Assert.Equal(1, q.CorrectAnswerIndex);
 
             q = questions[2];
             Assert.Equal("When did Louis XIV reign as king of France?", q.Text);
-            Assert.Equal("A. 1643 to 1715", q.Answers[0]);
-            Assert.Equal("B. 1515 to 1547", q.Answers[1]);
-            Assert.Equal("C. 1285 to 1314", q.Answers[2]);
-            Assert.Equal("D. 1574 to 1589", q.Answers[3]);
+            Assert.Equal("1643 to 1715", q.Answers[0]);
+            Assert.Equal("1515 to 1547", q.Answers[1]);
+            Assert.Equal("1285 to 1314", q.Answers[2]);
+            Assert.Equal("1574 to 1589", q.Answers[3]);
             Assert.Equal(0, q.CorrectAnswerIndex);
         }
 

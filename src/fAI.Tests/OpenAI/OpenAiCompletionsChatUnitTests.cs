@@ -80,7 +80,6 @@ namespace fAI.Tests
             Assert.Matches(@"dog.*vet.*10:00", response.Text);
         }
 
-
         [Fact()]
         [TestBeforeAfter]
         public void Completion_Chat_AnalyseLogError()
