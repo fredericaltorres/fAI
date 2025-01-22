@@ -125,6 +125,7 @@ namespace fAI
             {
                 return JsonConvert.SerializeObject(new
                 {
+                    system = System,
                     model = Model,
                     messages = this.Messages,
                     max_tokens = MaxTokens,
@@ -170,20 +171,6 @@ namespace fAI
             MaxTokens = 1024;
             Url = "https://api.anthropic.com/v1/messages";
         }
-
-        //public override string GetPostBody()
-        //{
-        //    if (this.Messages != null && this.Messages.Count > 0)
-        //    {
-        //        return JsonConvert.SerializeObject(new
-        //        {
-        //            model = Model,
-        //            messages = this.Messages,
-        //            max_tokens = MaxTokens,
-        //        });
-        //    }
-        //    else throw new System.Exception("No messages to send");
-        //}
     }
 }
 

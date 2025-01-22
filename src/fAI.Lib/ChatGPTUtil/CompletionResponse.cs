@@ -61,8 +61,6 @@ namespace fAI
         [JsonProperty(PropertyName = "content")]
         public List<AnthropicCompletionContentResponse> AnthropicContent { get; set; }
 
-
-
         [JsonProperty(PropertyName = "message")]
         public List<GPTMessage> Message { get; set; }
 
@@ -86,6 +84,22 @@ namespace fAI
             return r;
         }
 
+        public JArray JsonArray
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.Text))
+                    return null;
+                if (this.Text.StartsWith("["))
+                {
+                    var jsons = ReFormatJsonString(this.Text, "[", "]", justExtract: true, extractAndFormat: false);
+                    OpenAI.Trace(jsons[0], this);
+                    return JArray.Parse(jsons[0]);
+                }
+                return null;
+            }
+        }
+
         public JObject JsonObject
         {
             get
@@ -95,6 +109,7 @@ namespace fAI
                 if(this.Text.StartsWith("{"))
                 {
                     var jsons = ReFormatJsonString(this.Text, "{", "}", justExtract: true, extractAndFormat: false);
+                    OpenAI.Trace(jsons[0], this);
                     return JObject.Parse(jsons[0]);
                 }
                 return null;

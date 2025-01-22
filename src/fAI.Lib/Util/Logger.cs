@@ -61,14 +61,11 @@ namespace fAI
             return Trace(s, This, methodName);
         }
 
-        public static T Trace<T>(T ex)
+        public static Exception Trace(Exception ex)
         {
-            if (ex is Exception)
-            {
-                var e = ex as Exception;
-                TraceError(e.Message, e);
-            }
-            return ex;
+            var e = ex as Exception;
+            TraceError(e.Message, e);
+            return e;
         }
     }
 }

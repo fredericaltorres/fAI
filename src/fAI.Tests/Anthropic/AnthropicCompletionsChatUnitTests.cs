@@ -71,6 +71,37 @@ Discussion:
             //Assert.Equal("France", answer);
         }
 
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void AnalyseTextAndExtractCodeInformation_Airport_Code_Analyst()
+        {
+            var p = new Anthropic_Prompt_Claude_3_Opus()
+            {
+                System = @"Your task is to analyze the provided text and identify 
+                city airport codes and 
+                city time zones mentioned within it. 
+
+                Present these airport codes, names and time zone names as a JSON array in the order they appear in the text.
+                Output the data in JSON using the property names: (airportCode, cityName, timeZone). 
+                If no airport codes are found, return an empty array.",
+                Messages = new List<AnthropicMessage>()
+                {
+                    new AnthropicMessage { Role =  MessageRole.user,
+                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(
+                             @"My next trip involves flying from Seattle to Amsterdam.
+                               I’ll be spending a few days in Amsterdam before heading to Paris for a connecting flight to Rome and finaly by train to marseille."))
+                    }
+                }
+            };
+
+            var response = new Anthropic().Completions.Create(p);
+            Assert.True(response.Success);
+            var airportCode = response.JsonArray[0]["airportCode"];
+            var cityName = response.JsonArray[0]["cityName"];
+            var timeZoneName = response.JsonArray[0]["timeZone"];
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Completion_JsonMode_WorldCup()
