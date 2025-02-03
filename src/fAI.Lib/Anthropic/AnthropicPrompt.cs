@@ -116,32 +116,43 @@ namespace fAI
         public string Url { get; set; }
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
         public string Model { get; set; }
-        public int MaxTokens { get; set; } = 4000;
-        public string System { get; set; }
+        public int MaxTokens { get; set; } = 8192;
+        public string System { get; set; } = null;
+        public int Temperature { get; set; } = 1;
 
         public virtual string GetPostBody()
         {
             if (this.Messages != null && this.Messages.Count > 0)
             {
-                return JsonConvert.SerializeObject(new
+                if(this.System == null)
                 {
-                    system = System,
-                    model = Model,
-                    messages = this.Messages,
-                    max_tokens = MaxTokens,
-                });
+                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = MaxTokens });
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = MaxTokens });
+                }
             }
             else throw new System.Exception("No messages to send");
         }
 
-        public AnthropicPrompt() // Make sure we clone all property
+        public AnthropicPrompt(string model = "claude-3-opus-20240229", int maxTokens = 8192, int temperature = 1) // Make sure we clone all property
         {
             Model = "claude-3-opus-20240229";
-            MaxTokens = 1024;
+            this.MaxTokens = maxTokens;
             Url = "https://api.anthropic.com/v1/messages";
         }
     }
 
+
+    public class Anthropic_Prompt_Claude_3_5_Sonnet_20241022 : AnthropicPrompt
+    {
+        public Anthropic_Prompt_Claude_3_5_Sonnet_20241022() : base()
+        {
+            Model = "claude-3-5-sonnet-20241022";
+            
+        }
+    }
 
     // https://docs.anthropic.com/en/docs/
     // https://console.anthropic.com/dashboard API KEY
@@ -156,11 +167,6 @@ namespace fAI
             MaxTokens = 1024;
             Url = "https://api.anthropic.com/v1/messages";
         }
-
-        //public override string GetPostBody()
-        //{
-        //    return null;
-        //}
     }
 
     public class Anthropic_Image_Prompt_Claude_3_Opus : AnthropicPrompt

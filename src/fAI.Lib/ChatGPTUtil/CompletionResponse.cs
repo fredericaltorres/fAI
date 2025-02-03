@@ -144,6 +144,12 @@ namespace fAI
             }
         }
 
+        public T Deserialize<T>()
+        {
+            var json = this.ExtractJsonString(this.Text, justExtract: true)[0];
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+
         public string Text {
             get
             {
