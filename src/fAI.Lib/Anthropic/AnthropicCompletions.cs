@@ -32,7 +32,7 @@ namespace fAI
             return mc;
         }
 
-        public CompletionResponse Create(AnthropicPrompt p)
+        public CompletionResponse Create(AnthropicPromptBase p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);

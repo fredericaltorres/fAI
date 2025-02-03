@@ -1,17 +1,8 @@
 ﻿using System.IO;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
-using System;
-using fAI;
 using Xunit;
-using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Newtonsoft.Json;
 using DynamicSugar;
-using static System.Net.Mime.MediaTypeNames;
-using MimeTypes;
 using System.Text.Json.Serialization;
 
 namespace fAI.Tests
@@ -41,10 +32,10 @@ namespace fAI.Tests
 
         public class Action
         {
-            [JsonPropertyName("Command")]
+            [JsonPropertyName("command")]
             public string Command { get; set; }
 
-            [JsonPropertyName("Value")]
+            [JsonPropertyName("value")]
             public string Value { get; set; }
         }
 
@@ -52,19 +43,19 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Nusbio_Led_Control()
         {
-            var p = new Anthropic_Prompt_Claude_3_5_Sonnet_20241022()
+            var p = new Anthropic_Prompt_Claude_3_5_Sonnet()
             {
                 System = null,
                 Messages = new List<AnthropicMessage>()
                 {
                     new AnthropicMessage { Role =  MessageRole.user,
                          Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(@"
-
 You are controlling a electronic device displaying 9 LED named:
- LED_0, LED_1, LED_2, LED_3,LED_4, LED_5,LED_6, LED_7
+ LED_0, LED_1, LED_2, LED_3, LED_4, LED_5,LED_6, LED_7.
 
-All output should be in JSON, using a ""sequence"" object with the following properties:
-""comment"" which is a string, ""actions"" is an array of object containing the properties Command and Value.
+All output should be in JSON, using a main object containing a ""sequences"" property containing an array of the following properties:
+""comment"" which is a string, ""actions"" is an array of object containing the properties ""command"" and ""value"".
+
 To turn on LED LED_0, you must output: LED_0 ON.
 To turn off LED LED_0, you must output: LED_0 OFF.
 To wait 1 second, you must output: WAIT 1.
@@ -86,10 +77,11 @@ For each character of the word ""HELLO""
             foreach(var s in sequence.Sequences)
             {
                 Assert.Equal(9, s.Actions.Count);
+                Assert.Single(s.Actions.Where(a => a.Command == "WAIT").ToList());
+                Assert.Equal(8, s.Actions.Where(a => a.Command.StartsWith("LED_")).ToList().Count);
                 Assert.True(!string.IsNullOrEmpty(s.Comment));
             }
         }
-
 
         [Fact()]
         [TestBeforeAfter]

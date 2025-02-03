@@ -111,7 +111,7 @@ namespace fAI
         }
     }
 
-    public class AnthropicPrompt
+    public class AnthropicPromptBase
     {
         public string Url { get; set; }
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
@@ -126,17 +126,17 @@ namespace fAI
             {
                 if(this.System == null)
                 {
-                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = MaxTokens });
+                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = MaxTokens, temperature = Temperature });
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = MaxTokens });
+                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = MaxTokens, temperature = Temperature });
                 }
             }
             else throw new System.Exception("No messages to send");
         }
 
-        public AnthropicPrompt(string model = "claude-3-opus-20240229", int maxTokens = 8192, int temperature = 1) // Make sure we clone all property
+        public AnthropicPromptBase(string model = "claude-3-opus-20240229", int maxTokens = 8192, int temperature = 1) // Make sure we clone all property
         {
             Model = "claude-3-opus-20240229";
             this.MaxTokens = maxTokens;
@@ -145,9 +145,9 @@ namespace fAI
     }
 
 
-    public class Anthropic_Prompt_Claude_3_5_Sonnet_20241022 : AnthropicPrompt
+    public class Anthropic_Prompt_Claude_3_5_Sonnet : AnthropicPromptBase
     {
-        public Anthropic_Prompt_Claude_3_5_Sonnet_20241022() : base()
+        public Anthropic_Prompt_Claude_3_5_Sonnet() : base()
         {
             Model = "claude-3-5-sonnet-20241022";
             
@@ -159,7 +159,7 @@ namespace fAI
     // https://github.com/anthropics/anthropic-cookbook
     // https://github.com/anthropics/anthropic-cookbook/blob/main/multimodal/getting_started_with_vision.ipynb
     // https://docs.anthropic.com/en/prompt-library
-    public class Anthropic_Prompt_Claude_3_Opus : AnthropicPrompt
+    public class Anthropic_Prompt_Claude_3_Opus : AnthropicPromptBase
     {
         public Anthropic_Prompt_Claude_3_Opus() : base()
         {
@@ -169,7 +169,7 @@ namespace fAI
         }
     }
 
-    public class Anthropic_Image_Prompt_Claude_3_Opus : AnthropicPrompt
+    public class Anthropic_Image_Prompt_Claude_3_Opus : AnthropicPromptBase
     {
         public Anthropic_Image_Prompt_Claude_3_Opus() : base()
         {
