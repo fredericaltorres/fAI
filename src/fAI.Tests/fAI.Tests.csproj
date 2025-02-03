@@ -59,6 +59,7 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anthropic\LedSequence.cs" />
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
     <Compile Include="Anthropic\AnthropicCompletionsChatUnitTests.cs" />
