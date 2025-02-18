@@ -35,8 +35,8 @@ namespace fAI
 
     public class CompletionResponse  : BaseHttpResponse
     {
-        private const string NEED_MORE_TOKENS_RETURN_CODE = "length";
-        private const string FULL_SUCCEES_RETURN_CODE = "stop";
+        internal const string NEED_MORE_TOKENS_RETURN_CODE = "length";
+        internal const string FULL_SUCCEES_RETURN_CODE = "stop";
 
         public static List<string> ChatGPTSuccessfullReasons = new List<string> { NEED_MORE_TOKENS_RETURN_CODE, FULL_SUCCEES_RETURN_CODE };
 

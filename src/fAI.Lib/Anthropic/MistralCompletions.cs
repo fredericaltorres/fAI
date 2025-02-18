@@ -57,9 +57,7 @@ namespace fAI
             sw.Stop();
             if (!string.IsNullOrEmpty(response.Id))
             {
-                //response.Choices.
-                //response.SetText(response.Buffer, response.ContenType);
-                OpenAI.Trace(new { response.Choices[0].Message }, this);
+                OpenAI.Trace(new { response.Choices[0].Message.Content }, this);
                 var r = new CompletionResponse();
                 r.Choices = new List<CompletionChoiceResponse>();
                 r.Choices.Add(new CompletionChoiceResponse { 
@@ -68,7 +66,7 @@ namespace fAI
                         //Role = response.Choices[0].
                     }
                 });
-
+                r.Choices[0].finish_reason = CompletionResponse.FULL_SUCCEES_RETURN_CODE;
                 r.Stopwatch = sw;
                 return r;
             }
