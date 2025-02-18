@@ -13,7 +13,6 @@ using DynamicSugar;
 
 namespace fAI
 {
-
     public partial class AnthropicCompletions : HttpBase//, IOpenAICompletion
     {
         public AnthropicCompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)

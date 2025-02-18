@@ -68,6 +68,7 @@
     <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\Microsoft.Azure.CityAI.SearchTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Speech\Microsoft.Cognitive.Services.Tests.cs" />
+    <Compile Include="Mistral\MistralCompletionsChatUnitTests.cs" />
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
