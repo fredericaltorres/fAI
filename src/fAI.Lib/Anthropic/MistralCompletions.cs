@@ -59,8 +59,16 @@ namespace fAI
             {
                 //response.Choices.
                 //response.SetText(response.Buffer, response.ContenType);
-                //OpenAI.Trace(new { response.Text }, this);
-                var r = CompletionResponse.FromJson("");
+                OpenAI.Trace(new { response.Choices[0].Message }, this);
+                var r = new CompletionResponse();
+                r.Choices = new List<CompletionChoiceResponse>();
+                r.Choices.Add(new CompletionChoiceResponse { 
+                    message = new GPTMessage { 
+                        Content = response.Choices[0].Message.Content,
+                        //Role = response.Choices[0].
+                    }
+                });
+
                 r.Stopwatch = sw;
                 return r;
             }
