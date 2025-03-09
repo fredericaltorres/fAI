@@ -59,5 +59,18 @@ See how they run like pigs from a gun. See how they fly. I'm crying.
             Assert.Equal(expected, result.Text);
             Assert.Equal("en", result.Language);
         }
+
+        [Fact()]
+        public void SpeechToText_Mp4_File()
+        {
+            var mp4FileName = base.GetTestFile("I am Frederic Torres 2025.mp4");
+            var s = new WhisperSpeechToText();
+            var result = s.ExtractText(mp4FileName, "en", false);
+            var expected = "I am Frederick Torres. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer.";
+            Assert.True(result.Success);
+            Assert.Equal(expected, result.Text);
+            Assert.Equal("en", result.Language);
+        }
+
     }
 }

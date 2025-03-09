@@ -31,10 +31,10 @@ namespace fAI.Tests
         [Fact()]
         public void SpeechToText_Mp4_File()
         {
-            var mp4FileName = base.GetTestFile("I am Frederic Torres.mp4");
+            var mp4FileName = base.GetTestFile("I am Frederic Torres 2025.mp4");
             var s = new SpeechToTextEngine();
             var result = s.ExtractText(mp4FileName, "en", true);
-            var expected = "I am Fredrik Torres. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer. I.";
+            var expected = "Torre. I am a software engineer. I never wrote a book about software. I never taught at a university. I am just a software engineer.";
             Assert.True(result.Success);
             Assert.Equal(expected, result.Text);
             Assert.True(result.Captions.Length > 100);

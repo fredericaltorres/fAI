@@ -107,14 +107,14 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+    <Content Include="TestFiles\I am Frederic Torres 2025.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TextSplitter\LongText.splitted.txt" />
     <Content Include="TextSplitter\LongText.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\code.question.2.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestFiles\I am Frederic Torres.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\ManAndBoartInStorm.png">
