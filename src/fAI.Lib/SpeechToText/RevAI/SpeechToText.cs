@@ -7,7 +7,8 @@ using System.Threading;
 
 namespace fAI
 {
-    public class SpeechToTextEngine 
+
+    public class SpeechToTextEngine : ISpeechToTextEngine
     {
         const string SpeechToTextServiceUrl = "https://api.rev.ai/speechtotext/v1/jobs";
         const string CaptionServiceUrl = "https://api.rev.ai/speechtotext/v1/jobs/[JOBID]/captions";

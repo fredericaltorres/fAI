@@ -72,6 +72,7 @@
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
+    <Compile Include="WhisperSpeechToText\WhiperSpeechToText.Tests.cs" />
     <Compile Include="SpeechToText\SpeechToText.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.CodeGeneration.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.Chat.MultiImplementation.cs" />
@@ -106,8 +107,8 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
-    <Content Include="SpeechToText\LongText.splitted.txt" />
-    <Content Include="SpeechToText\LongText.txt">
+    <Content Include="TextSplitter\LongText.splitted.txt" />
+    <Content Include="TextSplitter\LongText.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\code.question.2.jpg">
