@@ -110,8 +110,10 @@
     <Content Include="TestFiles\I am Frederic Torres 2025.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TextSplitter\LongText.splitted.txt" />
-    <Content Include="TextSplitter\LongText.txt">
+    <Content Include="TestFiles\LongText.splitted.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\LongText.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\code.question.2.jpg">
