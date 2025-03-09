@@ -85,10 +85,10 @@ namespace fAI
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
-                var revAiResponse = SpeechToTextResponse.FromJSON(response.Text);
-                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, extractCaptions);
+                var raiResponse = SpeechToTextResponse.FromJSON(response.Text);
+                var r = WaitForWorkToBeDone(raiResponse.Id, this._timeOut, extractCaptions);
                 r.Language = languageIsoCode;
-                RemoveWork(revAiResponse.Id);
+                RemoveWork(raiResponse.Id);
                 if (string.IsNullOrEmpty(r.Text))
                     throw new SpeechToTextException($"Transciption failed");
 
@@ -120,10 +120,10 @@ namespace fAI
             var response = WebClient().POST(SpeechToTextServiceUrl,  fileNameOrUrl , options, streamName: "media");
             if (response.Success)
             {
-                var revAiResponse = SpeechToTextResponse.FromJSON(response.Text);
-                var r = WaitForWorkToBeDone(revAiResponse.Id, this._timeOut, extractCaptions);
+                var raiResponse = SpeechToTextResponse.FromJSON(response.Text);
+                var r = WaitForWorkToBeDone(raiResponse.Id, this._timeOut, extractCaptions);
                 r.Language = languageIsoCode;
-                RemoveWork(revAiResponse.Id);
+                RemoveWork(raiResponse.Id);
                 if (string.IsNullOrEmpty(r.Text))
                     throw new SpeechToTextException($"Transcription failed");
                 if (extractCaptions && string.IsNullOrEmpty(r.Captions))
