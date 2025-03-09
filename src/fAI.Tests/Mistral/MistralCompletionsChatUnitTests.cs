@@ -17,6 +17,14 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
+        public void Get_Models()
+        {
+            var models = new Mistral().Completions.GetModels();
+            var codestralModels = models.Where(m => m.Id.StartsWith("codestral")).ToList();
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Nusbio_Led_Control()
         {
             var p = new Mistral_Prompt_MistralSmallLatest()

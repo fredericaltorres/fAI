@@ -31,6 +31,7 @@ namespace fAI
     }
 
     // https://docs.mistral.ai/api/#tag/chat/operation/chat_completion_v1_chat_completions_post
+    // https://github.com/tghamm/Mistral.SDK
     public class MistralPromptBase
     {
         public string Url { get; set; }
@@ -61,14 +62,19 @@ namespace fAI
         public void SetResponseFormatAsJson()
         {
             _responseFormatAsJson = true;
-            //ResponseFormat = new global::Mistral.SDK.DTOs.ResponseFormat()
-            //{
-            //    Type = global::Mistral.SDK.DTOs.ResponseFormat.ResponseFormatEnum.JSON
-            //};
         }
     }
 
+    public class Mistral_Prompt_Codestral : MistralPromptBase
+    {
+        public Mistral_Prompt_Codestral() : base()
+        {
+            Model = global::Mistral.SDK.ModelDefinitions.MistralMedium;
+            base.Url = "https://api.mistral.ai/v1/codestral/completions";
+        }
+    }
 
+    // https://github.com/tghamm/Mistral.SDK
     public class Mistral_Prompt_MistralSmallLatest : MistralPromptBase
     {
         public Mistral_Prompt_MistralSmallLatest() : base()

@@ -2,6 +2,79 @@
 using Mistral.SDK;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Newtonsoft.Json;
+
+
+namespace fAI
+{
+    // Add the attribute `[JsonProperty("")]` to the properties of the class to match the JSON keys. and rename the properties in the class according to the C SHARP standards.
+
+    public class MistralCapabilities
+    {
+        [JsonProperty("completion_chat")]
+        public bool CompletionChat { get; set; }
+
+        [JsonProperty("completion_fim")]
+        public bool CompletionFim { get; set; }
+
+        [JsonProperty("function_calling")]
+        public bool FunctionCalling { get; set; }
+
+        [JsonProperty("fine_tuning")]
+        public bool FineTuning { get; set; }
+
+        [JsonProperty("vision")]
+        public bool Vision { get; set; }
+    }
+
+    public class MistralDatum
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("object")]
+        public string Object { get; set; }
+
+        [JsonProperty("created")]
+        public int Created { get; set; }
+
+        [JsonProperty("owned_by")]
+        public string OwnedBy { get; set; }
+
+        [JsonProperty("capabilities")]
+        public MistralCapabilities Capabilities { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("max_context_length")]
+        public int MaxContextLength { get; set; }
+
+        [JsonProperty("aliases")]
+        public List<string> Aliases { get; set; }
+
+        [JsonProperty("deprecation")]
+        public object Deprecation { get; set; }
+
+        [JsonProperty("default_model_temperature")]
+        public double? DefaultModelTemperature { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+    }
+
+    public class mistralMistralModel
+    {
+        public string @object { get; set; }
+        public List<MistralDatum> data { get; set; }
+
+        public static mistralMistralModel FromJson(string json) => 
+            JsonConvert.DeserializeObject<mistralMistralModel>(json);
+    }
+}
 
 namespace fAI
 {
@@ -9,6 +82,27 @@ namespace fAI
     {
         public MistralCompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
         {
+        }
+
+        public List<MistralDatum> GetModels()
+        {
+            var url = "https://api.mistral.ai/v1/models";
+
+            OpenAI.Trace(new { url }, this);
+
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().GET(url);
+            sw.Stop();
+            if (response.Success)
+            {
+                OpenAI.Trace(new { response.Text }, this);
+                return mistralMistralModel.FromJson(response.Text).data;
+            }
+            else
+            {
+                OpenAI.TraceError(response.Exception.Message, this);
+                throw response.Exception;
+            }
         }
 
         protected override ModernWebClient InitWebClient(bool addJsonContentType = true)

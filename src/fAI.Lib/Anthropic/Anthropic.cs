@@ -34,5 +34,7 @@ namespace fAI
 
         public MistralCompletions _completions = null;
         public MistralCompletions Completions => _completions ?? (_completions = new MistralCompletions());
+
+        
     }
 }
