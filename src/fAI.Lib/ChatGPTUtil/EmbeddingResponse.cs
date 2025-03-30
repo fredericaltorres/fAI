@@ -47,10 +47,12 @@ namespace fAI
         public System.Exception Exception { get; set; }
         public bool Success => Exception == null;
 
-        protected string DownloadImage(Uri uri)
+        protected string DownloadImage(Uri uri, string fileName = null)
         {
             string fileNameOnly = Path.GetFileName(uri.LocalPath);
             var fullPath = Path.Combine(Path.GetTempPath(), fileNameOnly);
+            if (fileName != null)
+                fullPath = fileName;
             DownloadImageAsync(uri.ToString(), fullPath);
             return fullPath;
         }

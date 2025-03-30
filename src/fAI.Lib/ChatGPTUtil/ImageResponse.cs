@@ -25,13 +25,22 @@ namespace fAI
             return JsonUtils.FromJSON<ImageResponse>(text);
         }
 
-        public List<string> DownloadImages()
+        public List<string> DownloadImages(List<string> images = null)
         {
+            if (images == null)
+            {
+                images = new List<string>();
+                foreach (var d in this.data)
+                    images.Add(null);
+            }
+
             var r = new List<string>();
+            var x = 0;
             foreach (var d in this.data)
             {
                 var uri = new Uri(d.url);
-                r.Add(DownloadImage(uri));
+                r.Add(DownloadImage(uri, images[x]));
+                x += 1;
             }
             return r;
         }

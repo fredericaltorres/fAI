@@ -173,6 +173,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RAG\RandomPeople.cs" />
+    <Compile Include="SoLonelyPrompt.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Alexandre Dumas\Promot.md" />

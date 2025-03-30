@@ -22,9 +22,10 @@ namespace fAIConsole
     {
         static void Main(string[] args)
         {
+            new SoLonelyPrompt().GenerateImageSequence();
             //Generate_Document(new VictorHugo());
             // Generate_Document(new FyodorDostoevsky());
-            Generate_HtmlWebSite();
+            //Generate_HtmlWebSite();
 
             return;
 

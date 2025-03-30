@@ -68,8 +68,6 @@ For each character of the word ""HELLO""
                 Assert.True(!string.IsNullOrEmpty(s.Comment));
             }
         }
-
-        
     }
 }
 
