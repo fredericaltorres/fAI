@@ -52,10 +52,10 @@ namespace fAIConsole
 
         public void GenerateImageSequence()
         {
-            //GenerateImageSequenceVerse(Verse1, 1, startLine: 6);
-            //GenerateImageSequenceVerse(Verse2, 2);
-            //GenerateImageSequenceVerse(Verse1Chorus, 3);
-            GenerateImageSequenceVerse(Verse2Chorus, 4);
+            // GenerateImageSequenceVerse(Verse1, 11);
+            //GenerateImageSequenceVerse(Verse2, 21);
+            //GenerateImageSequenceVerse(Verse1Chorus, 31);
+            GenerateImageSequenceVerse(Verse2Chorus, 41);
         }
 
         public void GenerateImageSequenceVerse(string verse, int verseIndex, int startLine = 0)

@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "my-mcp-server-9cb5f1a6": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "C:\\DVT\\fAI\\mcp\\MyMCP\\MyMCP.csproj"
+            ]
+        }
+    }
+}
