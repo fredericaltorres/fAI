@@ -1,6 +1,13 @@
 ﻿/*
     Introduction to the C# SDK for Model Context Protocol (MCP)
     https://www.youtube.com/watch?v=krB1aA9xpts
+
+
+dotnet new console -n MyMCP
+cd MyMCP
+dotnet add package ModelContextProtocol --prerelease
+dotnet add package Microsoft.Extensions.Hosting
+
 */
 
 using Microsoft.Extensions.DependencyInjection;
