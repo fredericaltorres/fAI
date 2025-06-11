@@ -38,7 +38,7 @@ namespace fAI.Microsoft.Search
         public string Id { get; set; }
         public List<string> Texts { get; set; } = new List<string>();
         
-        public List<List<float>> Embedings { get; set; } = new List<List<float>>();
+        public List<List<float>> Embeddings { get; set; } = new List<List<float>>();
 
         public void ToJsonFile(string parentFileName, string subFile)
         {
@@ -178,7 +178,7 @@ namespace fAI.Microsoft.Search
                     {
                         this.DataReady = true;
                         e.Texts.Add(t);
-                        e.Embedings.Add(re.Data[0].Embedding);
+                        e.Embeddings.Add(re.Data[0].Embedding);
                     }
                     else
                     {

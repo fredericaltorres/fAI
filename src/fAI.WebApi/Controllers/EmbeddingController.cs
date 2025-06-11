@@ -40,7 +40,7 @@ namespace fAI.WebApi.Controllers
         [HttpPost(Name = "ComputeEmbedding")]
         public IEnumerable<float> ComputeEmbedding([FromBody] string text)
         {
-            if (GetCallCounter() < 10) // avoid crazy calling my api costing me money
+            if (GetCallCounter() < 100) // avoid crazy calling my api costing me money
             {
                 var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
                 var key = _configuration.GetValue<string>("OPENAI_API_KEY");
