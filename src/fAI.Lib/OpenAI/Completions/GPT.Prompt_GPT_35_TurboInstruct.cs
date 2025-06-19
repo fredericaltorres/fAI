@@ -45,9 +45,9 @@ namespace fAI
         }
     }
 
-    public class Prompt_GPT_4_Turbo : GPTPrompt
+    public class Prompt_GPT_4_Turbo_128k : GPTPrompt // 128K
     {
-        public Prompt_GPT_4_Turbo() : base()
+        public Prompt_GPT_4_Turbo_128k() : base()
         {
             Model = "gpt-4-turbo";
             Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
@@ -59,6 +59,24 @@ namespace fAI
         public Prompt_GPT_4() : base()
         {
             Model = "gpt-4";
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+        }
+    }
+
+    public class Prompt_GPT_4_32K : GPTPrompt
+    {
+        public Prompt_GPT_4_32K() : base()
+        {
+            Model = "gpt-4-32k";
+            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+        }
+    }
+
+    public class Prompt_GPT_4o : GPTPrompt
+    {
+        public Prompt_GPT_4o() : base()
+        {
+            Model = "gpt-4o";
             Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
         }
     }

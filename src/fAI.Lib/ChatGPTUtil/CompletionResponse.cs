@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Runtime.ConstrainedExecution;
 
 namespace fAI
 {
@@ -31,6 +32,44 @@ namespace fAI
         public int prompt_tokens { get; set; }
         public int completion_tokens { get; set; }
         public int total_tokens { get; set; }
+
+        public double CompletionTokenPricePer1000Tokens(string model)
+        {
+            switch (model)
+            {
+                case "gpt‑4":
+                case "gpt‑4(8k)": return 0.06;
+                case "gpt‑4(32k)": return 0.12;
+                case "gpt‑4 turbo(128k)": return 0.03;
+
+                case "gpt-4-turbo":
+                    return 0.03;
+
+                default: // gpt-3.5-turbo , gpt-4o
+                    return 0.0015; // 1.5 cents per 1000 tokens
+            }
+        }
+
+        public double PromptTokenPricePer1000Tokens(string model)
+        {
+            switch (model)
+            {
+                case "gpt‑4":
+                case "gpt‑4(8k)": return 0.03;//    0.06
+                case "gpt‑4(32k)": return 0.06;//    0.12
+                case "gpt‑4 turbo(128k)": return 0.01;// 0.03
+
+                case "gpt-4-turbo": return 0.01;
+
+                default: // gpt-3.5-turbo, gpt-4o
+                    return 0.0005;
+            }
+        }
+
+        public double GetCost(string model)
+        {
+            return (prompt_tokens / 1000 * PromptTokenPricePer1000Tokens(model)) + (completion_tokens / 1000 * CompletionTokenPricePer1000Tokens(model));
+        }
     }
 
     public class CompletionResponse  : BaseHttpResponse

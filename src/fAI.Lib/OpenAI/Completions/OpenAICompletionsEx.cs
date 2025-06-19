@@ -47,7 +47,7 @@ namespace fAI
 
         public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following text:") 
         {
-            var prompt = new Prompt_GPT_4_Turbo //Prompt_GPT_35_TurboInstruct
+            var prompt = new Prompt_GPT_4_Turbo_128k //Prompt_GPT_35_TurboInstruct
             {
                 Messages = new List<GPTMessage>()
                 {
@@ -228,26 +228,6 @@ namespace fAI
             };
             return p;
         }
-
-        //string CleanTextReceivedFromGPTForQuestionGeneration (string text)
-        //{
-        //    text = text.Trim();
-
-        //    if (text[1] == ')' || text[1] == '.')
-        //        text = text.Substring(2);
-        //    if (text.StartsWith(@"Question:"))
-        //        text = text.Substring(9);
-        //    if (text.StartsWith(@"Q:"))
-        //        text = text.Substring(2);
-        //    if (text.StartsWith(@""""))
-        //        text = text.Substring(1);
-        //    if (text.EndsWith(@""""))
-        //        text = text.Substring(0, text.Length - 1);
-
-        //    text = text.Trim();
-
-        //    return text;
-        //}
 
         public List<MultiChoiceQuestion> GenerateMultiChoiceQuestionAboutText(
            int numberOfQuestions,

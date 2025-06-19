@@ -183,7 +183,24 @@ End of text
             DS.Assert.Words(response.Text, "real-time & capabilities");
         }
 
-
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_Chat_Hello_o()
+        {
+            var client = new OpenAI();
+            var p = new Prompt_GPT_4o
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a JavaScript expert." },
+                    new GPTMessage{ Role =  MessageRole.user, Content = "Write a JavaScript function usable in Node.js that take as argument a filename and returns the text content of the file." }
+                }
+            };
+            var response = client.Completions.Create(p);
+            Assert.True(response.Success);
+            Assert.Contains("require('fs')", response.Text);
+            Assert.Contains("fs.readFile(filename", response.Text);
+        }
 
         [Fact()]
         [TestBeforeAfter]
