@@ -37,21 +37,69 @@ namespace fAI.Tests
 
     public class ExceptionAnalyzed : DynamicSugar.JsonObject
     {
+        public string Language { get; set; } = "C#";
         public string Case { get; set; }
         public string Message { get; set; }
         public string ExceptionType { get; set; }
         public string StackTrace { get; set; }
         public List<FileLocation> StackTraceInfo => ExtractFileInformationFromStackTrace(StackTrace);
+
+        public int SourceCodeLine
+        {
+            get
+            {
+                if (StackTraceInfo.Count > 0)
+                    return StackTraceInfo[0].LineNumber;
+                return -1;
+            }
+        }
+
+        public string SourceCodeFileNameOnly
+        {
+            get
+            {
+                if (StackTraceInfo.Count > 0)
+                    return Path.GetFileName(StackTraceInfo[0].FileName);
+                return null;
+            }
+        }
+
+        public string SourceCodeFileName
+        {
+            get
+            {
+                if (StackTraceInfo.Count > 0)
+                    return StackTraceInfo[0].FileName;
+                return null;
+            }
+        }
+
         public string Source { get; set; }
         public string TargetSite { get; set; }
-        public string SourceCodeWithLineNumbers 
-        { 
-            get {
+        public string SourceCodeWithLineNumbers
+        {
+            get
+            {
                 var fileInfo = StackTraceInfo[0];
                 if (File.Exists(fileInfo.FileName))
                     return PrepareSourceCodeFileForAnalysis(fileInfo.FileName);
                 return "[Source Code Not Found]";
-            }   
+            }
+        }
+
+        private static string GetJsonFileName(string Case)
+        {
+            return Path.Combine(GetCaseRootFolder(), $"{Case}.error.json");
+        }
+
+        public static ExceptionAnalyzed Load(string @case)
+        {
+            return ExceptionAnalyzed.FromFile<ExceptionAnalyzed>(GetJsonFileName(@case));
+        }
+
+        public ExceptionAnalyzed()
+        {
+
         }
 
         public ExceptionAnalyzed(Exception ex, string @case)
@@ -63,7 +111,7 @@ namespace fAI.Tests
             this.Source = ex.Source;
             this.TargetSite = ex.TargetSite?.ToString();
             this.Case = @case;
-            base.JsonFileName = Path.Combine(GetCaseRootFolder(), $"{@case}.error.json");
+            base.JsonFileName = GetJsonFileName(@case);
             base.Save();
         }
 
@@ -74,7 +122,6 @@ namespace fAI.Tests
                 Directory.CreateDirectory(dir);
             return dir;
         }
-
 
         static List<FileLocation> ExtractFileInformationFromStackTrace(string stackTrace)
         {
@@ -95,7 +142,7 @@ namespace fAI.Tests
             }
             return fileInformation;
         }
-        
+
         public static string PrepareSourceCodeFileForAnalysis(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -105,6 +152,25 @@ namespace fAI.Tests
                 numberedCode.AppendLine($"{i + 1,4}: {lines[i]}");
             return numberedCode.ToString();
         }
+
+        public string Prompt
+        {
+            get
+            {
+
+                var promptStr = $@"
+Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
+at line {this.SourceCodeLine}.
+
+Source Code File ""{this.SourceCodeFileNameOnly}"":
+{this.SourceCodeWithLineNumbers}
+";
+                return promptStr;
+
+            }
+        }
+
+        public string Context => "You are a helpful and experienced C# and .NET software developer.";
     }
 
     [Collection("Sequential")]
@@ -116,11 +182,9 @@ namespace fAI.Tests
             OpenAI.TraceOn = true;
         }
 
-   
-        public string RunCase(System.Action a, 
-            [CallerMemberName] string callerCaseName = null
+
+        public string RunCase(System.Action a, [CallerMemberName] string callerCaseName = null)
         {
-            var errorFileName = Path.Combine(GetCaseRootFolder(), $"{callerCaseName}.error.txt");
             try
             {
                 a();
@@ -149,20 +213,14 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero()
         {
-            var sourceCode = ExceptionAnalyzed.PrepareSourceCodeFileForAnalysis(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\RunTimeAnalysis_Case1.cs");
-            var promptStr = $@"
-Analyze the following C# file name ""RunTimeAnalysis_Case1.cs"", for the following Exception: ""System.DivideByZeroException""
-on line 15.
+            var ea = ExceptionAnalyzed.Load("RunTimeAnalysis_DivisionByZero");
 
-C# File RunTimeAnalysis_Case1.cs:
-{sourceCode}
-";
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4o
             {
                 Messages = new List<GPTMessage> {
-                    new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced C# and .NET software developer." },
-                    new GPTMessage { Role =  MessageRole.user, Content = promptStr }
+                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt }
                 },
             };
             var response = client.Completions.Create(prompt);
