@@ -1,6 +1,7 @@
 ﻿using ChatGPT.Tests.CSRunTimeErrorAnalysis;
 using DynamicSugar;
 using fAI;
+using S = System;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -137,7 +138,7 @@ namespace fAI.Tests
 
         }
 
-        public ExceptionAnalyzed(Exception ex, string @case)
+        public ExceptionAnalyzed(Exception ex, string @case, List<string> otherFiles)
         {
             this.Case = @case;
             this.Message = ex.Message;
@@ -147,6 +148,7 @@ namespace fAI.Tests
             this.TargetSite = ex.TargetSite?.ToString();
             this.Case = @case;
             base.JsonFileName = GetJsonFileName(@case);
+            this.OtherFiles = otherFiles ?? new List<string>();
             base.Save();
         }
 
@@ -232,7 +234,9 @@ Other files:
 
         public string Context => "You are a helpful and experienced C# and .NET software developer.";
 
-        public static string RunCase(System.Action a, [CallerMemberName] string callerCaseName = null)
+        public static string RunCase(System.Action a, 
+            List<string> otherFiles = null,
+            [CallerMemberName] string callerCaseName = null)
         {
             try
             {
@@ -241,7 +245,7 @@ Other files:
             }
             catch (Exception ex)
             {
-                var ea = new ExceptionAnalyzed(ex, callerCaseName);
+                var ea = new ExceptionAnalyzed(ex, callerCaseName, otherFiles);
                 return ea.JsonFileName;
             }
         }
@@ -270,10 +274,9 @@ Other files:
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitialization()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
             {
-                var runTimeCase = new RunTimeAnalysis_Case1();
-                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
+                var result = new RunTimeAnalysis_Case1().Run(1); // This will throw a DivideByZeroException
             }));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
@@ -296,15 +299,12 @@ Other files:
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
             {
-                var runTimeCase = new RunTimeAnalysis_Case2();
-                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
-            }));
+                var result = new RunTimeAnalysis_Case2().Run(1); // This will throw a DivideByZeroException
+            }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
-
-            ea.OtherFiles.Add( @"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config");
 
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4o
@@ -323,15 +323,12 @@ Other files:
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
             {
-                var runTimeCase = new RunTimeAnalysis_Case3();
-                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
-            }));
+                var result = new RunTimeAnalysis_Case3().Run(1); // This will throw a DivideByZeroException
+            }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
-
-            ea.OtherFiles.Add(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config");
 
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4o
@@ -347,6 +344,7 @@ Other files:
         }
     }
 }
+
 
 
 
