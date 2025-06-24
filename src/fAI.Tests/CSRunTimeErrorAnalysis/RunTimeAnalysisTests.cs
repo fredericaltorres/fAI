@@ -160,7 +160,7 @@ namespace fAI.Tests
 
                 var promptStr = $@"
 Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
-at line {this.SourceCodeLine}.
+at line {this.SourceCodeLine}, and propose solutions to fix the issue.
 
 Source Code File ""{this.SourceCodeFileNameOnly}"":
 {this.SourceCodeWithLineNumbers}
@@ -171,19 +171,8 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
         }
 
         public string Context => "You are a helpful and experienced C# and .NET software developer.";
-    }
 
-    [Collection("Sequential")]
-    [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class RunTimeAnalysisTests : OpenAIUnitTestsBase
-    {
-        public RunTimeAnalysisTests()
-        {
-            OpenAI.TraceOn = true;
-        }
-
-
-        public string RunCase(System.Action a, [CallerMemberName] string callerCaseName = null)
+        public static string RunCase(System.Action a, [CallerMemberName] string callerCaseName = null)
         {
             try
             {
@@ -197,23 +186,47 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
             }
         }
 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    [Collection("Sequential")]
+    [CollectionDefinition("Sequential", DisableParallelization = true)]
+    public class RunTimeAnalysisTests : OpenAIUnitTestsBase
+    {
+        public RunTimeAnalysisTests()
+        {
+            OpenAI.TraceOn = true;
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_Case1_RunError()
         {
-            var exceptionDescriptionFileName = RunCase(new System.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
             {
                 var runTimeCase = new RunTimeAnalysis_Case1();
                 var result = runTimeCase.Run(0); // This will throw a DivideByZeroException
             }));
-
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero()
         {
-            var ea = ExceptionAnalyzed.Load("RunTimeAnalysis_DivisionByZero");
+            RunTimeAnalysis_Case1_RunError();
+            var ea = ExceptionAnalyzed.Load("RunTimeAnalysis_Case1_RunError");
 
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4o
