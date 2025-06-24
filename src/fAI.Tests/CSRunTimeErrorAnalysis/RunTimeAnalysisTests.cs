@@ -87,7 +87,7 @@ namespace fAI.Tests
                 {
                     if (File.Exists(file))
                         sb.AppendLine()
-                          .AppendLine($"File: {Path.GetFileName(file)}")
+                          .AppendLine($@"File: ""{Path.GetFileName(file)}""")
                           .AppendLine(PrepareSourceCodeFileForAnalysis(file)).AppendLine();
                     else
                         sb.AppendLine($"File: {Path.GetFileName(file)} - [Source Code Not Found]");
@@ -180,21 +180,36 @@ namespace fAI.Tests
             return fileInformation;
         }
 
+        private static string GetLanguageCodeFromExtension(string fileName)
+        {
+            var ext = Path.GetExtension(fileName).ToLowerInvariant();
+            switch (ext)
+            {
+                case ".cs": return "csharp";
+                case ".xml": return "xml";
+                case ".config": return "xml";
+
+                default: return "Unknown";
+            }
+        }
+
+        const string MDCodeBlock = "```";
+
         public static string PrepareSourceCodeFileForAnalysis(string fileName)
         {
+            var ext = Path.GetExtension(fileName);
             string[] lines = File.ReadAllLines(fileName);
 
             var numberedCode = new StringBuilder();
             for (int i = 0; i < lines.Length; i++)
                 numberedCode.AppendLine($"{i + 1,4}: {lines[i]}");
-            return numberedCode.ToString();
+            return $"{MDCodeBlock}\n{GetLanguageCodeFromExtension(ext)}\n{numberedCode}\n{MDCodeBlock}";
         }
 
-        public string Prompt
+        public string PromptAnalyzeCodeProposeNewFunction
         {
             get
             {
-
                 var promptStr = $@"
 Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
 at line {this.SourceCodeLine}.
@@ -208,11 +223,10 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
             }
         }
 
-        public string Prompt2
+        public string PromptAnalyzeCodeProposeExplanation
         {
             get
             {
-
                 var promptStr = $@"
 Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
 at line {this.SourceCodeLine}.
@@ -286,7 +300,7 @@ Other files:
             {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt }
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeNewFunction }
                 },
             };
             var response = client.Completions.Create(prompt);
@@ -311,7 +325,7 @@ Other files:
             {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt2 }
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeExplanation }
                 },
             };
             var response = client.Completions.Create(prompt);
@@ -330,14 +344,43 @@ Other files:
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
 
-            var client = new OpenAI();
+            var client = new FAI();
             var prompt = new Prompt_GPT_4o
             {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt2 }
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeExplanation }
                 },
             };
+            var response = client.Completions.Create(prompt);
+            Assert.True(response.Success);
+            var t = response.Text;
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2_Anthropic()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            {
+                var result = new RunTimeAnalysis_Case3().Run(1); // This will throw a DivideByZeroException
+            }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
+
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+
+            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            {
+                System = null,
+                Messages = new List<AnthropicMessage>()
+                {
+                    new AnthropicMessage { Role =  MessageRole.user,
+                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(ea.PromptAnalyzeCodeProposeExplanation))
+                    }
+                }
+            };
+
+            var client = new FAI();
             var response = client.Completions.Create(prompt);
             Assert.True(response.Success);
             var t = response.Text;

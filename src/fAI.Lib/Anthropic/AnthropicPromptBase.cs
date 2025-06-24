@@ -116,7 +116,8 @@ namespace fAI
         public string Url { get; set; }
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
         public string Model { get; set; }
-        public int MaxTokens { get; set; } = 8192;
+        public int OutputMaxTokens { get; set; } = 1024*4;
+        public int InputMaxTokens { get; set; } = 200000;
         public string System { get; set; } = null;
         public int Temperature { get; set; } = 1;
 
@@ -126,25 +127,22 @@ namespace fAI
             {
                 if(this.System == null)
                 {
-                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = MaxTokens, temperature = Temperature });
+                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = OutputMaxTokens, temperature = Temperature });
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = MaxTokens, temperature = Temperature });
+                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = OutputMaxTokens, temperature = Temperature });
                 }
             }
             else throw new System.Exception("No messages to send");
         }
 
-        public AnthropicPromptBase(string model = "claude-3-opus-20240229", int maxTokens = 8192, int temperature = 1) // Make sure we clone all property
+        public AnthropicPromptBase(string model = "claude-3-opus-20240229") // Make sure we clone all property
         {
             Model = "claude-3-opus-20240229";
-            this.MaxTokens = maxTokens;
             Url = "https://api.anthropic.com/v1/messages";
         }
     }
-
-
 
     public class Anthropic_Prompt_Claude_3_5_Sonnet : AnthropicPromptBase
     {
@@ -152,6 +150,16 @@ namespace fAI
         {
             Model = "claude-3-5-sonnet-20241022";
             
+        }
+    }
+
+    public class Anthropic_Prompt_Claude_4_Opus : AnthropicPromptBase
+    {
+        public Anthropic_Prompt_Claude_4_Opus() : base()
+        {
+            Model = "claude-opus-4-20250514";
+            OutputMaxTokens = 32000;
+            Url = "https://api.anthropic.com/v1/messages";
         }
     }
 
@@ -165,7 +173,6 @@ namespace fAI
         public Anthropic_Prompt_Claude_3_Opus() : base()
         {
             Model = "claude-3-opus-20240229";
-            MaxTokens = 1024;
             Url = "https://api.anthropic.com/v1/messages";
         }
     }
@@ -175,7 +182,6 @@ namespace fAI
         public Anthropic_Image_Prompt_Claude_3_Opus() : base()
         {
             Model = "claude-3-opus-20240229";
-            MaxTokens = 1024;
             Url = "https://api.anthropic.com/v1/messages";
         }
     }

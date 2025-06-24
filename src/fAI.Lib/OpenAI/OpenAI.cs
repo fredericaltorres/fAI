@@ -3,6 +3,21 @@ using System.Collections.Generic;
 
 namespace fAI
 {
+    public class FAI : Logger
+    {
+        public static IReadOnlyList<float> GenerateEmbeddings(string text)
+        {
+            return OpenAI.GenerateEmbeddings(text);
+        }
+
+        public FAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        {
+        }
+
+        public FAICompletions _completions = null;
+        public FAICompletions Completions => _completions ?? (_completions = new FAICompletions());
+    }
+
     public class OpenAI : Logger
     {
         public static IReadOnlyList<float> GenerateEmbeddings(string text)

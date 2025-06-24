@@ -13,9 +13,6 @@ namespace fAI
 {
     public partial class OpenAICompletions  : HttpBase
     {
-      
-
-
         public bool NeedToBeTranslated(string text, TranslationLanguages sourceLangague, TranslationLanguages targetLanguage)
         {
             var translationRules = new List<TranslationRule>();

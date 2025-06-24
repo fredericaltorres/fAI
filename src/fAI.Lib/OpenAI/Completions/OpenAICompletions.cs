@@ -13,6 +13,23 @@ using DynamicSugar;
 
 namespace fAI
 {
+    public class FAICompletions : HttpBase, IOpenAICompletion
+    {
+        public FAICompletions()
+        {
+        }
+
+        public CompletionResponse Create(GPTPrompt p)
+        {
+            return new OpenAI().Completions.Create(p);
+        }
+
+        public CompletionResponse Create(AnthropicPromptBase p)
+        {
+            return new Anthropic().Completions.Create(p);
+        }
+    }
+
     public partial class OpenAICompletions  : HttpBase, IOpenAICompletion
     {
         public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
