@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,6 +65,8 @@
   <ItemGroup>
     <Compile Include="Anthropic\LedSequence.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysisTests.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case3.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case2.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case1.cs" />
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
@@ -135,6 +138,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CSRunTimeErrorAnalysis\app.config" />
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.AZURE.INDEX.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

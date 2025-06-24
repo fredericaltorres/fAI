@@ -74,8 +74,40 @@ namespace fAI.Tests
             }
         }
 
+        public List<string> OtherFiles = new List<string>();
+
+        public string OtherFilesSourceCodeWithLineNumbers
+        {
+            get
+            {
+                if (OtherFiles.Count == 0) return null;
+                var sb = new StringBuilder();
+                foreach (var file in OtherFiles)
+                {
+                    if (File.Exists(file))
+                        sb.AppendLine()
+                          .AppendLine($"File: {Path.GetFileName(file)}")
+                          .AppendLine(PrepareSourceCodeFileForAnalysis(file)).AppendLine();
+                    else
+                        sb.AppendLine($"File: {Path.GetFileName(file)} - [Source Code Not Found]");
+                }
+                return sb.ToString();
+            }
+        }   
+
         public string Source { get; set; }
         public string TargetSite { get; set; }
+        public string FunctionName
+        {
+            get
+            {
+                var tokens = new DynamicSugar.Tokenizer().Tokenize(TargetSite);
+                if (tokens.Count > 1)
+                    return $"{tokens[1].Value}()";
+                return TargetSite;
+            }
+        }
+
         public string SourceCodeWithLineNumbers
         {
             get
@@ -94,6 +126,9 @@ namespace fAI.Tests
 
         public static ExceptionAnalyzed Load(string @case)
         {
+            if (File.Exists(@case))
+                return ExceptionAnalyzed.FromFile<ExceptionAnalyzed>(@case);
+
             return ExceptionAnalyzed.FromFile<ExceptionAnalyzed>(GetJsonFileName(@case));
         }
 
@@ -160,10 +195,35 @@ namespace fAI.Tests
 
                 var promptStr = $@"
 Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
-at line {this.SourceCodeLine}, and propose solutions to fix the issue.
+at line {this.SourceCodeLine}.
 
+Propose a new version of the function ""{this.FunctionName}"" to fix the issue.
 Source Code File ""{this.SourceCodeFileNameOnly}"":
 {this.SourceCodeWithLineNumbers}
+";
+                return promptStr;
+
+            }
+        }
+
+        public string Prompt2
+        {
+            get
+            {
+
+                var promptStr = $@"
+Analyze the following {this.Language}, fileName ""{this.SourceCodeFileNameOnly}"", for the following Exception: ""{this.ExceptionType}""
+at line {this.SourceCodeLine}.
+
+Propose an explanation.
+Source Code File ""{this.SourceCodeFileNameOnly}"":
+{this.SourceCodeWithLineNumbers}
+
+
+Other files:
+{this.OtherFilesSourceCodeWithLineNumbers}
+
+
 ";
                 return promptStr;
 
@@ -196,11 +256,6 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
 
 
 
-
-
-
-
-
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class RunTimeAnalysisTests : OpenAIUnitTestsBase
@@ -210,23 +265,18 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
             OpenAI.TraceOn = true;
         }
 
+
         [Fact()]
         [TestBeforeAfter]
-        public void RunTimeAnalysis_Case1_RunError()
+        public void RunTimeAnalysis_DivisionByZero_MissingInitialization()
         {
             var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
             {
                 var runTimeCase = new RunTimeAnalysis_Case1();
-                var result = runTimeCase.Run(0); // This will throw a DivideByZeroException
+                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
             }));
-        }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void RunTimeAnalysis_DivisionByZero()
-        {
-            RunTimeAnalysis_Case1_RunError();
-            var ea = ExceptionAnalyzed.Load("RunTimeAnalysis_Case1_RunError");
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
 
             var client = new OpenAI();
             var prompt = new Prompt_GPT_4o
@@ -234,6 +284,61 @@ Source Code File ""{this.SourceCodeFileNameOnly}"":
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
                     new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt }
+                },
+            };
+            var response = client.Completions.Create(prompt);
+            Assert.True(response.Success);
+            var t = response.Text;
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
+            {
+                var runTimeCase = new RunTimeAnalysis_Case2();
+                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
+            }));
+
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+
+            ea.OtherFiles.Add( @"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config");
+
+            var client = new OpenAI();
+            var prompt = new Prompt_GPT_4o
+            {
+                Messages = new List<GPTMessage> {
+                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt2 }
+                },
+            };
+            var response = client.Completions.Create(prompt);
+            Assert.True(response.Success);
+            var t = response.Text;
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new System.Action(() =>
+            {
+                var runTimeCase = new RunTimeAnalysis_Case3();
+                var result = runTimeCase.Run(1); // This will throw a DivideByZeroException
+            }));
+
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+
+            ea.OtherFiles.Add(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config");
+
+            var client = new OpenAI();
+            var prompt = new Prompt_GPT_4o
+            {
+                Messages = new List<GPTMessage> {
+                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
+                    new GPTMessage { Role =  MessageRole.user, Content = ea.Prompt2 }
                 },
             };
             var response = client.Completions.Create(prompt);
