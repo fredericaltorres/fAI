@@ -155,7 +155,7 @@ namespace fAI
                 {
                     foreach(var m in this.Messages)
                     {
-                        sb.AppendLine($"{m.Role}:");
+                        sb.Append($"{m.Role}: ");
                         foreach(var c in m.Content)
                         {
                             if(c is AnthropicContentText textContent)

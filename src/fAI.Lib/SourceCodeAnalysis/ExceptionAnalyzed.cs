@@ -82,6 +82,7 @@ namespace fAI.SourceCodeAnalysis
             {
                 if (OtherFiles.Count == 0) return null;
                 var sb = new StringBuilder();
+                sb.AppendLine("Other files:");
                 foreach (var file in OtherFiles)
                 {
                     if (File.Exists(file))
@@ -199,7 +200,7 @@ namespace fAI.SourceCodeAnalysis
             var numberedCode = new StringBuilder();
             for (int i = 0; i < lines.Length; i++)
                 numberedCode.AppendLine($"{i + 1,4}: {lines[i]}");
-            return $"{MDCodeBlock}\n{GetLanguageCodeFromExtension(ext)}\n{numberedCode}\n{MDCodeBlock}";
+            return $"{MDCodeBlock}{GetLanguageCodeFromExtension(ext)}\n{numberedCode}\n{MDCodeBlock}";
         }
 
         public string PromptAnalyzeCodeProposeNewFunction
@@ -208,7 +209,7 @@ namespace fAI.SourceCodeAnalysis
             {
                 var promptStr = $@"
 Analyze the following {Language}, fileName ""{SourceCodeFileNameOnly}"", for the following Exception: ""{ExceptionType}""
-at line {SourceCodeLine}.
+at line {SourceCodeLine}. Answer in MARKDOWN syntax.
 
 Propose a new version of the function ""{FunctionName}"" to fix the issue.
 Source Code File ""{SourceCodeFileNameOnly}"":
@@ -225,13 +226,13 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             {
                 var promptStr = $@"
 Analyze the following {Language}, fileName ""{SourceCodeFileNameOnly}"", for the following Exception: ""{ExceptionType}""
-at line {SourceCodeLine}.
+at line {SourceCodeLine}.  Answer in MARKDOWN syntax.
 
 Propose an explanation.
 Source Code File ""{SourceCodeFileNameOnly}"":
 {SourceCodeWithLineNumbers}
 
-Other files:
+
 {OtherFilesSourceCodeWithLineNumbers}
 ";
                 return promptStr;

@@ -114,7 +114,6 @@ namespace fAI.Tests
             var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
         }
 
-
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2_Anthropic()
@@ -132,6 +131,37 @@ namespace fAI.Tests
                 Messages = new List<AnthropicMessage>()
                 {
                     new AnthropicMessage { 
+                        Role =  MessageRole.user,
+                        Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(ea.PromptAnalyzeCodeProposeExplanation))
+                    }
+                }
+            };
+
+            var client = new FAI();
+            var response = client.Completions.Create(prompt);
+            Assert.True(response.Success);
+            var t = response.Text;
+
+            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_FileLocked_Anthropic()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            {
+                var result = new RunTimeAnalysis_Case4().Run(1);
+            }));
+
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+
+            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            {
+                System = null,
+                Messages = new List<AnthropicMessage>()
+                {
+                    new AnthropicMessage {
                         Role =  MessageRole.user,
                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(ea.PromptAnalyzeCodeProposeExplanation))
                     }
