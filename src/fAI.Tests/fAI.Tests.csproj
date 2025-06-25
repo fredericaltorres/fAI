@@ -138,6 +138,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="CSRunTimeErrorAnalysis\app.config" />
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.AZURE.INDEX.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

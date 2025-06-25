@@ -142,6 +142,38 @@ namespace fAI
             Model = "claude-3-opus-20240229";
             Url = "https://api.anthropic.com/v1/messages";
         }
+
+        public string FullPrompt
+        {
+            get
+            {
+                var sb = new System.Text.StringBuilder();
+                if (!string.IsNullOrEmpty(System))
+                    sb.AppendLine($"System: {System}");
+
+                if (this.Messages.Count > 0)
+                {
+                    foreach(var m in this.Messages)
+                    {
+                        sb.AppendLine($"{m.Role}:");
+                        foreach(var c in m.Content)
+                        {
+                            if(c is AnthropicContentText textContent)
+                                sb.AppendLine($"{textContent.Text}");
+                            else if (c is AnthropicContentMessage textMessage)
+                                sb.AppendLine($"(Type: {textMessage.Type})"); // Should not happen, but just in case.
+                            else if(c is AnthropicContentImage imageContent)
+                                sb.AppendLine($"  Image: {imageContent.Source["media_type"]} (base64 data)");
+                        }
+                    }
+                }
+                else
+                {
+                    sb.Append("No messages in prompt.");
+                }
+                return sb.ToString();
+            }
+        }
     }
 
     public class Anthropic_Prompt_Claude_3_5_Sonnet : AnthropicPromptBase
