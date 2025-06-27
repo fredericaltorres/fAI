@@ -92,6 +92,12 @@ namespace fAI
         {
         }
 
+        public AnthropicMessage(MessageRole role, List<AnthropicContentMessage> content)
+        {
+            this.Content = content.ToList();
+            Role = role;
+        }
+
         public AnthropicMessage(MessageRole role, params AnthropicContentMessage[] content)
         {
             this.Content = content.ToList();

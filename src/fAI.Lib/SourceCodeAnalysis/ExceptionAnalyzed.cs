@@ -27,10 +27,108 @@ namespace fAI.SourceCodeAnalysis
     {
         public string FileName { get; set; }
         public int LineNumber { get; set; }
+        public string ClassName { get; set; }
+        public string MethodName { get; set; }
+
         public override string ToString()
         {
             return $"{FileName}:{LineNumber}";
         }
+    }
+
+    public class CodeAnalysis : JsonObject
+    {
+        public string Language { get; set; } = "C#";
+        public string Case { get; set; }
+        public FileLocation FileLocation { get; set; }
+        public string Context { get; set; } = "You are a helpful and experienced C# and .NET software developer.";
+
+        [JsonIgnore]
+        public string SourceCodeFileNameOnly => Path.GetFileName(FileLocation.FileName);
+        [JsonIgnore]
+        public int SourceCodeLine => FileLocation.LineNumber;
+        [JsonIgnore]
+        public string SourceCodeWithLineNumbers => ExceptionAnalyzed.PrepareSourceCodeFileForAnalysis(FileLocation.FileName);
+        [JsonIgnore]
+        public string MethodName => FileLocation.MethodName;
+        [JsonIgnore]
+        public string ClassName => FileLocation.ClassName;
+
+
+        public static CodeAnalysis Load(string @case)
+        {
+            if (File.Exists(@case))
+                return FromFile<CodeAnalysis>(@case);
+
+            return FromFile<CodeAnalysis>(GetJsonFileName(@case));
+        }
+
+        private static string GetJsonFileName(string Case)
+        {
+            return Path.Combine(ExceptionAnalyzed.GetCaseRootFolder(), $"{Case}.CodeAnalysis.json");
+        }
+
+        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
+        {
+            var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
+            var sb = new StringBuilder();
+            sb.AppendLine($"## Prompt({prompt.Model}):");
+            sb.AppendLine($"{prompt.FullPrompt}");
+            sb.AppendLine($"## Answer:");
+            sb.AppendLine($"{completionResponse.Text}");
+
+            File.WriteAllText(reportFileName, sb.ToString());
+            return reportFileName;
+        }
+
+        public string AnalyzeCodeAndGenerateReport()
+        {
+            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            {
+                System = this.Context,
+                Messages = DS.List(
+                       new AnthropicMessage(MessageRole.user, DS.List<AnthropicContentMessage>(
+                           new AnthropicContentText(this.PromptAnalyzeCodeProposeExplanation))
+                       )
+                   )
+            };
+
+            var response = new FAI().Completions.Create(prompt);
+
+            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
+            return analysisReportFileName;
+        }
+
+        public CodeAnalysis()
+        {
+
+        }
+
+        public CodeAnalysis(string @case, FileLocation fileLocation)
+        {
+            Case = @case;
+            FileLocation = fileLocation;
+            JsonFileName = GetJsonFileName(@case);
+            Save();
+        }
+
+        public string PromptAnalyzeCodeProposeExplanation
+        {
+            get
+            {
+                var promptStr = $@"
+The {Language}, method ""{this.MethodName}"", in class ""{this.ClassName}""
+line {SourceCodeLine}, does not return the expected value. Answer in MARKDOWN syntax.
+
+Propose an explanation.
+Source Code File ""{SourceCodeFileNameOnly}"":
+{SourceCodeWithLineNumbers}
+";
+                return promptStr.Trim();
+            }
+        }
+
+
     }
 
     public class ExceptionAnalyzed : JsonObject
@@ -120,7 +218,7 @@ namespace fAI.SourceCodeAnalysis
 
         private static string GetJsonFileName(string Case)
         {
-            return Path.Combine(GetCaseRootFolder(), $"{Case}.error.json");
+            return Path.Combine(GetCaseRootFolder(), $"{Case}.ExceptionAnalysis.json");
         }
 
         public static ExceptionAnalyzed Load(string @case)
@@ -215,7 +313,7 @@ Propose a new version of the function ""{FunctionName}"" to fix the issue.
 Source Code File ""{SourceCodeFileNameOnly}"":
 {SourceCodeWithLineNumbers}
 ";
-                return promptStr;
+                return promptStr.Trim();
 
             }
         }
@@ -235,11 +333,11 @@ Source Code File ""{SourceCodeFileNameOnly}"":
 
 {OtherFilesSourceCodeWithLineNumbers}
 ";
-                return promptStr;
+                return promptStr.Trim();
             }
         }
 
-        public static string RunCase(Action actionCode, List<string> otherFiles = null, [CallerMemberName] string callerCaseName = null)
+        public static string RunCode(Action actionCode, List<string> otherFiles = null, [CallerMemberName] string callerCaseName = null)
         {
             try
             {
@@ -251,6 +349,40 @@ Source Code File ""{SourceCodeFileNameOnly}"":
                 var ea = new ExceptionAnalyzed(ex, callerCaseName, otherFiles);
                 return ea.JsonFileName;
             }
+        }
+
+
+        public string AnalyzeAndGenerateAnalysisReport(Anthropic_Prompt_Claude_3_5_Sonnet p)
+        {
+            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            {
+                System = this.Context,
+                Messages = DS.List(
+                     new AnthropicMessage(MessageRole.user, DS.List<AnthropicContentMessage>(
+                            new AnthropicContentText(this.PromptAnalyzeCodeProposeExplanation))
+                     )
+                 )
+            };
+
+            var client = new FAI();
+            var response = client.Completions.Create(prompt);
+            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
+            return analysisReportFileName;
+        }
+
+        public string AnalyzeAndGenerateAnalysisReport(Prompt_GPT_4o p)
+        {
+            var client = new FAI();
+            var prompt = new Prompt_GPT_4o
+            {
+                Messages = new List<GPTMessage> {
+                    new GPTMessage { Role =  MessageRole.system, Content = this.Context },
+                    new GPTMessage { Role =  MessageRole.user, Content = this.PromptAnalyzeCodeProposeExplanation }
+                },
+            };
+            var response = client.Completions.Create(prompt);
+            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
+            return analysisReportFileName;
         }
 
         public string GenerateAnalysisReport(string jsonFileName, GPTPrompt prompt, CompletionResponse completionResponse)
@@ -265,6 +397,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             File.WriteAllText(reportFileName, sb.ToString());
             return reportFileName;
         }
+
 
         public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
         {

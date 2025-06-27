@@ -36,7 +36,7 @@ namespace fAI
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
             var body = p.GetPostBody();
-            OpenAI.Trace(new { BodyLenght = body.Length, Body = body }, this);
+            OpenAI.Trace(new { BodyLength = body.Length, Body = body }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, body);

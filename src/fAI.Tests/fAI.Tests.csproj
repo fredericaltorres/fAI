@@ -64,11 +64,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Anthropic\LedSequence.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysisTests.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case2.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysisTests.cs" />
-    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case4.cs" />
-    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case3.cs" />
-    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case2.cs" />
-    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Case1.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case1.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case7.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case6.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case5.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case4.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case3.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case2.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case1.cs" />
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
     <Compile Include="Anthropic\AnthropicCompletionsChatUnitTests.cs" />
@@ -140,7 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="CSRunTimeErrorAnalysis\app.config" />
+    <None Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\app.config" />
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\Paul-Graham-Essays.AZURE.INDEX.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

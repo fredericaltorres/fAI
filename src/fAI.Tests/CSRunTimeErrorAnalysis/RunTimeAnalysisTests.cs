@@ -39,26 +39,13 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitialization()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
                 var result = new RunTimeAnalysis_Case1().Run(1); // This will throw a DivideByZeroException
             }));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
-
-            var client = new FAI();
-            var prompt = new Prompt_GPT_4o
-            {
-                Messages = new List<GPTMessage> {
-                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeNewFunction }
-                },
-            };
-            var response = client.Completions.Create(prompt);
-            Assert.True(response.Success);
-            var t = response.Text;
-
-            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Prompt_GPT_4o());
         }
 
 
@@ -66,114 +53,83 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
                 var result = new RunTimeAnalysis_Case2().Run(1); // This will throw a DivideByZeroException
             }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
-
-            var client = new FAI();
-            var prompt = new Prompt_GPT_4o
-            {
-                Messages = new List<GPTMessage> {
-                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeExplanation }
-                },
-            };
-            var response = client.Completions.Create(prompt);
-            Assert.True(response.Success);
-            var t = response.Text;
-
-            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Prompt_GPT_4o());
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
                 var result = new RunTimeAnalysis_Case3().Run(1); // This will throw a DivideByZeroException
-            }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
+            }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\app.config"));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
 
-            var client = new FAI();
-            var prompt = new Prompt_GPT_4o
-            {
-                Messages = new List<GPTMessage> {
-                    new GPTMessage { Role =  MessageRole.system, Content = ea.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = ea.PromptAnalyzeCodeProposeExplanation }
-                },
-            };
-            var response = client.Completions.Create(prompt);
-            Assert.True(response.Success);
-            var t = response.Text;
-
-            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Prompt_GPT_4o());
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile_v2_Anthropic()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
                 var result = new RunTimeAnalysis_Case3().Run(1); // This will throw a DivideByZeroException
             }), otherFiles: DS.List(@"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\app.config"));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
-
-            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
-            {
-                System = null,
-                Messages = new List<AnthropicMessage>()
-                {
-                    new AnthropicMessage { 
-                        Role =  MessageRole.user,
-                        Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(ea.PromptAnalyzeCodeProposeExplanation))
-                    }
-                }
-            };
-
-            var client = new FAI();
-            var response = client.Completions.Create(prompt);
-            Assert.True(response.Success);
-            var t = response.Text;
-
-            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void RunTimeAnalysis_FileLocked_Anthropic()
         {
-            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCase(new S.Action(() =>
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
                 var result = new RunTimeAnalysis_Case4().Run(1);
             }));
 
             var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+        }
 
-            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_NullString_Anthropic()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
             {
-                System = null,
-                Messages = new List<AnthropicMessage>()
-                {
-                    new AnthropicMessage {
-                        Role =  MessageRole.user,
-                        Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(ea.PromptAnalyzeCodeProposeExplanation))
-                    }
-                }
-            };
+                var result = new RunTimeAnalysis_Case5().Run(1);
+            }));
 
-            var client = new FAI();
-            var response = client.Completions.Create(prompt);
-            Assert.True(response.Success);
-            var t = response.Text;
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
 
-            var analysisReportFileName = ea.GenerateAnalysisReport(exceptionDescriptionFileName, prompt, response);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RunTimeAnalysis_ModifyingCollectionWhileIteratingOverIt_Anthropic()
+        {
+            var exceptionDescriptionFileName = ExceptionAnalyzed.RunCode(new S.Action(() =>
+            {
+                var instance = new RunTimeAnalysis_Case7();
+                instance.Items = DS.List("Item1", "Item2", "", "Item3", null, "Item4");
+                instance.RemoveEmptyItems(); 
+            }));
+
+            var ea = ExceptionAnalyzed.Load(exceptionDescriptionFileName);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+
         }
     }
 }
