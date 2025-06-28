@@ -118,7 +118,7 @@ namespace fAI.SourceCodeAnalysis
             {
                 var promptStr = $@"
 The {Language}, method ""{this.MethodName}"", in class ""{this.ClassName}""
-line {SourceCodeLine}, does not return the expected value. Answer in MARKDOWN syntax.
+line {SourceCodeLine}, does not return the expected value OR behave as expected. Answer in MARKDOWN syntax.
 
 Propose an explanation.
 Source Code File ""{SourceCodeFileNameOnly}"":

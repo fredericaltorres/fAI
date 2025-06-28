@@ -1,9 +1,10 @@
 ﻿using ChatGPT.Tests.CSRunTimeErrorAnalysis;
 using DynamicSugar;
 using fAI;
-using S = System;
+using fAI.SourceCodeAnalysis;
 using Newtonsoft.Json;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ using Xunit;
 using static fAI.OpenAICompletions;
 using static fAI.OpenAICompletionsEx;
 using static System.Net.Mime.MediaTypeNames;
-using fAI.SourceCodeAnalysis;
+using S = System;
 
 /*
  
@@ -26,6 +27,27 @@ how to pass a file to be analyzed for runtime errors?
  */
 namespace fAI.Tests
 {
+
+    public class  FLogViewerClient
+    {
+        public const string LofgViewerCommunicationFileName = @"C:\temp\flogviewer.notification.txt";
+
+        public static bool RequestToOpenFile(string fileName)
+        {
+            try
+            {
+                if (File.Exists(LofgViewerCommunicationFileName))
+                    File.Delete(LofgViewerCommunicationFileName);
+                File.WriteAllText(LofgViewerCommunicationFileName, fileName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+    }
+
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class CodeAnalysisTests : OpenAIUnitTestsBase
@@ -37,7 +59,6 @@ namespace fAI.Tests
 
 
         [Fact()]
-        [TestBeforeAfter]
         public void RunTimeAnalysis_CodeAnalysis_Anthropic()
         {
             var ea = new CodeAnalysis(nameof(RunTimeAnalysis_CodeAnalysis_Anthropic),
@@ -50,6 +71,53 @@ namespace fAI.Tests
                 });
 
             var analysisReportFileName = ea.AnalyzeCodeAndGenerateReport();
+        }
+
+        [Fact()]
+        public void RunTimeAnalysis_CodeAnalysis_ClosureInLoop_Anthropic()
+        {
+            var ea = new CodeAnalysis(nameof(RunTimeAnalysis_CodeAnalysis_Anthropic),
+                new FileLocation
+                {
+                    FileName = @"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case2.cs",
+                    ClassName = "ButtonCreator",
+                    MethodName = "CreateButtons",
+                    LineNumber = 10
+                });
+
+            var analysisReportFileName = ea.AnalyzeCodeAndGenerateReport();
+        }
+
+        [Fact()]
+        public void RunTimeAnalysis_CodeAnalysis_IncorrectUseOfValueTypeStructAndAssumingReferenceSemantics_Anthropic()
+        {
+            var ea = new CodeAnalysis(nameof(RunTimeAnalysis_CodeAnalysis_Anthropic),
+                new FileLocation
+                {
+                    FileName = @"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case3.cs",
+                    ClassName = "Program",
+                    MethodName = "Main",
+                    LineNumber = 19
+                });
+
+            var analysisReportFileName = ea.AnalyzeCodeAndGenerateReport();
+        }
+        
+        [Fact()]
+        public void RunTimeAnalysis_CodeAnalysis_LinqDeferredExecution_Anthropic()
+        {
+            var ea = new CodeAnalysis(nameof(RunTimeAnalysis_CodeAnalysis_Anthropic),
+                new FileLocation
+                {
+                    FileName = @"C:\DVT\fAI\src\fAI.Tests\CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case4.cs",
+                    ClassName = "Program2",
+                    MethodName = "Main",
+                    LineNumber = 19
+                });
+
+            var analysisReportFileName = ea.AnalyzeCodeAndGenerateReport();
+
+            FLogViewerClient.RequestToOpenFile(analysisReportFileName);
         }
     }
 }

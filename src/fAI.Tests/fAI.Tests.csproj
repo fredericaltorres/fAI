@@ -65,6 +65,8 @@
   <ItemGroup>
     <Compile Include="Anthropic\LedSequence.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysisTests.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case4.cs" />
+    <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case3.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case2.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysisTests.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case1.cs" />
