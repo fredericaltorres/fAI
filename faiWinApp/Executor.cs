@@ -132,7 +132,6 @@ namespace faiWinApp
         {
             return ExecuteConsoleAndCapture(PowerShellExe64B, $@"-command ""{script}"" ");
             //var is64 = Environment.Is64BitProcess;
-            //return ExecuteConsoleAndCapture(@"C:\Brainshark\development\poc\cheetah.regression.tool\Brainshark.DataAccess.CommandLine\bin\Debug\Brainshark.DataAccess.CommandLine.exe",
             //    $@"getPresentation --pid 794613385");
         }
 

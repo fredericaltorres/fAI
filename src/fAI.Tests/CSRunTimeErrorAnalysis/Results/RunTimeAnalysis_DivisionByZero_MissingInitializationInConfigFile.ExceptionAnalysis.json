@@ -1,0 +1,42 @@
+﻿{
+  "OtherFiles": [
+    "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\app.config"
+  ],
+  "Language": "C#",
+  "Case": "RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile",
+  "Message": "Attempted to divide by zero.",
+  "ExceptionType": "System.DivideByZeroException",
+  "StackTrace": "   at ChatGPT.Tests.CSRunTimeErrorAnalysis.RunTimeAnalysis_Case2.Run(Int32 input) in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case2.cs:line 23\r\n   at fAI.Tests.RunTimeAnalysisTests.<>c.<RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile>b__2_0() in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs:line 52\r\n   at fAI.SourceCodeAnalysis.ExceptionAnalyzer.RunCode(Action actionCode, List`1 otherFiles, String callerCaseName) in C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs:line 231",
+  "StackTraceInfo": [
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case2.cs",
+      "LineNumber": 23,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs",
+      "LineNumber": 52,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs",
+      "LineNumber": 231,
+      "ClassName": null,
+      "MethodName": null
+    }
+  ],
+  "Source": "ChatGPT.Tests",
+  "TargetSite": "Int32 Run(Int32)",
+  "Context": "You are a helpful and experienced C# and .NET software developer.",
+  "SourceCodeLine": 23,
+  "SourceCodeFileNameOnly": "RunTimeAnalysis_Case2.cs",
+  "SourceCodeFileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case2.cs",
+  "OtherFilesSourceCodeWithLineNumbers": "Other files:\r\n\r\nFile: \"app.config\"\r\n```xml\n   1: <?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n   2: <configuration>\r\n   3:   <appSettings>\r\n   4:     <add key=\"Number\" value=\"\"/>\r\n   5:   </appSettings>\r\n   6: </configuration>\r\n\n```\r\n\r\n",
+  "FunctionName": "Run()",
+  "SourceCodeWithLineNumbers": "```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case2\r\n  10:     {\r\n  11:         private int GetNumberFromConfig()\r\n  12:         {\r\n  13:             var number = System.Configuration.ConfigurationManager.AppSettings[\"Number\"];\r\n  14:             if (!string.IsNullOrEmpty(number))\r\n  15:                 return int.Parse(number);\r\n  16:             return 0; // Default value if not found\r\n  17:         }\r\n  18: \r\n  19:         public int Number { get { return GetNumberFromConfig(); } }\r\n  20: \r\n  21:         public int Run(int input)\r\n  22:         {\r\n  23:             return input / Number;\r\n  24:         }\r\n  25:     }\r\n  26: }\r\n\n```",
+  "PromptAnalyzeCodeProposeNewFunction": "Analyze the following C#, fileName \"RunTimeAnalysis_Case2.cs\", for the following Exception: \"System.DivideByZeroException\"\r\nat line 23. Answer in MARKDOWN syntax.\r\n\r\nPropose a new version of the function \"Run()\" to fix the issue.\r\nSource Code File \"RunTimeAnalysis_Case2.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case2\r\n  10:     {\r\n  11:         private int GetNumberFromConfig()\r\n  12:         {\r\n  13:             var number = System.Configuration.ConfigurationManager.AppSettings[\"Number\"];\r\n  14:             if (!string.IsNullOrEmpty(number))\r\n  15:                 return int.Parse(number);\r\n  16:             return 0; // Default value if not found\r\n  17:         }\r\n  18: \r\n  19:         public int Number { get { return GetNumberFromConfig(); } }\r\n  20: \r\n  21:         public int Run(int input)\r\n  22:         {\r\n  23:             return input / Number;\r\n  24:         }\r\n  25:     }\r\n  26: }\r\n\n```",
+  "PromptAnalyzeCodeProposeExplanation": "Analyze the following C#, fileName \"RunTimeAnalysis_Case2.cs\", for the following Exception: \"System.DivideByZeroException\"\r\nat line 23.  \r\n\r\nPropose an explanation.\r\nSource Code File \"RunTimeAnalysis_Case2.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case2\r\n  10:     {\r\n  11:         private int GetNumberFromConfig()\r\n  12:         {\r\n  13:             var number = System.Configuration.ConfigurationManager.AppSettings[\"Number\"];\r\n  14:             if (!string.IsNullOrEmpty(number))\r\n  15:                 return int.Parse(number);\r\n  16:             return 0; // Default value if not found\r\n  17:         }\r\n  18: \r\n  19:         public int Number { get { return GetNumberFromConfig(); } }\r\n  20: \r\n  21:         public int Run(int input)\r\n  22:         {\r\n  23:             return input / Number;\r\n  24:         }\r\n  25:     }\r\n  26: }\r\n\n```\r\n\r\nOther files:\r\n\r\nFile: \"app.config\"\r\n```xml\n   1: <?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n   2: <configuration>\r\n   3:   <appSettings>\r\n   4:     <add key=\"Number\" value=\"\"/>\r\n   5:   </appSettings>\r\n   6: </configuration>\r\n\n```",
+  "JsonFileName": "c:\\temp\\fAI.RunTimeAnalysis\\RunTimeAnalysis_DivisionByZero_MissingInitializationInConfigFile.ExceptionAnalysis.json"
+}

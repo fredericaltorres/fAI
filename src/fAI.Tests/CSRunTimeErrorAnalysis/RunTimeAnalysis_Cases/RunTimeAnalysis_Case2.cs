@@ -11,7 +11,7 @@ namespace ChatGPT.Tests.CSRunTimeErrorAnalysis
         private int GetNumberFromConfig()
         {
             var number = System.Configuration.ConfigurationManager.AppSettings["Number"];
-            if (number != null)
+            if (!string.IsNullOrEmpty(number))
                 return int.Parse(number);
             return 0; // Default value if not found
         }

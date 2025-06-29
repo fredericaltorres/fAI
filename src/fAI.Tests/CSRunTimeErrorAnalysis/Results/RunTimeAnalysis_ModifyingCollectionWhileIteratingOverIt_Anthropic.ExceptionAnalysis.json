@@ -1,0 +1,40 @@
+﻿{
+  "OtherFiles": [],
+  "Language": "C#",
+  "Case": "RunTimeAnalysis_ModifyingCollectionWhileIteratingOverIt_Anthropic",
+  "Message": "Collection was modified; enumeration operation may not execute.",
+  "ExceptionType": "System.InvalidOperationException",
+  "StackTrace": "   at System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)\r\n   at System.Collections.Generic.List`1.Enumerator.MoveNextRare()\r\n   at ChatGPT.Tests.CSRunTimeErrorAnalysis.RunTimeAnalysis_Case7.RemoveEmptyItems() in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case7.cs:line 15\r\n   at fAI.Tests.RunTimeAnalysisTests.<>c.<RunTimeAnalysis_ModifyingCollectionWhileIteratingOverIt_Anthropic>b__7_0() in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs:line 121\r\n   at fAI.SourceCodeAnalysis.ExceptionAnalyzer.RunCode(Action actionCode, List`1 otherFiles, String callerCaseName) in C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs:line 231",
+  "StackTraceInfo": [
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case7.cs",
+      "LineNumber": 15,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs",
+      "LineNumber": 121,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs",
+      "LineNumber": 231,
+      "ClassName": null,
+      "MethodName": null
+    }
+  ],
+  "Source": "mscorlib",
+  "TargetSite": "Void ThrowInvalidOperationException(System.ExceptionResource)",
+  "Context": "You are a helpful and experienced C# and .NET software developer.",
+  "SourceCodeLine": 15,
+  "SourceCodeFileNameOnly": "RunTimeAnalysis_Case7.cs",
+  "SourceCodeFileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case7.cs",
+  "OtherFilesSourceCodeWithLineNumbers": null,
+  "FunctionName": "ThrowInvalidOperationException()",
+  "SourceCodeWithLineNumbers": "```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case7\r\n  10:     {\r\n  11:         public List<string> Items = new List<string>();\r\n  12: \r\n  13:         public void RemoveEmptyItems()\r\n  14:         {\r\n  15:             foreach (var item in Items)\r\n  16:             {\r\n  17:                 if (string.IsNullOrWhiteSpace(item))\r\n  18:                     Items.Remove(item);\r\n  19:             }\r\n  20:         }\r\n  21:     }\r\n  22: }\r\n\n```",
+  "PromptAnalyzeCodeProposeNewFunction": "Analyze the following C#, fileName \"RunTimeAnalysis_Case7.cs\", for the following Exception: \"System.InvalidOperationException\"\r\nat line 15. Answer in MARKDOWN syntax.\r\n\r\nPropose a new version of the function \"ThrowInvalidOperationException()\" to fix the issue.\r\nSource Code File \"RunTimeAnalysis_Case7.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case7\r\n  10:     {\r\n  11:         public List<string> Items = new List<string>();\r\n  12: \r\n  13:         public void RemoveEmptyItems()\r\n  14:         {\r\n  15:             foreach (var item in Items)\r\n  16:             {\r\n  17:                 if (string.IsNullOrWhiteSpace(item))\r\n  18:                     Items.Remove(item);\r\n  19:             }\r\n  20:         }\r\n  21:     }\r\n  22: }\r\n\n```",
+  "PromptAnalyzeCodeProposeExplanation": "Analyze the following C#, fileName \"RunTimeAnalysis_Case7.cs\", for the following Exception: \"System.InvalidOperationException\"\r\nat line 15.  \r\n\r\nPropose an explanation.\r\nSource Code File \"RunTimeAnalysis_Case7.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case7\r\n  10:     {\r\n  11:         public List<string> Items = new List<string>();\r\n  12: \r\n  13:         public void RemoveEmptyItems()\r\n  14:         {\r\n  15:             foreach (var item in Items)\r\n  16:             {\r\n  17:                 if (string.IsNullOrWhiteSpace(item))\r\n  18:                     Items.Remove(item);\r\n  19:             }\r\n  20:         }\r\n  21:     }\r\n  22: }\r\n\n```",
+  "JsonFileName": "c:\\temp\\fAI.RunTimeAnalysis\\RunTimeAnalysis_ModifyingCollectionWhileIteratingOverIt_Anthropic.ExceptionAnalysis.json"
+}

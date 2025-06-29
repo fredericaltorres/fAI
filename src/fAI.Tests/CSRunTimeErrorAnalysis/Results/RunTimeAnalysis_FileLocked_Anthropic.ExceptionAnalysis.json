@@ -1,0 +1,40 @@
+﻿{
+  "OtherFiles": [],
+  "Language": "C#",
+  "Case": "RunTimeAnalysis_FileLocked_Anthropic",
+  "Message": "The process cannot access the file 'C:\\Users\\ftorres\\AppData\\Local\\Temp\\tmp66E3.tmp.txt' because it is being used by another process.",
+  "ExceptionType": "System.IO.IOException",
+  "StackTrace": "   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)\r\n   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)\r\n   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share)\r\n   at ChatGPT.Tests.CSRunTimeErrorAnalysis.RunTimeAnalysis_Case4.Run(Int32 input) in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case4.cs:line 22\r\n   at fAI.Tests.RunTimeAnalysisTests.<>c.<RunTimeAnalysis_FileLocked_Anthropic>b__5_0() in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs:line 92\r\n   at fAI.SourceCodeAnalysis.ExceptionAnalyzer.RunCode(Action actionCode, List`1 otherFiles, String callerCaseName) in C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs:line 231",
+  "StackTraceInfo": [
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case4.cs",
+      "LineNumber": 22,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs",
+      "LineNumber": 92,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs",
+      "LineNumber": 231,
+      "ClassName": null,
+      "MethodName": null
+    }
+  ],
+  "Source": "mscorlib",
+  "TargetSite": "Void WinIOError(Int32, System.String)",
+  "Context": "You are a helpful and experienced C# and .NET software developer.",
+  "SourceCodeLine": 22,
+  "SourceCodeFileNameOnly": "RunTimeAnalysis_Case4.cs",
+  "SourceCodeFileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case4.cs",
+  "OtherFilesSourceCodeWithLineNumbers": null,
+  "FunctionName": "WinIOError()",
+  "SourceCodeWithLineNumbers": "```csharp\n   1: using System;\r\n   2: using System.IO;\r\n   3: using System.Collections.Generic;\r\n   4: using System.Linq;\r\n   5: using System.Text;\r\n   6: using System.Threading.Tasks;\r\n   7: using DynamicSugar;\r\n   8: \r\n   9: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n  10: {\r\n  11:     internal class RunTimeAnalysis_Case4\r\n  12:     {\r\n  13:         public int Run(int input)\r\n  14:         {\r\n  15:             using (var tfh = new TestFileHelper())\r\n  16:             {\r\n  17:                 var tmpTxtFile = tfh.GetTempFileName(\".txt\");\r\n  18:                 var fs = new FileStream(tmpTxtFile, FileMode.Append, FileAccess.Write, FileShare.None);\r\n  19:                 var writer = new StreamWriter(fs);\r\n  20:                     writer.WriteLine(\"First line\");\r\n  21: \r\n  22:                 var fsRead = new FileStream(tmpTxtFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);\r\n  23: \r\n  24:                 // Read the contents of the file using fsRead\r\n  25:                 fsRead.Seek(0, SeekOrigin.Begin);\r\n  26:                 using (StreamReader reader = new StreamReader(fsRead, Encoding.UTF8, true, 1024, leaveOpen: true))\r\n  27:                 {\r\n  28:                     string fileContent = reader.ReadToEnd();\r\n  29:                     Console.WriteLine(fileContent);\r\n  30:                 }\r\n  31:                 fsRead.Close();\r\n  32: \r\n  33:                 return 1;\r\n  34:             }\r\n  35:         }\r\n  36:     }\r\n  37: }\r\n\n```",
+  "PromptAnalyzeCodeProposeNewFunction": "Analyze the following C#, fileName \"RunTimeAnalysis_Case4.cs\", for the following Exception: \"System.IO.IOException\"\r\nat line 22. Answer in MARKDOWN syntax.\r\n\r\nPropose a new version of the function \"WinIOError()\" to fix the issue.\r\nSource Code File \"RunTimeAnalysis_Case4.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.IO;\r\n   3: using System.Collections.Generic;\r\n   4: using System.Linq;\r\n   5: using System.Text;\r\n   6: using System.Threading.Tasks;\r\n   7: using DynamicSugar;\r\n   8: \r\n   9: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n  10: {\r\n  11:     internal class RunTimeAnalysis_Case4\r\n  12:     {\r\n  13:         public int Run(int input)\r\n  14:         {\r\n  15:             using (var tfh = new TestFileHelper())\r\n  16:             {\r\n  17:                 var tmpTxtFile = tfh.GetTempFileName(\".txt\");\r\n  18:                 var fs = new FileStream(tmpTxtFile, FileMode.Append, FileAccess.Write, FileShare.None);\r\n  19:                 var writer = new StreamWriter(fs);\r\n  20:                     writer.WriteLine(\"First line\");\r\n  21: \r\n  22:                 var fsRead = new FileStream(tmpTxtFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);\r\n  23: \r\n  24:                 // Read the contents of the file using fsRead\r\n  25:                 fsRead.Seek(0, SeekOrigin.Begin);\r\n  26:                 using (StreamReader reader = new StreamReader(fsRead, Encoding.UTF8, true, 1024, leaveOpen: true))\r\n  27:                 {\r\n  28:                     string fileContent = reader.ReadToEnd();\r\n  29:                     Console.WriteLine(fileContent);\r\n  30:                 }\r\n  31:                 fsRead.Close();\r\n  32: \r\n  33:                 return 1;\r\n  34:             }\r\n  35:         }\r\n  36:     }\r\n  37: }\r\n\n```",
+  "PromptAnalyzeCodeProposeExplanation": "Analyze the following C#, fileName \"RunTimeAnalysis_Case4.cs\", for the following Exception: \"System.IO.IOException\"\r\nat line 22.  \r\n\r\nPropose an explanation.\r\nSource Code File \"RunTimeAnalysis_Case4.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.IO;\r\n   3: using System.Collections.Generic;\r\n   4: using System.Linq;\r\n   5: using System.Text;\r\n   6: using System.Threading.Tasks;\r\n   7: using DynamicSugar;\r\n   8: \r\n   9: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n  10: {\r\n  11:     internal class RunTimeAnalysis_Case4\r\n  12:     {\r\n  13:         public int Run(int input)\r\n  14:         {\r\n  15:             using (var tfh = new TestFileHelper())\r\n  16:             {\r\n  17:                 var tmpTxtFile = tfh.GetTempFileName(\".txt\");\r\n  18:                 var fs = new FileStream(tmpTxtFile, FileMode.Append, FileAccess.Write, FileShare.None);\r\n  19:                 var writer = new StreamWriter(fs);\r\n  20:                     writer.WriteLine(\"First line\");\r\n  21: \r\n  22:                 var fsRead = new FileStream(tmpTxtFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);\r\n  23: \r\n  24:                 // Read the contents of the file using fsRead\r\n  25:                 fsRead.Seek(0, SeekOrigin.Begin);\r\n  26:                 using (StreamReader reader = new StreamReader(fsRead, Encoding.UTF8, true, 1024, leaveOpen: true))\r\n  27:                 {\r\n  28:                     string fileContent = reader.ReadToEnd();\r\n  29:                     Console.WriteLine(fileContent);\r\n  30:                 }\r\n  31:                 fsRead.Close();\r\n  32: \r\n  33:                 return 1;\r\n  34:             }\r\n  35:         }\r\n  36:     }\r\n  37: }\r\n\n```",
+  "JsonFileName": "c:\\temp\\fAI.RunTimeAnalysis\\RunTimeAnalysis_FileLocked_Anthropic.ExceptionAnalysis.json"
+}

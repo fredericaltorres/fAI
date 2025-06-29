@@ -1,0 +1,40 @@
+﻿{
+  "OtherFiles": [],
+  "Language": "C#",
+  "Case": "RunTimeAnalysis_NullString_Anthropic",
+  "Message": "Object reference not set to an instance of an object.",
+  "ExceptionType": "System.NullReferenceException",
+  "StackTrace": "   at ChatGPT.Tests.CSRunTimeErrorAnalysis.RunTimeAnalysis_Case5.Run(Int32 input) in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case5.cs:line 15\r\n   at fAI.Tests.RunTimeAnalysisTests.<>c.<RunTimeAnalysis_NullString_Anthropic>b__6_0() in C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs:line 105\r\n   at fAI.SourceCodeAnalysis.ExceptionAnalyzer.RunCode(Action actionCode, List`1 otherFiles, String callerCaseName) in C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs:line 231",
+  "StackTraceInfo": [
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case5.cs",
+      "LineNumber": 15,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysisTests.cs",
+      "LineNumber": 105,
+      "ClassName": null,
+      "MethodName": null
+    },
+    {
+      "FileName": "C:\\DVT\\fAI\\src\\fAI.Lib\\SourceCodeAnalysis\\ExceptionAnalyzer.cs",
+      "LineNumber": 231,
+      "ClassName": null,
+      "MethodName": null
+    }
+  ],
+  "Source": "ChatGPT.Tests",
+  "TargetSite": "System.String Run(Int32)",
+  "Context": "You are a helpful and experienced C# and .NET software developer.",
+  "SourceCodeLine": 15,
+  "SourceCodeFileNameOnly": "RunTimeAnalysis_Case5.cs",
+  "SourceCodeFileName": "C:\\DVT\\fAI\\src\\fAI.Tests\\CSRunTimeErrorAnalysis\\RunTimeAnalysis_Cases\\RunTimeAnalysis_Case5.cs",
+  "OtherFilesSourceCodeWithLineNumbers": null,
+  "FunctionName": "Run()",
+  "SourceCodeWithLineNumbers": "```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case5\r\n  10:     {\r\n  11:         public string Status { get; set; }\r\n  12: \r\n  13:         public string Run(int input)\r\n  14:         {\r\n  15:             return input.ToString() + this.Status.ToString();\r\n  16:         }\r\n  17:     }\r\n  18: }\r\n\n```",
+  "PromptAnalyzeCodeProposeNewFunction": "Analyze the following C#, fileName \"RunTimeAnalysis_Case5.cs\", for the following Exception: \"System.NullReferenceException\"\r\nat line 15. Answer in MARKDOWN syntax.\r\n\r\nPropose a new version of the function \"Run()\" to fix the issue.\r\nSource Code File \"RunTimeAnalysis_Case5.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case5\r\n  10:     {\r\n  11:         public string Status { get; set; }\r\n  12: \r\n  13:         public string Run(int input)\r\n  14:         {\r\n  15:             return input.ToString() + this.Status.ToString();\r\n  16:         }\r\n  17:     }\r\n  18: }\r\n\n```",
+  "PromptAnalyzeCodeProposeExplanation": "Analyze the following C#, fileName \"RunTimeAnalysis_Case5.cs\", for the following Exception: \"System.NullReferenceException\"\r\nat line 15.  \r\n\r\nPropose an explanation.\r\nSource Code File \"RunTimeAnalysis_Case5.cs\":\r\n```csharp\n   1: using System;\r\n   2: using System.Collections.Generic;\r\n   3: using System.Linq;\r\n   4: using System.Text;\r\n   5: using System.Threading.Tasks;\r\n   6: \r\n   7: namespace ChatGPT.Tests.CSRunTimeErrorAnalysis\r\n   8: {\r\n   9:     internal class RunTimeAnalysis_Case5\r\n  10:     {\r\n  11:         public string Status { get; set; }\r\n  12: \r\n  13:         public string Run(int input)\r\n  14:         {\r\n  15:             return input.ToString() + this.Status.ToString();\r\n  16:         }\r\n  17:     }\r\n  18: }\r\n\n```",
+  "JsonFileName": "c:\\temp\\fAI.RunTimeAnalysis\\RunTimeAnalysis_NullString_Anthropic.ExceptionAnalysis.json"
+}

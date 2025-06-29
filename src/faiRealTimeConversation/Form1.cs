@@ -24,7 +24,7 @@ namespace faiRealTimeConversation
     public partial class Form1 : Form
     {
 
-        const string about_brainshark = @"Brainshark is a software company that specializes in sales enablement and readiness solutions. Their platform provides a range of tools and resources to help sales teams be more effective, including content authoring, delivery, and analytics, as well as training and coaching solutions.\n\nBrainshark's content authoring tools allow users to create and distribute interactive and engaging content, such as presentations, sales demos, and training modules. The platform also includes features for tracking content engagement and measuring the impact of sales and marketing materials.\n\nIn addition to its content creation and delivery capabilities, Brainshark offers a range of training and coaching solutions to help sales teams develop the skills and knowledge they need to be successful. These solutions include on-demand video coaching, which allows sales reps to practice their pitch and receive feedback from managers and peers, as well as sales readiness assessments and analytics to identify areas for improvement.\n\nOverall, Brainshark's platform is designed to help organizations improve their sales enablement efforts by providing the tools and resources needed to create, deliver, and measure the impact of sales and marketing content, as well as train and coach sales teams to be more effective.";
+        const string about_b = @"B is a software";
 
         string _audioFileName;
         TestFileHelper _testFileHelper = new TestFileHelper();
@@ -160,7 +160,7 @@ namespace faiRealTimeConversation
             //var r = await client.Audio.Transcriptions.CreateAsync(@"C:\temp\faiRealTimeConversation\recorded.mp3");
             //this.UserMessage($"Text: {r.Duration }");
             //this.UserMessage($"Text: {r.Text}");
-            await GenerateAudio("Tell me more abount Brainshark",  true);
+            await GenerateAudio("Tell me more about B",  true);
         }
 
         private async Task GenerateAudio(string text, bool play)
@@ -184,7 +184,7 @@ namespace faiRealTimeConversation
 
         private  void button1_Click(object sender, EventArgs e)
         {
-            this._tts = about_brainshark;
+            this._tts = about_b;
             Task.Factory.StartNew(() =>
             {
                 GenerateAudio(this._tts, true).GetAwaiter().GetResult();

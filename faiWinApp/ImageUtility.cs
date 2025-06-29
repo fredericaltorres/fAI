@@ -352,8 +352,7 @@ namespace faiWinApp
             }
         }
 
-        //static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v4.3.1\bin\ffmpeg.exe";
-        static string ffmpeg = @"C:\Brainshark\scripts\ffmpeg\v6.1.1\bin\ffmpeg.exe";
+        static string ffmpeg = @"C:\tools\ffmpeg\v6.1.1\bin\ffmpeg.exe";
         
         private static List<string> GrabLastX(List<string> l, int count) { 
 
@@ -527,7 +526,6 @@ namespace faiWinApp
             var inputFileName = tfh.CreateFile(fileList, tfh.GetTempFileName(".txt"));
 
 
-//        C:\Brainshark\scripts\ffmpeg\v6.1.1\bin\ffmpeg.exe - f concat - safe 0 - i "C:\Users\ftorres\AppData\Local\Temp\tmp97C9.tmp.txt" - framerate 16 - c:v libx264 -pix_fmt yuv420p "C:\temp\@fAiImages\dark and eerie world\Animated.mp4"
 
             //var cmd = $@"  -loglevel debug -y -f concat -safe 0 -i ""{inputFileName}"" -c:v libx264 -r {mp4FrameRate} -pix_fmt yuv420p -vf ""settb=AVTB,setpts=N/{mp4FrameRate}/TB,fps={mp4FrameRate}"" ""{mp4OutputFile}"" ";
 

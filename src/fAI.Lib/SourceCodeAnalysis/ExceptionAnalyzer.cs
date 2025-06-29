@@ -1,6 +1,5 @@
 ﻿using DynamicSugar;
 using S = System;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,124 +13,9 @@ using static fAI.OpenAICompletions;
 using static fAI.OpenAICompletionsEx;
 using static System.Net.Mime.MediaTypeNames;
 
-
-/*
- 
-using c# and the openai completion api https://api.openai.com/v1/chat/completions
-how to pass a file to be analyzed for runtime errors?
-
- */
 namespace fAI.SourceCodeAnalysis
 {
-    public class FileLocation
-    {
-        public string FileName { get; set; }
-        public int LineNumber { get; set; }
-        public string ClassName { get; set; }
-        public string MethodName { get; set; }
-
-        public override string ToString()
-        {
-            return $"{FileName}:{LineNumber}";
-        }
-    }
-
-    public class CodeAnalysis : JsonObject
-    {
-        public string Language { get; set; } = "C#";
-        public string Case { get; set; }
-        public FileLocation FileLocation { get; set; }
-        public string Context { get; set; } = "You are a helpful and experienced C# and .NET software developer.";
-
-        [JsonIgnore]
-        public string SourceCodeFileNameOnly => Path.GetFileName(FileLocation.FileName);
-        [JsonIgnore]
-        public int SourceCodeLine => FileLocation.LineNumber;
-        [JsonIgnore]
-        public string SourceCodeWithLineNumbers => ExceptionAnalyzed.PrepareSourceCodeFileForAnalysis(FileLocation.FileName);
-        [JsonIgnore]
-        public string MethodName => FileLocation.MethodName;
-        [JsonIgnore]
-        public string ClassName => FileLocation.ClassName;
-
-
-        public static CodeAnalysis Load(string @case)
-        {
-            if (File.Exists(@case))
-                return FromFile<CodeAnalysis>(@case);
-
-            return FromFile<CodeAnalysis>(GetJsonFileName(@case));
-        }
-
-        private static string GetJsonFileName(string Case)
-        {
-            return Path.Combine(ExceptionAnalyzed.GetCaseRootFolder(), $"{Case}.CodeAnalysis.json");
-        }
-
-        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
-        {
-            var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
-            var sb = new StringBuilder();
-            sb.AppendLine($"## Prompt({prompt.Model}):");
-            sb.AppendLine($"{prompt.FullPrompt}");
-            sb.AppendLine($"## Answer:");
-            sb.AppendLine($"{completionResponse.Text}");
-
-            File.WriteAllText(reportFileName, sb.ToString());
-            return reportFileName;
-        }
-
-        public string AnalyzeCodeAndGenerateReport()
-        {
-            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
-            {
-                System = this.Context,
-                Messages = DS.List(
-                       new AnthropicMessage(MessageRole.user, DS.List<AnthropicContentMessage>(
-                           new AnthropicContentText(this.PromptAnalyzeCodeProposeExplanation))
-                       )
-                   )
-            };
-
-            var response = new FAI().Completions.Create(prompt);
-
-            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
-            return analysisReportFileName;
-        }
-
-        public CodeAnalysis()
-        {
-
-        }
-
-        public CodeAnalysis(string @case, FileLocation fileLocation)
-        {
-            Case = @case;
-            FileLocation = fileLocation;
-            JsonFileName = GetJsonFileName(@case);
-            Save();
-        }
-
-        public string PromptAnalyzeCodeProposeExplanation
-        {
-            get
-            {
-                var promptStr = $@"
-The {Language}, method ""{this.MethodName}"", in class ""{this.ClassName}""
-line {SourceCodeLine}, does not return the expected value OR behave as expected. Answer in MARKDOWN syntax.
-
-Propose an explanation.
-Source Code File ""{SourceCodeFileNameOnly}"":
-{SourceCodeWithLineNumbers}
-";
-                return promptStr.Trim();
-            }
-        }
-
-
-    }
-
-    public class ExceptionAnalyzed : JsonObject
+    public class ExceptionAnalyzer : JsonObject
     {
         public string Language { get; set; } = "C#";
         public string Case { get; set; }
@@ -221,19 +105,19 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             return Path.Combine(GetCaseRootFolder(), $"{Case}.ExceptionAnalysis.json");
         }
 
-        public static ExceptionAnalyzed Load(string @case)
+        public static ExceptionAnalyzer Load(string @case)
         {
             if (File.Exists(@case))
-                return FromFile<ExceptionAnalyzed>(@case);
+                return FromFile<ExceptionAnalyzer>(@case);
 
-            return FromFile<ExceptionAnalyzed>(GetJsonFileName(@case));
+            return FromFile<ExceptionAnalyzer>(GetJsonFileName(@case));
         }
 
-        public ExceptionAnalyzed()
+        public ExceptionAnalyzer()
         {
         }
 
-        public ExceptionAnalyzed(Exception ex, string @case, List<string> otherFiles)
+        public ExceptionAnalyzer(Exception ex, string @case, List<string> otherFiles)
         {
             Case = @case;
             Message = ex.Message;
@@ -247,9 +131,11 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             Save();
         }
 
+        public const string RootFolder = @"c:\temp\fAI.RunTimeAnalysis";
+
         public static string GetCaseRootFolder()
         {
-            var dir = Path.Combine(@"c:\temp", "fAI.RunTimeAnalysis");
+            var dir = RootFolder;
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             return dir;
@@ -318,18 +204,19 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             }
         }
 
+        // Answer in MARKDOWN syntax.
+
         public string PromptAnalyzeCodeProposeExplanation
         {
             get
             {
                 var promptStr = $@"
 Analyze the following {Language}, fileName ""{SourceCodeFileNameOnly}"", for the following Exception: ""{ExceptionType}""
-at line {SourceCodeLine}.  Answer in MARKDOWN syntax.
+at line {SourceCodeLine}.  
 
 Propose an explanation.
 Source Code File ""{SourceCodeFileNameOnly}"":
 {SourceCodeWithLineNumbers}
-
 
 {OtherFilesSourceCodeWithLineNumbers}
 ";
@@ -346,11 +233,10 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             }
             catch (Exception ex)
             {
-                var ea = new ExceptionAnalyzed(ex, callerCaseName, otherFiles);
+                var ea = new ExceptionAnalyzer(ex, callerCaseName, otherFiles);
                 return ea.JsonFileName;
             }
         }
-
 
         public string AnalyzeAndGenerateAnalysisReport(Anthropic_Prompt_Claude_3_5_Sonnet p)
         {
@@ -370,7 +256,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             return analysisReportFileName;
         }
 
-        public string AnalyzeAndGenerateAnalysisReport(Prompt_GPT_4o p)
+        public string AnalyzeAndGenerateReport(Prompt_GPT_4o p)
         {
             var client = new FAI();
             var prompt = new Prompt_GPT_4o
@@ -397,7 +283,6 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             File.WriteAllText(reportFileName, sb.ToString());
             return reportFileName;
         }
-
 
         public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
         {
