@@ -828,6 +828,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CSRunTimeErrorAnalysis\Results\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>::: copy "$(ProjectDir)\MS.DLL\*.*" "$(TargetDir)"</PostBuildEvent>
