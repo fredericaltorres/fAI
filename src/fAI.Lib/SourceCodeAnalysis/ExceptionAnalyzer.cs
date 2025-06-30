@@ -22,11 +22,72 @@ namespace fAI.SourceCodeAnalysis
         public string Message { get; set; }
         public string ExceptionType { get; set; }
         public string StackTrace { get; set; }
-        public List<FileLocation> StackTraceInfo => ExtractFileInformationFromStackTrace(StackTrace);
+
+        private List<FileLocation> _stackTraceInfo { get; set; }  = new List<FileLocation>();
+        
+        public List<FileLocation> StackTraceInfo {
+            get
+            {
+                if(!string.IsNullOrEmpty(StackTrace))
+                    return ExtractFileInformationFromStackTrace(StackTrace);
+
+                return _stackTraceInfo;
+            }
+            set             {
+                _stackTraceInfo = value;
+            }
+        }
+
         public List<string> OtherFiles = new List<string>();
         public string Source { get; set; }
         public string TargetSite { get; set; }
         public string Context { get; set; } = "You are a helpful and experienced C# and .NET software developer.";
+
+
+        const string EndOfMessageInException = @". at ";
+
+        public static ExceptionAnalyzer ExtractFromLog(string text)
+        {
+            var regExFindSystemDotException = new Regex(@"System\..*Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var match = regExFindSystemDotException.Match(text);
+            if (match.Success && match.Captures.Count == 1)
+            {
+                var exceptionName = match.Captures[0].Value; // Extract the exception name
+                exceptionName = exceptionName.Substring(0, exceptionName.Length - 1); // Remove the trailing colon
+
+                var messageIndex = match.Index + match.Length; // Extract the message 
+                var messageEndIndex = text.IndexOf(EndOfMessageInException, messageIndex);
+                var message = text.Substring(messageIndex, messageEndIndex - messageIndex);
+                message = message.Trim(); // Clean up the message
+                var nextIndex = messageEndIndex + EndOfMessageInException.Length;
+
+                var fileLocations = new List<FileLocation>();
+                var nextText = text.Substring(nextIndex); // Extract the stack trace information
+                var regExS = new Regex(@"at\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                var matchS = regExS.Match(nextText);
+                if (matchS.Success)
+                {
+                        var method = matchS.Groups["method"].Value.Trim();
+                        var file = matchS.Groups["file"].Value.Trim();
+                        var line = matchS.Groups["line"].Value;
+                        fileLocations.Add(new FileLocation
+                        {
+                            MethodName = method,
+                            FileName = file,
+                            LineNumber = int.Parse(line)
+                        });
+                }
+
+                var ea = new ExceptionAnalyzer { 
+                    ExceptionType = exceptionName,
+                    Message = message,
+                    StackTraceInfo = fileLocations,
+
+                };
+                return ea;
+            }
+            return null;
+        }
 
         public int SourceCodeLine
         {
