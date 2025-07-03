@@ -44,7 +44,7 @@ namespace fAI.SourceCodeAnalysis
         public string Context { get; set; } = "You are a helpful and experienced C# and .NET software developer.";
 
 
-        const string EndOfMessageInException = @". at ";
+        const string EndOfMessageInException = @" at ";
 
         public static ExceptionAnalyzer ExtractFromLog(string text)
         {
@@ -59,14 +59,16 @@ namespace fAI.SourceCodeAnalysis
                 var messageEndIndex = text.IndexOf(EndOfMessageInException, messageIndex);
                 var message = text.Substring(messageIndex, messageEndIndex - messageIndex);
                 message = message.Trim(); // Clean up the message
-                var nextIndex = messageEndIndex + EndOfMessageInException.Length;
+                var nextIndex = messageEndIndex;
 
                 var fileLocations = new List<FileLocation>();
                 var nextText = text.Substring(nextIndex); // Extract the stack trace information
-                var regExS = new Regex(@"at\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                var matchS = regExS.Match(nextText);
-                if (matchS.Success)
+                var regExS = new Regex(@"\sat\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                var matches = regExS.Matches(nextText);
+                foreach (Match matchS in matches)
                 {
+                    if (matchS.Success)
+                    {
                         var method = matchS.Groups["method"].Value.Trim();
                         var file = matchS.Groups["file"].Value.Trim();
                         var line = matchS.Groups["line"].Value;
@@ -76,7 +78,20 @@ namespace fAI.SourceCodeAnalysis
                             FileName = file,
                             LineNumber = int.Parse(line)
                         });
+                    }
                 }
+                //if (matchS.Success)
+                //{
+                //        var method = matchS.Groups["method"].Value.Trim();
+                //        var file = matchS.Groups["file"].Value.Trim();
+                //        var line = matchS.Groups["line"].Value;
+                //        fileLocations.Add(new FileLocation
+                //        {
+                //            MethodName = method,
+                //            FileName = file,
+                //            LineNumber = int.Parse(line)
+                //        });
+                //}
 
                 var ea = new ExceptionAnalyzer { 
                     ExceptionType = exceptionName,

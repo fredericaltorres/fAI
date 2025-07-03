@@ -32,24 +32,45 @@ namespace fAI.Tests
 
         const string LogException1 = @"
 System.Exception: 
-DeliveryRequest 'donotdelete.txt' not found. at Brainshark.Brainshark.Reporting.DeliveryRequest..ctor(String id)
- at Brainshark.Monitors.ReportingService.DeliveryMonitor.Process()
- in E:\JenkinsAgent\workspace\monitor-jobs_master@2\Brainshark.Monitors.ReportingService\DeliveryMonitor.cs:line 140 
-rt=Jun 29 2025 23:59:27 start=Jun 29 2025 23:59:27 end=Jun 29 2025 23:59:27 dvchost=bos3bkndsvc02|┊
+RequeteDeLivraison 'NePasDetruire.txt' non trouve. 
+ at RrainBar.Rotors.ReportSvc.LivraisonEngine.Run() in Z:\JAgent\space\job\ReportingSvc\LivraisonEngine.cs:line 140 
+blah blah
 
 ";
 
         [Fact()]
         [TestBeforeAfter]
-        public void ExtractDotNetExceptionFromLog()
+        public void ExtractDotNetExceptionFromLog1()
         {
             var ea = ExceptionAnalyzer.ExtractFromLog(LogException1);
             Assert.Equal(@"System.Exception", ea.ExceptionType);
-            Assert.Equal(@"DeliveryRequest 'donotdelete.txt' not found", ea.Message);
+            Assert.Equal(@"RequeteDeLivraison 'NePasDetruire.txt' non trouve.", ea.Message);
             Assert.Single(ea.StackTraceInfo);
-            Assert.Equal(@"Brainshark.Monitors.ReportingService.DeliveryMonitor.Process()", ea.StackTraceInfo[0].MethodName);
-            Assert.Equal(@"E:\JenkinsAgent\workspace\monitor-jobs_master@2\Brainshark.Monitors.ReportingService\DeliveryMonitor.cs", ea.StackTraceInfo[0].FileName);
+            Assert.Equal(@"RrainBar.Rotors.ReportSvc.LivraisonEngine.Run()", ea.StackTraceInfo[0].MethodName);
+            Assert.Equal(@"Z:\JAgent\space\job\ReportingSvc\LivraisonEngine.cs", ea.StackTraceInfo[0].FileName);
             Assert.Equal(140, ea.StackTraceInfo[0].LineNumber);
+        }
+
+        const string LogException2 = @"
+Exception:System.ApplicationException: Error replacing tag! You are certified in Bla at CConverter.Verify(String text, Int32 offset) in Z:\JAgent\work\Common\Certificate.cs:line 1275 at CConverter.Replace(ViewData oViewData, Company oCompany, String sCertificateMessage) in Z:\JAgent\work\Common\Certificate.cs:line 1212
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractDotNetExceptionFromLog2()
+        {
+            var ea = ExceptionAnalyzer.ExtractFromLog(LogException2);
+            Assert.Equal(@"System.ApplicationException", ea.ExceptionType);
+            Assert.Equal(@"Error replacing tag! You are certified in Bla", ea.Message);
+            Assert.Equal(2, ea.StackTraceInfo.Count);
+
+            Assert.Equal(@"CConverter.Verify(String text, Int32 offset)", ea.StackTraceInfo[0].MethodName);
+            Assert.Equal(@"Z:\JAgent\work\Common\Certificate.cs", ea.StackTraceInfo[0].FileName);
+            Assert.Equal(1275, ea.StackTraceInfo[0].LineNumber);
+
+            Assert.Equal(@"CConverter.Replace(ViewData oViewData, Company oCompany, String sCertificateMessage)", ea.StackTraceInfo[1].MethodName);
+            Assert.Equal(@"Z:\JAgent\work\Common\Certificate.cs", ea.StackTraceInfo[1].FileName);
+            Assert.Equal(1212, ea.StackTraceInfo[1].LineNumber);
         }
     }
 }
