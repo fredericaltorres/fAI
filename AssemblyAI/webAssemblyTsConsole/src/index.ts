@@ -1,4 +1,5 @@
 // Install the required packages by executing the command "npm install assemblyai stream node-record-lpcm16"
+// https://sourceforge.net/projects/sox/
 
 import dotenv from "dotenv";
 import { Readable } from 'stream'

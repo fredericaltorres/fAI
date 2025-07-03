@@ -28,4 +28,8 @@ npm install dotenv
 ```
 
 
-WEBASSEMBLY_API_KEY -- 5d437fdbe4784b61926a450e40c5ef24
+WEBASSEMBLY_API_KEY -- 
+
+npm i --save-dev @types/node-record-lpcm16
+
+choco install sox.portable
