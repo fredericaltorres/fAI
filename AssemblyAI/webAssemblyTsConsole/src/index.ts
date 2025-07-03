@@ -1,7 +1,10 @@
-// console.log("Hello from TypeScript- webAssemblyTsConsole");
-
+// Install the required packages by executing the command "npm install assemblyai stream node-record-lpcm16"
 
 import dotenv from "dotenv";
+import { Readable } from 'stream'
+import { AssemblyAI } from 'assemblyai'
+import recorder from 'node-record-lpcm16'
+
 dotenv.config();
 
 function getApiKey() {
@@ -17,18 +20,9 @@ function trace(message: string) {
 trace("webAssemblyTsConsole");
 trace(`WEBASSEMBLY_API_KEY: ${getApiKey()}`);
 
-
-// Install the required packages by executing the command "npm install assemblyai stream node-record-lpcm16"
-
-
-import { Readable } from 'stream'
-import { AssemblyAI } from 'assemblyai'
-import recorder from 'node-record-lpcm16'
-
 const run = async () => {
-  const client = new AssemblyAI({
-    apiKey: "5d437fdbe4784b61926a450e40c5ef24",   // Replace with your chosen API key, this is the "default" account api key
-  });
+
+  const client = new AssemblyAI({ apiKey: getApiKey() });
 
   const transcriber = client.streaming.transcriber({
     sampleRate: 16_000,
@@ -36,7 +30,7 @@ const run = async () => {
   });
 
   transcriber.on("open", ({ id }) => {
-    console.log('Session opened with ID:${id}')
+    console.log(`Session opened with ID:${id}`)
   });
 
   transcriber.on("error", (error) => {
@@ -61,7 +55,7 @@ const run = async () => {
     await transcriber.connect();
 
     console.log("Starting recording");
-
+    
     const recording = recorder.record({
       channels: 1,
       sampleRate: 16_000,
@@ -87,4 +81,4 @@ const run = async () => {
   }
 };
 
-// run();
+run();
