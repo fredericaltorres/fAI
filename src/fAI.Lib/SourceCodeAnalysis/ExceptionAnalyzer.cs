@@ -48,7 +48,9 @@ namespace fAI.SourceCodeAnalysis
 
         public static ExceptionAnalyzer ExtractFromLog(string text)
         {
-            var regExFindSystemDotException = new Regex(@"System\..*Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            //var regExFindSystemDotException = new Regex(@"System\.([0..9a..zA..Z_\.]*)Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var regExFindSystemDotException = new Regex(@"System\.(.*?)Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline); // UnGreedy
+            
             var match = regExFindSystemDotException.Match(text);
             if (match.Success && match.Captures.Count == 1)
             {
@@ -78,7 +80,11 @@ namespace fAI.SourceCodeAnalysis
                             FileName = file,
                             LineNumber = int.Parse(line)
                         });
+                        fileLocations.Last().Clean();
+                        var localFileName = fileLocations.Last().GetLocalFileName();
+                        var localFileFound = fileLocations.Last().LocalFileFound;
                     }
+
                 }
                 //if (matchS.Success)
                 //{
