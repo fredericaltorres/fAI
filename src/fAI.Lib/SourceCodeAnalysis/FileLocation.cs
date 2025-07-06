@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace fAI.SourceCodeAnalysis
 {
@@ -23,6 +24,7 @@ namespace fAI.SourceCodeAnalysis
             return path.Replace(@"\\", @"\");
         }
 
+        [JsonIgnore]
         public Dictionary<string, string> PathReplace = new Dictionary<string, string>
         {
             { @"E:\b\master\",  @"C:\brainshark\development\core\" },

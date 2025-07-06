@@ -96,6 +96,7 @@ Exception:System.ApplicationException: Error replacing tag! You are certified in
                 /////sb.AppendLine($@"  Assert.Equal(@""{st.FileName}"", ea.StackTraceInfo[x++].FileName); ");
                 ////sb.AppendLine($@"  Assert.Equal({st.LineNumber}, ea.StackTraceInfo[x++].LineNumber); ");
             }
+            var s = sb.ToString();
 
             var x = 0;
             Assert.Equal(@"E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.Reporting\Web References\ReportService2005\Reference.cs", ea.StackTraceInfo[x++].FileName);
@@ -113,7 +114,15 @@ Exception:System.ApplicationException: Error replacing tag! You are certified in
             Assert.Equal(1961, ea.StackTraceInfo[x++].LineNumber);
             Assert.Equal(183, ea.StackTraceInfo[x++].LineNumber);
 
-            var s = sb.ToString();
+            var otherFiles = ea.StackTraceInfo.Select(st => st.GetLocalFileName()).ToList();
+            otherFiles.RemoveAt(0);
+            ea.OtherFiles = DS.List(otherFiles[0]); // Add only the second file. If we add all the file the prompt is too long.
+
+            ea.Case = "ExtractDotNetExceptionFromLog3";
+            ea.JsonFileName =  ExceptionAnalyzer.GetJsonFileName(ea.Case);
+            ea.Save(ea.JsonFileName);
+
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
         }
     }
 }

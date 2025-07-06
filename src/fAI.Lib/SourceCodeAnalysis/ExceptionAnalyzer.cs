@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using static fAI.OpenAICompletions;
 using static fAI.OpenAICompletionsEx;
 using static System.Net.Mime.MediaTypeNames;
+using System.Text.Json.Serialization;
 
 namespace fAI.SourceCodeAnalysis
 {
@@ -84,20 +85,7 @@ namespace fAI.SourceCodeAnalysis
                         var localFileName = fileLocations.Last().GetLocalFileName();
                         var localFileFound = fileLocations.Last().LocalFileFound;
                     }
-
                 }
-                //if (matchS.Success)
-                //{
-                //        var method = matchS.Groups["method"].Value.Trim();
-                //        var file = matchS.Groups["file"].Value.Trim();
-                //        var line = matchS.Groups["line"].Value;
-                //        fileLocations.Add(new FileLocation
-                //        {
-                //            MethodName = method,
-                //            FileName = file,
-                //            LineNumber = int.Parse(line)
-                //        });
-                //}
 
                 var ea = new ExceptionAnalyzer { 
                     ExceptionType = exceptionName,
@@ -140,6 +128,7 @@ namespace fAI.SourceCodeAnalysis
             }
         }
 
+        [JsonIgnore]
         public string OtherFilesSourceCodeWithLineNumbers
         {
             get
@@ -158,12 +147,15 @@ namespace fAI.SourceCodeAnalysis
                 }
                 return sb.ToString();
             }
-        }   
-        
+        }
+
+        [JsonIgnore]
         public string FunctionName
         {
             get
             {
+                if (string.IsNullOrEmpty(TargetSite))
+                    return TargetSite;
                 var tokens = new Tokenizer().Tokenize(TargetSite);
                 if (tokens.Count > 1)
                     return $"{tokens[1].Value}()";
@@ -171,6 +163,7 @@ namespace fAI.SourceCodeAnalysis
             }
         }
 
+        [JsonIgnore]
         public string SourceCodeWithLineNumbers
         {
             get
@@ -178,11 +171,15 @@ namespace fAI.SourceCodeAnalysis
                 var fileInfo = StackTraceInfo[0];
                 if (File.Exists(fileInfo.FileName))
                     return PrepareSourceCodeFileForAnalysis(fileInfo.FileName);
+
+                if (fileInfo.LocalFileFound)
+                    return PrepareSourceCodeFileForAnalysis(fileInfo.GetLocalFileName());
+
                 return "[Source Code Not Found]";
             }
         }
 
-        private static string GetJsonFileName(string Case)
+        public static string GetJsonFileName(string Case)
         {
             return Path.Combine(GetCaseRootFolder(), $"{Case}.ExceptionAnalysis.json");
         }
