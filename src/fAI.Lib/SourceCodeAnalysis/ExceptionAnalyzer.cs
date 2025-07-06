@@ -26,6 +26,16 @@ namespace fAI.SourceCodeAnalysis
 
         private List<FileLocation> _stackTraceInfo { get; set; }  = new List<FileLocation>();
         
+        public bool HasFileName
+        {
+            get
+            {
+                if (StackTraceInfo.Count > 0)
+                    return !string.IsNullOrEmpty(StackTraceInfo[0].FileName);
+                return false;
+            }
+        }
+
         public List<FileLocation> StackTraceInfo {
             get
             {
@@ -49,10 +59,16 @@ namespace fAI.SourceCodeAnalysis
 
         public static ExceptionAnalyzer ExtractFromLog(string text)
         {
-            //var regExFindSystemDotException = new Regex(@"System\.([0..9a..zA..Z_\.]*)Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            var regExFindSystemDotException = new Regex(@"System\.(.*?)Exception:", RegexOptions.IgnoreCase | RegexOptions.Singleline); // UnGreedy
-            
-            var match = regExFindSystemDotException.Match(text);
+            var rxExtractSystemException = @"System\.([a-zA-Z0-9_\.]*?)Exception:";
+            var ungreedyRegExFindSystemDotException = new Regex(rxExtractSystemException, RegexOptions.IgnoreCase | RegexOptions.Singleline); // UnGreedy
+            var match = ungreedyRegExFindSystemDotException.Match(text);
+            if (!match.Success)
+            {
+                var rxExtractSystemException2 = @"([a-zA-Z0-9_\.]*?)Exception:";
+                var ungreedyRegExFindSystemDotException2 = new Regex(rxExtractSystemException2, RegexOptions.IgnoreCase | RegexOptions.Singleline); // UnGreedy
+                match = ungreedyRegExFindSystemDotException2.Match(text);
+            }
+
             if (match.Success && match.Captures.Count == 1)
             {
                 var exceptionName = match.Captures[0].Value; // Extract the exception name
@@ -63,39 +79,71 @@ namespace fAI.SourceCodeAnalysis
                 var message = text.Substring(messageIndex, messageEndIndex - messageIndex);
                 message = message.Trim(); // Clean up the message
                 var nextIndex = messageEndIndex;
-
-                var fileLocations = new List<FileLocation>();
                 var nextText = text.Substring(nextIndex); // Extract the stack trace information
-                var regExS = new Regex(@"\sat\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+                // There are 2 formats of stack trace in .NET:
+                // 1. "at MethodName in FileName:line LineNumber" (with file name and line number)
+                // 2. "at MethodName" 
+                var fileLocations = new List<FileLocation>();
+                var rxExtractAtMethodInFileNameLine = @"\sat\s+(?<method>.+?)\s+in\s+(?<file>.+?):line\s+(?<line>\d+)";
+                var regExS = new Regex(rxExtractAtMethodInFileNameLine, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 var matches = regExS.Matches(nextText);
-                foreach (Match matchS in matches)
+                if (matches.Count > 0)
                 {
-                    if (matchS.Success)
+                    ExtractResultOf_AtMethodInFileNameLine(fileLocations, matches);
+                }
+                else
+                {
+                    var rxExtractAtMethod = @"\sat\s+(?<method>.+?)(?<terminator>\))";
+                    var regExS2 = new Regex(rxExtractAtMethod, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                    var matches2 = regExS2.Matches(nextText);
+                    if (matches2.Count > 0)
                     {
-                        var method = matchS.Groups["method"].Value.Trim();
-                        var file = matchS.Groups["file"].Value.Trim();
-                        var line = matchS.Groups["line"].Value;
-                        fileLocations.Add(new FileLocation
-                        {
-                            MethodName = method,
-                            FileName = file,
-                            LineNumber = int.Parse(line)
-                        });
-                        fileLocations.Last().Clean();
-                        var localFileName = fileLocations.Last().GetLocalFileName();
-                        var localFileFound = fileLocations.Last().LocalFileFound;
+                        ExtractResultOf_AtMethod(fileLocations, matches2);
                     }
                 }
 
-                var ea = new ExceptionAnalyzer { 
-                    ExceptionType = exceptionName,
-                    Message = message,
-                    StackTraceInfo = fileLocations,
-
-                };
+                var ea = new ExceptionAnalyzer { ExceptionType = exceptionName, Message = message, StackTraceInfo = fileLocations };
                 return ea;
             }
             return null;
+        }
+
+        private static void ExtractResultOf_AtMethodInFileNameLine(List<FileLocation> fileLocations, MatchCollection matches)
+        {
+            foreach (Match matchS in matches)
+            {
+                if (matchS.Success)
+                {
+                    var method = matchS.Groups["method"].Value.Trim();
+                    var file = matchS.Groups["file"].Value.Trim();
+                    var line = matchS.Groups["line"].Value;
+                    fileLocations.Add(new FileLocation
+                    {
+                        MethodName = method,
+                        FileName = file,
+                        LineNumber = int.Parse(line)
+                    });
+                    fileLocations.Last().Clean();
+                }
+            }
+        }
+
+        private static void ExtractResultOf_AtMethod(List<FileLocation> fileLocations, MatchCollection matches)
+        {
+            foreach (Match matchS in matches)
+            {
+                if (matchS.Success)
+                {
+                    var method = matchS.Groups["method"].Value.Trim();
+                    var terminator = matchS.Groups["terminator"].Value.Trim();
+                    fileLocations.Add(new FileLocation
+                    {
+                        MethodName = method + terminator,
+                    });
+                    fileLocations.Last().Clean();
+                }
+            }
         }
 
         public int SourceCodeLine
@@ -377,6 +425,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
         }
     }
 }
+
 
 
 

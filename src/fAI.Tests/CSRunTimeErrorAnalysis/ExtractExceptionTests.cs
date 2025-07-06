@@ -126,8 +126,12 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
 
 
         const string LogException4 = @"
-    79 ┊ 2025/07/05 05:31:34.773 PM ┊ 2025/07/05 05:31:38.063 PM ┊ bos3acvtcert02 ┊ prod/cert/app_logs       ┊ 2025-07-05 17:31:34.773|Zark|ERROR||CEF:0|Zark|ZarkRotoSvc,Error,CCRotot,JobId:486480717, UserId:0, CompanyId:0, CourseId:, Exception: System.ApplicationException: Error processing tag in certificate offset:151  at Zark.Rotors.Common.CConverterRotor.VerifyStringOffset(String text, Int32 offset, String callId) in E:\\JAgent\\work\\monitor-jobs_master@2\\Zark.Rotors.Common\\CConverterRotor.cs:line 1275     at Zark.Rotors.Common.CConverterRotor.ReplaceShapeText2(IShape oShp, Curriculum oCurriculum, CurriculumEnrollment oCurriculumEnrollment, Course oCourse, Enrollment oCourseEnrollment, User oAuthor, Presentation oPresentation, User oUser, ViewData oViewData, Company oCompany, String sCertificateMessage, Double lPresentationScoreAchieved, Int32 jobId) in E:\\JAgent\\work\\monitor-jobs_master@2\\Zark.Rotors.Common\\CConverterRotor.cs:line 1212 blablah
-
+    ZarkRotoSvc,Error,CCRotot,JobId:486480717, UserId:0, CompanyId:0, CourseId:, 
+Exception: System.ApplicationException: Error processing tag in certificate offset:151 
+ at Zark.Rotors.Common.CConverterRotor.VerifyStringPosition(String text, Int32 offset, String callId)
+    in E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs:line 1275     
+ at Zark.Rotors.Common.CConverterRotor.ReplaceShapeText2(IShape oShp, Curriculum oCurriculum, CurriculumEnrollment oCurriculumEnrollment, Course oCourse, Enrollment oCourseEnrollment, User oAuthor, Presentation oPresentation, User oUser, ViewData oViewData, Company oCompany, String sCertificateMessage, Double lPresentationScoreAchieved, Int32 jobId)
+    in E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs:line 1212 blablah
 ";
 
         [Fact()]
@@ -150,8 +154,8 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
             var s = sb.ToString();
 
             var x = 0;
-            Assert.Equal(@"E:\JAgent\work\monitor-jobs_master@2\Zark.Rotors.Common\CConverterRotor.cs", ea.StackTraceInfo[x++].FileName);
-            Assert.Equal(@"E:\JAgent\work\monitor-jobs_master@2\Zark.Rotors.Common\CConverterRotor.cs", ea.StackTraceInfo[x++].FileName);
+            Assert.Equal(@"E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs", ea.StackTraceInfo[x++].FileName);
+            Assert.Equal(@"E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs", ea.StackTraceInfo[x++].FileName);
             x = 0;
             Assert.Equal(1275, ea.StackTraceInfo[x++].LineNumber);
             Assert.Equal(1212, ea.StackTraceInfo[x++].LineNumber);
@@ -167,6 +171,53 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
             ea.Save(ea.JsonFileName);
 
             var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+        }
+
+        const string LogException5 = @"
+aaaa bbbb
+Exception: System.Net.WebException: The remote server returned an error: (400) Bad Request.  
+ at System.Net.WebClient.UploadDataInternal(Uri address, String method, Byte[] data, WebRequest& request) 
+ at System.Net.WebClient.UploadData(Uri address, String method, Byte[] data)   
+ at System.Net.WebClient.UploadData(String address, Byte[] data)   
+ at Brainshark.Azure.Search.Utility.performSearchQuery(String query, String filter, String searchFields, String sort, Int32 offset, Int32 perPage, String index, String select)
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractDotNetExceptionFromLog5()
+        {
+            var ea = ExceptionAnalyzer.ExtractFromLog(LogException5);
+            Assert.Equal(@"System.Net.WebException", ea.ExceptionType);
+            Assert.Equal(@"The remote server returned an error: (400) Bad Request.", ea.Message);
+            Assert.Equal(4, ea.StackTraceInfo.Count);
+            Assert.False(ea.HasFileName);
+        }
+
+
+        const string LogException6 = @"
+SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server).
+ at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)   
+ at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection) 
+ at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)    
+ at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions) 
+ at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions) 
+ at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry) 
+ at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)    
+ at System.Data.SqlClient.SqlConnection.Open()   
+ at Brark.DtaSvc.Sql.OpenConnection()================
+Inner Exception: Win32Exception: The network path was not found.   blablah
+
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractDotNetExceptionFromLog6()
+        {
+            var ea = ExceptionAnalyzer.ExtractFromLog(LogException6);
+            Assert.Equal(@"SqlException", ea.ExceptionType);
+            Assert.Equal(@"A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server).", ea.Message);
+            Assert.Equal(9, ea.StackTraceInfo.Count);
+            Assert.False(ea.HasFileName);
         }
     }
 }
