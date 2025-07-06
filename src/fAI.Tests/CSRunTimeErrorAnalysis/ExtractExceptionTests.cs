@@ -124,5 +124,51 @@ Exception:System.ApplicationException: Error replacing tag! You are certified in
 
             var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
         }
+
+
+
+        const string LogException4 = @"
+    79 ┊ 2025/07/05 05:31:34.773 PM ┊ 2025/07/05 05:31:38.063 PM ┊ bos3acvtcert02 ┊ prod/cert/app_logs       ┊ 2025-07-05 17:31:34.773|Brainshark|Core|1.0.1.0|ERROR|bos3acvtcert02|CEF:0|Brainshark|Core|0|Message|Message|Error|msg=BrainsharkMonitorService on BOS3ACVTCERT02,Error,CertificateConversionMonitor,JobId:486480717, UserId:0, CompanyId:0, CourseId:, Exception: System.ApplicationException: Error replacing tag in certificate offset:151, text:[This is to certify that Patience  Antwi  Patience  Antwi  Congratulations on Completing Interpreting Cardiac Rhythm Strips  Total Score:  0   ], callId:B     at Brainshark.Monitors.Common.CertificateConverterMonitor.VerifyStringOffset(String text, Int32 offset, String callId) in E:\\JenkinsAgent\\workspace\\monitor-jobs_master@2\\Brainshark.Monitors.Common\\CertificateConverterMonitor.cs:line 1275     at Brainshark.Monitors.Common.CertificateConverterMonitor.ReplaceShapeText2(IShape oShp, Curriculum oCurriculum, CurriculumEnrollment oCurriculumEnrollment, Course oCourse, Enrollment oCourseEnrollment, User oAuthor, Presentation oPresentation, User oUser, ViewData oViewData, Company oCompany, String sCertificateMessage, Double lPresentationScoreAchieved, Int32 jobId) in E:\\JenkinsAgent\\workspace\\monitor-jobs_master@2\\Brainshark.Monitors.Common\\CertificateConverterMonitor.cs:line 1212 rt=Jul 05 2025 17:31:34 start=Jul 05 2025 17:31:34 end=Jul 05 2025 17:31:34 dvchost=bos3acvtcert02|
+
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractDotNetExceptionFromLog4()
+        {
+            var ea = ExceptionAnalyzer.ExtractFromLog(LogException4);
+            Assert.Equal(@"System.ApplicationException", ea.ExceptionType);
+            Assert.Equal(@"Error replacing tag in certificate offset:151, text:[This is to certify that Patience  Antwi  Patience  Antwi  Congratulations on Completing Interpreting Cardiac Rhythm Strips  Total Score:  0   ], callId:B", ea.Message);
+            Assert.Equal(2, ea.StackTraceInfo.Count);
+
+            var sb = new StringBuilder();
+
+            foreach (var st in ea.StackTraceInfo)
+            {
+                Assert.True(st.LocalFileFound);
+                ///////sb.AppendLine($@"  Assert.Equal(@""{st.FileName}"", ea.StackTraceInfo[x++].FileName); ");
+                sb.AppendLine($@"  Assert.Equal({st.LineNumber}, ea.StackTraceInfo[x++].LineNumber); ");
+            }
+            var s = sb.ToString();
+
+            var x = 0;
+            Assert.Equal(@"E:\JenkinsAgent\workspace\monitor-jobs_master@2\Brainshark.Monitors.Common\CertificateConverterMonitor.cs", ea.StackTraceInfo[x++].FileName);
+            Assert.Equal(@"E:\JenkinsAgent\workspace\monitor-jobs_master@2\Brainshark.Monitors.Common\CertificateConverterMonitor.cs", ea.StackTraceInfo[x++].FileName);
+            x = 0;
+            Assert.Equal(1275, ea.StackTraceInfo[x++].LineNumber);
+            Assert.Equal(1212, ea.StackTraceInfo[x++].LineNumber);
+
+            var otherFiles = ea.StackTraceInfo.Select(st => st.GetLocalFileName()).ToList();
+            otherFiles.RemoveAt(0);
+            ea.OtherFiles = DS.List(otherFiles[0]); // Add only the second file. If we add all the file the prompt is too long.
+            if(Path.GetFileName(ea.SourceCodeFileName) == Path.GetFileName(ea.OtherFiles[0]))
+                ea.OtherFiles = DS.List<string>();
+
+            ea.Case = "ExtractDotNetExceptionFromLog3";
+            ea.JsonFileName = ExceptionAnalyzer.GetJsonFileName(ea.Case);
+            ea.Save(ea.JsonFileName);
+
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+        }
     }
 }

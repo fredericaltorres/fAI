@@ -28,6 +28,7 @@ namespace fAI.SourceCodeAnalysis
         public Dictionary<string, string> PathReplace = new Dictionary<string, string>
         {
             { @"E:\b\master\",  @"C:\brainshark\development\core\" },
+            { @"E:\JenkinsAgent\workspace\monitor-jobs_master@2\",  @"C:\brainshark\development\Monitors\monitor.core\" },
         };
 
         public bool LocalFileFound => !string.IsNullOrEmpty(FileName) && System.IO.File.Exists(GetLocalFileName());
