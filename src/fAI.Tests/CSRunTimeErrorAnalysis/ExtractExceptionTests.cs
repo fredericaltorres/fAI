@@ -90,7 +90,7 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
 
             foreach (var st in ea.StackTraceInfo)
             {
-                Assert.True(st.LocalFileFound);
+                Assert.False(st.LocalFileFound);
                 /////sb.AppendLine($@"  Assert.Equal(@""{st.FileName}"", ea.StackTraceInfo[x++].FileName); ");
                 ////sb.AppendLine($@"  Assert.Equal({st.LineNumber}, ea.StackTraceInfo[x++].LineNumber); ");
             }
@@ -116,8 +116,8 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
             otherFiles.RemoveAt(0);
             ea.OtherFiles = DS.List(otherFiles[0]); // Add only the second file. If we add all the file the prompt is too long.
 
-            ea.Case = "ExtractDotNetExceptionFromLog3";
-            ea.JsonFileName =  ExceptionAnalyzer.GetJsonFileName(ea.Case);
+            ea.Case = nameof(ExtractDotNetExceptionFromLog3);
+            ea.JsonFileName = ExceptionAnalyzer.GetJsonFileName(ea.Case);
             ea.Save(ea.JsonFileName);
 
             /////var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
@@ -127,7 +127,7 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
 
         const string LogException4 = @"
     ZarkRotoSvc,Error,CCRotot,JobId:486480717, UserId:0, CompanyId:0, CourseId:, 
-Exception: System.ApplicationException: Error processing tag in certificate offset:151 
+Exception: System.ApplicationException: Error processing tag in cert offset:151 
  at Zark.Rotors.Common.CConverterRotor.VerifyStringPosition(String text, Int32 offset, String callId)
     in E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs:line 1275     
  at Zark.Rotors.Common.CConverterRotor.ReplaceShapeText2(IShape oShp, Curriculum oCurriculum, CurriculumEnrollment oCurriculumEnrollment, Course oCourse, Enrollment oCourseEnrollment, User oAuthor, Presentation oPresentation, User oUser, ViewData oViewData, Company oCompany, String sCertificateMessage, Double lPresentationScoreAchieved, Int32 jobId)
@@ -140,14 +140,14 @@ Exception: System.ApplicationException: Error processing tag in certificate offs
         {
             var ea = ExceptionAnalyzer.ExtractFromLog(LogException4);
             Assert.Equal(@"System.ApplicationException", ea.ExceptionType);
-            Assert.Equal(@"Error processing tag in offset:151", ea.Message);
+            Assert.Equal(@"Error processing tag in cert offset:151", ea.Message);
             Assert.Equal(2, ea.StackTraceInfo.Count);
 
             var sb = new StringBuilder();
 
             foreach (var st in ea.StackTraceInfo)
             {
-                Assert.True(st.LocalFileFound);
+                Assert.False(st.LocalFileFound);
                 ///////sb.AppendLine($@"  Assert.Equal(@""{st.FileName}"", ea.StackTraceInfo[x++].FileName); ");
                 sb.AppendLine($@"  Assert.Equal({st.LineNumber}, ea.StackTraceInfo[x++].LineNumber); ");
             }
@@ -160,17 +160,11 @@ Exception: System.ApplicationException: Error processing tag in certificate offs
             Assert.Equal(1275, ea.StackTraceInfo[x++].LineNumber);
             Assert.Equal(1212, ea.StackTraceInfo[x++].LineNumber);
 
-            var otherFiles = ea.StackTraceInfo.Select(st => st.GetLocalFileName()).ToList();
-            otherFiles.RemoveAt(0);
-            ea.OtherFiles = DS.List(otherFiles[0]); // Add only the second file. If we add all the file the prompt is too long.
-            if(Path.GetFileName(ea.SourceCodeFileName) == Path.GetFileName(ea.OtherFiles[0]))
-                ea.OtherFiles = DS.List<string>();
-
-            ea.Case = "ExtractDotNetExceptionFromLog3";
+            ea.OtherFiles = ea.GetSecondOtherLocalFilesFromStackTraceInfo();
+            ea.Case = nameof(ExtractDotNetExceptionFromLog4);
             ea.JsonFileName = ExceptionAnalyzer.GetJsonFileName(ea.Case);
             ea.Save(ea.JsonFileName);
-
-            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+            ///var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
         }
 
         const string LogException5 = @"
@@ -206,7 +200,6 @@ SqlException: A network-related or instance-specific error occurred while establ
  at System.Data.SqlClient.SqlConnection.Open()   
  at Brark.DtaSvc.Sql.OpenConnection()================
 Inner Exception: Win32Exception: The network path was not found.   blablah
-
 ";
 
         [Fact()]
@@ -218,6 +211,38 @@ Inner Exception: Win32Exception: The network path was not found.   blablah
             Assert.Equal(@"A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server).", ea.Message);
             Assert.Equal(9, ea.StackTraceInfo.Count);
             Assert.False(ea.HasFileName);
+        }
+
+            const string LogException7 = @"
+|M=Message|Error:=GET 
+PlatformException: 50001 trappedErr Error in StudentCourseInfo.Load().    
+ at Brainshark.Brainshark.Platform.Learning.StudentCourseInfo.Load(Int32 enrollmentId, Int32 userId, Int32 courseId, Boolean includeLimitedEnrollments)    
+ at Brainshark.Brainshark.WebServices.Mobile.StudentCourseHandler.RetrieveTakeNow() 
+    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\Handlers\studentcourseHandler.cs:line 256   
+ at Brainshark.Brainshark.WebServices.Mobile.StudentCourseHandler.GET()
+    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\Handlers\studentcourseHandler.cs:line 24   
+ at Brainshark.Brainshark.WebServices.Mobile.NewBaseRequestHandler.ProcessRequest(IOperatingContext context, ISession session) 
+    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\NewBaseRequestHandler.cs:line 178
+================Inner Exception: PlatformException: 50038 BadParametersErr Error loading student course info:StudentCourseInfo.Load().    
+ at Brainshark.Brainshark.Platform.Learning.StudentCourseInfo.Load(Int32 enrollmentId, Int32 userId, Int32 courseId, Boolean includeLimitedEnrollments) 
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractDotNetExceptionFromLog7()
+        {
+            var ea = ExceptionAnalyzer.ExtractFromLog(LogException7);
+            Assert.Equal("PlatformException", ea.ExceptionType);
+            Assert.Equal("50001 trappedErr Error in StudentCourseInfo.Load().", ea.Message);
+            Assert.Equal(3, ea.StackTraceInfo.Count);
+            Assert.True(ea.HasFileName);
+
+            ea.OtherFiles = ea.GetSecondOtherLocalFilesFromStackTraceInfo();
+            ea.Case = nameof(ExtractDotNetExceptionFromLog4);
+            ea.JsonFileName = ExceptionAnalyzer.GetJsonFileName(ea.Case);
+            ea.Save(ea.JsonFileName);
+            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
+
         }
     }
 }

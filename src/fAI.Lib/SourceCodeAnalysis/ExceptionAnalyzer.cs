@@ -49,6 +49,20 @@ namespace fAI.SourceCodeAnalysis
             }
         }
 
+        // Return the second file from the stack trace information.
+        public List<string> GetSecondOtherLocalFilesFromStackTraceInfo()
+        {
+            var otherFiles = this.StackTraceInfo.Select(st => st.GetLocalFileName()).ToList();
+            otherFiles.RemoveAt(0);
+            var otherFiles2 = DS.List(otherFiles[0]); // Add only the second file. If we add all the file the prompt is too long.
+
+            // Check if second file is the same as the source code file AKA the first file.
+            if (Path.GetFileName(this.SourceCodeFileName) == Path.GetFileName(otherFiles2[0]))
+                otherFiles2 = DS.List<string>();
+
+            return otherFiles2;
+        }
+
         public List<string> OtherFiles = new List<string>();
         public string Source { get; set; }
         public string TargetSite { get; set; }
@@ -76,6 +90,9 @@ namespace fAI.SourceCodeAnalysis
 
                 var messageIndex = match.Index + match.Length; // Extract the message 
                 var messageEndIndex = text.IndexOf(EndOfMessageInException, messageIndex);
+                if (messageEndIndex == -1)
+                    throw new ArgumentException($"Cannot extract message from text. exceptionName:{exceptionName}, text:{text}");
+
                 var message = text.Substring(messageIndex, messageEndIndex - messageIndex);
                 message = message.Trim(); // Clean up the message
                 var nextIndex = messageEndIndex;
@@ -339,7 +356,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             {
                 var promptStr = $@"
 Analyze the following {Language}, fileName ""{SourceCodeFileNameOnly}"", for the following Exception: ""{ExceptionType}""
-at line {SourceCodeLine}.  
+at line {SourceCodeLine}. The exception message is: ""{Message}"". 
 
 Propose an explanation.
 Source Code File ""{SourceCodeFileNameOnly}"":
