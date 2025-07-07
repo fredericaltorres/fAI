@@ -22,7 +22,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class ExtractExceptionTests : OpenAIUnitTestsBase
+    public partial class ExtractExceptionTests : OpenAIUnitTestsBase
     {
         public ExtractExceptionTests()
         {
@@ -213,36 +213,5 @@ Inner Exception: Win32Exception: The network path was not found.   blablah
             Assert.False(ea.HasFileName);
         }
 
-            const string LogException7 = @"
-|M=Message|Error:=GET 
-PlatformException: 50001 trappedErr Error in StudentCourseInfo.Load().    
- at Brainshark.Brainshark.Platform.Learning.StudentCourseInfo.Load(Int32 enrollmentId, Int32 userId, Int32 courseId, Boolean includeLimitedEnrollments)    
- at Brainshark.Brainshark.WebServices.Mobile.StudentCourseHandler.RetrieveTakeNow() 
-    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\Handlers\studentcourseHandler.cs:line 256   
- at Brainshark.Brainshark.WebServices.Mobile.StudentCourseHandler.GET()
-    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\Handlers\studentcourseHandler.cs:line 24   
- at Brainshark.Brainshark.WebServices.Mobile.NewBaseRequestHandler.ProcessRequest(IOperatingContext context, ISession session) 
-    in E:\b\master\Code\DotNet Beta\Brainshark\Brainshark.Brainshark.WebServices.Mobile\Old_App_Code\NewBaseRequestHandler.cs:line 178
-================Inner Exception: PlatformException: 50038 BadParametersErr Error loading student course info:StudentCourseInfo.Load().    
- at Brainshark.Brainshark.Platform.Learning.StudentCourseInfo.Load(Int32 enrollmentId, Int32 userId, Int32 courseId, Boolean includeLimitedEnrollments) 
-";
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void ExtractDotNetExceptionFromLog7()
-        {
-            var ea = ExceptionAnalyzer.ExtractFromLog(LogException7);
-            Assert.Equal("PlatformException", ea.ExceptionType);
-            Assert.Equal("50001 trappedErr Error in StudentCourseInfo.Load().", ea.Message);
-            Assert.Equal(3, ea.StackTraceInfo.Count);
-            Assert.True(ea.HasFileName);
-
-            ea.OtherFiles = ea.GetSecondOtherLocalFilesFromStackTraceInfo();
-            ea.Case = nameof(ExtractDotNetExceptionFromLog4);
-            ea.JsonFileName = ExceptionAnalyzer.GetJsonFileName(ea.Case);
-            ea.Save(ea.JsonFileName);
-            var analysisReportFileName = ea.AnalyzeAndGenerateAnalysisReport(new Anthropic_Prompt_Claude_3_5_Sonnet());
-
-        }
     }
 }
