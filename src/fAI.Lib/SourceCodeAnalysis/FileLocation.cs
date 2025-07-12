@@ -36,7 +36,7 @@ namespace fAI.SourceCodeAnalysis
         public void Clean()
         {
             FileName = FileLocation.RemoveDoubleBackSlash(FileName);
-            var parts = this.MethodName?.Split(DS.List(" at ").ToArray(), 11, System.StringSplitOptions.None);
+            var parts = this.MethodName?.Split(DS.List(" at ").ToArray(), 1024, System.StringSplitOptions.None);
             this.MethodName = parts?.Length > 0 ? parts.Last() : this.MethodName;
         }
 
