@@ -12,7 +12,10 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai("gpt-4o-mini"),
     messages,
-    system: "Always respond in full capital letters",
+    system: "Always respond in full capital letters and in FRENCH.",
+    onFinish: (message) => {
+      console.log(`Backend received message: ${message.text}`);
+    },
   });
 
   return result.toDataStreamResponse();
