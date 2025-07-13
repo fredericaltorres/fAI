@@ -16,7 +16,7 @@ export default function Home() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: "/api/chat",
     initialMessages: [
-      { id: "1", role: "user", content: "Hello, how are you?" },
+      { id: "1", role: "user", content: "HI, how are you?" },
     ],
   });
 

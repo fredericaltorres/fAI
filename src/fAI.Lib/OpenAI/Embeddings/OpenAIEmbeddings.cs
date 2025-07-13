@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace fAI
 {
@@ -65,6 +67,40 @@ namespace fAI
                 return r;
             }
             else throw new ChatGPTException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
+        }
+
+        public List<EmbeddingResponse> CreateBatch(IEnumerable<string> inputs, string model = EmbeddingAda002, int maxBatchSize = 6)
+        {
+            try
+            {
+                var semaphore = new SemaphoreSlim(maxBatchSize); // Limit to 6 concurrent calls
+                var tasks = new List<Task<EmbeddingResponse>>();
+
+                Logger.TraceOn = false;
+
+                foreach (var input in inputs)
+                {
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        await semaphore.WaitAsync();
+                        try
+                        {
+                            return Create(input, model);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }));
+                }
+
+                var results = Task.WhenAll(tasks).GetAwaiter().GetResult();
+                return results.ToList();
+            }
+            finally
+            {
+                Logger.TraceOn = true;
+            }
         }
     }
 }

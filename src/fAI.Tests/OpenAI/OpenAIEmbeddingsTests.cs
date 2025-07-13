@@ -30,6 +30,29 @@ namespace fAI.Tests
             Assert.Equal(37, r.Usage.TotalTokens);
         }
 
+        [Fact()]
+        public void Embeddings_CreateBatch()
+        {
+            var songLyrics = Revolver.Values.ToList().Skip(1).Take(12).ToList();
+            var client = new OpenAI();
+            var r = client.Embeddings.CreateBatch(songLyrics);
+            Assert.Equal(12, r.Count);
+            foreach(var item in r)
+            {
+                Assert.Equal("list", item.Object);
+                Assert.Single(item.Data);
+                Assert.Equal("embedding", item.Data[0].Object);
+                Assert.Equal(0, item.Data[0].Index);
+                Assert.Equal(item.Data[0].EmbeddingMaxValue, item.Data[0].Embedding.Count);
+
+                foreach (var f in item.Data[0].Embedding)
+                    Assert.InRange(f, -1.0f, 1.0f); // Check that the embedding values are in the expected range
+
+                Assert.True(item.Usage.PromptTokens > 100);
+                Assert.True(item.Usage.TotalTokens> 100);
+            }
+        }
+
         Dictionary<string, string> Revolver = new Dictionary<string, string>()
         {
             ["Revolver - Beatles"] = @"

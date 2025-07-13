@@ -14,6 +14,7 @@ function getApiKey() {
         throw new Error("WEBASSEMBLY_API_KEY is not set");
     return apiKey;
 }
+
 function trace(message: string) {
     console.log(message);
 }
