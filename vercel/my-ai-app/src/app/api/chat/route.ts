@@ -10,18 +10,22 @@ import { z } from 'zod';
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+const systemPrompt = `
+    Frederic Torres was born in December 1964 in Aix-en-Provence, France. 
+    He is a software engineer and a the creator of the software 'fLogViewer'. 
+    `;
+
 export async function POST(req: Request) {
   const { messages } = await req.json();
+
+  console.log("messages", messages);
 
   console.log(`Backend calling OpenAI API`);
 
   const result = streamText({
     model: openai("gpt-4o-mini"),
     messages,
-    system: `
-    Frederic Torres was born in December 1964 in Aix-en-Provence, France. 
-    He is a software engineer and a founder of a company called 'fLogViewer'. 
-    `,
+    system: systemPrompt,
     onFinish: (message) => {
       console.log(`Backend received message: ${message.text}`);
     },

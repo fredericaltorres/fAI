@@ -7,17 +7,30 @@ https://ai-sdk.dev
     Video Source Code:
     https://github.com/cosdensolutions/code/blob/master/videos/long/vercel-ai-sdk-tutorial/src/app/page.tsx
 
+
+    Discussion:
+    list the books of baudelaire?
+    give me a short bio of the author.
+    List other poets friends of the author.
+    Did the author meet Victor Hugo?
+
 */
 "use client";
 
-import { useChat } from "@ai-sdk/react";
+import { useEffect, useState } from "react";
+import { Message, useChat } from "@ai-sdk/react";
 
 export default function Home() {
+  const [messages2, setMessages2] = useState([ { id: "1", role: "user", content: "HI, how are you?" } ]);
+
+console.log("messages2", messages2);
+
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: "/api/chat",
-    initialMessages: [
-      { id: "1", role: "user", content: "HI, how are you?" },
-    ],
+    initialMessages: messages2 as Message[],
+    onFinish: (message) => {
+      setMessages2([...messages2, { id: message.id, role: message.role , content: message.content }]);
+    },
   });
 
   return (
@@ -38,7 +51,7 @@ export default function Home() {
         <input
           className="fixed dark:bg-zinc-900 bottom-0 w-full max-w-md p-2 mb-8 border border-zinc-300 dark:border-zinc-800 rounded shadow-xl"
           value={input}
-          placeholder="Say something..."
+          placeholder="Ask me something..."
           onChange={handleInputChange}
         />
       </form>
