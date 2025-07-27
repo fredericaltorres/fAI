@@ -20,22 +20,32 @@ namespace fAI.WebApi.Controllers
             fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
 
-        [HttpGet(Name = "GetJsonDb")]
-        public string GetJsonDb([FromQuery] string filename, [FromQuery] string type = "checklist")
-        {
-            var f = new FredisDB();
-            var jsonText =  f.GetFileName(type, filename);
-            if (string.IsNullOrEmpty(jsonText))
-                return string.Empty;
+        // curl.exe -X POST -H "Content-type: application/json" -d "{""id"": ""sample-checklist"",""title"": ""Sample Checklist"",""items"": [{""id"": ""1"",""title"": ""Item 1"",""imageUrl"": ""https://example.com/image1.jpg"",""completed"": false    }]}"  "https://faiwebapi.azurewebsites.net/jsonclouddb?filename=titi"
+        // curl.exe -X POST -H "Content-type: application/json" -d "{""id"": ""sample-checklist"",""title"": ""Sample Checklist"",""items"": [{""id"": ""1"",""title"": ""Item 1"",""imageUrl"": ""https://example.com/image1.jpg"",""completed"": false    }]}"  "https://localhost:7009/jsonclouddb?filename=titi"
 
-            return jsonText;
+
+        [HttpGet(Name = "GetJsonDb")]
+        public CheckList GetJsonDb([FromQuery] string filename)
+        {
+            return new FredisDB().GetCheckList(filename);
         }
 
+
+        // curl.exe -X GET -H "Content-type: application/json"   "https://faiwebapi.azurewebsites.net/jsonclouddb?filename=titi"
+        // curl.exe -X GET -H "Content-type: application/json"   "https://localhost:7009/jsonclouddb?filename=titi"
         [HttpPost(Name = "SetJsonDb")]
-        public bool SetJsonDb([FromQuery]string filename, [FromBody] string jsonText, [FromQuery] string type = "checklist")
+        public bool SetJsonDb([FromQuery]string filename, [FromBody] CheckList checkList)
+        {
+            new FredisDB().AddUpdateCheckList(filename, checkList);
+            return true;
+        }
+
+        // curl.exe -X DELETE "https://faiwebapi.azurewebsites.net/JsonCloudDB?filename=titi&type=checklist" -H "accept: text/plain" -H "Content-Type: application/json"
+        [HttpDelete(Name = "DeleteJsonDb")]
+        public bool DeleteJsonDb([FromQuery] string filename, [FromQuery] string type = "checklist")
         {
             var f = new FredisDB();
-            f.AddUpdateFileName(type, filename, jsonText);
+            f.DeleteCheckList(filename);
             return true;
         }
     }

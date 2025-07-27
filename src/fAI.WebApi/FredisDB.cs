@@ -10,6 +10,57 @@ using System.Text;
 
 namespace fAI.WebApi
 {
+    public class CheckListItem
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string imageUrl { get; set; }
+        public bool completed { get; set; }
+    }
+
+    public class CheckList
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public List<CheckListItem> items { get; set; }
+
+
+        public static CheckList SampleCheckList()
+        {
+            return new CheckList
+            {
+                id = "sample-checklist",
+                title = "Sample Checklist",
+                items = new List<CheckListItem>
+                {
+                    new CheckListItem { id = "1", title = "Item 1", imageUrl = "https://example.com/image1.jpg", completed = false },
+                }
+            };
+        }
+
+        public CheckList()
+        {
+            items = new List<CheckListItem>();
+        }
+
+        public string ToJSON()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+
+        public static CheckList FromJSON(string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<CheckList>(json);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+    }
+
     public class FredisDB
     {
         public string url => Environment.GetEnvironmentVariable("fredis_url");
@@ -57,30 +108,29 @@ namespace fAI.WebApi
         {
             return $"{FREDIS_DB_PREFIX}{type}-{filename}";
         }
+        const string CHECKLIST_TYPE = "checklist";
 
-        public bool AddUpdateFileName(string type, string fileName, string json)
+        public bool AddUpdateCheckList(string fileName, CheckList checkList)
         {
-            return _fRedis.SetKey(GetFileNameKey(type, fileName), json, 0);
+            return _fRedis.SetKey(GetFileNameKey(CHECKLIST_TYPE, fileName), checkList.ToJSON(), 0);
         }
 
-        public bool DeleteFileName(string type, string filename)
+        public bool DeleteCheckList(string filename)
         {
-            if (GetFileName(type, filename) == null)
+            if (GetCheckList(filename) == null)
                 return false;
 
-            _fRedis.DeleteKey(GetFileNameKey(type, filename));
+            _fRedis.DeleteKey(GetFileNameKey(CHECKLIST_TYPE, filename));
 
             return true;
         }
 
-        public string GetFileName(string type, string fileName)
+        public CheckList GetCheckList(string fileName)
         {
-            var pid = CreatePid(fileName);
-            var json = _fRedis.Get<string>($"{FREDIS_DB_PREFIX}{type}-{pid}");
+            var json = _fRedis.Get<string>(GetFileNameKey(CHECKLIST_TYPE, fileName));
             if (string.IsNullOrEmpty(json))
-                return null;
-
-            return json;
+                return CheckList.SampleCheckList();
+            return CheckList.FromJSON(json);
         }
     }
 }
