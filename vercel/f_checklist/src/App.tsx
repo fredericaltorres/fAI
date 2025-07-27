@@ -19,22 +19,25 @@ const App: React.FC = () => {
     items: []
   });
 
-  // // Load checklist on app start
-  // useEffect(() => {
-  //   const loadedChecklist = loadCheckList();
-  //   if (loadedChecklist) 
-  //     setChecklist(loadedChecklist);
-  // }, []);
+  // Load checklist on app start
+  useEffect(() => {
+    const loadChecklist = async () => {
+      const loadedChecklist = await loadCheckList();
+      if (loadedChecklist) 
+        setChecklist(loadedChecklist);
+    };
+    loadChecklist();
+  }, []);
   
-  const { data: checkList, isError, isLoading } = useQuery({
+//   const { data: checkList, isError, isLoading } = useQuery({
 
-    queryKey: ['checkListWebApiQuery'],
-    queryFn: async () => await loadCheckList(),
-    staleTime: dbCacheTime1Hour,
-    gcTime: dbCacheTime1Hour,
-});
-if (isLoading) return <LoadingComponent />;
-if (isError) return <ErrorDisplay />;
+//     queryKey: ['checkListWebApiQuery'],
+//     queryFn: async () => await loadCheckList(),
+//     staleTime: dbCacheTime1Hour,
+//     gcTime: dbCacheTime1Hour,
+// });
+// if (isLoading) return <LoadingComponent />;
+// if (isError) return <ErrorDisplay />;
 
   // Auto-save checklist when it changes
   useEffect(() => {
