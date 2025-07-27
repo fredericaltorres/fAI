@@ -25,8 +25,6 @@ const App: React.FC = () => {
   //   if (loadedChecklist) 
   //     setChecklist(loadedChecklist);
   // }, []);
-
-
   
   const { data: checkList, isError, isLoading } = useQuery({
 

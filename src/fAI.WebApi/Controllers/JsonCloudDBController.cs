@@ -20,7 +20,7 @@ namespace fAI.WebApi.Controllers
             fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
 
-        // curl.exe -X POST -H "Content-type: application/json" -d "{""id"": ""sample-checklist"",""title"": ""Sample Checklist"",""items"": [{""id"": ""1"",""title"": ""Item 1"",""imageUrl"": ""https://example.com/image1.jpg"",""completed"": false    }]}"  "https://faiwebapi.azurewebsites.net/jsonclouddb?filename=titi"
+        // curl.exe -X POST -H "Content-type: application/json" -d "{""id"": ""sample-checklist"",""title"": ""Sample Checklist"",""items"": [{""id"": ""1"",""title"": ""Item 1"",""imageUrl"": ""https://example.com/image1.jpg"",""completed"": false    }]}"  "https://faiwebapi.azurewebsites.net/jsonclouddb?filename=tata"
         // curl.exe -X POST -H "Content-type: application/json" -d "{""id"": ""sample-checklist"",""title"": ""Sample Checklist"",""items"": [{""id"": ""1"",""title"": ""Item 1"",""imageUrl"": ""https://example.com/image1.jpg"",""completed"": false    }]}"  "https://localhost:7009/jsonclouddb?filename=titi"
 
 
