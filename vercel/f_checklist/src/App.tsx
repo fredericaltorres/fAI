@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Checklist, AppMode } from './types';
 import { saveCheckList, loadCheckList } from './storage';
 import ChecklistEditor from './components/ChecklistEditor';
@@ -8,6 +9,8 @@ import ChecklistRunner from './components/ChecklistRunner';
 const checkListTitle = "Fred CheckList";
 const checkListId = "123456";
 
+const dbCacheTime1Hour = 1000 * 60 * 60 * 1; // 1 hour
+
 const App: React.FC = () => {
   const [mode, setMode] = useState<AppMode>('edit');
   const [checklist, setChecklist] = useState<Checklist>({
@@ -16,17 +19,29 @@ const App: React.FC = () => {
     items: []
   });
 
-  // Load checklist on app start
-  useEffect(() => {
-    const loadedChecklist = loadCheckList();
-    if (loadedChecklist) {
-      setChecklist(loadedChecklist);
-    }
-  }, []);
+  // // Load checklist on app start
+  // useEffect(() => {
+  //   const loadedChecklist = loadCheckList();
+  //   if (loadedChecklist) 
+  //     setChecklist(loadedChecklist);
+  // }, []);
+
+
+  
+  const { data: checkList, isError, isLoading } = useQuery({
+
+    queryKey: ['checkListWebApiQuery'],
+    queryFn: async () => await loadCheckList(),
+    staleTime: dbCacheTime1Hour,
+    gcTime: dbCacheTime1Hour,
+});
+if (isLoading) return <LoadingComponent />;
+if (isError) return <ErrorDisplay />;
 
   // Auto-save checklist when it changes
   useEffect(() => {
-    saveCheckList(checklist);
+    if(checklist.items.length > 0) 
+      saveCheckList(checklist);
   }, [checklist]);
 
   return (
@@ -77,5 +92,17 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const LoadingComponent = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="text-xl font-semibold text-gray-700">Loading...</div>
+  </div>
+);
+
+const ErrorDisplay = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="text-xl font-semibold text-gray-700">Error</div>
+  </div>
+);
 
 export default App;

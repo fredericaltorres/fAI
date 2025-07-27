@@ -114,10 +114,39 @@ const ChecklistRunner: React.FC<ChecklistRunnerProps> = ({ checklist, onChecklis
                         <img
                           src={item.imageUrl}
                           alt={item.title}
-                          className="w-16 h-16 object-cover rounded-lg border border-gray-300"
+                          className="w-64 h-64 object-cover rounded-lg border border-gray-300 cursor-pointer"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
+                          onClick={() => {
+                            if (document.fullscreenEnabled) {
+                              const img = document.createElement('img');
+                              img.src = item.imageUrl!;
+                              img.alt = item.title;
+                              img.style.maxWidth = '100vw';
+                              img.style.maxHeight = '100vh';
+                              img.style.display = 'block';
+                              img.style.margin = 'auto';
+                              img.style.background = 'black';
+                              img.style.position = 'fixed';
+                              img.style.top = '0';
+                              img.style.left = '0';
+                              img.style.right = '0';
+                              img.style.bottom = '0';
+                              img.style.zIndex = '9999';
+                              img.onclick = () => {
+                                if (document.fullscreenElement) {
+                                  document.exitFullscreen();
+                                }
+                                img.remove();
+                              };
+                              document.body.appendChild(img);
+                              img.requestFullscreen();
+                            } else {
+                              window.open(item.imageUrl, '_blank');
+                            }
+                          }}
+                          title="Click to view full screen"
                         />
                       </div>
                     )}
