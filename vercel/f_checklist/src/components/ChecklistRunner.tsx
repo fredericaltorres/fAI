@@ -119,7 +119,7 @@ const ChecklistRunner: React.FC<ChecklistRunnerProps> = ({ checklist, onChecklis
                             e.currentTarget.style.display = 'none';
                           }}
                           onClick={() => {
-                            if (document.fullscreenEnabled) {
+                            
                               const img = document.createElement('img');
                               img.src = item.imageUrl!;
                               img.alt = item.title;
@@ -134,17 +134,8 @@ const ChecklistRunner: React.FC<ChecklistRunnerProps> = ({ checklist, onChecklis
                               img.style.right = '0';
                               img.style.bottom = '0';
                               img.style.zIndex = '9999';
-                              img.onclick = () => {
-                                if (document.fullscreenElement) {
-                                  document.exitFullscreen();
-                                }
-                                img.remove();
-                              };
-                              document.body.appendChild(img);
-                              img.requestFullscreen();
-                            } else {
-                              window.open(item.imageUrl, '_blank');
-                            }
+                              img.onclick = () => { img.remove(); };
+                              document.body.appendChild(img);                            
                           }}
                           title="Click to view full screen"
                         />

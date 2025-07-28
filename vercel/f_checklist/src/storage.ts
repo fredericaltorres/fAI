@@ -9,29 +9,29 @@ const checkListFileName = "FredCheckList";
 const apiUrl = `https://faiwebapi.azurewebsites.net/JsonCloudDB?filename=${checkListFileName}`;
 
 export const saveCheckList = (checklist: Checklist): void => {
-  console.log('Saving checklist to server:', JSON.stringify(checklist));
-  const body = JSON.stringify(checklist);
-  fetch(apiUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: body,
-  })
-  .then(response => {
-    if (!response.ok) 
-      throw new Error("Failed to save checklist to server");
-    return response.json();
-  })
-  .then(data => {
-    console.log('Checklist saved to server:', data);
-  })
-  .catch(error => {
-    console.error('Error saving checklist to server:', error);
-  });
+    console.log('Saving checklist to server:', JSON.stringify(checklist));
+    const body = JSON.stringify(checklist);
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    })
+    .then(response => {
+      if (!response.ok) 
+        throw new Error("Failed to save checklist to server");
+      return response.json();
+    })
+    .then(data => {
+      console.log('Checklist saved to server:', data);
+    })
+    .catch(error => {
+      console.error('Error saving checklist to server:', error);
+    });
 };
 
 export const loadCheckList = async (): Promise<Checklist> => {
   try {
-
+    console.log('Loading checklist from server:', apiUrl);
     const startTime = performance.now();
     const response = await fetch(apiUrl);
     if (!response.ok)  throw new Error(`HTTP error! status: ${response.status}`);
