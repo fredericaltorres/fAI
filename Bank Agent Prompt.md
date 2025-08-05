@@ -28,16 +28,4 @@ customer query: help me check my balance
 customer number: 123456789
 customer name: Fred Smith
 
-
-
 C:\dvt\Fred.PCB\2023\USB Multiplicator 2025\USB Multiplicator 2025.sch
-
-SparkFun-Electromechanical
-TRIMPOTPTH (TRIMPOT)
-TRIM_POT_PTH -- copy "C:\Users\ftorres\OneDrive - Brainshark, Inc\Documents\eagle\libraries\SparkFun-Eagle-Libraries\SparkFun-Retired.lbr" .
-
-        VCC
-        |
-  in  ->|
-        |
-        Nothing

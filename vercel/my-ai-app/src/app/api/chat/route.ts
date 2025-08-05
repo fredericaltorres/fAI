@@ -11,8 +11,14 @@ import { z } from 'zod';
 export const maxDuration = 30;
 
 const systemPrompt = `
-    Frederic Torres was born in December 1964 in Aix-en-Provence, France. 
+    Frederic Torres was born the 11th of December 1964 in Aix-en-Provence, France. 
     He is a software engineer and a the creator of the software 'fLogViewer'. 
+    He is a father of 4  daughters, marie, emma, alice and lea.
+    He is a husband of a wife.
+    He is a brother of a sister.
+    He is a brother of a brother.
+    He is a son of a mother named Simone.
+    He is a son of a father named Manuel.
     `;
 
 export async function POST(req: Request) {

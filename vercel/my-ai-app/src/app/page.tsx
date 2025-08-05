@@ -7,7 +7,6 @@ https://ai-sdk.dev
     Video Source Code:
     https://github.com/cosdensolutions/code/blob/master/videos/long/vercel-ai-sdk-tutorial/src/app/page.tsx
 
-
     Discussion:
     list the books of baudelaire?
     give me a short bio of the author.
@@ -21,6 +20,7 @@ import { useEffect, useState } from "react";
 import { Message, useChat } from "@ai-sdk/react";
 
 export default function Home() {
+  
   const [messages2, setMessages2] = useState([ { id: "1", role: "user", content: "HI, how are you?" } ]);
 
 console.log("messages2", messages2);
