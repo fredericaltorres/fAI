@@ -221,13 +221,13 @@ namespace fAI
             var response = wc.GET(_getVoiceListUrl+$"?provider={provider}&page_size={pageSize}&page_number={pageNumber}");
             if (response.Success)
             {
-                OpenAI.TraceError(response.Text, this);
+                OpenAI.Trace(response.Text, this);
                 var voices = JsonConvert.DeserializeObject<HumeGetVoicesResponse>(response.Text);
                 if (loadAllPage)
                 {
                     for (var p = 1; p < voices.TotalPages; p++)
                     {
-                        var otherVoicePages = GetVoices(provider: provider, pageSize = 100, loadAllPage = false, pageNumber: p);
+                        var otherVoicePages = GetVoices(provider: provider, pageSize: pageSize, loadAllPage : false, pageNumber: p);
                         voices.VoicesPage.AddRange(otherVoicePages);
                     }
                 }
