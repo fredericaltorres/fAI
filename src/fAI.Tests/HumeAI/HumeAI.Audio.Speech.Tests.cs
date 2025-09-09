@@ -12,14 +12,14 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAIAudioTextToSpeech
+    public class HumeAIAudioTextToSpeech
     {
         [Fact()]
         public void SpeechToText()
         {
             const string input = @"Maybe I'm amazed at the way you pulled me out of time. Hung me on a line.";
-            var client = new OpenAI();
-            var mp3FileName = client.Audio.Speech.Create(input, OpenAISpeech.Voices.echo);
+            var client = new HumeAI();
+            var mp3FileName = client.Audio.Speech.Create(input, client.Audio.Speech.DefaultMaleEnglishVoice);
 
             var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
             Assert.True(mp3Info.DurationAsDouble > 3);
@@ -27,5 +27,4 @@ namespace fAI.Tests
             AudioUtil.DeleteFile(mp3FileName);
         }
     }
-
 }

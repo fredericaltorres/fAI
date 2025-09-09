@@ -7,13 +7,6 @@ namespace fAI
 
     public class HumeAI : Logger
     {
-        public static IReadOnlyList<float> GenerateEmbeddings(string text)
-        {
-            var client = new OpenAI();
-            var r = client.Embeddings.Create(text);
-            return r.Data[0].Embedding;
-        }
-
         public HumeAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             HttpBase._key = Environment.GetEnvironmentVariable("HUME_API_KEY");
@@ -29,22 +22,22 @@ namespace fAI
             if (openAiOrg != null)
                 HttpBase. _openAiOrg = openAiOrg;
         }
-        
-        OpenAIAudio _audio = null;
-        public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio());
+
+        HumeAIAudio _audio = null;
+        public HumeAIAudio Audio => _audio ?? (_audio = new HumeAIAudio());
 
         //OpenAICompletionsEx
 
-        public OpenAICompletionsEx _completionsEx = null;
-        public OpenAICompletionsEx CompletionsEx => _completionsEx ?? (_completionsEx = new OpenAICompletionsEx());
+        //public OpenAICompletionsEx _completionsEx = null;
+        //public OpenAICompletionsEx CompletionsEx => _completionsEx ?? (_completionsEx = new OpenAICompletionsEx());
 
-        public OpenAICompletions _completions = null;
-        public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions());
+        //public OpenAICompletions _completions = null;
+        //public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions());
 
-        public OpenAIEmbeddings _embeddings = null;
-        public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());
+        //public OpenAIEmbeddings _embeddings = null;
+        //public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());
 
-        public OpenAIImage _image = null;
-        public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
+        //public OpenAIImage _image = null;
+        //public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
     }
 }

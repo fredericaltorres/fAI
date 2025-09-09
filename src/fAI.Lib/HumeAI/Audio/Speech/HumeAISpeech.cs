@@ -49,6 +49,8 @@ namespace fAI
             CUSTOM_VOICE
         }
 
+        public string DefaultMaleEnglishVoice => "Male English Actor";
+
         protected override ModernWebClient InitWebClient(bool addJsonContentType = true)
         {
             var mc = new ModernWebClient(_timeout);
@@ -59,7 +61,6 @@ namespace fAI
                   .AddHeader("Accept", "application/json");
             return mc;
         }
-
 
         public string Create(string input, string voiceName, string mp3FileName = null, Provider provider = Provider.HUME_AI)
         {

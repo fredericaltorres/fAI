@@ -14,6 +14,10 @@
         public OpenAICompletions Completions { get; private set; } = new OpenAICompletions();
     }
 
-  
+    public class HumeAIAudio
+    {
+        public HumeAISpeech Speech { get; private set; } = new HumeAISpeech();
+    }
+
 }
 
