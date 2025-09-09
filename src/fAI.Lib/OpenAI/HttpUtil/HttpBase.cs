@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace fAI
 {
@@ -54,7 +55,7 @@ namespace fAI
                 _openAiOrg = openAiOrg;
         }
 
-        protected virtual ModernWebClient InitWebClient(bool addJsonContentType = true)
+        protected virtual ModernWebClient InitWebClient(bool addJsonContentType = true, Dictionary<string, object> extraHeaders = null)
         {
             var mc = new ModernWebClient(_timeout);
             mc.AddHeader("Authorization", $"Bearer {_key}")

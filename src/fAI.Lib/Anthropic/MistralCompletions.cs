@@ -105,7 +105,7 @@ namespace fAI
             }
         }
 
-        protected override ModernWebClient InitWebClient(bool addJsonContentType = true)
+        protected override ModernWebClient InitWebClient(bool addJsonContentType = true, Dictionary<string, object> extraHeaders = null)
         {
             var mc = new ModernWebClient(_timeout);
             mc.AddHeader("Authorization", $"Bearer {_key}");
