@@ -41,8 +41,8 @@
     <Reference Include="Deepgram, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Deepgram.3.4.1\lib\netstandard2.0\Deepgram.dll</HintPath>
     </Reference>
-    <Reference Include="DynamicSugarStandard, Version=1.0.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DynamicSugarStandard.1.0.70\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
+    <Reference Include="DynamicSugarStandard, Version=1.0.83.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DynamicSugarStandard.1.0.83\lib\netstandard2.0\DynamicSugarStandard.dll</HintPath>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.24.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Google.Protobuf.3.24.0\lib\net45\Google.Protobuf.dll</HintPath>

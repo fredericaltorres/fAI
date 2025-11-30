@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicSugarStandard" Version="1.0.70" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.83" />
     <PackageReference Include="Fredis.Lib" Version="1.1.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -20,6 +20,12 @@
 
   <ItemGroup>
     <Folder Include="Test\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DynamicSugarStandard">
+      <HintPath>..\..\..\DynamicSugarNet\DynamicSugarStandard\bin\Debug\netstandard2.0\DynamicSugarStandard.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
