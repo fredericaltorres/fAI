@@ -19,11 +19,18 @@ namespace fAI.WebApi.Controllers
             fAI.Logger.DefaultLogFileName = Path.Combine(Path.GetTempPath(), "fAI.log");
         }
 
-        [HttpGet(Name = "GetPractitioners")]
+        // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB/Practitioners"
+        [HttpGet("Practitioners")]
         public IEnumerable<Practitioner> GetPractitioners()
         {
-            var c = Practitioner.GetColumns();
             return BookerDB2.GetPractitioners();
+        }
+
+        // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB/Patients"
+        [HttpGet("Patients")]
+        public IEnumerable<Patient> GetPatients()
+        {
+            return BookerDB2.GetPatients();
         }
     }
 }
