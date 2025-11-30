@@ -22,21 +22,81 @@ namespace BookerDB
 
     public class BookerEntity
     {
-        public string GetTableName()
+        public virtual string GetTableName()
         {
             return this.GetType().Name; 
         }
 
-        public List<string> GetColumns()
+        public virtual List<string> GetColumns()
         {
             return DS.Dictionary(this).Keys.ToList();
         }
 
-        public string GetSqlSelect()
+        public virtual string GetSqlSelect()
         {
             var cols = this.GetColumns();
             return $"select {string.Join(", ", cols)} from {this.GetTableName()}";
         }
+    }
+
+    public enum SlotStatus
+    {
+        free, busy, busy_unavailable, busy_tentative, not_available
+    }
+
+    public class FreeSlot : BookerEntity
+    {
+        public string DoctorName { get; set; }
+        public int SlotId { get; set; }
+        public SlotStatus Status { get; set; }
+        public string DayOfWeek { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public int PractitionerId { get; set; }
+        public int ScheduleId { get; set; }
+
+        public string _practitionerLastName { get; }
+
+        public FreeSlot Load(SqlDataReader reader)
+        {
+            DoctorName = reader.GetString(reader.GetOrdinal("DoctorName"));
+            SlotId = (int)reader["SlotId"];
+
+            var statusStr = reader.GetString(reader.GetOrdinal("status"));
+            Status = Enum.Parse<SlotStatus>(statusStr);
+
+            DayOfWeek = reader.GetString(reader.GetOrdinal("DayOfWeek"));
+            StartDateTime = (DateTime)reader["startDateTime"];
+            PractitionerId = (int)reader["PractitionerId"];
+            ScheduleId = (int)reader["ScheduleId"];
+
+            return this;
+        }
+
+        public FreeSlot(string practitionerLastName)
+        {
+            _practitionerLastName = practitionerLastName;
+        }
+
+        public override string GetSqlSelect()
+        {
+            return @$"
+select 
+	p.FirstName + ' ' + p.LastName AS DoctorName,
+	sl.SlotId, sl.status,
+	DATENAME(WEEKDAY, sl.StartDateTime) AS DayOfWeek,
+	sl.startDateTime,
+	p.PractitionerId,
+	sch.ScheduleId
+from Schedule sch
+join Practitioner p on p.PractitionerId = sch.PractitionerId
+join dbo.Slot sl ON sch.ScheduleId = sl.ScheduleId  and sl.isEnabled = 1
+where 
+	sl.startDateTime > getdate() and
+	sl.status = 'free' and
+	p.LastName like '%{_practitionerLastName}%'
+";
+        }
+
     }
 
     public class Patient : BookerEntity
@@ -91,6 +151,25 @@ namespace BookerDB
 
     public class BookerDB2
     {
+        public static List<FreeSlot> GetFreeSlots(string practitionerLastName)
+        {
+            var r = new List<FreeSlot>();
+            var sql = new FreeSlot(practitionerLastName).GetSqlSelect();
+            string connectionString = GetConnectionString();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(sql, connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        r.Add(new FreeSlot(practitionerLastName).Load(reader));
+                    }
+                }
+            }
+            return r;
+        }
 
         public static List<Patient> GetPatients()
         {
