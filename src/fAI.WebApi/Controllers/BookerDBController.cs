@@ -1,4 +1,4 @@
-using BookerDB;
+using BookerDatabase;
 using Microsoft.AspNetCore.Mvc;
 //using Microsoft.AspNetCore.Mvc.Formatters;
 //using Microsoft.Extensions.Caching.Memory;
@@ -22,33 +22,33 @@ namespace fAI.WebApi.Controllers
         [HttpGet("Practitioners")]
         public IEnumerable<Practitioner> GetPractitioners()
         {
-            return BookerDB2.GetPractitioners();
+            return BookerDB.GetPractitioners();
         }
 
         // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB/Patients"
         [HttpGet("Patients")]
         public IEnumerable<Patient> GetPatients()
         {
-            return BookerDB2.GetPatients();
+            return BookerDB.GetPatients();
         }
 
         // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB/FreeSlots?practitionerLastName=Moreau"
         [HttpGet("FreeSlots")]
         public IEnumerable<FreeSlot> GetFreeSlots([FromQuery]string practitionerLastName)
         {
-            return BookerDB2.GetFreeSlots(practitionerLastName);
+            return BookerDB.GetFreeSlots(practitionerLastName);
         }
 
-        // curl.exe -X PUT -H "accept: application/json" "https://localhost:7009/BookerDB/BookAppointment?slotId=1657&patientId=1"
+        // curl.exe -X PUT -H "accept: application/json" "https://localhost:7009/BookerDB/BookAppointment?slotId=2&patientId=1"
         [HttpPut("BookAppointment")]
         public Appointment BookAppointment([FromQuery] int slotId, [FromQuery] int patientId)
         {
-            var a = BookerDB2.BookAppointment(slotId, patientId);
+            var a = BookerDB.BookAppointment(slotId, patientId);
             if (a.AppointmentId > 0)
             {
-                if(BookerDB2.BookSlot(slotId, patientId, SlotStatus.busy))
+                if(BookerDB.BookSlot(slotId, patientId, SlotStatus.busy))
                 {
-                    return BookerDB2.GetAppointmentById(a.AppointmentId);
+                    return BookerDB.GetAppointmentById(a.AppointmentId);
                 }
             }
             return null;

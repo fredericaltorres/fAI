@@ -1,49 +1,56 @@
 using DynamicSugar;
 using fAI.Pinecone.Model;
+using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
+using System.Text.Json.Serialization;
 using static fAI.LeonardoImage;
 
-namespace BookerDB
+namespace BookerDatabase
 {
-    // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/ftorres/providers/Microsoft.Web/sites/fAIWebApi/configuration
-    // KUDU https://faiwebapi.scm.azurewebsites.net/Env.cshtml
-    // https://faiwebapi.azurewebsites.net/Embedding
-
-    //  curl.exe -X GET  -H "accept: text/plain" "https://localhost:7009/InMemoryLog/rows"
-    //  curl.exe -X PUT  -H "accept: text/plain" "https://localhost:7009/InMemoryLog/clear"
-    //  curl.exe -X POST -H "accept: * / *" -H "Content-Type: application/json"  -d "\"tutu\""  "https://localhost:7009/InMemoryLog/rows"
-
-    //  curl.exe -X GET   "https://faiwebapi.azurewebsites.net/InMemoryLog/rows"
-    //  curl.exe -X PUT   "https://faiwebapi.azurewebsites.net/InMemoryLog/clear"
-    //  curl.exe -X POST -H "Content-Type: application/json"   -d "\"Zizi\""  "https://faiwebapi.azurewebsites.net/InMemoryLog/rows"
-    //  curl.exe -X POST -H "accept: * / *" -H "Content-Type: application/json"  -d "\"Zizi\""  "https://faiwebapi.azurewebsites.net/InMemoryLog/rows"
-
-    // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB"
-
     public class BookerEntity
     {
-        public string __primaryKey { get; set; }
+        internal string __primaryKey { get; set; }
 
-        public virtual string GetTableName()
+        internal List<string> __joinedFields = new List<string>();
+
+        public T __GetEnum<T>(SqlDataReader reader, string name) where T : struct, Enum
+        {
+            var statusStr = reader.GetString(reader.GetOrdinal(name));
+            if (Enum.TryParse<T>(statusStr, true, out T result))
+            {
+                return result;
+            }
+            throw new ArgumentException($"Unable to parse '{statusStr}' into {typeof(T).Name}.");
+        }
+
+        public string __GetString(SqlDataReader reader, string name)
+        {
+            var s = null as string;
+            if (!reader.IsDBNull(reader.GetOrdinal(name)))
+                s = reader.GetString(reader.GetOrdinal(name));
+            return s;
+        }
+
+        public virtual string __GetTableName()
         {
             return this.GetType().Name; 
         }
 
-        public virtual List<string> GetColumns()
+        public virtual List<string> __GetColumns()
         {
             return DS.Dictionary(this).Keys.ToList();
         }
 
-        public virtual string GetSqlSelect()
+        public virtual string __GetSqlSelect()
         {
-            var cols = this.GetColumns();
-            return $"select {string.Join(", ", cols)} from {this.GetTableName()}";
+            var cols = this.__GetColumns();
+            return $"select {string.Join(", ", cols)} from {this.__GetTableName()}";
         }
 
-        public virtual string GetSqlSelectById(int id)
+        public virtual string __GetSqlSelectById(int id)
         {
-            var cols = this.GetColumns().Where(c => !c.StartsWith("__")).ToList();
-            return $"select {string.Join(", ", cols)} from {this.GetTableName()} where {__primaryKey} = {id}";
+            var cols = this.__GetColumns().Where(c => !c.StartsWith("__")).ToList();
+            return $"select {string.Join(", ", cols)} from {this.__GetTableName()} where {__primaryKey} = {id}";
         }
 
         private static string SqlValue(object value)
@@ -62,18 +69,21 @@ namespace BookerDB
                 return value.ToString();
         }
 
-        public virtual string GetSqlInsert()
+        public virtual string __GetSqlInsert()
         {
             var nameValues = DS.Dictionary(this);
             if(!string.IsNullOrEmpty(__primaryKey))
                 nameValues.Remove(__primaryKey);
+
+            foreach(var joinField in __joinedFields)
+                nameValues.Remove(joinField);
 
             nameValues = nameValues.Where(kv => !kv.Key.StartsWith("__")).ToDictionary(kv => kv.Key, kv => kv.Value);
 
             var columns = string.Join(", ", nameValues.Keys);
             var values = string.Join(", ", nameValues.Values.Select(v => SqlValue(v)));
             return $@"
-                insert into {this.GetTableName()} ({columns}) values ({values}); 
+                insert into {this.__GetTableName()} ({columns}) values ({values}); 
                 select SCOPE_IDENTITY();
             ";
         }
@@ -95,9 +105,36 @@ namespace BookerDB
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
+        // Joined fields
+        public int PractitionerId { get; set; }
+        public string ScheduleName { get; set; }
+        public string  PractitionerFirstLastName { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public SlotStatus SlotStatus { get; set; }
+
         public Appointment()
         {
             __primaryKey = "AppointmentId";
+            __joinedFields = new List<string> { "PractitionerId", "ScheduleName", "PractitionerFirstLastName", "StartDateTime", "SlotStatus" };
+        }
+
+        public override string __GetSqlSelectById(int id)
+        {
+            var cols = this.__GetColumns().Where(c => !c.StartsWith("__")).ToList();
+            return $@"
+select a.*,
+    sch.practitionerId, 
+    sch.ScheduleName, 
+    pr.FirstName + ' ' + pr.LastName practitionerFirstLastName,
+    sl.StartDateTime, 
+    sl.Status SlotStatus
+from Appointment a
+join slot sl on a.slotId = sl.SlotId and sl.IsEnabled = 1
+join Schedule sch on sl.ScheduleId = sch.ScheduleId and sch.IsActive = 1
+join Patient p on a.PatientId = p.PatientId
+join practitioner pr on sch.practitionerId = pr.practitionerId and pr.IsActive = 1
+where {__primaryKey} = {id}
+";
         }
 
         public Appointment Load(SqlDataReader reader)
@@ -105,20 +142,18 @@ namespace BookerDB
             AppointmentId = (int)reader["AppointmentId"];
             SlotId = (int)reader["SlotId"];
             PatientId = (int)reader["PatientId"];
-
-            var statusStr = reader.GetString(reader.GetOrdinal("status"));
-            Status = Enum.Parse<AppointmentStatus>(statusStr);
-
-            Description = null;
-            if (!reader.IsDBNull(reader.GetOrdinal("Description")))
-                Description = reader.GetString(reader.GetOrdinal("Description"));
-
-            AppointmentType = null;
-            if (!reader.IsDBNull(reader.GetOrdinal("AppointmentType")))
-                AppointmentType = reader.GetString(reader.GetOrdinal("AppointmentType"));
-
+            Status = __GetEnum<AppointmentStatus>(reader, "status");
+            Description = __GetString(reader, "Description");
+            AppointmentType = __GetString(reader, "AppointmentType");
             CreatedDate = (DateTime)reader["CreatedDate"];
             ModifiedDate = (DateTime)reader["ModifiedDate"];
+
+            // Join fields
+            PractitionerId = (int)reader["PractitionerId"];
+            ScheduleName = __GetString(reader, "ScheduleName");
+            AppointmentType = __GetString(reader, "AppointmentType");
+            StartDateTime = (DateTime)reader["StartDateTime"];
+            SlotStatus = __GetEnum<SlotStatus>(reader, "SlotStatus");
 
             return this;
         }
@@ -131,7 +166,7 @@ namespace BookerDB
 
     public class FreeSlot : BookerEntity
     {
-        public string DoctorName { get; set; }
+        public string PractitionerName { get; set; }
         public int SlotId { get; set; }
         public SlotStatus Status { get; set; }
         public string DayOfWeek { get; set; }
@@ -143,13 +178,10 @@ namespace BookerDB
 
         public FreeSlot Load(SqlDataReader reader)
         {
-            DoctorName = reader.GetString(reader.GetOrdinal("DoctorName"));
+            PractitionerName = __GetString(reader, "PractitionerName");
             SlotId = (int)reader["SlotId"];
-
-            var statusStr = reader.GetString(reader.GetOrdinal("status"));
-            Status = Enum.Parse<SlotStatus>(statusStr);
-
-            DayOfWeek = reader.GetString(reader.GetOrdinal("DayOfWeek"));
+            Status = __GetEnum<SlotStatus>(reader, "Status");
+            DayOfWeek = __GetString(reader, "DayOfWeek");
             StartDateTime = (DateTime)reader["startDateTime"];
             PractitionerId = (int)reader["PractitionerId"];
             ScheduleId = (int)reader["ScheduleId"];
@@ -162,24 +194,24 @@ namespace BookerDB
             _practitionerLastName = practitionerLastName;
         }
 
-        public override string GetSqlSelect()
+        public override string __GetSqlSelect()
         {
             return @$"
-select 
-	p.FirstName + ' ' + p.LastName AS DoctorName,
-	sl.SlotId, sl.status,
-	DATENAME(WEEKDAY, sl.StartDateTime) AS DayOfWeek,
-	sl.startDateTime,
-	p.PractitionerId,
-	sch.ScheduleId
-from Schedule sch
-join Practitioner p on p.PractitionerId = sch.PractitionerId
-join dbo.Slot sl ON sch.ScheduleId = sl.ScheduleId  and sl.isEnabled = 1
-where 
-	sl.startDateTime > getdate() and
-	sl.status = 'free' and
-	p.LastName like '%{_practitionerLastName}%'
-";
+                select 
+	                p.FirstName + ' ' + p.LastName AS PractitionerName,
+	                sl.SlotId, sl.status,
+	                DATENAME(WEEKDAY, sl.StartDateTime) AS DayOfWeek,
+	                sl.startDateTime,
+	                p.PractitionerId,
+	                sch.ScheduleId
+                from Schedule sch
+                join Practitioner p on p.PractitionerId = sch.PractitionerId
+                join dbo.Slot sl ON sch.ScheduleId = sl.ScheduleId  and sl.isEnabled = 1
+                where 
+	                sl.startDateTime > getdate() and
+	                sl.status = 'free' and
+	                p.LastName like '%{_practitionerLastName}%'
+            ";
         }
 
     }
@@ -234,13 +266,13 @@ where
         }
     };
 
-    public class BookerDB2
+    public class BookerDB
     {
         public static List<FreeSlot> GetFreeSlots(string practitionerLastName)
         {
             var r = new List<FreeSlot>();
-            var sql = new FreeSlot(practitionerLastName).GetSqlSelect();
-            using (var connection = new SqlConnection(GetConnectionString()))
+            var sql = new FreeSlot(practitionerLastName).__GetSqlSelect();
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -256,8 +288,8 @@ where
         public static List<Patient> GetPatients()
         {
             var r = new List<Patient>();
-            var sql = new Patient().GetSqlSelect();
-            using (var connection = new SqlConnection(GetConnectionString()))
+            var sql = new Patient().__GetSqlSelect();
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -273,8 +305,8 @@ where
         public static List<Practitioner> GetPractitioners()
         {
             var r = new List<Practitioner>();
-            var sql = new Practitioner().GetSqlSelect();
-            using (var connection = new SqlConnection(GetConnectionString()))
+            var sql = new Practitioner().__GetSqlSelect();
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -290,8 +322,8 @@ where
         public static Appointment GetAppointmentById(int appointmentId)
         {
             var r = new List<Appointment>();
-            var sql = new Appointment().GetSqlSelectById(appointmentId);
-            using (var connection = new SqlConnection(GetConnectionString()))
+            var sql = new Appointment().__GetSqlSelectById(appointmentId);
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -307,8 +339,8 @@ where
         public static List<Appointment> GetAppointments()
         {
             var r = new List<Appointment>();
-            var sql = new Appointment().GetSqlSelect();
-            using (var connection = new SqlConnection(GetConnectionString()))
+            var sql = new Appointment().__GetSqlSelect();
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -321,22 +353,36 @@ where
             return r;
         }
 
-        internal static Appointment BookAppointment(int slotId, int PatientId)
+        internal static Appointment BookAppointment(int slotId, int patientId)
         {
-            var a = new Appointment();
-            a.SlotId = slotId;
-            a.PatientId = PatientId;
-            a.Status = AppointmentStatus.booked;
-            a.CreatedDate = DateTime.Now;
-            a.ModifiedDate = DateTime.Now;
-
-            var sql = a.GetSqlInsert();
+            var a = new Appointment()
+            {
+                SlotId = slotId,
+                PatientId = patientId,
+                Status = AppointmentStatus.booked,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
 
             using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
-                var command = new SqlCommand(sql, connection);
-                a.AppointmentId = Convert.ToInt32(command.ExecuteScalar());
+                var command = new SqlCommand(a.__GetSqlInsert(), connection);
+                try
+                {
+                    a.AppointmentId = Convert.ToInt32(command.ExecuteScalar());
+                }
+                catch (SqlException sex)
+                {
+                    var duplicateAppointment = sex.Message.Contains("duplicate key");
+                    if (duplicateAppointment)
+                        throw new ApplicationException($"Duplicate appointment for SlotId={slotId} and PatientId={patientId}", sex);
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException("Error occurred while trying to book the appointment.", ex);
+                }
+
                 return a;
             }
         }
@@ -344,13 +390,18 @@ where
         internal static bool BookSlot(int slotId, int patientId, SlotStatus status)
         {
             var sql = $"update slot set Status = '{status}', ModifiedDate = getDate() where slotId={slotId}";
-            using (var connection = new SqlConnection(GetConnectionString()))
+            using (var connection = GetConnection())
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
                 var recordUpdatedCount = command.ExecuteNonQuery();
                 return recordUpdatedCount > 0;
             }
+        }
+
+        public static SqlConnection GetConnection()
+        {
+            return new SqlConnection(GetConnectionString());
         }
 
         private static string GetConnectionString()
