@@ -268,7 +268,13 @@ where {__primaryKey} = {id}
 
     public class BookerDB
     {
-        public static List<FreeSlot> GetFreeSlots(string practitionerLastName)
+        public static bool AreDateAround(DateTime refDate, DateTime testDate, int acceptedRangeInDays = 2)
+        {
+            TimeSpan difference = testDate - refDate; // Calculate the difference in days between the two dates
+            return Math.Abs(difference.TotalDays) <= acceptedRangeInDays; // Check if the absolute difference is within 2 days
+        }
+
+        public static List<FreeSlot> GetFreeSlots(string practitionerLastName, DateTime aroundDate)
         {
             var r = new List<FreeSlot>();
             var sql = new FreeSlot(practitionerLastName).__GetSqlSelect();
@@ -282,6 +288,8 @@ where {__primaryKey} = {id}
                         r.Add(new FreeSlot(practitionerLastName).Load(reader));
                 }
             }
+
+            r = r.Where(fs => AreDateAround(aroundDate, fs.StartDateTime)).ToList();
             return r;
         }
 

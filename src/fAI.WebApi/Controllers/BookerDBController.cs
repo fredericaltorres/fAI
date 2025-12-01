@@ -1,8 +1,5 @@
 using BookerDatabase;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Formatters;
-//using Microsoft.Extensions.Caching.Memory;
-//using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.WebApi.Controllers
 {
@@ -36,7 +33,7 @@ namespace fAI.WebApi.Controllers
         [HttpGet("FreeSlots")]
         public IEnumerable<FreeSlot> GetFreeSlots([FromQuery]string practitionerLastName)
         {
-            return BookerDB.GetFreeSlots(practitionerLastName);
+            return BookerDB.GetFreeSlots(practitionerLastName, DateTime.Now);
         }
 
         // curl.exe -X PUT -H "accept: application/json" "https://localhost:7009/BookerDB/BookAppointment?slotId=2&patientId=1"
