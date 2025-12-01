@@ -1,5 +1,7 @@
 using DynamicSugar;
+using fAI.Pinecone.Model;
 using System.Data.SqlClient;
+using static fAI.LeonardoImage;
 
 namespace BookerDB
 {
@@ -18,8 +20,6 @@ namespace BookerDB
 
     // curl.exe -X GET -H "accept: application/json" "https://localhost:7009/BookerDB"
 
-    
-
     public class BookerEntity
     {
         public virtual string GetTableName()
@@ -36,6 +36,66 @@ namespace BookerDB
         {
             var cols = this.GetColumns();
             return $"select {string.Join(", ", cols)} from {this.GetTableName()}";
+        }
+
+        private static string SqlValue(object value)
+        {
+            if (value is string)
+                return $"'{value.ToString().Replace("'", "''")}'";
+            else if (value is DateTime dt)
+                return $"'{dt:yyyy-MM-dd HH:mm:ss}'";
+            else if (value is bool b)
+                return b ? "1" : "0";
+            else if (value is Enum e)
+                return $"'{e.ToString()}'";
+            else if (value == null)
+                return "NULL";
+            else
+                return value.ToString();
+        }
+
+        public virtual string GetSqlInsert()
+        {
+            var nameValues = DS.Dictionary(this);
+            var columns = string.Join(", ", nameValues.Keys);
+            var values = string.Join(", ", nameValues.Values.Select(v => SqlValue(v)));
+            return $"insert into {this.GetTableName()} ({columns}) values ({values})";
+        }
+    }
+
+    public enum AppointmentStatus
+    {
+        proposed, pending, booked, arrived, fulfilled, cancelled, noshow
+    }
+
+    public class Appointment : BookerEntity
+    {
+        public int AppointmentId { get; set; }
+        public int SlotId { get; set; }
+        public int PatientId { get; set; }
+        public AppointmentStatus Status { get; set; }
+        public string AppointmentType { get; set; }
+        public string Description { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
+
+
+
+        public Appointment Load(SqlDataReader reader)
+        {
+            AppointmentId = (int)reader["AppointmentId"];
+            SlotId = (int)reader["SlotId"];
+            PatientId = (int)reader["PatientId"];
+
+            var statusStr = reader.GetString(reader.GetOrdinal("status"));
+            Status = Enum.Parse<AppointmentStatus>(statusStr);
+
+            AppointmentType = reader.GetString(reader.GetOrdinal("AppointmentType"));
+            Description = reader.GetString(reader.GetOrdinal("Description"));
+            CreatedDate = (DateTime)reader["CreatedDate"];
+            ModifiedDate = (DateTime)reader["ModifiedDate"];
+
+            return this;
         }
     }
 
@@ -200,6 +260,28 @@ where
                 }
             }
             return r;
+        }
+
+        internal static Appointment BookAppointment(int slotId, int PatientId)
+        {
+            var a = new Appointment();
+            a.SlotId = slotId;
+            a.PatientId = PatientId;
+            a.Status = AppointmentStatus.booked;
+            a.CreatedDate = DateTime.Now;
+            a.ModifiedDate = DateTime.Now;
+
+            var sql = a.GetSqlInsert();
+
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                var command = new SqlCommand(sql, connection);
+                var recordUpdatedCount = command.ExecuteNonQuery();
+                if(recordUpdatedCount > 0)
+                    return a;
+            }
+            return null;
         }
 
         internal static bool BookSlot(int slotId, int patientId, SlotStatus status)
