@@ -22,6 +22,8 @@ namespace BookerDB
 
     public class BookerEntity
     {
+        public string __primaryKey { get; set; }
+
         public virtual string GetTableName()
         {
             return this.GetType().Name; 
@@ -36,6 +38,12 @@ namespace BookerDB
         {
             var cols = this.GetColumns();
             return $"select {string.Join(", ", cols)} from {this.GetTableName()}";
+        }
+
+        public virtual string GetSqlSelectById(int id)
+        {
+            var cols = this.GetColumns().Where(c => !c.StartsWith("__")).ToList();
+            return $"select {string.Join(", ", cols)} from {this.GetTableName()} where {__primaryKey} = {id}";
         }
 
         private static string SqlValue(object value)
@@ -57,9 +65,17 @@ namespace BookerDB
         public virtual string GetSqlInsert()
         {
             var nameValues = DS.Dictionary(this);
+            if(!string.IsNullOrEmpty(__primaryKey))
+                nameValues.Remove(__primaryKey);
+
+            nameValues = nameValues.Where(kv => !kv.Key.StartsWith("__")).ToDictionary(kv => kv.Key, kv => kv.Value);
+
             var columns = string.Join(", ", nameValues.Keys);
             var values = string.Join(", ", nameValues.Values.Select(v => SqlValue(v)));
-            return $"insert into {this.GetTableName()} ({columns}) values ({values})";
+            return $@"
+                insert into {this.GetTableName()} ({columns}) values ({values}); 
+                select SCOPE_IDENTITY();
+            ";
         }
     }
 
@@ -79,7 +95,10 @@ namespace BookerDB
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-
+        public Appointment()
+        {
+            __primaryKey = "AppointmentId";
+        }
 
         public Appointment Load(SqlDataReader reader)
         {
@@ -90,8 +109,14 @@ namespace BookerDB
             var statusStr = reader.GetString(reader.GetOrdinal("status"));
             Status = Enum.Parse<AppointmentStatus>(statusStr);
 
-            AppointmentType = reader.GetString(reader.GetOrdinal("AppointmentType"));
-            Description = reader.GetString(reader.GetOrdinal("Description"));
+            Description = null;
+            if (!reader.IsDBNull(reader.GetOrdinal("Description")))
+                Description = reader.GetString(reader.GetOrdinal("Description"));
+
+            AppointmentType = null;
+            if (!reader.IsDBNull(reader.GetOrdinal("AppointmentType")))
+                AppointmentType = reader.GetString(reader.GetOrdinal("AppointmentType"));
+
             CreatedDate = (DateTime)reader["CreatedDate"];
             ModifiedDate = (DateTime)reader["ModifiedDate"];
 
@@ -262,6 +287,40 @@ where
             return r;
         }
 
+        public static Appointment GetAppointmentById(int appointmentId)
+        {
+            var r = new List<Appointment>();
+            var sql = new Appointment().GetSqlSelectById(appointmentId);
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                var command = new SqlCommand(sql, connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                        r.Add(new Appointment().Load(reader));
+                }
+            }
+            return r[0];
+        }
+
+        public static List<Appointment> GetAppointments()
+        {
+            var r = new List<Appointment>();
+            var sql = new Appointment().GetSqlSelect();
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                var command = new SqlCommand(sql, connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                        r.Add(new Appointment().Load(reader));
+                }
+            }
+            return r;
+        }
+
         internal static Appointment BookAppointment(int slotId, int PatientId)
         {
             var a = new Appointment();
@@ -277,11 +336,9 @@ where
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
-                var recordUpdatedCount = command.ExecuteNonQuery();
-                if(recordUpdatedCount > 0)
-                    return a;
+                a.AppointmentId = Convert.ToInt32(command.ExecuteScalar());
+                return a;
             }
-            return null;
         }
 
         internal static bool BookSlot(int slotId, int patientId, SlotStatus status)
