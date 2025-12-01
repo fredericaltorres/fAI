@@ -155,17 +155,14 @@ where
         {
             var r = new List<FreeSlot>();
             var sql = new FreeSlot(practitionerLastName).GetSqlSelect();
-            string connectionString = GetConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
-                    {
                         r.Add(new FreeSlot(practitionerLastName).Load(reader));
-                    }
                 }
             }
             return r;
@@ -175,17 +172,14 @@ where
         {
             var r = new List<Patient>();
             var sql = new Patient().GetSqlSelect();
-            string connectionString = GetConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
-                    {
                         r.Add(new Patient().Load(reader));
-                    }
                 }
             }
             return r;
@@ -195,20 +189,29 @@ where
         {
             var r = new List<Practitioner>();
             var sql = new Practitioner().GetSqlSelect();
-            string connectionString = GetConnectionString();
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
-                    {
                         r.Add(new Practitioner().Load(reader));
-                    }
                 }
             }
             return r;
+        }
+
+        internal static bool BookSlot(int slotId, int patientId, SlotStatus status)
+        {
+            var sql = $"update slot set Status = '{status}', ModifiedDate = getDate() where slotId={slotId}";
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                var command = new SqlCommand(sql, connection);
+                var recordUpdatedCount = command.ExecuteNonQuery();
+                return recordUpdatedCount > 0;
+            }
         }
 
         private static string GetConnectionString()

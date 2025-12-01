@@ -38,5 +38,13 @@ namespace fAI.WebApi.Controllers
         {
             return BookerDB2.GetFreeSlots(practitionerLastName);
         }
+
+        // curl.exe -X PUT -H "accept: application/json" "https://localhost:7009/BookerDB/BookSlots?slotId=1657&patientId=1&status=busy"
+        // curl.exe -X PUT -H "accept: application/json" "https://localhost:7009/BookerDB/BookSlots?slotId=1657&patientId=1&status=free"
+        [HttpPut("BookSlots")]
+        public bool BookSlot([FromQuery] int slotId, [FromQuery] int patientId, [FromQuery] SlotStatus status = SlotStatus.busy)
+        {
+            return BookerDB2.BookSlot(slotId, patientId, status);
+        }
     }
 }
