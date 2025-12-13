@@ -7,6 +7,17 @@ namespace fAI.WebApi.Controllers
     // https://portal.azure.com/#@fredericaltorreslive.onmicrosoft.com/resource/subscriptions/57646804-986c-47e8-af66-a3abec32e52a/resourceGroups/ftorres/providers/Microsoft.Web/sites/fAIWebApi/configuration
     // KUDU https://faiwebapi.scm.azurewebsites.net/Env.cshtml
     // https://faiwebapi.azurewebsites.net/Embedding
+    // https://faiwebapi2026-ahe0dmhrasdpd5cx.canadacentral-01.azurewebsites.net/Embedding
+    // curl.exe -i -X POST -H "Content-Type: application/json"   -d "sea"  "https://faiwebapi2026-ahe0dmhrasdpd5cx.canadacentral-01.azurewebsites.net/Embedding"
+
+    /*
+        When deploying 
+    1.Environment Variables
+        OPENAI_ORGANIZATION_ID, OPENAI_API_KEY
+    2. CORS settings to allow your front-end to call the API
+        "https://ftorres.azurewebsites.net"
+     
+     */
 
     [ApiController]
     [Route("[controller]")]
