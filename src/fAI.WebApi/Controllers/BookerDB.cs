@@ -213,7 +213,6 @@ where {__primaryKey} = {id}
 	                p.LastName like '%{_practitionerLastName}%'
             ";
         }
-
     }
 
     public class Patient : BookerEntity
@@ -414,7 +413,7 @@ where {__primaryKey} = {id}
 
         private static string GetConnectionString()
         {
-            return "Server=dr-booker.database.windows.net;Database=booker;User Id=fredericaltorres;Password=machi123!;";
+            return "Server=dr-booker-db.database.windows.net;Database=dr-booker-db;User Id=fredericaltorres;Password=machi123!;";
         }
     }
 }
