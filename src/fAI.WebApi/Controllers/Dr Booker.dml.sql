@@ -1,4 +1,4 @@
-use booker
+--use dr-booker-db
 go
 -- =====================================================
 -- Doctor Appointment Scheduling System
@@ -62,15 +62,15 @@ GO
 
 
 
-    PatientId INT IDENTITY(1,1) PRIMARY KEY,
-    FirstName NVARCHAR(100) NOT NULL,
-    LastName NVARCHAR(100) NOT NULL,
-    DateOfBirth DATE NOT NULL,
-    Phone NVARCHAR(20) NULL,
-    Email NVARCHAR(100) NULL,
-    IsActive BIT NOT NULL DEFAULT 1,
-    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
-    ModifiedDate DATETIME2 NOT NULL DEFAULT GETDATE()
+    --PatientId INT IDENTITY(1,1) PRIMARY KEY,
+    --FirstName NVARCHAR(100) NOT NULL,
+    --LastName NVARCHAR(100) NOT NULL,
+    --DateOfBirth DATE NOT NULL,
+    --Phone NVARCHAR(20) NULL,
+    --Email NVARCHAR(100) NULL,
+    --IsActive BIT NOT NULL DEFAULT 1,
+    --CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    --ModifiedDate DATETIME2 NOT NULL DEFAULT GETDATE()
 
 -- select * from Practitioner
 -- select PractitionerId,FirstName,LastName,Specialty,IsActive,CreatedDate,ModifiedDate from Practitioner

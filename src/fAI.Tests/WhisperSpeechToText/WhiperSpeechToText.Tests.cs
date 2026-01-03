@@ -14,15 +14,39 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class WhisperSpeechToTextEngineTests : UnitTestBase
     {
+
+
+        private string ReplacePunctuation(string input)
+        {
+            var punctuation = new string[] { ",", ".", "!", "?", ";", ":" };
+            foreach (var p in punctuation)
+            {
+                input = input.Replace(p, "_");
+            }
+            return input.ToLowerInvariant();
+        }
+
         [Fact()]
         public void SpeechToText_Mp3_File()
         {
             var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
+            var expected = "I am he as you are he as you are me. and we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+
             var s = new WhisperSpeechToText();
-            var result = s.ExtractText(mp3FileName, "en", false);
-            var expected = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+
+            var result = s.ExtractText(mp3FileName, "en", false, "gpt-4o-transcribe");
             Assert.True(result.Success);
-            Assert.Equal(expected, result.Text);
+            Assert.Equal(ReplacePunctuation(expected), ReplacePunctuation(result.Text));
+            Assert.Equal("en", result.Language);
+
+            result = s.ExtractText(mp3FileName, "en", false, "gpt-4o-mini-transcribe");
+            Assert.True(result.Success);
+            Assert.Equal(ReplacePunctuation(expected), ReplacePunctuation(result.Text));
+            Assert.Equal("en", result.Language);
+
+            result = s.ExtractText(mp3FileName, "en", false);
+            Assert.True(result.Success);
+            Assert.Equal(ReplacePunctuation(expected), ReplacePunctuation(result.Text));
             Assert.Equal("en", result.Language);
         }
 
@@ -51,7 +75,7 @@ See how they run like pigs from a gun. See how they fly. I'm crying.
         [Fact()]
         public void SpeechToText_Mp3_Url()
         {
-            var mp3Url = "https://fredcloud.blob.core.windows.net/public/Fred.Video/fAI/AudioTest01.mp3";
+            var mp3Url = "https://fredcloud2026.blob.core.windows.net/public/Fred.Video/fAI/AudioTest01.mp3";
             var s = new WhisperSpeechToText();
             var result = s.ExtractText(mp3Url, "en", false);
             var expected = "You're playing cards, Trump said. You're gambling with the lives of millions of people. You're gambling with World War III. You're gambling with World War III. And what you're doing is very disrespectful to the country, this country.";

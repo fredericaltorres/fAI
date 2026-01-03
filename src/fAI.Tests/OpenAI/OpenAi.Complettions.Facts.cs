@@ -104,6 +104,7 @@ namespace fAI.Tests
             var questions = client.CompletionsEx.GenerateMultiChoiceQuestionAboutText(questionCount, dbFact.GetText());
             Assert.Equal(questionCount, questions.Count);
 
+
             var question = questions[0];
             Assert.True(question.Text.Length > 0);
             Assert.True(question.Answers.Count > 0);

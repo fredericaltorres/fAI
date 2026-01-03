@@ -24,15 +24,19 @@ namespace fAI
         {
             _timeOut = timeOut;
             _key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            if (key != null)
+                _key = key;
         }
 
-        const string SpeechToTextServiceUrl = " https://api.openai.com/v1/audio/transcriptions";
+        const string SpeechToTextServiceUrl = "https://api.openai.com/v1/audio/transcriptions";
 
         // Special Whisper feature
         public bool WordTimestampGranularities { get; set;} = false;
 
-        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions)
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = null)
         {
+            model = model == null ? "whisper-1" : model;
+
             using (var tfh = new TestFileHelper())
             {
                 if (SpeechToTextEngine.IsUrl(fileNameOrUrl))
@@ -45,9 +49,9 @@ namespace fAI
                 if (!File.Exists(fileNameOrUrl))
                     throw new ArgumentException($"File name {fileNameOrUrl} not found");
 
-                var options = new Dictionary<string, string> { ["model"] = "whisper-1" };
+                var options = new Dictionary<string, string> { ["model"] = model };
 
-                // With Whisper, you get or the text or the VTT butnot both
+                // With Whisper, you get or the text or the VTT but not both
                 if (extractCaptions)
                     options["response_format"] = "vtt";
 

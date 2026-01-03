@@ -91,6 +91,7 @@
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
     <Compile Include="HumeAI\HumeAI.Audio.Speech.Tests.cs" />
+    <Compile Include="OpenAI\OpenAiCompletionsTextImprovement.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
     <Compile Include="WhisperSpeechToText\WhiperSpeechToText.Tests.cs" />
     <Compile Include="SpeechToText\SpeechToText.Tests.cs" />

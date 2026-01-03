@@ -467,14 +467,14 @@ We can't hear anything at all";
             Assert.Equal("Henry I", answer);
         }
 
-        [Fact(Skip = "Do not pass with gpt 3.5")]
+        [Fact]
         [TestBeforeAfter]
-        public void AnswerQuestionBasedOnText_Answered_GPT35()
+        public void AnswerQuestionBasedOnText_Answered_GPT5()
         {
             var client = new OpenAI();
             var question = "Who was king of france in 1032?";
-            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question, gpt35: true);
-            // Assert.Equal("Henry I", answer);
+            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question, model: "gpt-5");
+            Assert.Equal("Henry I", answer);
         }
 
         [Fact()]
@@ -484,6 +484,9 @@ We can't hear anything at all";
             var client = new OpenAI();
             var question = "Who was king of france in 2016?";
             var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
+            Assert.Equal(client.CompletionsEx.AnswerNotFoundDefault, answer);
+
+            answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question, model: "gpt-5");
             Assert.Equal(client.CompletionsEx.AnswerNotFoundDefault, answer);
         }
 

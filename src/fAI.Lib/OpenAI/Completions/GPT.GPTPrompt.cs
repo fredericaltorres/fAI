@@ -44,7 +44,7 @@ namespace fAI
         public string PrePrompt { get; set; }
         public string PostPrompt { get; set; }
         public string Model { get; set; }
-        public int MaxTokens { get; set; } = 4000;
+        //public int MaxTokens { get; set; } = 4000;
         //public int NewTokens { get; set; } = 500;
 
         const double DEFAULT_TEMPERATURE = 0.1;
@@ -57,7 +57,8 @@ namespace fAI
             Balance: Finding the right temperature often involves balancing between creativity and coherence. A moderate temperature value (like 0.7) is a common choice for a mix of reliability and inventiveness in responses.
             Lower values for temperature result in more consistent outputs  https://platform.openai.com/docs/guides/text-generation/how-should-i-set-the-temperature-parameter
         */
-        public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
+        //public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
+
         public CompletionResponse Response { get; set; }
         public GPTPrompt UnprocessPrompt { get; set; } // allow to back up the current prompt before being processed.
 
@@ -131,8 +132,8 @@ namespace fAI
                 {
                     model = Model,
                     messages = Messages,
-                    max_tokens = MaxTokens,
-                    temperature = Temperature,
+                    //max_tokens = MaxTokens,
+                    //temperature = Temperature,
                     response_format = response_format,
                 });
             }
@@ -142,8 +143,8 @@ namespace fAI
                 {
                     model = Model,
                     prompt = FullPrompt,
-                    max_tokens = MaxTokens,
-                    temperature = Temperature
+                    //max_tokens = MaxTokens,
+                    //temperature = Temperature
                 });
             }
         }

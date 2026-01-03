@@ -78,7 +78,8 @@ namespace fAI
             public string Url { get; set; }
         }
 
-        private SpeechToTextResult ExtractText(Uri uri, string languageIsoCode, bool extractCaptions)
+
+        public SpeechToTextResult ExtractText(Uri uri, string languageIsoCode, bool extractCaptions, string model = null/*not used*/)
         {
             var jsonPayload = new SpeechToTextTranscriptionOptions(languageIsoCode: languageIsoCode, url: uri.ToString()).ToJson();
             var response = WebClient().POST(SpeechToTextServiceUrl, jsonPayload);
@@ -104,10 +105,10 @@ namespace fAI
             }
         }
 
-        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions)
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = null)
         {
             if (IsUrl(fileNameOrUrl))
-                return ExtractText(new Uri(fileNameOrUrl), languageIsoCode, extractCaptions);
+                return ExtractText(new Uri(fileNameOrUrl), languageIsoCode, extractCaptions, "");
 
             if (!File.Exists(fileNameOrUrl))
                 throw new ArgumentException($"File name {fileNameOrUrl} not found");
@@ -149,5 +150,7 @@ namespace fAI
                   .AddHeader("Accept", "application/json");
             return mc;
         }
+
+       
     }
 }

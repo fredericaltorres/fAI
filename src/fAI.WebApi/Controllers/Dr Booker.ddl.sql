@@ -1,4 +1,4 @@
-use booker
+--use dr-booker-db
 go
 -- =====================================================
 -- Doctor Appointment Scheduling System

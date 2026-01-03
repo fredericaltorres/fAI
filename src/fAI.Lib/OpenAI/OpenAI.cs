@@ -30,6 +30,7 @@ namespace fAI
         public OpenAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
             HttpBase._openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
             HttpBase._timeout = 60 * 4;
 

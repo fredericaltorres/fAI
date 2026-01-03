@@ -20,7 +20,7 @@ namespace fAI
         }
 
         public string GenerateMultiChoiceQuestionAbout(string text,
-            string promptCommand = "Generate a multi choice questions about the text below,  mark with a * the right answer:")
+            string promptCommand = "Generate a multi choice questions about the userPrompt below,  mark with a * the right answer:")
         {
             var prompt = new Prompt_GPT_35_TurboInstruct
             {
@@ -45,7 +45,7 @@ namespace fAI
         //    });
         //}
 
-        public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following text:") 
+        public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following userPrompt:") 
         {
             var prompt = new Prompt_GPT_4_Turbo_128k //Prompt_GPT_35_TurboInstruct
             {
@@ -75,7 +75,7 @@ namespace fAI
                     - If the answer cannot be found in the article, write ""[not_found]""
             ",
             string answerNotFound = _answerNotFoundDefault,
-            bool gpt35 = false)
+            string model = "gpt-4")
         {
 
             context = context.Template(new { question, not_found = answerNotFound }, "[", "]");
@@ -95,18 +95,9 @@ namespace fAI
                 }
             };
 
-            if (gpt35)
+            if (model != "gpt-4")
             {
-                p = new Prompt_GPT_35_Turbo// Prompt_GPT_35_Turbo
-                {
-                    //PrePrompt = context,
-                    //Text = dataAndQuestion,
-                    Messages = new List<GPTMessage>()
-                    {
-                        new GPTMessage{ Role =  MessageRole.system, Content = context },
-                        new GPTMessage{ Role =  MessageRole.user, Content = dataAndQuestion }
-                    }
-                };
+               p.Model = model;
             }
 
             var response = client.Completions.Create(p);
@@ -260,6 +251,56 @@ namespace fAI
             }
             else 
                 return null;
+        }
+
+        // "gpt-5.2", gpt-5-mini, gpt-5-nano
+        public Prompt_GPT_4 GetPromptForTextImprovement(string userPrompt, string systemPrompt, string model = "gpt-5-mini")
+        {
+            var data = $@"
+""""""
+{userPrompt} 
+""""""
+";
+            var client = new OpenAI();
+            var p = new Prompt_GPT_4
+            {
+                Messages = new List<GPTMessage>()
+                {
+                    new GPTMessage{ Role =  MessageRole.system, Content = systemPrompt },
+                    new GPTMessage{ Role =  MessageRole.user, Content = data },
+                }
+                , Model = model
+            };
+
+
+            return p;
+        }
+
+        public string TextImprovement(
+           string text,
+           string language,
+           string systemPrompt = @"
+Improve the [language] for the following phrases, in more polished and business-friendly way:
+===================================
+            ",
+            string model = "gpt-5-mini"
+           )
+        {
+            var contextPreProcessed = systemPrompt.Template(new
+            {
+                language,
+            }, "[", "]");
+
+            
+            var client = new OpenAI();
+            var p = GetPromptForTextImprovement(text, contextPreProcessed, model);
+            var response = client.Completions.Create(p);
+            if (response.Success)
+            {
+                var responseText = response.Text;
+                return responseText;
+            }
+            else return null;
         }
     }
 }
