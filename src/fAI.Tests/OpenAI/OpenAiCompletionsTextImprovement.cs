@@ -49,7 +49,7 @@ namespace fAI.Tests
             var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
-            var expectedWords = DS.List("alice","email","car");
+            var expectedWords = DS.List("alice", "insurance", "car");
             var client = new GenericAI();
 
             foreach (var model in GenericAI.GetModels())

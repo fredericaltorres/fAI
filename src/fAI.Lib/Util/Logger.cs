@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace fAI
 {
@@ -13,15 +14,28 @@ namespace fAI
         public static string DefaultLogFileName = @"c:\temp\fAI.log";
         public static string LogFileName = null;
 
-        private static void TraceToFile(string message)
+        private static void TraceToFile(string message, int recursiveIndex = 0)
         {
             if (LogFileName == null)
                 LogFileName = Environment.GetEnvironmentVariable("OPENAI_LOG_FILE");
             if (LogFileName == null)
                 LogFileName = DefaultLogFileName;
 
-            File.AppendAllText(LogFileName, message + Environment.NewLine);
+            try
+            {
+                File.AppendAllText(LogFileName, message + Environment.NewLine);
+            }
+            catch (Exception)
+            {
+                if (recursiveIndex == 0)
+                {
+                    Thread.Sleep(256);
+                    TraceToFile(message, recursiveIndex + 1);
+                }
+                else throw;
+            }
         }
+
 
         public static string TraceError(string message, object This, [CallerMemberName] string methodName = "")
         {

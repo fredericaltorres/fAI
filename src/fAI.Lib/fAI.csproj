@@ -9,9 +9,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>Creation</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <AssemblyVersion>1.0.40.0</AssemblyVersion>
-    <FileVersion>1.0.40.0</FileVersion>
-    <VersionPrefix>1.0.40.0</VersionPrefix>
+    <AssemblyVersion>1.0.41.0</AssemblyVersion>
+    <FileVersion>1.0.41.0</FileVersion>
+    <VersionPrefix>1.0.41.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
