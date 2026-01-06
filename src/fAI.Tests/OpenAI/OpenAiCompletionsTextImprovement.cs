@@ -61,7 +61,7 @@ Use the following rules to guide your improvements:
 ";
 
             var client = new GoogleAI();
-            var result = client.Completions.TextImprovement(text: text, language: "English", systemPrompt: systemPrompt, model: "gemini-3-pro-preview");
+            var result = client.Completions.TextImprovement(text: text, language: "English", systemPrompt: systemPrompt, model: "gemini-3-flash-preview");
         }
     }
 }
