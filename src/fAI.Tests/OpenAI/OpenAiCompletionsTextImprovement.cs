@@ -26,7 +26,7 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void EnglishTextImprove()
+        public void EnglishTextImprove_OpenAI()
         {
             var text = @"
 - Create a dentist booking demo 
@@ -40,5 +40,28 @@ namespace fAI.Tests
             result = client.CompletionsEx.TextImprovement(text: text, language: "English", model: "gpt-5-nano");
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void EnglishTextImprove_GoogleGeminiAI()
+        {
+            var text = @"
+hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
+";
+
+            var systemPrompt = @"
+Improve the English in more polished and business-friendly way, for the following phrases.
+Use the following rules to guide your improvements:
+<rules>
+- Do NOT use MARKDOWN formatting.
+- Insert a new line between paragraphs.
+- Do not add new section like 'Subject'.
+ - If the following text is part of an email content, add at the end 'Thanks, sincerely Frederic Torres'.
+ </rules>
+ ===================================
+";
+
+            var client = new GoogleAI();
+            var result = client.Completions.TextImprovement(text: text, language: "English", systemPrompt: systemPrompt, model: "gemini-3-pro-preview");
+        }
     }
 }
