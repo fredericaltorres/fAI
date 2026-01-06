@@ -171,7 +171,7 @@
             this.createGifAnimationToolStripMenuItem2.Name = "createGifAnimationToolStripMenuItem2";
             this.createGifAnimationToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
             this.createGifAnimationToolStripMenuItem2.Size = new System.Drawing.Size(269, 24);
-            this.createGifAnimationToolStripMenuItem2.Text = "Create Gif Animation";
+            this.createGifAnimationToolStripMenuItem2.Text = "OpenAICreate Gif Animation";
             this.createGifAnimationToolStripMenuItem2.Click += new System.EventHandler(this.createGifAnimationToolStripMenuItem2_Click);
             // 
             // mP4ToolStripMenuItem
@@ -210,7 +210,7 @@
             // 
             this.createGifAnimationZoomToolStripMenuItem.Name = "createGifAnimationZoomToolStripMenuItem";
             this.createGifAnimationZoomToolStripMenuItem.Size = new System.Drawing.Size(271, 24);
-            this.createGifAnimationZoomToolStripMenuItem.Text = "Create Gif Animation - Zoom";
+            this.createGifAnimationZoomToolStripMenuItem.Text = "OpenAICreate Gif Animation - Zoom";
             this.createGifAnimationZoomToolStripMenuItem.Click += new System.EventHandler(this.createGifAnimationZoomToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
@@ -261,7 +261,7 @@
             // 
             this.createImageToolStripMenuItem.Name = "createImageToolStripMenuItem";
             this.createImageToolStripMenuItem.Size = new System.Drawing.Size(167, 24);
-            this.createImageToolStripMenuItem.Text = "Create Image";
+            this.createImageToolStripMenuItem.Text = "OpenAICreate Image";
             this.createImageToolStripMenuItem.Click += new System.EventHandler(this.createImageToolStripMenuItem_Click);
             // 
             // buildVideoToolStripMenuItem
@@ -284,7 +284,7 @@
             // 
             this.createImageToolStripMenuItem1.Name = "createImageToolStripMenuItem1";
             this.createImageToolStripMenuItem1.Size = new System.Drawing.Size(167, 24);
-            this.createImageToolStripMenuItem1.Text = "Create image";
+            this.createImageToolStripMenuItem1.Text = "OpenAICreate image";
             this.createImageToolStripMenuItem1.Click += new System.EventHandler(this.createImageToolStripMenuItem1_Click);
             // 
             // buildVideoToolStripMenuItem1
@@ -307,7 +307,7 @@
             // 
             this.createImageToolStripMenuItem2.Name = "createImageToolStripMenuItem2";
             this.createImageToolStripMenuItem2.Size = new System.Drawing.Size(167, 24);
-            this.createImageToolStripMenuItem2.Text = "Create Image";
+            this.createImageToolStripMenuItem2.Text = "OpenAICreate Image";
             this.createImageToolStripMenuItem2.Click += new System.EventHandler(this.createImageToolStripMenuItem2_Click);
             // 
             // buildVideoBossRoom
@@ -330,7 +330,7 @@
             // 
             this.createImageToolStripMenuItem3.Name = "createImageToolStripMenuItem3";
             this.createImageToolStripMenuItem3.Size = new System.Drawing.Size(180, 24);
-            this.createImageToolStripMenuItem3.Text = "Create Image";
+            this.createImageToolStripMenuItem3.Text = "OpenAICreate Image";
             this.createImageToolStripMenuItem3.Click += new System.EventHandler(this.createImageToolStripMenuItem3_Click);
             // 
             // buildVideoToolStripMenuItem2
@@ -353,7 +353,7 @@
             // 
             this.celestialShimmeringCreateImage.Name = "celestialShimmeringCreateImage";
             this.celestialShimmeringCreateImage.Size = new System.Drawing.Size(180, 24);
-            this.celestialShimmeringCreateImage.Text = "Create Image";
+            this.celestialShimmeringCreateImage.Text = "OpenAICreate Image";
             this.celestialShimmeringCreateImage.Click += new System.EventHandler(this.celestialShimmeringCreateImage_Click);
             // 
             // buildVideoCS

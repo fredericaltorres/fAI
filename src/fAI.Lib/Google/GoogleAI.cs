@@ -11,6 +11,19 @@ namespace fAI
 {
     public class GoogleAI : Logger
     {
+
+        public static List<string> GetModels()
+        {
+            return DS.List(
+"gemini-3-pro-preview",
+"gemini-3-flash-preview",
+"gemini-2.5-pro",
+"gemini-2.5-flash",
+"gemini-2.0-flash"
+            );
+        }
+
+
         public GoogleAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
         {
             HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
@@ -102,12 +115,10 @@ namespace fAI
                 public List<PromptTokensDetail> promptTokensDetails { get; set; }
                 public int thoughtsTokenCount { get; set; }
             }
-
-
         }
+
         public class GoogleAICompletionsBody
         {
-
             // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
             public class Content
             {
@@ -147,17 +158,7 @@ namespace fAI
 
         const string DEFAULT_MODEL = "gemini-3-flash-preview";
 
-        public List<string> GetModels()
-        {
-            return DS.List(
-            "gemini-2.0-flash-lite",
-            "gemini-3-flash-preview",
-            "gemini-3-pro-preview"
-            );
-        }
-
-        public GoogleAICompletionsBody.GeminiPrompt GetPromptForTextImprovement(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, 
-
+        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, 
             float temperature = 0.7f, int maxOutputTokens = 1024 * 64)
         {
             return new GoogleAICompletionsBody.GeminiPrompt
@@ -177,8 +178,8 @@ namespace fAI
             };
         }
 
-        // curl.exe "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=AIzaSyCX2Ss-89sKoE8kFSzrsxMyNFUbMQstU8I" -H "Content-Type: application/json" -d "{\"system_instruction\": {\"parts\": [{\"text\": \"You are a helpful assistant that speaks like a pirate.\"}]}, \"contents\": [{\"role\": \"user\", \"parts\": [{\"text\": \"Explain the concept of gravity.\"}]}]}"
-        // curl.exe -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=AIzaSyCX2Ss-89sKoE8kFSzrsxMyNFUbMQstU8I" -H "Content-Type: application/json" -d "{\"system_instruction\": {\"parts\": [{\"text\": \"You are a helpful assistant\"}]}, \"contents\": [{\"role\": \"user\", \"parts\": [{\"text\": \"Explain the concept of gravity.\"}]}]}"
+        // curl.exe "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" -H "Content-Type: application/json" -d "{\"system_instruction\": {\"parts\": [{\"text\": \"You are a helpful assistant that speaks like a pirate.\"}]}, \"contents\": [{\"role\": \"user\", \"parts\": [{\"text\": \"Explain the concept of gravity.\"}]}]}"
+        // curl.exe -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=" -H "Content-Type: application/json" -d "{\"system_instruction\": {\"parts\": [{\"text\": \"You are a helpful assistant\"}]}, \"contents\": [{\"role\": \"user\", \"parts\": [{\"text\": \"Explain the concept of gravity.\"}]}]}"
 
         public string TextImprovement(
            string text,
@@ -190,21 +191,23 @@ Improve the [language] for the following phrases, in more polished and business-
             string model = DEFAULT_MODEL
            )
         {
-            var contextPreProcessed = systemPrompt.Template(new
-            {
-                language,
-            }, "[", "]");
+            var contextPreProcessed = systemPrompt.Template(new { language }, "[", "]");
 
-
-            var p = GetPromptForTextImprovement(text, contextPreProcessed, model);
+            var p = GetPrompt(text, contextPreProcessed, model);
             var url = GetUrl(model, _key);
+            var r = Create(p, url);
+            return r.GetText();
+        }
+
+        public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url)
+        {
+            var sw = Stopwatch.StartNew();
+            var body = JsonConvert.SerializeObject(p);
 
             OpenAI.Trace(new { Url = url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
-            var body = JsonConvert.SerializeObject(p);
             OpenAI.Trace(new { Body = body }, this);
 
-            var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(url, body);
             sw.Stop();
             if (response.Success)
@@ -212,8 +215,8 @@ Improve the [language] for the following phrases, in more polished and business-
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
                 var geminiResponse = GeminiResponse.FromJson(response.Text);
-                var r = geminiResponse.GetText();
-                return r;
+                return geminiResponse;
+
             }
             else
             {

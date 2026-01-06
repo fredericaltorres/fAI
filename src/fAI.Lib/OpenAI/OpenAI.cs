@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicSugar;
+using System;
 using System.Collections.Generic;
 
 namespace fAI
@@ -25,6 +26,13 @@ namespace fAI
             var client = new OpenAI();
             var r = client.Embeddings.Create(text);
             return r.Data[0].Embedding;
+        }
+
+        public static List<string> GetModels()
+        {
+            return DS.List(
+                "gpt-5", "gpt-5.1", "gpt-5.2", "gpt-5-mini", "gpt-5-nano"
+            );
         }
 
         public OpenAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
