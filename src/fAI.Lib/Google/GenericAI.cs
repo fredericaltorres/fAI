@@ -12,6 +12,14 @@ namespace fAI
 {
     public class GenericAI : Logger
     {
+        public static List<string> GetModels()
+        {
+            var models = new List<string>();
+            models.AddRange(GoogleAI.GetModels());
+            models.AddRange(OpenAI.GetModels());
+            return models;
+        }
+
         public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
         {
             HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
@@ -31,6 +39,7 @@ namespace fAI
         public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: HttpBase._key));
     }
 
+
     public partial class GenericAICompletions : HttpBase 
     {
         public GenericAICompletions(int timeOut = -1, string ApiKey = null, string openAiOrg = null) : base(timeOut, ApiKey, openAiOrg)
@@ -46,7 +55,7 @@ namespace fAI
                 var googleAIClient = new GoogleAI();
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
                 var url = googleAIClient.Completions.GetUrl(model, _key);
-                var r = googleAIClient.Completions.Create(p, url);
+                var r = googleAIClient.Completions.Create(p, url, model);
                 return r.GetText();
             }
             else if (OpenAI.GetModels().Contains(model))

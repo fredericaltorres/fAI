@@ -1,17 +1,19 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System;
+﻿using DynamicSugar;
 using fAI;
-using Xunit;
-using static fAI.OpenAICompletions;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using Newtonsoft.Json;
-using DynamicSugar;
-using static System.Net.Mime.MediaTypeNames;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using Xunit;
+using static fAI.HumeAISpeech;
+using static fAI.OpenAICompletions;
 using static fAI.OpenAICompletionsEx;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI.Tests
 {
@@ -47,11 +49,14 @@ namespace fAI.Tests
             var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
-
+            var expectedWords = DS.List("alice","email","car");
             var client = new GenericAI();
-            var result = client.Completions.TextImprovement(text: text, language: "English",  model: "gemini-2.5-flash");
-            result = client.Completions.TextImprovement(text: text, language: "English", model: "gemini-3-flash-preview");
-            result = client.Completions.TextImprovement(text: text, language: "English", model: "gpt-5.2");
+
+            foreach (var model in GenericAI.GetModels())
+            {
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+                Assert.True(expectedWords.All(w => result.ToLower().Contains(w)));
+            }
         }
     }
 }

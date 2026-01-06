@@ -58,6 +58,7 @@ namespace fAI
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(p.Url, p.GetPostBody());
             sw.Stop();
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0 }, this);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);

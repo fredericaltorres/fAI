@@ -195,11 +195,11 @@ Improve the [language] for the following phrases, in more polished and business-
 
             var p = GetPrompt(text, contextPreProcessed, model);
             var url = GetUrl(model, _key);
-            var r = Create(p, url);
+            var r = Create(p, url, model);
             return r.GetText();
         }
 
-        public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url)
+        public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url, string model)
         {
             var sw = Stopwatch.StartNew();
             var body = JsonConvert.SerializeObject(p);
@@ -210,6 +210,8 @@ Improve the [language] for the following phrases, in more polished and business-
 
             var response = InitWebClient().POST(url, body);
             sw.Stop();
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, model}, this);
+
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
