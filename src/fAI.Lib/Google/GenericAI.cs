@@ -51,8 +51,10 @@ namespace fAI
         {
             if (GoogleAI.GetModels().Contains(model))
             {
-                HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
-                var googleAIClient = new GoogleAI();
+                if(string.IsNullOrEmpty(HttpBase._key))
+                    HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
+
+                var googleAIClient = new GoogleAI(ApiKey: HttpBase._key);
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
                 var url = googleAIClient.Completions.GetUrl(model, _key);
                 var r = googleAIClient.Completions.Create(p, url, model);
@@ -60,8 +62,10 @@ namespace fAI
             }
             else if (OpenAI.GetModels().Contains(model))
             {
-                HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-                var openAIClient = new OpenAI();
+                if (string.IsNullOrEmpty(HttpBase._key))
+                    HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+                var openAIClient = new OpenAI(openAiKey: HttpBase._key);
                 var p = new Prompt_GPT_4
                 {
                     Messages = new List<GPTMessage>()
@@ -99,6 +103,7 @@ Use the following rules to guide your improvements:
             "
            )
         {
+            systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             return Create(text, systemPrompt, model);
         }
 
@@ -110,7 +115,6 @@ Use the following rules to guide your improvements:
             public int SummaryWordCount => CountWords(Summary);
             public double Duration { get; set; }
             public double PercentageSummzarized => TextWordCount == 0 ? 0 : (1.0 - ((double)SummaryWordCount / (double)TextWordCount)) * 100.0;
-
 
             public static int CountWords(string text)
             {
@@ -135,14 +139,15 @@ Use the following rules to guide your summarization:
 - Do NOT use MARKDOWN formatting.
 - Insert a new line between paragraphs.
 - Maintain the context of the text without altering its meaning.
-- Keep the summary concise and to the point.
+- Keep the bulletPointsText concise and to the point.
 - Use formal language suitable for business communication.
-- Ensure that all key information is included in the summary.
+- Ensure that all key information is included in the bulletPointsText.
  </rules>
  ===================================
             "
            )
         {
+            systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             var sw  = Stopwatch.StartNew();
             var summary = Create(text, systemPrompt, model);
             sw.Stop();
@@ -153,5 +158,75 @@ Use the following rules to guide your summarization:
                 Duration = sw.ElapsedMilliseconds/1000.0
             };
         }
+
+        public class GenerateTitleResult
+        {
+            public string Title { get; set; }
+            public double Duration { get; set; }
+        }
+
+
+        public GenerateTitleResult GenerateTitle(
+           string text,
+           string language,
+           string model,
+           string systemPrompt = @"
+Create a ""Title"" for the following [language] paragraph.
+Use the following rules to guide your summarization:
+<rules>
+- Do NOT use MARKDOWN formatting.
+- Use formal language suitable for business communication.
+ </rules>
+ ===================================
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { language }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var title = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new GenerateTitleResult
+            {
+                Title = title,
+                Duration = sw.ElapsedMilliseconds / 1000.0
+            };
+        }
+
+        public class GenerateBulletPointResult
+        {
+            public string Text { get; set; }
+            public double Duration { get; set; }
+        }
+
+        public GenerateBulletPointResult GenerateBulletPoints(
+           int bulletPointCount,
+           string text,
+           string language,
+           string model,
+           string systemPrompt = @"
+Create [bulletPointCount] bullet points for the following [language] paragraph.
+Use the following rules to guide your summarization:
+<rules>
+- Each bullet point should be concise and to the point.
+- Each bullet point should be about 10 words long.
+- Use the character '*' at the beginning of each bullet point.
+- Do NOT use MARKDOWN formatting.
+- Use formal language suitable for business communication.
+ </rules>
+ ===================================
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { bulletPointCount, language }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var bulletPointsText = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new GenerateBulletPointResult
+            {
+                Text = bulletPointsText,
+                Duration = sw.ElapsedMilliseconds / 1000.0
+            };
+        }
+
     }
 }

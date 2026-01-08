@@ -44,16 +44,15 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void EnglishTextImprove_GenericAI_InterfaceForOpenAIAndGoogle()
+        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle()
         {
             var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var client = new GenericAI();
-
             foreach (var model in GenericAI.GetModels())
             {
+                var client = new GenericAI();
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
                 Assert.True(expectedWords.All(w => result.ToLower().Contains(w)));
             }
@@ -70,11 +69,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                                                                                   a test."));
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void EnglishTextSummarize_GenericAI_InterfaceForOpenAIAndGoogle()
-        {
-            var text = @"
+        const string GlycemicReseachText = @"
 A groundbreaking study published in Cell approximately seven years ago by researchers in Israel, 
 titled 'Personalized Nutrition by Prediction of Glycemic Responses', 
 generated considerable interest. 
@@ -92,17 +87,53 @@ adopting lifestyle strategies such as improving sleep quality, engaging in post-
 incorporating resistance training, and utilizing cold exposure techniques can also contribute to better 
 glycemic control and overall well-being.
 ";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Summarize_GenericAI_InterfaceForOpenAIAndGoogle()
+        {
             var expectedWords = DS.List("alice", "insurance", "car");
             var client = new GenericAI();
 
             foreach (var model in GenericAI.GetModels())
             {
-                var result = client.Completions.Summarize(text: text, language: "English", model: model);
-                //Assert.True(expectedWords.All(w => result.Summary.ToLower().Contains(w))); // Uncommenting ASSERT statement
+                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model);
                 HttpBase.Trace($"[SUMMARIZATION] model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, Duration: {result.Duration:0.0}", this);
-                //Assert.Equal(100, result.TextWordCount);
-                //Assert.Equal(100, result.SummaryWordCount);
             }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateTitle_GenericAI_InterfaceForOpenAIAndGoogle()
+        {
+            var client = new GenericAI();
+            foreach (var model in GenericAI.GetModels())
+            {
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
+                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Title: {result.Title}, Duration: {result.Duration:0.0}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateBulletPoints_GenericAI_InterfaceForOpenAIAndGoogle()
+        {
+            foreach (var model in GenericAI.GetModels())
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
+                HttpBase.Trace($"[GENERATE-BULLETPOINT] model: {model}, Text: {result.Text}, Duration: {result.Duration:0.0}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateBulletPoints_GenericAI_IsPassedTheWrongApiKey()
+        {
+            var model = "gpt-5-nano";
+            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+            var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
+            Assert.Null(result.Text);
         }
     }
 }
