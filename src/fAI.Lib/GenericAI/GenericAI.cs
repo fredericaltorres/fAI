@@ -33,7 +33,6 @@ namespace fAI
         public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: base._key));
     }
 
-
     public partial class GenericAICompletions : HttpBase 
     {
         public GenericAICompletions(int timeOut = -1, string ApiKey = null) : base(timeOut, ApiKey)
@@ -159,7 +158,6 @@ Use the following rules to guide your summarization:
             public double Duration { get; set; }
         }
 
-
         public GenerateTitleResult GenerateTitle(
            string text,
            string language,
@@ -244,13 +242,14 @@ Use the following rules to guide answer the question below.
 - In the answer, do not reference the article or say 'According to the article' or 'Based on the question provided'.
 - Return the answer in the simplest possible terms.
 - Return the answer in the following JSON format: { ""answer"": ""[answer here]"" }
+- Do not return any MARKDOWN formatting.
 - If the answer cannot be found in the article, write """"[not_found]""""
  </rules>
             ",
 
            string questionPrompt = @"
-Use ONLY the provided article delimited by triple quotes to answer the question: [question]",
-           string not_found = "I could not find an answer"
+Use ONLY the provided article delimited by triple quotes to answer the question: [question].",
+           string not_found = "Answer not found."
            )
         {
             systemPrompt = systemPrompt.Template(new { not_found, facts }, "[", "]");

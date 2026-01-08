@@ -80,7 +80,12 @@ namespace fAI
         {
             if (string.IsNullOrEmpty(json))
                 return null;
-            if (json.StartsWith("{"))
+
+            if(json.Contains("```json"))
+            {
+                json = json.Replace("```json", "").Replace("```", "").Trim();
+            }
+            if (json.Trim().StartsWith("{"))
             {
                 OpenAI.Trace(json, this);
                 return JObject.Parse(json);

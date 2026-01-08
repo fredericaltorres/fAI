@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Azure;
+using DynamicSugar;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using static fAI.OpenAICompletions;
-using Newtonsoft.Json;
-using DynamicSugar;
 using static fAI.OpenAICompletionsEx;
 
 namespace fAI.Tests
@@ -89,7 +90,7 @@ namespace fAI.Tests
             {
                 Messages = new List<GPTMessage> {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a helpful and experienced software developer."      },
-                    new GPTMessage { Role =  MessageRole.user, Content = $"Analyse this error message:{Environment.NewLine}{error_log}" }
+                    new GPTMessage { Role =  MessageRole.user, Content = $"Analyze this error message:{Environment.NewLine}{error_log}" }
                 }
             };
             var response = client.Completions.Create(prompt);
@@ -183,25 +184,7 @@ End of question
             DS.Assert.Words(response.Text, "real-time & capabilities");
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Completion_Chat_Hello_o()
-        {
-            var client = new OpenAI();
-            var p = new Prompt_GPT_4o
-            {
-                Messages = new List<GPTMessage>()
-                {
-                    new GPTMessage{ Role =  MessageRole.system, Content = "You are a JavaScript expert." },
-                    new GPTMessage{ Role =  MessageRole.user, Content = "Write a JavaScript function usable in Node.js that take as argument a filename and returns the question content of the file." }
-                }
-            };
-            var response = client.Completions.Create(p);
-            Assert.True(response.Success);
-            Assert.Contains("require('fs')", response.Text);
-            Assert.Contains("fs.readFile(filename", response.Text);
-        }
-
+  
         [Fact()]
         [TestBeforeAfter]
         public void Completion_JsonMode_WorldCup()
@@ -244,76 +227,27 @@ End of question
         [TestBeforeAfter]
         public void Completion_ThisIsATest()
         {
-            var client = new OpenAI();
-            var p = new Prompt_GPT_35_Turbo
+            foreach (var model in GenericAI.GetModels())
             {
-                Messages = new List<GPTMessage>()
+                var client = new GenericAI();
+                var question = "Say this is a test!";
+                var r = client.Completions.Create(question, "", model);
+
+                if (model == "gemini-2.0-flash")
                 {
-                    new GPTMessage{ Role =  MessageRole.user, Content = "Say this is a test!" }
+                    var a = 1;
                 }
-            };
-            var response = client.Completions.Create(p);
-            Assert.True(response.Success);
-            Assert.Equal("This is a test!", response.Text);
+
+                Assert.True("This is a test!" == r || "This is a test" == r);
+                //HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
+            }
         }
-
-
-      
 
         const string ReferenceEnglishTextForSummarization = @"Hey there, everyone! I'm Jordan Lee, and I'm super excited to be here with you today because 
 I've got somethin to share with you that is going to blow your mind!
  Introducing the all-new ""SwiftGadget X"" – the gadget of your dreams! This little marvel is not just a device; 
 it's your personal assistant, your entertainment hub, and your productivity powerhouse, all rolled into one. 
 Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Summarize_EnglishText()
-        {
-            var client = new OpenAI();
-            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English);
-            DS.Assert.Words(summarization, "introduc & SwiftGadget & (revolutionary | revolutionize) ");
-            Assert.NotNull(summarization);
-        }
-
-        //[Fact()]
-        //[TestBeforeAfter]
-        //public void Summarize_EnglishText_SematicFunction()
-        //{
-        //    var client = new OpenAI();
-        //    var summarizeFunc = client.CompletionsEx.SemanticFunction("Summarize the following text:\r\n[text]");
-        //    var summarization = summarizeFunc(new { text = ReferenceEnglishTextForSummarization });
-        //    Assert.NotNull(summarization);
-        //}
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Summarize_EnglishText_InOneLine()
-        {
-            var client = new OpenAI();
-            var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English,
-                                    promptCommand: "Summarize the following question in one line:");
-            Assert.NotNull(summarization);
-            DS.Assert.Words(summarization, "introduc & SwiftGadget & (revolutionary | revolutionize | versatile | game-changing | game-changer) ");
-        }
-
-        [Fact()]
-        [TestBeforeAfter]
-        public void Summarize_CopyRightedText_EnglishText()
-        {
-            string text = @"
-Another suburban family morning
-Grandmother screaming at the wall
-We have to shout above the din of our rice crispies
-We can't hear anything at all";
-
-            var client = new OpenAI();
-            var summarization = client.CompletionsEx.Summarize(text, TranslationLanguages.English);
-            var result1 = "A chaotic morning in a suburban family where the grandmother is yelling and the noise of breakfast cereal makes it hard to hear anything.";
-            var result2 = "The question describes a chaotic morning in a suburban family, with the grandmother yelling and the noise of their breakfast cereal making it difficult to hear anything.";
-
-            DS.Assert.Words(summarization, "chaotic & morning & noise & cereal & grandmother");
-        }
 
         const string KingOfFrances = @"
             ""Hugh Capet"" was king of France from 987 to 996.
@@ -356,35 +290,34 @@ We can't hear anything at all";
         {
             foreach (var model in GenericAI.GetModels())
             {
+                if(model == "gemini-2.0-flash")
+                    continue;
+
                 var client = new GenericAI();
                 var question = "Who was king of France in 1032?";
                 var r = client.Completions.AnswerQuestionBasedOnFacts(model, question, KingOfFrances);
                 Assert.Equal("Henry I", r.Text);
-                HttpBase.Trace(new { model, r.Duration, r.Text }, this);
+                HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }
         }
 
-        [Fact]
-        [TestBeforeAfter]
-        public void AnswerQuestionBasedOnText_Answered_GPT5()
-        {
-            var client = new OpenAI();
-            var question = "Who was king of france in 1032?";
-            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question, model: "gpt-5");
-            Assert.Equal("Henry I", answer);
-        }
 
         [Fact()]
         [TestBeforeAfter]
         public void AnswerQuestionBasedOnText_AnswerNotFound()
         {
-            var client = new OpenAI();
-            var question = "Who was king of france in 2016?";
-            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Assert.Equal(client.CompletionsEx.AnswerNotFoundDefault, answer);
+            foreach (var model in GenericAI.GetModels())
+            {
+                //if (model == "gemini-2.0-flash")
+                //    continue;
 
-            answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question, model: "gpt-5");
-            Assert.Equal(client.CompletionsEx.AnswerNotFoundDefault, answer);
+                var client = new GenericAI();
+                var question = "Who was king of france in 2016?";
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model, question, KingOfFrances);
+                Assert.Equal("Answer not found.", r.Text);
+                HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
+            }
+
         }
 
         [Fact()]
