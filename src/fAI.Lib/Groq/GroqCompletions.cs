@@ -16,7 +16,7 @@ namespace fAI
 
     public partial class GroqCompletions : HttpBase, IOpenAICompletion
     {
-        public GroqCompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
+        public GroqCompletions(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 

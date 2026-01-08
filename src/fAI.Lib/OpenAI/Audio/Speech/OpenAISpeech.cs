@@ -18,7 +18,7 @@ namespace fAI
             nova,
             shimmer
         }
-        public OpenAISpeech(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
+        public OpenAISpeech(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 

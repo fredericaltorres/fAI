@@ -15,7 +15,7 @@ namespace fAI
 {
     public partial class OpenAICompletionsEx  : OpenAICompletions
     {
-        public OpenAICompletionsEx() : base(-1, null, null)
+        public OpenAICompletionsEx() : base(-1, null)
         {
         }
 

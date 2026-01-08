@@ -3,24 +3,18 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-   
-
-    public class HumeAI : Logger
+    public class HumeAI : HttpBase
     {
         public HumeAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("HUME_API_KEY");
-            HttpBase._openAiOrg = Environment.GetEnvironmentVariable("HUME_SECRET_KEY");
+            base._key = Environment.GetEnvironmentVariable("HUME_API_KEY");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
             if (openAiKey != null)
-                HttpBase._key = openAiKey;
-
-            if (openAiOrg != null)
-                HttpBase. _openAiOrg = openAiOrg;
+                base._key = openAiKey;
         }
 
         HumeAIAudio _audio = null;

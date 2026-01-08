@@ -32,7 +32,7 @@ namespace fAI
 
     public partial class OpenAICompletions  : HttpBase, IOpenAICompletion
     {
-        public OpenAICompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut,  openAiKey, openAiOrg)
+        public OpenAICompletions(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 

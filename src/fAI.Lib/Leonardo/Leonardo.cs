@@ -7,22 +7,19 @@ using System.Runtime.CompilerServices;
 namespace fAI
 {
     // https://docs.leonardo.ai/reference/getuserself
-    public class Leonardo : Logger
+    public class Leonardo : HttpBase
     {
         public Leonardo(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
             Trace("Leonardo ctor", this);
-            HttpBase._key = Environment.GetEnvironmentVariable("LEONARDO_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("LEONARDO_API_KEY");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
             if (openAiKey != null)
-                HttpBase._key = openAiKey;
-
-            if (openAiOrg != null)
-                HttpBase. _openAiOrg = openAiOrg;
+                base._key = openAiKey;
         }
         
     

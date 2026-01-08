@@ -20,7 +20,7 @@ namespace fAI
 
     public partial class OpenAIEmbeddings : HttpBase
     {
-        public OpenAIEmbeddings(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
+        public OpenAIEmbeddings(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 

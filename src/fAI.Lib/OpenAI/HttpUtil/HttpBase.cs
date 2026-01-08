@@ -40,10 +40,10 @@ namespace fAI
     public class HttpBase : Logger
     {
         public static int _timeout = 60 * 4;
-        public static string _key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        public static string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
+        public string _key;
+        //public string _openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
 
-        public HttpBase(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public HttpBase(int timeOut = -1, string openAiKey = null) // , string openAiOrg = null
         {
             if (timeOut > 0)
                 _timeout = timeOut;
@@ -51,15 +51,13 @@ namespace fAI
             if (openAiKey != null)
                 _key = openAiKey;
 
-            if (openAiOrg != null)
-                _openAiOrg = openAiOrg;
         }
 
         protected virtual ModernWebClient InitWebClient(bool addJsonContentType = true, Dictionary<string, object> extraHeaders = null)
         {
             var mc = new ModernWebClient(_timeout);
-            mc.AddHeader("Authorization", $"Bearer {_key}")
-              .AddHeader("OpenAI-Organization", _openAiOrg);
+            mc.AddHeader("Authorization", $"Bearer {_key}");
+              //.AddHeader("OpenAI-Organization", _openAiOrg);
 
             if (addJsonContentType)
                 mc.AddHeader("Content-Type", "application/json")

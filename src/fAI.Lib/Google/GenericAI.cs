@@ -10,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
-    public class GenericAI : Logger
+    public class GenericAI : HttpBase
     {
         public static List<string> GetModels()
         {
@@ -22,27 +22,22 @@ namespace fAI
 
         public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
-
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
             if (ApiKey != null)
-                HttpBase._key = ApiKey;
-
-            if (openAiOrg != null)
-                HttpBase. _openAiOrg = openAiOrg;
+                base._key = ApiKey;
         }
         public GenericAICompletions _completions = null;
-        public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: HttpBase._key));
+        public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: base._key));
     }
 
 
     public partial class GenericAICompletions : HttpBase 
     {
-        public GenericAICompletions(int timeOut = -1, string ApiKey = null, string openAiOrg = null) : base(timeOut, ApiKey, openAiOrg)
+        public GenericAICompletions(int timeOut = -1, string ApiKey = null) : base(timeOut, ApiKey)
         {
             _key = ApiKey;
         }
@@ -51,10 +46,10 @@ namespace fAI
         {
             if (GoogleAI.GetModels().Contains(model))
             {
-                if(string.IsNullOrEmpty(HttpBase._key))
-                    HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
+                if(string.IsNullOrEmpty(base._key))
+                    base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
 
-                var googleAIClient = new GoogleAI(ApiKey: HttpBase._key);
+                var googleAIClient = new GoogleAI(ApiKey: base._key);
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
                 var url = googleAIClient.Completions.GetUrl(model, _key);
                 var r = googleAIClient.Completions.Create(p, url, model);
@@ -62,10 +57,10 @@ namespace fAI
             }
             else if (OpenAI.GetModels().Contains(model))
             {
-                if (string.IsNullOrEmpty(HttpBase._key))
-                    HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+                if (string.IsNullOrEmpty(base._key))
+                    base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-                var openAIClient = new OpenAI(openAiKey: HttpBase._key);
+                var openAIClient = new OpenAI(openAiKey: base._key);
                 var p = new Prompt_GPT_4
                 {
                     Messages = new List<GPTMessage>()

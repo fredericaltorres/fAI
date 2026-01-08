@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-    public class Groq : Logger
+    public class Groq : HttpBase
     {
 
         public Groq(int timeOut = -1)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("GROQ_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("GROQ_API_KEY");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)

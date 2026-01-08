@@ -9,7 +9,7 @@ using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 
 namespace fAI
 {
-    public class GoogleAI : Logger
+    public class GoogleAI : HttpBase
     {
 
         public static List<string> GetModels()
@@ -23,10 +23,9 @@ namespace fAI
             );
         }
 
-
-        public GoogleAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
+        public GoogleAI(int timeOut = -1, string ApiKey = null) 
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
 
             HttpBase._timeout = 60 * 4;
 
@@ -34,13 +33,13 @@ namespace fAI
                 HttpBase._timeout = timeOut;
 
             if (ApiKey != null)
-                HttpBase._key = ApiKey;
+                base._key = ApiKey;
 
-            if (openAiOrg != null)
-                HttpBase. _openAiOrg = openAiOrg;
+            //if (openAiOrg != null)
+            //    HttpBase. _openAiOrg = openAiOrg;
         }
         public GoogleAICompletions _completions = null;
-        public GoogleAICompletions Completions => _completions ?? (_completions = new GoogleAICompletions(ApiKey: HttpBase._key));
+        public GoogleAICompletions Completions => _completions ?? (_completions = new GoogleAICompletions(ApiKey: base._key));
     }
 
     public partial class GoogleAICompletions : HttpBase, IOpenAICompletion
@@ -145,7 +144,7 @@ namespace fAI
         }
 
         private string _key;
-        public GoogleAICompletions(int timeOut = -1, string ApiKey = null, string openAiOrg = null) : base(timeOut, ApiKey, openAiOrg)
+        public GoogleAICompletions(int timeOut = -1, string ApiKey = null) : base(timeOut, ApiKey)
         {
             _key = ApiKey;
         }

@@ -11,7 +11,7 @@ namespace fAI
             return OpenAI.GenerateEmbeddings(text);
         }
 
-        public FAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public FAI(int timeOut = -1, string openAiKey = null)
         {
         }
 
@@ -19,7 +19,7 @@ namespace fAI
         public FAICompletions Completions => _completions ?? (_completions = new FAICompletions());
     }
 
-    public class OpenAI : Logger
+    public class OpenAI : HttpBase
     {
         public static IReadOnlyList<float> GenerateEmbeddings(string text)
         {
@@ -37,19 +37,15 @@ namespace fAI
 
         public OpenAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-            HttpBase._openAiOrg = Environment.GetEnvironmentVariable("OPENAI_ORGANIZATION_ID");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
             if (openAiKey != null)
-                HttpBase._key = openAiKey;
-
-            if (openAiOrg != null)
-                HttpBase. _openAiOrg = openAiOrg;
+                base._key = openAiKey;
         }
         
         OpenAIAudio _audio = null;
@@ -61,7 +57,7 @@ namespace fAI
         public OpenAICompletionsEx CompletionsEx => _completionsEx ?? (_completionsEx = new OpenAICompletionsEx());
 
         public OpenAICompletions _completions = null;
-        public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions());
+        public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions(openAiKey: base._key));
 
         public OpenAIEmbeddings _embeddings = null;
         public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());

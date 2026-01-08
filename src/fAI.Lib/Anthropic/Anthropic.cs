@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-    public class Anthropic : Logger
+    public class Anthropic : HttpBase
     {
         public static string AnthropicApiVersion = "2023-06-01" ;
 
         public Anthropic(int timeOut = -1)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
@@ -20,12 +20,12 @@ namespace fAI
         public AnthropicCompletions Completions => _completions ?? (_completions = new AnthropicCompletions());
     }
 
-    public class Mistral : Logger
+    public class Mistral : HttpBase
     {
 
         public Mistral(int timeOut = -1)
         {
-            HttpBase._key = Environment.GetEnvironmentVariable("MISTRAL_API_KEY");
+            base._key = Environment.GetEnvironmentVariable("MISTRAL_API_KEY");
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)

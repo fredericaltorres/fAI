@@ -80,7 +80,7 @@ namespace fAI
 {
     public partial class MistralCompletions : HttpBase//, IOpenAICompletion
     {
-        public MistralCompletions(int timeOut = -1, string openAiKey = null, string openAiOrg = null) : base(timeOut, openAiKey, openAiOrg)
+        public MistralCompletions(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 
