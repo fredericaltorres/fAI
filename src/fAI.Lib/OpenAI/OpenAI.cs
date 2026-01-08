@@ -60,7 +60,7 @@ namespace fAI
         public OpenAICompletions Completions => _completions ?? (_completions = new OpenAICompletions(openAiKey: base._key));
 
         public OpenAIEmbeddings _embeddings = null;
-        public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings());
+        public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings(openAiKey: base._key));
 
         public OpenAIImage _image = null;
         public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
