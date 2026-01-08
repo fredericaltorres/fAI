@@ -101,5 +101,57 @@ Use the following rules to guide your improvements:
         {
             return Create(text, systemPrompt, model);
         }
+
+        public class SummarizationResult
+        {
+            public string Summary { get; set; }
+            public string Text { get; set; }
+            public int TextWordCount => CountWords(Text);
+            public int SummaryWordCount => CountWords(Summary);
+            public double Duration { get; set; }
+            public double PercentageSummzarized => TextWordCount == 0 ? 0 : (1.0 - ((double)SummaryWordCount / (double)TextWordCount)) * 100.0;
+
+
+            public static int CountWords(string text)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return 0;
+
+                // Split by whitespace characters and remove empty entries
+                string[] words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+                return words.Length;
+            }
+        }
+
+        public SummarizationResult Summarize(
+           string text,
+           string language,
+           string model,
+           string systemPrompt = @"
+Summarize the following [language] text.
+Use the following rules to guide your summarization:
+<rules>
+- Do NOT use MARKDOWN formatting.
+- Insert a new line between paragraphs.
+- Maintain the context of the text without altering its meaning.
+- Keep the summary concise and to the point.
+- Use formal language suitable for business communication.
+- Ensure that all key information is included in the summary.
+ </rules>
+ ===================================
+            "
+           )
+        {
+            var sw  = Stopwatch.StartNew();
+            var summary = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new SummarizationResult
+            {
+                Summary = summary,
+                Text = text,
+                Duration = sw.ElapsedMilliseconds/1000.0
+            };
+        }
     }
 }
