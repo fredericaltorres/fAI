@@ -110,7 +110,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Title: {result.Title}, Duration: {result.Duration:0.0}", this);
+                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Text: {result.Title}, Duration: {result.Duration:0.0}", this);
             }
         }
 

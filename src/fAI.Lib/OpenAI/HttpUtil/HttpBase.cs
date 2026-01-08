@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace fAI
@@ -57,7 +58,7 @@ namespace fAI
         {
             var mc = new ModernWebClient(_timeout);
             mc.AddHeader("Authorization", $"Bearer {_key}");
-              //.AddHeader("OpenAI-Organization", _openAiOrg);
+            //.AddHeader("OpenAI-Organization", _openAiOrg);
 
             if (addJsonContentType)
                 mc.AddHeader("Content-Type", "application/json")
@@ -73,6 +74,18 @@ namespace fAI
         protected HttpError GetError(string text)
         {
             return HttpError.FromJson(text);
+        }
+
+        public JObject GetJsonObject(string json)
+        {
+            if (string.IsNullOrEmpty(json))
+                return null;
+            if (json.StartsWith("{"))
+            {
+                OpenAI.Trace(json, this);
+                return JObject.Parse(json);
+            }
+            return null;
         }
     }
 }

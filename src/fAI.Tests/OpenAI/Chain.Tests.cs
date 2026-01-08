@@ -51,7 +51,7 @@ namespace fAI.Tests
                 {
                     new GPTMessage { Role =  MessageRole.system, Content = "You are a British intelligence expert." },
                     new GPTMessage { Role =  MessageRole.user,   Content = @"
-Answer the question based only on the following context:
+Text the question based only on the following context:
 [Context]
 
 Question: [Question]

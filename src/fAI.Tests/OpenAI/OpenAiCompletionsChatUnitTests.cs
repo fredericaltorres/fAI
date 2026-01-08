@@ -101,7 +101,7 @@ namespace fAI.Tests
             Assert.Contains("Execution:", blogPost);
 
             var answer = response.Answer;
-            Assert.Contains("Answer:", blogPost);
+            Assert.Contains("Text:", blogPost);
 
             var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
         }
@@ -111,7 +111,7 @@ namespace fAI.Tests
         public void FormatChatGPTAnswerForTextDisplay_MultiPhraseOnSameLine()
         {
             var blogPost = @"
-Answer:
+Text:
 aa aa aa. 
 aa aa aa. bb bb bb.
 aa aa aa. bb bb bb. cc cc cc.
@@ -119,7 +119,7 @@ zz zz zz zz
 ";
             var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
-            var expectedBlogPost = @"Answer:
+            var expectedBlogPost = @"Text:
 aa aa aa.
 aa aa aa.
 bb bb bb.
@@ -136,16 +136,16 @@ zz zz zz zz
         public void FormatChatGPTAnswerForTextDisplay_BulletPoint()
         {
             var blogPost = @"
-Answer:
+Text:
 aa aa aa.
 aa aa aa. bb bb bb.
 1. point A. Point A-1 continuation. Point A-2 continuation
 2. point B. Point B-1 continuation. Point B-2 continuation
-End of text
+End of question
 ";
             var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
-            var expectedBlogPost = @"Answer:
+            var expectedBlogPost = @"Text:
 aa aa aa.
 aa aa aa.
 bb bb bb.
@@ -155,7 +155,7 @@ bb bb bb.
 2. point B.
    Point B-1 continuation.
    Point B-2 continuation
-End of text
+End of question
 ";
             Assert.Equal(expectedBlogPost, formattedBogPost);
         }
@@ -193,7 +193,7 @@ End of text
                 Messages = new List<GPTMessage>()
                 {
                     new GPTMessage{ Role =  MessageRole.system, Content = "You are a JavaScript expert." },
-                    new GPTMessage{ Role =  MessageRole.user, Content = "Write a JavaScript function usable in Node.js that take as argument a filename and returns the text content of the file." }
+                    new GPTMessage{ Role =  MessageRole.user, Content = "Write a JavaScript function usable in Node.js that take as argument a filename and returns the question content of the file." }
                 }
             };
             var response = client.Completions.Create(p);
@@ -292,7 +292,7 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         {
             var client = new OpenAI();
             var summarization = client.CompletionsEx.Summarize(ReferenceEnglishTextForSummarization, TranslationLanguages.English,
-                                    promptCommand: "Summarize the following text in one line:");
+                                    promptCommand: "Summarize the following question in one line:");
             Assert.NotNull(summarization);
             DS.Assert.Words(summarization, "introduc & SwiftGadget & (revolutionary | revolutionize | versatile | game-changing | game-changer) ");
         }
@@ -310,7 +310,7 @@ We can't hear anything at all";
             var client = new OpenAI();
             var summarization = client.CompletionsEx.Summarize(text, TranslationLanguages.English);
             var result1 = "A chaotic morning in a suburban family where the grandmother is yelling and the noise of breakfast cereal makes it hard to hear anything.";
-            var result2 = "The text describes a chaotic morning in a suburban family, with the grandmother yelling and the noise of their breakfast cereal making it difficult to hear anything.";
+            var result2 = "The question describes a chaotic morning in a suburban family, with the grandmother yelling and the noise of their breakfast cereal making it difficult to hear anything.";
 
             DS.Assert.Words(summarization, "chaotic & morning & noise & cereal & grandmother");
         }
@@ -354,10 +354,14 @@ We can't hear anything at all";
         [TestBeforeAfter]
         public void AnswerQuestionBasedOnText_Answered()
         {
-            var client = new OpenAI();
-            var question = "Who was king of france in 1032?";
-            var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
-            Assert.Equal("Henry I", answer);
+            foreach (var model in GenericAI.GetModels())
+            {
+                var client = new GenericAI();
+                var question = "Who was king of France in 1032?";
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model, question, KingOfFrances);
+                Assert.Equal("Henry I", r.Text);
+                HttpBase.Trace(new { model, r.Duration, r.Text }, this);
+            }
         }
 
         [Fact]

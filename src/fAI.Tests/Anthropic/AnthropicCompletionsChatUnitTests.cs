@@ -149,7 +149,7 @@ Discussion:
                     new AnthropicMessage { Role =  MessageRole.user,
                          Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(
                              @"Who won the soccer world cup in 1998?
-                               Answer the question in JSON only using a property 'winner'."))
+                               Text the question in JSON only using a property 'winner'."))
                     }
                 }
             };
@@ -217,7 +217,7 @@ Discussion:
                     new AnthropicMessage(
                         MessageRole.user,
                         new AnthropicContentImage(imageFileName),
-                        new AnthropicContentText("Answer the question in the image with True or False only.")
+                        new AnthropicContentText("Text the question in the image with True or False only.")
                     )
                 )
             };
@@ -240,7 +240,7 @@ Discussion:
                     new AnthropicMessage(
                         MessageRole.user,
                         new AnthropicContentImage(imageFileName),
-                        new AnthropicContentText("Answer the question in the image.")
+                        new AnthropicContentText("Text the question in the image.")
                     )
                 )
             };

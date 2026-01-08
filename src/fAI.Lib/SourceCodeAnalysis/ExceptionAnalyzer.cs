@@ -337,7 +337,7 @@ namespace fAI.SourceCodeAnalysis
             {
                 var promptStr = $@"
 Analyze the following {Language}, fileName ""{SourceCodeFileNameOnly}"", for the following Exception: ""{ExceptionType}""
-at line {SourceCodeLine}. Answer in MARKDOWN syntax.
+at line {SourceCodeLine}. Text in MARKDOWN syntax.
 
 Propose a new version of the function ""{FunctionName}"" to fix the issue.
 Source Code File ""{SourceCodeFileNameOnly}"":
@@ -421,7 +421,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             var sb = new StringBuilder();
             sb.AppendLine($"## Prompt({prompt.Model}):");
             sb.AppendLine($"{prompt.FullPrompt}");
-            sb.AppendLine($"## Answer:");
+            sb.AppendLine($"## Text:");
             sb.AppendLine($"{completionResponse.Text}");
 
             File.WriteAllText(reportFileName, sb.ToString());
@@ -434,7 +434,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             var sb = new StringBuilder();
             sb.AppendLine($"## Prompt({prompt.Model}):");
             sb.AppendLine($"{prompt.FullPrompt}");
-            sb.AppendLine($"## Answer:");
+            sb.AppendLine($"## Text:");
             sb.AppendLine($"{completionResponse.Text}");
 
             File.WriteAllText(reportFileName, sb.ToString());

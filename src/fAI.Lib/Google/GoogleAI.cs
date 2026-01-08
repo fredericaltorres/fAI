@@ -134,6 +134,15 @@ namespace fAI
             {
                 public SystemInstruction system_instruction { get; set; }
                 public List<Content> contents { get; set; }
+
+                public override string ToString()
+                {
+                    return ToJson();
+                }
+                public string ToJson()
+                {
+                    return JsonConvert.SerializeObject(this);
+                }
             }
 
             public class SystemInstruction

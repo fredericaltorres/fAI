@@ -42,7 +42,7 @@ namespace fAI.SourceCodeAnalysis
             var sb = new StringBuilder();
             sb.AppendLine($"## Prompt({prompt.Model}):");
             sb.AppendLine($"{prompt.FullPrompt}");
-            sb.AppendLine($"## Answer:");
+            sb.AppendLine($"## Text:");
             sb.AppendLine($"{completionResponse.Text}");
 
             File.WriteAllText(reportFileName, sb.ToString());
@@ -86,7 +86,7 @@ namespace fAI.SourceCodeAnalysis
             {
                 var promptStr = $@"
 The {Language}, method ""{this.MethodName}"", in class ""{this.ClassName}""
-line {SourceCodeLine}, does not return the expected value OR behave as expected. Answer in MARKDOWN syntax.
+line {SourceCodeLine}, does not return the expected value OR behave as expected. Text in MARKDOWN syntax.
 
 Propose an explanation.
 Source Code File ""{SourceCodeFileNameOnly}"":

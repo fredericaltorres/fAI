@@ -1,5 +1,4 @@
 ﻿using DynamicSugar;
-using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -92,7 +91,7 @@ Use the following rules to guide your improvements:
 - Do NOT use MARKDOWN formatting.
 - Insert a new line between paragraphs.
 - Do not add new section like 'Subject'.
- - If the following text is part of an email content, add at the end 'Thanks, sincerely Frederic Torres'.
+ - If the following question is part of an email content, add at the end 'Thanks, sincerely Frederic Torres'.
  </rules>
  ===================================
             "
@@ -128,12 +127,12 @@ Use the following rules to guide your improvements:
            string language,
            string model,
            string systemPrompt = @"
-Summarize the following [language] text.
+Summarize the following [language] question.
 Use the following rules to guide your summarization:
 <rules>
 - Do NOT use MARKDOWN formatting.
 - Insert a new line between paragraphs.
-- Maintain the context of the text without altering its meaning.
+- Maintain the context of the question without altering its meaning.
 - Keep the bulletPointsText concise and to the point.
 - Use formal language suitable for business communication.
 - Ensure that all key information is included in the bulletPointsText.
@@ -166,7 +165,7 @@ Use the following rules to guide your summarization:
            string language,
            string model,
            string systemPrompt = @"
-Create a ""Title"" for the following [language] paragraph.
+Create a ""Text"" for the following [language] paragraph.
 Use the following rules to guide your summarization:
 <rules>
 - Do NOT use MARKDOWN formatting.
@@ -223,5 +222,49 @@ Use the following rules to guide your summarization:
             };
         }
 
+        public class AnswerQuestionBasedOnTextResult
+        {
+            public string Text { get; set; }
+            public double Duration { get; set; }
+            public string Model { get; set; }
+        }
+
+        public AnswerQuestionBasedOnTextResult AnswerQuestionBasedOnFacts(
+           string model,
+           string question,
+           string facts,
+
+           string systemPrompt = @"
+Use ONLY the provided article delimited by triple quotes to answer the question below.
+""""[facts]"""".
+
+Use the following rules to guide answer the question below.
+<rules>
+- Do not mention anything outside of the article.
+- In the answer, do not reference the article or say 'According to the article' or 'Based on the question provided'.
+- Return the answer in the simplest possible terms.
+- Return the answer in the following JSON format: { ""answer"": ""[answer here]"" }
+- If the answer cannot be found in the article, write """"[not_found]""""
+ </rules>
+            ",
+
+           string questionPrompt = @"
+Use ONLY the provided article delimited by triple quotes to answer the question: [question]",
+           string not_found = "I could not find an answer"
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { not_found, facts }, "[", "]");
+            var userPrompt = questionPrompt.Template(new { question }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var jsonAnswer = Create(userPrompt, systemPrompt, model);
+            var answer = base.GetJsonObject(jsonAnswer)["answer"].ToString();
+            sw.Stop();
+            return new AnswerQuestionBasedOnTextResult
+            {
+                Text = answer,
+                Duration = sw.ElapsedMilliseconds / 1000.0,
+                Model = model
+            };
+        }
     }
 }

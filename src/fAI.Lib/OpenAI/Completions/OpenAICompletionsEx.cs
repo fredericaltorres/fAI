@@ -32,19 +32,6 @@ namespace fAI
             return Create(prompt).Text?.Trim();
         }
 
-        //public Func<object, string> SemanticFunction(string parameterizedPrompt) 
-        //{
-        //    return new Func<object, string>((poco) =>
-        //    {
-        //        var prompt = new Prompt_GPT_35_TurboInstruct
-        //        {
-        //            Text = parameterizedPrompt.Template(poco, "[","]" ),
-        //        };
-
-        //        return Create(prompt).Text?.Trim();
-        //    });
-        //}
-
         public string Summarize(string text, TranslationLanguages sourceLangague, string promptCommand = "Summarize the following userPrompt:") 
         {
             var prompt = new Prompt_GPT_4_Turbo_128k //Prompt_GPT_35_TurboInstruct
@@ -71,7 +58,7 @@ namespace fAI
             string context = @"
                     Use the provided article delimited by triple quotes to answer the question:
                     ""[question]"".
-                    - Answer with a JSON object with the property 'answer'.
+                    - Text with a JSON object with the property 'answer'.
                     - If the answer cannot be found in the article, write ""[not_found]""
             ",
             string answerNotFound = _answerNotFoundDefault,

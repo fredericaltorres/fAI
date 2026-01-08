@@ -16,7 +16,7 @@ namespace fAI
         public EssaiAICsvMapping()
         {
             Map(m => m.Url).Name("Url");
-            Map(m => m.Title).Name("Title");
+            Map(m => m.Title).Name("Text");
         }
     }
 
@@ -25,7 +25,7 @@ namespace fAI
         public PresentationAICsvMapping()
         {
             Map(m => m.Id).Name("Id");
-            Map(m => m.Title).Name("Title");
+            Map(m => m.Title).Name("Text");
             Map(m => m.Description).Name("Description");
         }
     }

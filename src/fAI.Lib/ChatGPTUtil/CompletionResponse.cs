@@ -279,7 +279,7 @@ namespace fAI
                 var sb = new StringBuilder(1024);
 
                 sb.AppendLine($"Model: {this.GPTPrompt.Model}, Execution: {this.Stopwatch.ElapsedMilliseconds / 1000:0:0}s").AppendLine();
-                sb.AppendLine($"Answer:").AppendLine(this.Text);
+                sb.AppendLine($"Text:").AppendLine(this.Text);
 
                 return sb.ToString();
             }
@@ -298,7 +298,7 @@ namespace fAI
 
                 sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 
-                sb.AppendLine($"Answer:").AppendLine(this.Text);
+                sb.AppendLine($"Text:").AppendLine(this.Text);
 
                 sb.AppendLine().AppendLine("".PadLeft(80, '-')).AppendLine();
 

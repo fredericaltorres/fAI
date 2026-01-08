@@ -32,7 +32,7 @@ namespace fAI.Tests
             {
                 Messages = new List<GPTMessage>()
                 {
-                    new GPTMessage { Role =  MessageRole.system, Content = "Answer the question in JSON format with a property 'winner'" },
+                    new GPTMessage { Role =  MessageRole.system, Content = "Text the question in JSON format with a property 'winner'" },
                     new GPTMessage { Role =  MessageRole.user,   Content = "Who won the soccer world cup in 1998?" }
                 }
             };

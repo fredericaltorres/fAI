@@ -46,7 +46,7 @@ namespace fAIConsole
                 if(question == "exit")
                     break;
                 var answer = client.CompletionsEx.AnswerQuestionBasedOnText(peopleData, question);
-                Console.WriteLine($"Answer: {answer}");
+                Console.WriteLine($"Text: {answer}");
             }
         }
 
@@ -93,7 +93,7 @@ namespace fAIConsole
             var client = new OpenAI();
             var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}");
+            Console.WriteLine($"Text: {answer}");
             Console.ReadLine();
         }
 
@@ -184,13 +184,13 @@ namespace fAIConsole
             var question = "Who was king of france in 1032?";
             var answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}"); // Henry I
+            Console.WriteLine($"Text: {answer}"); // Henry I
             PlayAnswerWhoWasKingOfFrance(client, question, answer, client.CompletionsEx.AnswerNotFoundDefault);
 
             question = "Who was king of france in 1812?";
             answer = client.CompletionsEx.AnswerQuestionBasedOnText(KingOfFrances, question);
             Console.WriteLine($"Question: {question}");
-            Console.WriteLine($"Answer: {answer}");
+            Console.WriteLine($"Text: {answer}");
             PlayAnswerWhoWasKingOfFrance(client, question, answer, client.CompletionsEx.AnswerNotFoundDefault);
 
             Console.ReadLine();
