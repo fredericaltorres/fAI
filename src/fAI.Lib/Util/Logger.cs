@@ -17,7 +17,7 @@ namespace fAI
         private static void TraceToFile(string message, int recursiveIndex = 0)
         {
             if (LogFileName == null)
-                LogFileName = Environment.GetEnvironmentVariable("OPENAI_LOG_FILE");
+                LogFileName = Environment.GetEnvironmentVariable("FAI_LOG_FILE");
             if (LogFileName == null)
                 LogFileName = DefaultLogFileName;
 

@@ -35,6 +35,7 @@ namespace fAI
     {
         public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
         public const string OPENAI_URL_V1_COMPLETIONS = "https://api.openai.com/v1/completions";
+        public const string OPENAI_URL_V2_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
 
         public JsonResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }

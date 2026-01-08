@@ -7,8 +7,8 @@ namespace fAI
     {
         public Prompt_GPT_35_TurboInstruct() : base()
         {
-            Model = "gpt-3.5-turbo-instruct";
-            Url = GPTPrompt.OPENAI_URL_V1_COMPLETIONS;
+            Model = "gpt-5-mini";// "gpt-3.5-turbo-instruct" was replaced
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 
@@ -16,8 +16,8 @@ namespace fAI
     {
         public Prompt_GPT_35_Turbo() : base()
         {
-            Model = "gpt-3.5-turbo";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Model = "gpt-5.2"; //"gpt-3.5-turbo";
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 

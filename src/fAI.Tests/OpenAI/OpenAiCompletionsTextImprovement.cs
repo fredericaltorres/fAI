@@ -93,10 +93,10 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_InterfaceForOpenAIAndGoogle()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-            var client = new GenericAI();
 
             foreach (var model in GenericAI.GetModels())
             {
+                var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model);
                 HttpBase.Trace($"[SUMMARIZATION] model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, Duration: {result.Duration:0.0}", this);
             }
@@ -106,9 +106,9 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateTitle_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            var client = new GenericAI();
             foreach (var model in GenericAI.GetModels())
             {
+                var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
                 HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Title: {result.Title}, Duration: {result.Duration:0.0}", this);
             }
