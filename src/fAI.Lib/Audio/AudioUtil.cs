@@ -14,9 +14,15 @@ namespace fAI
         {
             public int SampleRate { get; set; }
             public int BitsPerSample { get; set; }
-
             public int Duration { get; set; }
             public double DurationAsDouble { get; set; }
+            public string FileName { get; set; }
+
+            public override string ToString()
+            {
+                return $"FileName:{this.FileName}, SampleRate:{this.SampleRate}, BitsPerSample:{this.BitsPerSample}, Duration(s):{this.Duration}, DurationAsDouble(s):{this.DurationAsDouble:0.00}";
+            }
+
         }
 
 
@@ -116,7 +122,8 @@ namespace fAI
                     Duration = (int)mp3.TotalTime.TotalSeconds,
                     DurationAsDouble = mp3.TotalTime.TotalSeconds,
                     SampleRate = mp3.WaveFormat.SampleRate,
-                    BitsPerSample = mp3.WaveFormat.BitsPerSample
+                    BitsPerSample = mp3.WaveFormat.BitsPerSample,
+                    FileName = fileName
                 };
             }
         }
