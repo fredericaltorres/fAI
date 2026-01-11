@@ -19,9 +19,9 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletionsTextImprovement : OpenAIUnitTestsBase
+    public class OpenAiCompletions_TextImprovement_Title_BulletPoints : OpenAIUnitTestsBase
     {
-        public OpenAiCompletionsTextImprovement()
+        public OpenAiCompletions_TextImprovement_Title_BulletPoints()
         {
             OpenAI.TraceOn = true;
         }

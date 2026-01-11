@@ -49,7 +49,8 @@ namespace fAI
             var mc = new ModernWebClient(_timeout);
             if (addJsonContentType)
                 mc.AddHeader("Content-Type", "application/json")
-                  .AddHeader("Accept", "application/json");
+                  .AddHeader("Accept", "application/json")
+                    .AddHeader("x-goog-api-key", _key);
             return mc;
         }
 
@@ -158,10 +159,11 @@ namespace fAI
             _key = ApiKey;
         }
 
-        public string GetUrl(string model, string ApiKey)
+        public string GetUrl(string model)
         {
-            return $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={ApiKey}";
-            // $"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_ID}:generateContent?key={API_KEY}";
+            return $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
+            //return $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={ApiKey}";
+
         }
 
         const string DEFAULT_MODEL = "gemini-3-flash-preview";
@@ -202,7 +204,7 @@ Improve the [language] for the following phrases, in more polished and business-
             var contextPreProcessed = systemPrompt.Template(new { language }, "[", "]");
 
             var p = GetPrompt(text, contextPreProcessed, model);
-            var url = GetUrl(model, _key);
+            var url = GetUrl(model);
             var r = Create(p, url, model);
             return r.GetText();
         }

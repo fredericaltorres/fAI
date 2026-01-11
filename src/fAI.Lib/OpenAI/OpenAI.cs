@@ -49,7 +49,7 @@ namespace fAI
         }
         
         OpenAIAudio _audio = null;
-        public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio());
+        public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio(openAiKey: base._key));
 
         //OpenAICompletionsEx
 
@@ -63,6 +63,6 @@ namespace fAI
         public OpenAIEmbeddings Embeddings => _embeddings ?? (_embeddings = new OpenAIEmbeddings(openAiKey: base._key));
 
         public OpenAIImage _image = null;
-        public OpenAIImage Image => _image ?? (_image = new OpenAIImage());
+        public OpenAIImage Image => _image ?? (_image = new OpenAIImage(openAiKey: base._key));
     }
 }

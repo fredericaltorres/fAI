@@ -42,7 +42,7 @@ namespace fAI
                 var mp3FileName = Path.Combine(@".\audio", Path.GetFileNameWithoutExtension(gdd.LocalImage) + ".mp3");
                 if (!File.Exists(mp3FileName))
                 {
-                    client.Audio.Speech.Create(text, OpenAISpeech.Voices.onyx, mp3FileName: mp3FileName);
+                    client.Audio.Speech.Create(text, "onyx", mp3FileName: mp3FileName);
                     //var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
                 }
             }

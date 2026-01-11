@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Cache;
@@ -12,17 +13,33 @@ namespace fAI
         public enum Voices
         {
             alloy,
+            ash,
+            ballad,
+            coral,
             echo,
             fable,
-            onyx,
             nova,
-            shimmer
+            onyx,
+            sage,
+            shimmer,
+            verse,
         }
+
+        public static List<string> VoicesAsString {
+            get
+            {
+                var list = new List<string>();
+                foreach (var v in (Voices[])System.Enum.GetValues(typeof(Voices)))
+                    list.Add(v.ToString());
+                return list;
+            }
+        }
+
         public OpenAISpeech(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
         {
         }
 
-        private string GetPayLoad(string text, Voices voice, string model)
+        private string GetPayLoad(string text, string voice, string model)
         {
             return JsonConvert.SerializeObject(new {
                 model = model,
@@ -31,7 +48,7 @@ namespace fAI
             });
         }
 
-        public string Create(string input, Voices voice, string mp3FileName = null, string model = "tts-1")
+        public string Create(string input, string voice, string mp3FileName = null, string model = "gpt-4o-mini-tts") // "tts-1"
         {
             OpenAI.Trace(new { input, voice, model }, this);
 

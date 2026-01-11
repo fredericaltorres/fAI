@@ -17,7 +17,7 @@ namespace fAI
         }
         
         public AnthropicCompletions _completions = null;
-        public AnthropicCompletions Completions => _completions ?? (_completions = new AnthropicCompletions());
+        public AnthropicCompletions Completions => _completions ?? (_completions = new AnthropicCompletions( openAiKey: base._key));
     }
 
     public class Mistral : HttpBase

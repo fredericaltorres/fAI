@@ -17,7 +17,7 @@ namespace fAI
         const string _ttsUrl = "https://api.hume.ai/v0/tts/file";
         const string _getVoiceListUrl = "https://api.hume.ai/v0/tts/voices";
 
-        public HumeAISpeech(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
+        public HumeAISpeech(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
         }
 

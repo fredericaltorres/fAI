@@ -49,7 +49,7 @@ namespace fAI
 
                 var googleAIClient = new GoogleAI(ApiKey: base._key);
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
-                var url = googleAIClient.Completions.GetUrl(model, _key);
+                var url = googleAIClient.Completions.GetUrl(model);
                 var r = googleAIClient.Completions.Create(p, url, model);
                 return r.GetText();
             }
@@ -163,7 +163,7 @@ Use the following rules to guide your summarization:
            string language,
            string model,
            string systemPrompt = @"
-Create a ""Text"" for the following [language] paragraph.
+Create a short ""Title"" for the following [language] paragraph.
 Use the following rules to guide your summarization:
 <rules>
 - Do NOT use MARKDOWN formatting.

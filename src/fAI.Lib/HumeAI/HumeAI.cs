@@ -18,7 +18,7 @@ namespace fAI
         }
 
         HumeAIAudio _audio = null;
-        public HumeAIAudio Audio => _audio ?? (_audio = new HumeAIAudio());
+        public HumeAIAudio Audio => _audio ?? (_audio = new HumeAIAudio(base._key));
 
         //OpenAICompletionsEx
 

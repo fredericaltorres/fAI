@@ -19,12 +19,16 @@ namespace fAI.Tests
         {
             const string input = @"Maybe I'm amazed at the way you pulled me out of time. Hung me on a line.";
             var client = new OpenAI();
-            var mp3FileName = client.Audio.Speech.Create(input, OpenAISpeech.Voices.echo);
 
-            var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
-            Assert.True(mp3Info.DurationAsDouble > 3);
-
-            AudioUtil.DeleteFile(mp3FileName);
+            OpenAISpeech.VoicesAsString.ToList().ForEach(voiceName =>
+            {
+                var mp3FileName = client.Audio.Speech.Create(input, voiceName);
+                var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
+                Assert.True(mp3Info.DurationAsDouble > 3);
+                File.Copy(mp3FileName, Path.Combine(@"c:\temp", $"{voiceName}.mp3"));
+                OpenAI.Trace(new { voiceName, mp3Info }, this);
+                AudioUtil.DeleteFile(mp3FileName);
+            });
         }
     }
 
