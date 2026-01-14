@@ -116,6 +116,18 @@ glycemic control and overall well-being.
 
         [Fact()]
         [TestBeforeAfter]
+        public void Translate_GenericAI_InterfaceForOpenAIAndGoogle()
+        {
+            foreach (var model in GenericAI.GetModels())
+            {
+                var client = new GenericAI();
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage:"French",  model: model);
+                HttpBase.Trace($"[TRANSLATE] model: {model}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}, Duration: {result.Duration:0.0}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void GenerateBulletPoints_GenericAI_InterfaceForOpenAIAndGoogle()
         {
             foreach (var model in GenericAI.GetModels())

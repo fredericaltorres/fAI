@@ -152,6 +152,42 @@ Use the following rules to guide your summarization:
             };
         }
 
+
+        public class TranslationResult
+        {
+            public string SourceText { get; set; }
+            public string TranslatedText { get; set; }
+            public double Duration { get; set; }
+            public string Language { get; set; }
+            public string destinationLanguage { get; set; }
+
+        }
+
+        public TranslationResult Translate(
+           string text,
+           string language,
+           string destinationLanguage,
+           string model,
+           string systemPrompt = @"
+Translate the following [language] paragraph into [destinationLanguage].
+ ===================================
+            "//polished and business-friendly 
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { language, destinationLanguage }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var translatedText = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new TranslationResult
+            {
+                SourceText = text,
+                TranslatedText = translatedText,
+                Language = language,
+                destinationLanguage = destinationLanguage,
+                Duration = sw.ElapsedMilliseconds / 1000.0
+            };
+        }
+
         public class GenerateTitleResult
         {
             public string Title { get; set; }
