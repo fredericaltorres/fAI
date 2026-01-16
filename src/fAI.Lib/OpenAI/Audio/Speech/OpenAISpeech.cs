@@ -39,21 +39,23 @@ namespace fAI
         {
         }
 
-        private string GetPayLoad(string text, string voice, string model)
+        private string GetPayLoad(string text, string voice, string model, string instructions)
         {
             return JsonConvert.SerializeObject(new {
                 model = model,
                 input = text,
-                voice =  voice.ToString()
+                voice =  voice.ToString(),
+                instructions = instructions
             });
         }
 
-        public string Create(string input, string voice, string mp3FileName = null, string model = "gpt-4o-mini-tts") // "tts-1"
+        public string Create(string input, string voice, string mp3FileName = null, 
+            string model = "gpt-4o-mini-tts", string instructions = "Speak in a cheerful and positive tone.") // "tts-1"
         {
             OpenAI.Trace(new { input, voice, model }, this);
 
             var wc = InitWebClient();
-            var response = wc.POST(__url, GetPayLoad(input, voice, model));
+            var response = wc.POST(__url, GetPayLoad(input, voice, model, instructions));
             if (response.Success)
             {
                 var ext = wc.GetResponseImageExtension();

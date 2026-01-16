@@ -47,4 +47,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OpenAI\Audio\VoiceSamples\" />
+  </ItemGroup>
+
 </Project>
