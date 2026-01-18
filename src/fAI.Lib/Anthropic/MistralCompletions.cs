@@ -62,7 +62,7 @@ namespace fAI
         [JsonProperty("default_model_temperature")]
         public double? DefaultModelTemperature { get; set; }
 
-        [JsonProperty("type")]
+        [JsonProperty("Type")]
         public string Type { get; set; }
     }
 
@@ -116,7 +116,7 @@ namespace fAI
             return mc;
         }
 
-        public CompletionResponse Create(MistralPromptBase p)
+        public AnthropicCompletionResponse Create(MistralPromptBase p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -152,7 +152,7 @@ namespace fAI
             if (!string.IsNullOrEmpty(response.Id))
             {
                 OpenAI.Trace(new { response.Choices[0].Message.Content }, this);
-                var r = new CompletionResponse();
+                var r = new AnthropicCompletionResponse();
                 r.Choices = new List<CompletionChoiceResponse>();
                 r.Choices.Add(new CompletionChoiceResponse { 
                     message = new GPTMessage { 
@@ -160,7 +160,7 @@ namespace fAI
                         //Role = response.Choices[0].
                     }
                 });
-                r.Choices[0].finish_reason = CompletionResponse.FULL_SUCCEES_RETURN_CODE;
+                r.Choices[0].finish_reason = AnthropicCompletionResponse.FULL_SUCCEES_RETURN_CODE;
                 r.Stopwatch = sw;
                 return r;
             }

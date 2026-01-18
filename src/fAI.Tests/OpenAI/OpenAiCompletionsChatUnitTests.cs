@@ -104,7 +104,7 @@ namespace fAI.Tests
             var answer = response.Answer;
             Assert.Contains("Text:", blogPost);
 
-            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
         }
 
         [Fact()]
@@ -118,7 +118,7 @@ aa aa aa. bb bb bb.
 aa aa aa. bb bb bb. cc cc cc.
 zz zz zz zz
 ";
-            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
             var expectedBlogPost = @"Text:
 aa aa aa.
@@ -144,7 +144,7 @@ aa aa aa. bb bb bb.
 2. point B. Point B-1 continuation. Point B-2 continuation
 End of question
 ";
-            var formattedBogPost = CompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
             var expectedBlogPost = @"Text:
 aa aa aa.
@@ -301,7 +301,6 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
             }
         }
 
-
         [Fact()]
         [TestBeforeAfter]
         public void AnswerQuestionBasedOnText_AnswerNotFound()
@@ -317,7 +316,6 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
                 Assert.Equal("Answer not found.", r.Text);
                 HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }
-
         }
 
         [Fact()]

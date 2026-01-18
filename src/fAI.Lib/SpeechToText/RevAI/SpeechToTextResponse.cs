@@ -28,7 +28,7 @@ namespace fAI
         [JsonProperty("duration")]
         public double Duration { get; set; }
 
-        [JsonProperty("text")]
+        [JsonProperty("Text")]
         public string Text { get; set; }
 
         [JsonProperty("words")]
@@ -64,7 +64,7 @@ namespace fAI
         [JsonProperty("status")]
         public string Status { get; set; }
 
-        [JsonProperty("type")]
+        [JsonProperty("Type")]
         public string Type { get; set; }
 
         [JsonProperty("title")]

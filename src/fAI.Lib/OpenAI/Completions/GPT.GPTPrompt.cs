@@ -60,7 +60,7 @@ namespace fAI
         */
         //public double Temperature { get; set; } = DEFAULT_TEMPERATURE;
 
-        public CompletionResponse Response { get; set; }
+        public AnthropicCompletionResponse Response { get; set; }
         public GPTPrompt UnprocessPrompt { get; set; } // allow to back up the current prompt before being processed.
 
         public GPTPrompt Clone() // Make sure we clone all property

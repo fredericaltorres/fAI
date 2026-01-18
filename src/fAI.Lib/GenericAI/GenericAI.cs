@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static DynamicSugar.DS;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -14,6 +15,7 @@ namespace fAI
         public static List<string> GetModels()
         {
             var models = new List<string>();
+            models.AddRange(Anthropic.GetModels());
             models.AddRange(GoogleAI.GetModels());
             models.AddRange(OpenAI.GetModels());
             return models;
@@ -42,7 +44,24 @@ namespace fAI
 
         public string Create(string prompt, string systemPrompt, string model)
         {
-            if (GoogleAI.GetModels().Contains(model))
+            if (Anthropic.GetModels().Contains(model))
+            {
+                var p = new Anthropic_Prompt_Generic(model)
+                {
+                    System = systemPrompt,
+                    Messages = new List<AnthropicMessage>()
+                    {
+                        new AnthropicMessage { Role =  MessageRole.user,
+                             Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(prompt))
+                        }
+                    }
+                };
+                if (string.IsNullOrEmpty(base._key))
+                    base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+                var response = new Anthropic(key: base._key).Completions.Create(p);
+                var text = response.Text;
+            }
+            else if (GoogleAI.GetModels().Contains(model))
             {
                 if(string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
@@ -79,7 +98,14 @@ namespace fAI
             return "";
         }
 
-        public string TextImprovement(
+        public class TextImprovementResult
+        {
+            public string Text { get; set; }
+            public string OriginalText { get; set; }
+            public double Duration { get; set; }
+        }
+
+        public TextImprovementResult TextImprovement(
            string text,
            string language,
            string model,
@@ -96,8 +122,16 @@ Use the following rules to guide your improvements:
             "
            )
         {
+            var sw = Stopwatch.StartNew();
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
-            return Create(text, systemPrompt, model);
+            var newText = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new TextImprovementResult
+            {
+                Text = newText,
+                OriginalText = text,
+                Duration = sw.ElapsedMilliseconds / 1000.0
+            };
         }
 
         public class SummarizationResult
@@ -119,6 +153,34 @@ Use the following rules to guide your improvements:
 
                 return words.Length;
             }
+        }
+
+
+        public class ConversationResult
+        {
+            public string Text { get; set; }
+            public string Response { get; set; }
+            public double Duration { get; set; }
+        }
+
+        public ConversationResult Conversation(
+           string text,
+           string model,
+           string systemPrompt = @"
+You are an AI assistant with the knowledge of a internet search engine.
+Answer the question to the best of your ability.
+            "
+           )
+        {
+            var sw = Stopwatch.StartNew();
+            var response = Create(text, systemPrompt, model);
+            sw.Stop();
+            return new ConversationResult
+            {
+                Response = response,
+                Text = text,
+                Duration = sw.ElapsedMilliseconds / 1000.0
+            };
         }
 
         public SummarizationResult Summarize(

@@ -52,7 +52,7 @@ blah blah
         }
 
         const string LogException2 = @"
-Exception:System.ApplicationException: Error processing tag! You are certified in Bla at CConverter.Verify(String text, Int32 offset) in Z:\JAgent\work\Common\Cert.cs:line 1275 at CConverter.Replace(ViewData oViewData, Company oCompany, String sCertificateMessage) in Z:\JAgent\work\Common\Cert.cs:line 1212
+Exception:System.ApplicationException: Error processing tag! You are certified in Bla at CConverter.Verify(String Text, Int32 offset) in Z:\JAgent\work\Common\Cert.cs:line 1275 at CConverter.Replace(ViewData oViewData, Company oCompany, String sCertificateMessage) in Z:\JAgent\work\Common\Cert.cs:line 1212
 ";
 
         [Fact()]
@@ -64,7 +64,7 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
             Assert.Equal(@"Error processing tag! You are certified in Bla", ea.Message);
             Assert.Equal(2, ea.StackTraceInfo.Count);
 
-            Assert.Equal(@"CConverter.Verify(String text, Int32 offset)", ea.StackTraceInfo[0].MethodName);
+            Assert.Equal(@"CConverter.Verify(String Text, Int32 offset)", ea.StackTraceInfo[0].MethodName);
             Assert.Equal(@"Z:\JAgent\work\Common\Cert.cs", ea.StackTraceInfo[0].FileName);
             Assert.Equal(1275, ea.StackTraceInfo[0].LineNumber);
 
@@ -128,7 +128,7 @@ Exception:System.ApplicationException: Error processing tag! You are certified i
         const string LogException4 = @"
     ZarkRotoSvc,Error,CCRotot,JobId:486480717, UserId:0, CompanyId:0, CourseId:, 
 Exception: System.ApplicationException: Error processing tag in cert offset:151 
- at Zark.Rotors.Common.CConverterRotor.VerifyStringPosition(String text, Int32 offset, String callId)
+ at Zark.Rotors.Common.CConverterRotor.VerifyStringPosition(String Text, Int32 offset, String callId)
     in E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs:line 1275     
  at Zark.Rotors.Common.CConverterRotor.ReplaceShapeText2(IShape oShp, Curriculum oCurriculum, CurriculumEnrollment oCurriculumEnrollment, Course oCourse, Enrollment oCourseEnrollment, User oAuthor, Presentation oPresentation, User oUser, ViewData oViewData, Company oCompany, String sCertificateMessage, Double lPresentationScoreAchieved, Int32 jobId)
     in E:\JAgent\work\main\Zark.Rotors.Common\CConverterRotor.cs:line 1212 blablah

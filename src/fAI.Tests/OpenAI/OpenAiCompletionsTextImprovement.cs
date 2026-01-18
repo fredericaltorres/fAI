@@ -54,7 +54,8 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             {
                 var client = new GenericAI();
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
-                Assert.True(expectedWords.All(w => result.ToLower().Contains(w)));
+                Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
+                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
             }
         }
 
@@ -98,7 +99,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[SUMMARIZATION] model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, Duration: {result.Duration:0.0}", this);
+                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
             }
         }
 
@@ -110,7 +111,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Text: {result.Title}, Duration: {result.Duration:0.0}", this);
+                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
             }
         }
 
@@ -122,7 +123,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage:"French",  model: model);
-                HttpBase.Trace($"[TRANSLATE] model: {model}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}, Duration: {result.Duration:0.0}", this);
+                HttpBase.Trace($"[TRANSLATE] model: {model}, , Duration: {result.Duration:0.0}SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
 
@@ -134,7 +135,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-BULLETPOINT] model: {model}, Text: {result.Text}, Duration: {result.Duration:0.0}", this);
+                HttpBase.Trace($"[GENERATE-BULLETPOINT] model: {model}, Duration: {result.Duration:0.0}, Text: {result.Text}", this);
             }
         }
 
@@ -146,6 +147,22 @@ glycemic control and overall well-being.
             var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
             var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
             Assert.Null(result.Text);
+        }
+
+        const string CSharpJsonDotNetQuestion = @"
+When using C# and the newtonsoft library, what is the name of the attribute to serialize an enum as a string?
+";
+        [Fact()]
+        [TestBeforeAfter]
+        public void Conversation_GenericAI_InterfaceForOpenAIAndGoogle()
+        {
+            foreach (var model in GenericAI.GetModels())
+            {
+                var client = new GenericAI();
+                var result = client.Completions.Conversation(text: CSharpJsonDotNetQuestion, model: model);
+                Assert.Contains("[JsonConverter(typeof(StringEnumConverter))]", result.Response);
+                HttpBase.Trace($"[CONVERSATION] model: {model}, Duration: {result.Duration:0.0}, Response: {result.Response}", this);
+            }
         }
     }
 }

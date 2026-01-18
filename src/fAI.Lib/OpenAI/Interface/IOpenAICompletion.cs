@@ -2,7 +2,7 @@
 {
     public interface IOpenAICompletion
     {
-        CompletionResponse Create(GPTPrompt p);
+        AnthropicCompletionResponse Create(GPTPrompt p);
     }
 }
 

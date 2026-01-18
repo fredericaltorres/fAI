@@ -236,7 +236,7 @@ Improve the [language] for the following phrases, in more polished and business-
             }
         }
 
-        public CompletionResponse Create(GPTPrompt p)
+        public AnthropicCompletionResponse Create(GPTPrompt p)
         {
             throw new NotImplementedException();
         }

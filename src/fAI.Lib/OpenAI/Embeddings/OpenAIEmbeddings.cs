@@ -27,7 +27,7 @@ namespace fAI
         const string __url = "https://api.openai.com/v1/embeddings";
 
 
-        public const string EmbeddingAda002 = "text-embedding-ada-002";
+        public const string EmbeddingAda002 = "Text-embedding-ada-002";
         public const int EmbeddingAda002Dimension = 1536;
 
         const int MaxTextLength = 4096;

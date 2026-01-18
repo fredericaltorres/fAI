@@ -67,7 +67,7 @@ namespace fAI.Microsoft.Search
         [Newtonsoft.Json.JsonIgnore]
         public List<EmbedingsData> EmbedingsData { get; set; } = new List<EmbedingsData>();
 
-        private const string ModelName = "text-embedding-ada-002";
+        private const string ModelName = "Text-embedding-ada-002";
         private const int ModelDimensions = 1536;
         private const string SemanticSearchConfigName = "my-semantic-config";
         public const string indexName = "fai-search-pg-essays";

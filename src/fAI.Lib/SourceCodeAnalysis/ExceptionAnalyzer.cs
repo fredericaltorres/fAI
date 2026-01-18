@@ -91,7 +91,7 @@ namespace fAI.SourceCodeAnalysis
                 var messageIndex = match.Index + match.Length; // Extract the message 
                 var messageEndIndex = text.IndexOf(EndOfMessageInException, messageIndex);
                 if (messageEndIndex == -1)
-                    throw new ArgumentException($"Cannot extract message from text. exceptionName:{exceptionName}, text:{text}");
+                    throw new ArgumentException($"Cannot extract message from Text. exceptionName:{exceptionName}, Text:{text}");
 
                 var message = text.Substring(messageIndex, messageEndIndex - messageIndex);
                 message = message.Trim(); // Clean up the message
@@ -415,7 +415,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             return analysisReportFileName;
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, GPTPrompt prompt, CompletionResponse completionResponse)
+        public string GenerateAnalysisReport(string jsonFileName, GPTPrompt prompt, AnthropicCompletionResponse completionResponse)
         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();
@@ -428,7 +428,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             return reportFileName;
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
+        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, AnthropicCompletionResponse completionResponse)
         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();

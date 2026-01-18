@@ -33,7 +33,7 @@ namespace fAI
         private string GetVTTText(string jobId)
         {
             //var mc = WebClient().AddHeader("Accept", "text/vtt");
-            var response = WebClient().AddHeader("Accept", "text/vtt").GET(CaptionServiceUrl.TokenReplacer(new { jobId }));
+            var response = WebClient().AddHeader("Accept", "Text/vtt").GET(CaptionServiceUrl.TokenReplacer(new { jobId }));
             if (response.Success)
                 return response.Text;
             else 
@@ -43,7 +43,7 @@ namespace fAI
         private string GetTranscriptResult(string jobId)
         {
             //var mc = WebClient().AddHeader("Accept", "text/plain");
-            var response = WebClient().AddHeader("Accept", "text/plain").GET($"{SpeechToTextServiceUrl}/[JOBID]/transcript".TokenReplacer(new { jobId }));
+            var response = WebClient().AddHeader("Accept", "Text/plain").GET($"{SpeechToTextServiceUrl}/[JOBID]/transcript".TokenReplacer(new { jobId }));
             if (response.Success)
             {
                 var text = response.Text;

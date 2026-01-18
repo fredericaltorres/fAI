@@ -19,12 +19,12 @@ namespace fAI
         {
         }
 
-        public CompletionResponse Create(GPTPrompt p)
+        public AnthropicCompletionResponse Create(GPTPrompt p)
         {
             return new OpenAI().Completions.Create(p);
         }
 
-        public CompletionResponse Create(AnthropicPromptBase p)
+        public AnthropicCompletionResponse Create(AnthropicPromptBase p)
         {
             return new Anthropic().Completions.Create(p);
         }
@@ -49,7 +49,7 @@ namespace fAI
         }
 
         // https://platform.openai.com/docs/guides/gpt
-        public CompletionResponse Create(GPTPrompt p)
+        public AnthropicCompletionResponse Create(GPTPrompt p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -64,14 +64,14 @@ namespace fAI
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
 
-                var r = CompletionResponse.FromJson(response.Text);
+                var r = AnthropicCompletionResponse.FromJson(response.Text);
                 r.GPTPrompt = p;
                 r.Stopwatch = sw;
                 return r;
             }
             else
             {
-                return new CompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
+                return new AnthropicCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
             }
         }
 

@@ -65,9 +65,12 @@ For each character of the word ""HELLO""
         {
             var p = new Anthropic_Prompt_Claude_3_Opus()
             {
-                System = @"Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. 
-Use clear and professional language, and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points. 
-Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting’s content, with a particular focus on clearly indicating who is responsible for each action item.",
+                System = @"
+Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. 
+Use clear and professional language, 
+and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points. 
+Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting’s content, 
+with a particular focus on clearly indicating who is responsible for each action item.",
                 
                 Messages = new List<AnthropicMessage>()
                 {
@@ -114,11 +117,11 @@ Discussion:
         {
             var p = new Anthropic_Prompt_Claude_3_Opus()
             {
-                System = @"Your task is to analyze the provided text and identify 
+                System = @"Your task is to analyze the provided Text and identify 
                 city airport codes and 
                 city time zones mentioned within it. 
 
-                Present these airport codes, names and time zone names as a JSON array in the order they appear in the text.
+                Present these airport codes, names and time zone names as a JSON array in the order they appear in the Text.
                 Output the data in JSON using the property names: (airportCode, cityName, timeZone). 
                 If no airport codes are found, return an empty array.",
                 Messages = new List<AnthropicMessage>()

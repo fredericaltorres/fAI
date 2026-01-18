@@ -36,7 +36,7 @@ namespace fAI.SourceCodeAnalysis
             return Path.Combine(ExceptionAnalyzer.GetCaseRootFolder(), $"{Case}.CodeAnalysis.json");
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, CompletionResponse completionResponse)
+        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, AnthropicCompletionResponse completionResponse)
         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();

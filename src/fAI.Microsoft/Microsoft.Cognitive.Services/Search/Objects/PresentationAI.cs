@@ -34,7 +34,7 @@ namespace fAI.Microsoft.Search
         public string Description { get; set; }
         public string Category { get; set; }
 
-        private const string ModelName = "text-embedding-ada-002";
+        private const string ModelName = "Text-embedding-ada-002";
         private const int ModelDimensions = 1536;
         private const string SemanticSearchConfigName = "my-semantic-config";
         public const string indexName = "fred-presentation-test-index";

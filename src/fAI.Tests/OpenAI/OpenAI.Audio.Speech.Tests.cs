@@ -37,15 +37,15 @@ namespace fAI.Tests
             const string input = @"
 Win Speak is a Windows Dictation Application which
 
-- Used speech recognition technology to convert spoken words into text with high accuracy and speed.
-- Then using AI LLM the application improves the text recorded in term of grammar, punctuation, and context.
-- The Windows App run in background, therefore the improved text is sent automatically in the application with the focus.
-- Win Whisper can also applied to the text extracted the following actions
+- Used speech recognition technology to convert spoken words into Text with high accuracy and speed.
+- Then using AI LLM the application improves the Text recorded in term of grammar, punctuation, and context.
+- The Windows App run in background, therefore the improved Text is sent automatically in the application with the focus.
+- Win Whisper can also applied to the Text extracted the following actions
     * Summarization.
     * Title generation.
     * Bullet point generation.
-    * Translate the text generated into another language.
-    * Publish the text generated and it's audio representation via an URL.
+    * Translate the Text generated into another language.
+    * Publish the Text generated and it's audio representation via an URL.
 ";
             var client = new OpenAI();
 

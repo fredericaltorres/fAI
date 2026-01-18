@@ -34,7 +34,7 @@ namespace fAI
 
         public override string ToString()
         {
-            return $"Error type:{this.error.type}, msg:{this.error.message}, param:{this.error.param}, code:{this.error.code}";
+            return $"Error Type:{this.error.type}, msg:{this.error.message}, param:{this.error.param}, code:{this.error.code}";
         }
     }
 

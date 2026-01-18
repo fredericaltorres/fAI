@@ -182,6 +182,14 @@ namespace fAI
         }
     }
 
+    public class Anthropic_Prompt_Generic : AnthropicPromptBase
+    {
+        public Anthropic_Prompt_Generic(string model) : base()
+        {
+            Model = model;
+        }
+    }
+
     public class Anthropic_Prompt_Claude_3_5_Sonnet : AnthropicPromptBase
     {
         public Anthropic_Prompt_Claude_3_5_Sonnet() : base()
@@ -191,11 +199,12 @@ namespace fAI
         }
     }
 
-    public class Anthropic_Prompt_Claude_4_Opus : AnthropicPromptBase
+    public class Anthropic_Prompt_Claude_4_5_Opus : AnthropicPromptBase
     {
-        public Anthropic_Prompt_Claude_4_Opus() : base()
+        public Anthropic_Prompt_Claude_4_5_Opus() : base()
         {
-            Model = "claude-opus-4-20250514";
+            //Model = "claude-opus-4-20250514";
+            Model = "claude-sonnet-4-5-20250929"; // Claude Haiku 4.5: claude-haiku-4-5-20251001 (the fastest, most cost-effective option)
             OutputMaxTokens = 32000;
             Url = "https://api.anthropic.com/v1/messages";
         }

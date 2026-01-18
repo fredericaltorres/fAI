@@ -157,10 +157,10 @@ namespace fAI
                     if (r.Text.TrimStart().EndsWith(@""""))
                         r.Text = r.Text.TrimStart().Substring(0, r.Text.Length - 1);
 
-                    if (CompletionResponse.StartsWithANumberSection(r.Text) || CompletionResponse.StartsWithALetterSection(r.Text) || 
-                        CompletionResponse.StartsWithWordSection(r.Text, DS.List("Question", "Q")))
+                    if (AnthropicCompletionResponse.StartsWithANumberSection(r.Text) || AnthropicCompletionResponse.StartsWithALetterSection(r.Text) || 
+                        AnthropicCompletionResponse.StartsWithWordSection(r.Text, DS.List("Question", "Q")))
                     {
-                        r.Text = CompletionResponse.RemoveSection(r.Text);
+                        r.Text = AnthropicCompletionResponse.RemoveSection(r.Text);
                     }
 
                     for (var i = 1; i <= maxAnswer; i++)

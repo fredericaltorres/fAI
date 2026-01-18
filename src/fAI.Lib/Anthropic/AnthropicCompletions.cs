@@ -31,7 +31,7 @@ namespace fAI
             return mc;
         }
 
-        public CompletionResponse Create(AnthropicPromptBase p)
+        public AnthropicCompletionResponse Create(AnthropicPromptBase p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -45,14 +45,14 @@ namespace fAI
             {
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
-                var r = CompletionResponse.FromJson(response.Text);
+                var r = AnthropicCompletionResponse.FromJson(response.Text);
                 r.Stopwatch = sw;
                 return r;
             }
             else
             {
                 OpenAI.TraceError(response.Exception.Message, this);
-                return new CompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
+                return new AnthropicCompletionResponse { Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception) };
             }
         }
     }

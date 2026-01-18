@@ -23,56 +23,27 @@ namespace fAI
 
     public class AnthropicCompletionContentResponse
     {
-        public string text { get; set; }
-        public string type { get; set; }
+        [JsonProperty(PropertyName = "Text")]
+        public string Text { get; set; }
+        [JsonProperty(PropertyName = "Type")]
+        public string Type { get; set; }
     }
 
-    public class Usage
+    public class AnthropicUsage
     {
-        public int prompt_tokens { get; set; }
-        public int completion_tokens { get; set; }
-        public int total_tokens { get; set; }
+        [JsonProperty(PropertyName = "input_tokens")]
+        public int InputTokens { get; set; }
 
-        public double CompletionTokenPricePer1000Tokens(string model)
-        {
-            switch (model)
-            {
-                case "gpt‑4":
-                case "gpt‑4(8k)": return 0.06;
-                case "gpt‑4(32k)": return 0.12;
-                case "gpt‑4 turbo(128k)": return 0.03;
+        [JsonProperty(PropertyName = "output_tokens")]
+        public int OutputTokens { get; set; }
 
-                case "gpt-4-turbo":
-                    return 0.03;
+        [JsonProperty(PropertyName = "service_tier")]
+        public string ServiceTier { get; set; }
 
-                default: // gpt-3.5-turbo , gpt-4o
-                    return 0.0015; // 1.5 cents per 1000 tokens
-            }
-        }
-
-        public double PromptTokenPricePer1000Tokens(string model)
-        {
-            switch (model)
-            {
-                case "gpt‑4":
-                case "gpt‑4(8k)": return 0.03;//    0.06
-                case "gpt‑4(32k)": return 0.06;//    0.12
-                case "gpt‑4 turbo(128k)": return 0.01;// 0.03
-
-                case "gpt-4-turbo": return 0.01;
-
-                default: // gpt-3.5-turbo, gpt-4o
-                    return 0.0005;
-            }
-        }
-
-        public double GetCost(string model)
-        {
-            return (prompt_tokens / 1000 * PromptTokenPricePer1000Tokens(model)) + (completion_tokens / 1000 * CompletionTokenPricePer1000Tokens(model));
-        }
+        
     }
 
-    public class CompletionResponse  : BaseHttpResponse
+    public class AnthropicCompletionResponse  : BaseHttpResponse
     {
         internal const string NEED_MORE_TOKENS_RETURN_CODE = "length";
         internal const string FULL_SUCCEES_RETURN_CODE = "stop";
@@ -84,8 +55,8 @@ namespace fAI
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        [JsonProperty(PropertyName = "object")]
-        public string @Object { get; set; }
+        //[JsonProperty(PropertyName = "object")]
+        //public string @Object { get; set; }
 
         public int created { get; set; }
 
@@ -98,25 +69,25 @@ namespace fAI
         public List<CompletionChoiceResponse> Choices { get; set; }
 
         [JsonProperty(PropertyName = "content")]
-        public List<AnthropicCompletionContentResponse> AnthropicContent { get; set; }
+        public List<AnthropicCompletionContentResponse> Content { get; set; }
 
         [JsonProperty(PropertyName = "message")]
         public List<GPTMessage> Message { get; set; }
 
         [JsonProperty(PropertyName = "usage")]
-        public Usage Usage { get; set; }
+        public AnthropicUsage Usage { get; set; }
 
-        public static CompletionResponse FromJson(string json)
+        public static AnthropicCompletionResponse FromJson(string json)
         {
-            var r = JsonUtils.FromJSON<CompletionResponse>(json);
+            var r = JsonUtils.FromJSON<AnthropicCompletionResponse>(json);
 
-            if(r.AnthropicContent != null && r.AnthropicContent.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
+            if(r.Content != null && r.Content.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
             {
                 r.Choices = new List<CompletionChoiceResponse>();
-                r.AnthropicContent.ForEach(c =>
+                r.Content.ForEach(c =>
                 {
-                    if (c.type == "text")
-                        r.Choices.Add(new CompletionChoiceResponse { text = c.text, finish_reason = "stop" });
+                    if (c.Type == "Text")
+                        r.Choices.Add(new CompletionChoiceResponse { text = c.Text, finish_reason = "stop" });
                 });
             }
             

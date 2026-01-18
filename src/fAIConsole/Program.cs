@@ -132,7 +132,7 @@ namespace fAIConsole
 
             // Get text content
             var text3 = doc.DocumentNode
-                .SelectNodes("//text()[normalize-space()]")
+                .SelectNodes("//Text()[normalize-space()]")
                 .Select(node => ExtractNode(node))
                 .Where(text => !string.IsNullOrWhiteSpace(text))
                 //.Select(text => text.Replace("\t", " ").Replace("\n", " ").Replace("\r", " "))
@@ -354,7 +354,7 @@ It also highlights the brutality of slavery and the courage of those who fought 
             var text = $@"{answer} {question.Replace("Who", "")}.";
             if (answer == notFoundAnswer)
                 text = $@"{notFoundAnswer} to the question: {question}.";
-            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo);
+            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo.ToString());
             AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
             Thread.Sleep(1000 * 4);
         }

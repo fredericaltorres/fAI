@@ -101,7 +101,7 @@ namespace fAI
                 using (HttpClient httpClient = new HttpClient())
                 {
                     foreach (var header in this.Headers.AllKeys)
-                        if (header.ToLowerInvariant() != "content-type")
+                        if (header.ToLowerInvariant() != "content-Type")
                             httpClient.DefaultRequestHeaders.Add(header, this.Headers[header]);
 
                     var multiPartcontent = new MultipartFormDataContent("----MyGreatBoundary");
