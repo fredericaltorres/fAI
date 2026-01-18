@@ -56,7 +56,7 @@ namespace fAI.WebApi.Controllers
                 var org = _configuration.GetValue<string>("OPENAI_ORGANIZATION_ID");
                 var key = _configuration.GetValue<string>("OPENAI_API_KEY");
 
-                var client = new OpenAI(openAiKey: key, openAiOrg: org);
+                var client = new OpenAI(apiKey: key, openAiOrg: org);
                 var r = client.Embeddings.Create(text);
                 if (r.Success)
                 {

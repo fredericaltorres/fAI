@@ -66,7 +66,7 @@ namespace fAI
                 if(string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
 
-                var googleAIClient = new GoogleAI(ApiKey: base._key);
+                var googleAIClient = new GoogleAI(apiKey: base._key);
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
                 var url = googleAIClient.Completions.GetUrl(model);
                 var r = googleAIClient.Completions.Create(p, url, model);
@@ -77,7 +77,7 @@ namespace fAI
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-                var openAIClient = new OpenAI(openAiKey: base._key);
+                var openAIClient = new OpenAI(apiKey: base._key);
                 var p = new Prompt_GPT_4
                 {
                     Messages = new List<GPTMessage>()

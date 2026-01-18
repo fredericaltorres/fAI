@@ -19,29 +19,14 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class OpenAiCompletions_TextImprovement_Title_BulletPoints : OpenAIUnitTestsBase
+    public class GenericAiCompletions_UnitTests : OpenAIUnitTestsBase
     {
-        public OpenAiCompletions_TextImprovement_Title_BulletPoints()
+        public GenericAiCompletions_UnitTests()
         {
             OpenAI.TraceOn = true;
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void EnglishTextImprove_OpenAI()
-        {
-            var text = @"
-- Create a dentist booking demo 
-- Redo fLogviewer AI assistant 
-- Install Visual Studio 2026";
-
-            var client = new OpenAI(openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
-
-            var result = client.CompletionsEx.TextImprovement(text: text, language: "English", model: "gpt-5-mini");// default
-            result = client.CompletionsEx.TextImprovement(text: text, language: "English", model: "gpt-5.2");
-            result = client.CompletionsEx.TextImprovement(text: text, language: "English", model: "gpt-5-nano");
-        }
-
+       
         [Fact()]
         [TestBeforeAfter]
         public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle()
@@ -61,7 +46,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
         [Fact()]
         [TestBeforeAfter]
-        public void SummarizationResult()
+        public void SummarizationResult_CountWords()
         {
             Assert.Equal(4, GenericAICompletions.SummarizationResult.CountWords("This is a test."));
             Assert.Equal(4, GenericAICompletions.SummarizationResult.CountWords("This was, a test."));
@@ -123,7 +108,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage:"French",  model: model);
-                HttpBase.Trace($"[TRANSLATE] model: {model}, , Duration: {result.Duration:0.0}SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
+                HttpBase.Trace($"[TRANSLATE] model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
 

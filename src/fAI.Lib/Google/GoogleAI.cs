@@ -23,7 +23,7 @@ namespace fAI
             );
         }
 
-        public GoogleAI(int timeOut = -1, string ApiKey = null) 
+        public GoogleAI(int timeOut = -1, string apiKey = null) 
         {
             base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
 
@@ -32,12 +32,10 @@ namespace fAI
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
-            if (ApiKey != null)
-                base._key = ApiKey;
-
-            //if (openAiOrg != null)
-            //    HttpBase. _openAiOrg = openAiOrg;
+            if (apiKey != null)
+                base._key = apiKey;
         }
+
         public GoogleAICompletions _completions = null;
         public GoogleAICompletions Completions => _completions ?? (_completions = new GoogleAICompletions(ApiKey: base._key));
     }
