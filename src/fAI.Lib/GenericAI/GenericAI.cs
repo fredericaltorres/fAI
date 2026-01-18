@@ -59,7 +59,7 @@ namespace fAI
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
                 var response = new Anthropic(key: base._key).Completions.Create(p);
-                var text = response.Text;
+                return response.Text;
             }
             else if (GoogleAI.GetModels().Contains(model))
             {

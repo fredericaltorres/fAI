@@ -7,7 +7,7 @@
     /// I am the owner of this voice and I consent to OpenAI using this voice to create a synthetic voice model.
     /// 
     /// C:\DVT\fAI\src\fAI.Lib\OpenAI\Audio\VoiceSamples\Fred OpenAI Sample.wav
-    /// curl.exe https://api.openai.com/v1/audio/voice_consents -X POST -H "Authorization: Bearer xxxx" -F "name=test_consent" -F "language=en" -F "recording=@C:\DVT\fAI\src\fAI.Lib\OpenAI\Audio\VoiceSamples\Fred OpenAI Sample.wav;type=audio/x-wav"
+    /// curl.exe https://api.openai.com/v1/audio/voice_consents -X POST -H "Authorization: B earer xxxx" -F "name=test_consent" -F "language=en" -F "recording=@C:\DVT\fAI\src\fAI.Lib\OpenAI\Audio\VoiceSamples\Fred OpenAI Sample.wav;type=audio/x-wav"
     /// </summary>
     public class  OpenAIAudio
     {

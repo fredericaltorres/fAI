@@ -170,6 +170,11 @@ namespace fAI
                     if (Choices[0].message != null)
                         return Choices[0].message.Content.Replace("\n\n", Environment.NewLine);
                 }
+                if(Content != null && Content.Count > 0)
+                {
+                    var texts = Content.Where(c => c.Type == "text").Select(c => c.Text.Trim()).ToList();
+                    return string.Join(Environment.NewLine, texts);
+                }
                 return null;
             }
         }
