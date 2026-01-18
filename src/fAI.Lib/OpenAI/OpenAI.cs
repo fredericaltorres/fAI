@@ -48,9 +48,7 @@ namespace fAI
         }
         
         OpenAIAudio _audio = null;
-        public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio(openAiKey: base._key));
-
-        //OpenAICompletionsEx
+        public OpenAIAudio Audio => _audio ?? (_audio = new OpenAIAudio(apiKey: base._key));
 
         public OpenAICompletionsEx _completionsEx = null;
         public OpenAICompletionsEx CompletionsEx => _completionsEx ?? (_completionsEx = new OpenAICompletionsEx());

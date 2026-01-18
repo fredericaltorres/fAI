@@ -13,7 +13,7 @@ namespace fAI
     {
         const string __url = "https://api.openai.com/v1/audio/transcriptions";
 
-        public OpenAITranscriptions(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public OpenAITranscriptions(int timeOut = -1, string apiKey = null, string openAiOrg = null) : base(timeOut, apiKey)
         {
         }
 
@@ -33,24 +33,21 @@ namespace fAI
             OpenAI.Trace(new { audioFile, model, responseFormat}, this);
 
             var wc = InitWebClient(addJsonContentType: false);
-            using (var fileStream = File.OpenRead(audioFile))
+            var properties = new Dictionary<string, string>()
             {
-                var properties = new Dictionary<string, string>()
-                {
-                     ["model"] = model,
-                     // ["response_format"] = responseFormat,
-                };
-                var response = wc.POST(__url, audioFile, properties);
-                if (response.Success)
-                {
-                    return OpenAITranscriptionsResponse.FromJson(response.Text).Text;
-                }
-                else
-                {
-                    if (base.IsError(response.Text))
-                        response.SetException(base.GetError(response.Text).ToString());
-                    throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
-                }
+                    ["model"] = model,
+                    // ["response_format"] = responseFormat,
+            };
+            var response = wc.POST(__url, audioFile, properties);
+            if (response.Success)
+            {
+                return OpenAITranscriptionsResponse.FromJson(response.Text).Text;
+            }
+            else
+            {
+                if (base.IsError(response.Text))
+                    response.SetException(base.GetError(response.Text).ToString());
+                throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
             }
         }
     }

@@ -12,9 +12,9 @@
     {
         public string _key { get; }
 
-        public OpenAIAudio(string openAiKey = null)
+        public OpenAIAudio(string apiKey = null)
         {
-            _key = openAiKey;
+            _key = apiKey;
         }
 
         OpenAISpeech _speech;
@@ -23,7 +23,7 @@
             get
             {
                 if (_speech == null )
-                    _speech = new OpenAISpeech(openAiKey: _key); 
+                    _speech = new OpenAISpeech(apiKey: _key); 
                 return _speech;
             }
             set { 
@@ -37,7 +37,7 @@
             get 
             { 
                 if (_transcriptions == null)
-                    _transcriptions = new OpenAITranscriptions(openAiKey: _key);
+                    _transcriptions = new OpenAITranscriptions(apiKey: _key);
                 return _transcriptions;
             } 
             set { 

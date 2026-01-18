@@ -35,7 +35,7 @@ namespace fAI
             }
         }
 
-        public OpenAISpeech(int timeOut = -1, string openAiKey = null) : base(timeOut, openAiKey)
+        public OpenAISpeech(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
         }
 
