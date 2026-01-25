@@ -229,7 +229,7 @@ namespace fAIConsole
                     generatedDocument.Summary = response.Text;
                     var imagePrompt = $@"
 As {a.Country} literature expert and people expert.
-Generate an image inspired by {a.Name}'s classic novel, ""{book}"".
+GenerateUrl an image inspired by {a.Name}'s classic novel, ""{book}"".
 [MORE_DALLE_PROMPT]
 
 The image should depict 3 characters from {a.Country} only and from the era of the novel.
@@ -289,7 +289,7 @@ It also highlights the brutality of slavery and the courage of those who fought 
             {
                 this.Name = "Victor Hugo";
                 this.Title = $"{this.Name}'s MasterPieces";
-                this.Description = $"Generate a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
+                this.Description = $"GenerateUrl a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
                 this.Country = "France";
 
                 Books = new Dictionary<string, string>()
@@ -314,7 +314,7 @@ It also highlights the brutality of slavery and the courage of those who fought 
             {
                 this.Name = "Fyodor Dostoevsky";
                 this.Title = $"{this.Name}'s MasterPieces";
-                this.Description = $"Generate a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
+                this.Description = $"GenerateUrl a summary of {this.Name}'s MasterPieces and an image inspired by the book.";
                 this.Country = "Russia";
 
                 Books = new Dictionary<string, string>()

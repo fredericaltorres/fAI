@@ -20,7 +20,7 @@ namespace fAI
         }
 
         public string GenerateMultiChoiceQuestionAbout(string text,
-            string promptCommand = "Generate a multi choice questions about the userPrompt below,  mark with a * the right answer:")
+            string promptCommand = "GenerateUrl a multi choice questions about the userPrompt below,  mark with a * the right answer:")
         {
             var prompt = new Prompt_GPT_35_TurboInstruct
             {
@@ -212,7 +212,7 @@ namespace fAI
            string text,
            string context = @"
                     Use the provided article delimited by triple quotes to 
-                    Generate [numberOfQuestions] [random] multi choice question about the article. 
+                    GenerateUrl [numberOfQuestions] [random] multi choice question about the article. 
                     Mark the right answer with a character * in the same line of the answer.
             ",
            Func<string, string> preProcessTextReceivedFn = null,

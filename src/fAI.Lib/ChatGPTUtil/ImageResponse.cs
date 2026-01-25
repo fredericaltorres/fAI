@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.ComTypes;
@@ -25,6 +26,11 @@ namespace fAI
             return JsonUtils.FromJSON<ImageResponse>(text);
         }
 
+        public List<string> GetUrls()
+        {
+            return this.data.Select(z => z.url).ToList();
+        }
+
         public List<string> DownloadImages(List<string> images = null)
         {
             if (images == null)
@@ -44,7 +50,5 @@ namespace fAI
             }
             return r;
         }
-
-        
     }
 }
