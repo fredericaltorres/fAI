@@ -15,7 +15,7 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAIImageTests
     {
-        const string prompt = @"GenerateUrl an image inspired by Victor Hugo's classic novel, 'Les Misérables'. 
+        const string prompt = @"Generate an image inspired by Victor Hugo's classic novel, 'Les Misérables'. 
 The image should depict three characters, each with distinct characteristics. 
 The first is an older, physically strong WHITE man with a scarred face, wearing threadbare clothes, indicative of a hard life — this represents Jean Valjean. 
 The second is a young WHITE woman radiating innocence and kindness; she wears modest clothes and has beautiful shining eyes — this is Cosette. 

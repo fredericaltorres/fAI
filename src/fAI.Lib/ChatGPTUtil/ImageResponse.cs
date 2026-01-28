@@ -19,6 +19,8 @@ namespace fAI
 
     public class ImageResponse : BaseHttpResponse
     {
+        public bool Success => Exception == null;
+        public Exception Exception { get; set; }
         public int created { get; set; }
         public List<DatumImage> data { get; set; }
         public static ImageResponse FromJson(string text)
