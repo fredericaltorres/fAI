@@ -68,18 +68,32 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
                 HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
 
-                // Conversation step 2
-                var text2 = @"What is this conversation about?";
-
                 var systemPrompt = @"You are a helpful assistant that analyzes English text";
                 // ^^^ Change the system prompt to force the LLM to answer the question and do not improve the text.
 
+                // Conversation step 2
+                var text2 = @"What is this conversation about?";
+
                 var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
-                Assert.Equal(4, result.Contents.Count); // Query + Response
-                Assert.Equal("user", result.Contents[0].Role);
-                Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
-                Assert.Equal("user", result.Contents[2].Role);
-                Assert.True("model" == result.Contents[3].Role || "assistant" == result.Contents[1].Role);
+                Assert.Equal(4, result2.Contents.Count); // Query + Response
+                Assert.Equal("user", result2.Contents[0].Role);
+                Assert.True("model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
+                Assert.Equal("user", result2.Contents[2].Role);
+                Assert.True("model" == result2.Contents[3].Role || "assistant" == result2.Contents[1].Role);
+
+                // Conversation step 3
+                var text3 = @"Is finding a suitable car insurance proposal problem solve? Answer with YES or NO only.";
+
+                var result3 = client.Completions.TextImprovement(text: text3, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
+                Assert.Contains("yes", result3.Text.ToLower());
+
+                Assert.Equal(6, result3.Contents.Count); // Query + Response
+                Assert.Equal("user", result3.Contents[0].Role);
+                Assert.True("model" == result3.Contents[1].Role || "assistant" == result3.Contents[1].Role);
+                Assert.Equal("user", result3.Contents[2].Role);
+                Assert.True("model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
+                Assert.Equal("user", result3.Contents[4].Role);
+                Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
             }
         }
 

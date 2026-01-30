@@ -79,17 +79,14 @@ namespace fAI
             _key = ApiKey;
         }
 
-        public (string, GenericAI.Contents)Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
+        public (string, GenericAI.Contents) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
         {
             contents = contents == null ? new GenericAI.Contents() : contents;
 
             contents.Add(new GenericAI.ContentMessage
             {
                 Role = "user", // A conversation always starts with user message
-                Parts = new List<GenericAI.ContentMessagePart>
-                    {
-                        new GenericAI.ContentMessagePart { Text = prompt }
-                    }
+                Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
             });
 
             if (Anthropic.GetModels().Contains(model))

@@ -167,21 +167,26 @@ namespace fAI
 
         const string DEFAULT_MODEL = "gemini-3-flash-preview";
 
-        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<GoogleAICompletionsBody.Content> Contents = null)
+        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<GoogleAICompletionsBody.Content> contents = null)
         {
-            var r = new GoogleAICompletionsBody.GeminiPrompt
+            var r = new GoogleAICompletionsBody.GeminiPrompt();
+            r.system_instruction = new GoogleAICompletionsBody.SystemInstruction
             {
-                system_instruction = new GoogleAICompletionsBody.SystemInstruction
-                {
-                    parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = systemPrompt } } 
-                },
-                contents = Contents == null ? new List<GoogleAICompletionsBody.Content>() : Contents
+                parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = systemPrompt } }
             };
-            r.contents.Add(new GoogleAICompletionsBody.Content
+            if (contents == null)
             {
-                role = "user",
-                parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = userPrompt } }
-            });
+                r.contents.Add(new GoogleAICompletionsBody.Content
+                {
+                    role = "user",
+                    parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = userPrompt } }
+                });
+            }
+            else
+            {
+                r.contents = contents; // Expect the passed content to already contain the user prompt.
+            }
+
             return r;
         }
 
