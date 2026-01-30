@@ -51,11 +51,13 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = DS.List("gpt-5-mini","gemini-2.0-flash");
+            var models = DS.List("gemini-2.0-flash", "gpt-5-mini");
 
             foreach (var model in models)
             {
                 var client = new GenericAI();
+
+                // Conversation step 1
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
 
@@ -65,6 +67,20 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
 
                 HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
+
+                // Conversation step 2
+                var text2 = @"What is this conversation about?";
+
+                var systemPrompt = @"You are a helpful assistant that analyzes English text";
+                // ^^^ Change the system prompt to force the LLM to answer the question and do not improve the text.
+
+                var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
+                Assert.Equal(4, result.Contents.Count); // Query + Response
+                Assert.Equal("user", result.Contents[0].Role);
+                Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
+                Assert.Equal("user", result.Contents[2].Role);
+                Assert.True("model" == result.Contents[3].Role || "assistant" == result.Contents[1].Role);
+
             }
         }
 
