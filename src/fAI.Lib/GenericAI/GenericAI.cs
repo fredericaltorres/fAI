@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using static DynamicSugar.DS;
+using static fAI.GenericAI;
+using static fAI.GoogleAICompletions;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -14,7 +16,21 @@ namespace fAI
     {
         public class Contents : List<ContentMessage>
         {
-
+            public List<GoogleAICompletionsBody.Content> GetGoogleContents()
+            {
+                // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
+                var googleContents = List<GoogleAICompletionsBody.Content>();
+                foreach (var c in this)
+                {
+                    var googleContent = new GoogleAICompletionsBody.Content
+                    {
+                        role = c.Role,
+                        parts = new List<GoogleAICompletionsBody.Part>() { new GoogleAICompletionsBody.Part { text = c.Parts[0].Text } }
+                    };
+                    googleContents.Add(googleContent);
+                }
+                return googleContents;
+            }
         }
 
         public class ContentMessagePart
@@ -99,7 +115,10 @@ namespace fAI
                     base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
 
                 var googleAIClient = new GoogleAI(apiKey: base._key);
-                var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
+
+                // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
+                var googleContents = contents.GetGoogleContents();
+                var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
                 var url = googleAIClient.Completions.GetUrl(model);
                 var r = googleAIClient.Completions.Create(p, url, model);
 

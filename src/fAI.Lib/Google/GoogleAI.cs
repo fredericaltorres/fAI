@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static fAI.GenericAI;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 
 namespace fAI
@@ -166,24 +167,22 @@ namespace fAI
 
         const string DEFAULT_MODEL = "gemini-3-flash-preview";
 
-        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, 
-            float temperature = 0.7f, int maxOutputTokens = 1024 * 64)
+        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<GoogleAICompletionsBody.Content> Contents = null)
         {
-            return new GoogleAICompletionsBody.GeminiPrompt
+            var r = new GoogleAICompletionsBody.GeminiPrompt
             {
                 system_instruction = new GoogleAICompletionsBody.SystemInstruction
                 {
                     parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = systemPrompt } } 
                 },
-                contents = new List<GoogleAICompletionsBody.Content>
-                {
-                    new GoogleAICompletionsBody.Content
-                    {
-                        role = "user",
-                        parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = userPrompt } }
-                    }
-                }
+                contents = Contents == null ? new List<GoogleAICompletionsBody.Content>() : Contents
             };
+            r.contents.Add(new GoogleAICompletionsBody.Content
+            {
+                role = "user",
+                parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = userPrompt } }
+            });
+            return r;
         }
 
         // curl.exe "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" -H "Content-Type: application/json" -d "{\"system_instruction\": {\"parts\": [{\"text\": \"You are a helpful assistant that speaks like a pirate.\"}]}, \"contents\": [{\"role\": \"user\", \"parts\": [{\"text\": \"Explain the concept of gravity.\"}]}]}"
