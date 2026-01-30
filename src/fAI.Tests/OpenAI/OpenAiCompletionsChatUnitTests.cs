@@ -231,7 +231,7 @@ End of question
             {
                 var client = new GenericAI();
                 var question = "Say this is a test!";
-                var r = client.Completions.Create(question, "", model);
+                var (r,_) = client.Completions.Create(question, "", model);
 
                 if (model == "gemini-2.0-flash")
                 {

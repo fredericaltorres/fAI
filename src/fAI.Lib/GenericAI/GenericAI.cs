@@ -12,6 +12,24 @@ namespace fAI
 {
     public class GenericAI : HttpBase
     {
+        public class Contents : List<ContentMessage>
+        {
+
+        }
+
+        public class ContentMessagePart
+        {
+            [JsonProperty("text")]
+            public string Text { get; set; }
+        }
+
+        public class ContentMessage 
+        {
+            [JsonProperty("role")]
+            public string Role { get; set; }
+            public List<ContentMessagePart> Parts { get; set; }
+        }
+
         public static List<string> GetModels()
         {
             var models = new List<string>();
@@ -45,8 +63,21 @@ namespace fAI
             _key = ApiKey;
         }
 
-        public string Create(string prompt, string systemPrompt, string model)
+        public (string, GenericAI.Contents)Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
         {
+            if (contents == null)
+            {
+                contents = new GenericAI.Contents();
+                contents.Add(new GenericAI.ContentMessage
+                {
+                    Role = "user", // A conversation always starts with user message
+                    Parts = new List<GenericAI.ContentMessagePart>
+                    {
+                        new GenericAI.ContentMessagePart { Text = prompt }
+                    }
+                });
+            }
+
             if (Anthropic.GetModels().Contains(model))
             {
                 var p = new Anthropic_Prompt_Generic(model)
@@ -62,7 +93,7 @@ namespace fAI
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
                 var response = new Anthropic(key: base._key).Completions.Create(p);
-                return response.Text;
+                return (response.Text, contents);
             }
             else if (GoogleAI.GetModels().Contains(model))
             {
@@ -73,7 +104,19 @@ namespace fAI
                 var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model);
                 var url = googleAIClient.Completions.GetUrl(model);
                 var r = googleAIClient.Completions.Create(p, url, model);
-                return r.GetText();
+
+                // Update the contents discussion with the answer from the AI
+                var answerContent = r.candidates[0].content;
+                contents.Add(new GenericAI.ContentMessage
+                {
+                    Role = answerContent.role,
+                    Parts = new List<GenericAI.ContentMessagePart>
+                    {
+                        new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
+                    }
+                });
+                
+                return (r.GetText(), contents);
             }
             else if (OpenAI.GetModels().Contains(model))
             {
@@ -94,11 +137,11 @@ namespace fAI
                 if (response.Success)
                 {
                     var responseText = response.Text;
-                    return responseText;
+                    return (responseText, contents);
                 }
-                else return null;
+                else return (null, contents);
             }
-            return "";
+            return (null, contents);
         }
 
         public class TextImprovementResult
@@ -106,6 +149,7 @@ namespace fAI
             public string Text { get; set; }
             public string OriginalText { get; set; }
             public double Duration { get; set; }
+            public GenericAI.Contents Contents { get; set; }
         }
 
         public TextImprovementResult TextImprovement(
@@ -122,18 +166,21 @@ Use the following rules to guide your improvements:
  - If the following question is part of an email content, add at the end 'Thanks, sincerely Frederic Torres'.
  </rules>
  ===================================
-            "
+            ",
+           GenericAI.Contents contents = null
            )
         {
             var sw = Stopwatch.StartNew();
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
-            var newText = Create(text, systemPrompt, model);
+            var (newText, contents2) = Create(text, systemPrompt, model, contents);
+            contents = contents2;
             sw.Stop();
             return new TextImprovementResult
             {
                 Text = newText,
                 OriginalText = text,
-                Duration = sw.ElapsedMilliseconds / 1000.0
+                Duration = sw.ElapsedMilliseconds / 1000.0,
+                Contents = contents
             };
         }
 
@@ -175,7 +222,7 @@ Answer the question to the best of your ability.
            )
         {
             var sw = Stopwatch.StartNew();
-            var response = Create(text, systemPrompt, model);
+            var (response, _) = Create(text, systemPrompt, model);
             sw.Stop();
             return new ConversationResult
             {
@@ -206,7 +253,7 @@ Use the following rules to guide your summarization:
         {
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             var sw  = Stopwatch.StartNew();
-            var summary = Create(text, systemPrompt, model);
+            var (summary, _) = Create(text, systemPrompt, model);
             sw.Stop();
             return new SummarizationResult
             {
@@ -240,7 +287,7 @@ Translate the following [language] paragraph into [destinationLanguage].
         {
             systemPrompt = systemPrompt.Template(new { language, destinationLanguage }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var translatedText = Create(text, systemPrompt, model);
+            var (translatedText, _) = Create(text, systemPrompt, model);
             sw.Stop();
             return new TranslationResult
             {
@@ -275,7 +322,7 @@ Use the following rules to guide your summarization:
         {
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var title = Create(text, systemPrompt, model);
+            var (title, _) = Create(text, systemPrompt, model);
             sw.Stop();
             return new GenerateTitleResult
             {
@@ -311,7 +358,7 @@ Use the following rules to guide your summarization:
         {
             systemPrompt = systemPrompt.Template(new { bulletPointCount, language }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var bulletPointsText = Create(text, systemPrompt, model);
+            var (bulletPointsText, _) = Create(text, systemPrompt, model);
             sw.Stop();
             return new GenerateBulletPointResult
             {
@@ -355,7 +402,7 @@ Use ONLY the provided article delimited by triple quotes to answer the question:
             systemPrompt = systemPrompt.Template(new { not_found, facts }, "[", "]");
             var userPrompt = questionPrompt.Template(new { question }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var jsonAnswer = Create(userPrompt, systemPrompt, model);
+            var (jsonAnswer, _) = Create(userPrompt, systemPrompt, model);
             var answer = base.GetJsonObject(jsonAnswer)["answer"].ToString();
             sw.Stop();
             return new AnswerQuestionBasedOnTextResult
