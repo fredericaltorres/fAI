@@ -50,11 +50,12 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
-            var expectedWords = DS.List("alice", "insurance", "car");
-            var models = DS.List("gemini-2.0-flash", "gpt-5-mini");
+            var expectedWords = DS.List("alice", "insurance", "car", "policy");
+            var models = DS.List("gpt-5-mini", "gemini-2.0-flash");
 
             foreach (var model in models)
             {
+                var sw = Stopwatch.StartNew();
                 var client = new GenericAI();
 
                 // Conversation step 1
@@ -66,10 +67,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.Equal(text, result.Contents[0].Parts[0].Text);
                 Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
 
-                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
-
-                var systemPrompt = @"You are a helpful assistant that analyzes English text";
-                // ^^^ Change the system prompt to force the LLM to answer the question and do not improve the text.
+                var systemPrompt = @"You are a helpful assistant that analyzes English text"; // <<< Change the system prompt to force the LLM to answer the question and do not improve the text.
 
                 // Conversation step 2
                 var text2 = @"What is this conversation about?";
@@ -80,6 +78,8 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
                 Assert.Equal("user", result2.Contents[2].Role);
                 Assert.True("model" == result2.Contents[3].Role || "assistant" == result2.Contents[1].Role);
+
+                Assert.True(expectedWords.All(w => result2.Text.ToLower().Contains(w)));
 
                 // Conversation step 3
                 var text3 = @"Is finding a suitable car insurance proposal problem solve? Answer with YES or NO only.";
@@ -94,6 +94,9 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
                 Assert.Equal("user", result3.Contents[4].Role);
                 Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
+
+                sw.Stop();
+                HttpBase.Trace($"[CONVERSATION] model: {model}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
             }
         }
 

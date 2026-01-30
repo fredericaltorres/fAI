@@ -16,6 +16,23 @@ namespace fAI
     {
         public class Contents : List<ContentMessage>
         {
+            public List<GPTMessage>  GetOpenAIContents(string systemPrompt)
+            {
+                var r = new List<GPTMessage>();
+                r.Add(new GPTMessage { Role = MessageRole.system, Content = systemPrompt });
+
+                foreach (var c in this)
+                {
+                    var gptMessage = new GPTMessage
+                    {
+                        Role = (MessageRole)Enum.Parse(typeof(MessageRole), c.Role),
+                        Content = c.Parts[0].Text
+                    };
+                    r.Add(gptMessage);
+                }
+                return r;
+            }
+
             public List<GoogleAICompletionsBody.Content> GetGoogleContents()
             {
                 // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
@@ -137,6 +154,7 @@ namespace fAI
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
+                var openAIContents = contents.GetOpenAIContents(systemPrompt);
                 var openAIClient = new OpenAI(apiKey: base._key);
                 var p = new Prompt_GPT_4
                 {
@@ -147,6 +165,12 @@ namespace fAI
                     },
                     Model = model
                 };
+
+                if(openAIContents.Count > 1)
+                {
+                    p.Messages = openAIContents;
+                }
+
                 var response = openAIClient.Completions.Create(p);
                 if (response.Success)
                 {
