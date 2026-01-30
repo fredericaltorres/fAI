@@ -80,7 +80,6 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
                 Assert.Equal("user", result.Contents[2].Role);
                 Assert.True("model" == result.Contents[3].Role || "assistant" == result.Contents[1].Role);
-
             }
         }
 
