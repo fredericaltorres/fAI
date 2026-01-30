@@ -51,17 +51,21 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var model = "gemini-2.0-flash";
-            var client = new GenericAI();
-            var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
-            Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
+            var models = DS.List("gpt-5-mini","gemini-2.0-flash");
 
-            Assert.Equal(2, result.Contents.Count); // Query + Response
-            Assert.Equal("user", result.Contents[0].Role);
-            Assert.Equal(text, result.Contents[0].Parts[0].Text);
-            Assert.Equal("model", result.Contents[0].Role);
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+                Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
 
-            HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
+                Assert.Equal(2, result.Contents.Count); // Query + Response
+                Assert.Equal("user", result.Contents[0].Role);
+                Assert.Equal(text, result.Contents[0].Parts[0].Text);
+                Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
+
+                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
+            }
         }
 
         [Fact()]

@@ -136,6 +136,17 @@ namespace fAI
                 var response = openAIClient.Completions.Create(p);
                 if (response.Success)
                 {
+                    // Update the contents discussion with the answer from the AI
+                    var answerContent = response.Choices.First().message;
+                    contents.Add(new GenericAI.ContentMessage
+                    {
+                        Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
+                        Parts = new List<GenericAI.ContentMessagePart>
+                        {
+                            new GenericAI.ContentMessagePart { Text = answerContent.Content }
+                        }
+                    });
+
                     var responseText = response.Text;
                     return (responseText, contents);
                 }
