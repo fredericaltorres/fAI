@@ -127,6 +127,11 @@ namespace fAI
         public string System { get; set; } = null;
         public int Temperature { get; set; } = 1;
 
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
         public virtual string GetPostBody()
         {
             if (this.Messages != null && this.Messages.Count > 0)
@@ -195,7 +200,6 @@ namespace fAI
         public Anthropic_Prompt_Claude_3_5_Sonnet() : base()
         {
             Model = "claude-3-5-sonnet-20241022";
-            
         }
     }
 

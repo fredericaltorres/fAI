@@ -141,6 +141,10 @@ namespace fAI
                 };
 
                 var anthropicContents = contents.GetAnthropicContents();
+                if(anthropicContents.Count > 1)
+                {
+                    p.Messages = anthropicContents;
+                }
 
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
