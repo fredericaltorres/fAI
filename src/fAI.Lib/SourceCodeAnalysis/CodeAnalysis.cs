@@ -36,7 +36,7 @@ namespace fAI.SourceCodeAnalysis
             return Path.Combine(ExceptionAnalyzer.GetCaseRootFolder(), $"{Case}.CodeAnalysis.json");
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, AnthropicCompletionResponse completionResponse)
+        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, fAI.AnthropicLib.AnthropicCompletionResponse completionResponse)
         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();
@@ -61,7 +61,8 @@ namespace fAI.SourceCodeAnalysis
                    )
             };
 
-            var response = new FAI().Completions.Create(prompt);
+            var client = new Anthropic();
+            var response = client.Completions.Create(prompt);
 
             var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
             return analysisReportFileName;

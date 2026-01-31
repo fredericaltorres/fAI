@@ -13,22 +13,22 @@ using DynamicSugar;
 
 namespace fAI
 {
-    public class FAICompletions : HttpBase, IOpenAICompletion
-    {
-        public FAICompletions()
-        {
-        }
+    //public class FAICompletions : HttpBase, IOpenAICompletion
+    //{
+    //    public FAICompletions()
+    //    {
+    //    }
 
-        public AnthropicCompletionResponse Create(GPTPrompt p)
-        {
-            return new OpenAI().Completions.Create(p);
-        }
+    //    public AnthropicErrorCompletionResponse Create(GPTPrompt p)
+    //    {
+    //        return new OpenAI().Completions.Create(p);
+    //    }
 
-        public AnthropicCompletionResponse Create(AnthropicPromptBase p)
-        {
-            return new Anthropic().Completions.Create(p);
-        }
-    }
+    //    public AnthropicErrorCompletionResponse Create(AnthropicPromptBase p)
+    //    {
+    //        return new Anthropic().Completions.Create(p);
+    //    }
+    //}
 
     public partial class OpenAICompletions  : HttpBase, IOpenAICompletion
     {
@@ -49,7 +49,7 @@ namespace fAI
         }
 
         // https://platform.openai.com/docs/guides/gpt
-        public AnthropicCompletionResponse Create(GPTPrompt p)
+        public AnthropicErrorCompletionResponse Create(GPTPrompt p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -64,14 +64,14 @@ namespace fAI
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
 
-                var r = AnthropicCompletionResponse.FromJson(response.Text);
+                var r = AnthropicErrorCompletionResponse.FromJson(response.Text);
                 r.GPTPrompt = p;
                 r.Stopwatch = sw;
                 return r;
             }
             else
             {
-                return new AnthropicCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
+                return new AnthropicErrorCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
             }
         }
 

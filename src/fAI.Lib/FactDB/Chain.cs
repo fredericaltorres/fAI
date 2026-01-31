@@ -27,7 +27,7 @@ namespace fAI
     public partial class Chain 
     {
         GPTPrompt _prompt;
-        AnthropicCompletionResponse response;
+        AnthropicErrorCompletionResponse response;
         Stack<string> _invokedStack = new Stack<string>();
 
         public string InvokedText => string.Join(Environment.NewLine, _invokedStack.ToArray());

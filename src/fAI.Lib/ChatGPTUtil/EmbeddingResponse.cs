@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,6 +48,43 @@ namespace fAI
         public System.Exception Exception { get; set; }
         public bool Success => Exception == null;
 
+        public virtual string Text { get; set; }
+
+        public T Deserialize<T>()
+        {
+            return JsonConvert.DeserializeObject<T>(this.Text);
+        }
+
+        public JArray JsonArray
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.Text))
+                    return null;
+                if (this.Text.StartsWith("["))
+                {
+                    OpenAI.Trace(this.Text, this);
+                    return JArray.Parse(this.Text);
+                }
+                return null;
+            }
+        }
+
+        public JObject JsonObject
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.Text))
+                    return null;
+                if (this.Text.StartsWith("{"))
+                {
+                    OpenAI.Trace(this.Text, this);
+                    return JObject.Parse(this.Text);
+                }
+                return null;
+            }
+        }
+
         protected string DownloadImage(Uri uri, string fileName = null)
         {
             string fileNameOnly = Path.GetFileName(uri.LocalPath);
@@ -87,7 +125,7 @@ namespace fAI
         [JsonProperty(PropertyName = "data")]
         public List<Datum> Data { get; set; }
 
-        [JsonProperty(PropertyName = "model")]
+        [JsonProperty(PropertyName = "Model")]
         public string Model { get; set; }
 
         [JsonProperty(PropertyName = "usage")]

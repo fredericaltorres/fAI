@@ -33,6 +33,27 @@ namespace fAI
                 return r;
             }
 
+            public List<AnthropicMessage> GetAnthropicContents()
+            {
+                var anthropicContents = new List<AnthropicMessage>();
+                foreach (var c in this)
+                {
+                    anthropicContents.Add(new AnthropicMessage {
+                        Role = (MessageRole)Enum.Parse(typeof(MessageRole), c.Role),
+                        Content = new List<AnthropicContentMessage>()
+                        {
+                               new AnthropicContentText()
+                               {
+                                    Text = c.Parts[0].Text,
+                                    Type =  AnthropicContentMessageType.text
+                               }
+                        }
+                    });
+
+                }
+                return anthropicContents;
+            }
+
             public List<GoogleAICompletionsBody.Content> GetGoogleContents()
             {
                 // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
@@ -118,10 +139,26 @@ namespace fAI
                         }
                     }
                 };
+
+                var anthropicContents = contents.GetAnthropicContents();
+
                 if (string.IsNullOrEmpty(base._key))
                     base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+
                 var response = new Anthropic(key: base._key).Completions.Create(p);
-                return (response.Text, contents);
+
+                // Update the contents discussion with the answer from the AI
+                var answerContent = response.Content.FirstOrDefault(c => c.IsText);
+                contents.Add(new GenericAI.ContentMessage
+                {
+                    Role = response.Role,
+                    Parts = new List<GenericAI.ContentMessagePart>
+                    {
+                        new GenericAI.ContentMessagePart { Text = answerContent.Text }
+                    }
+                });
+
+                return (answerContent.Text, contents);
             }
             else if (GoogleAI.GetModels().Contains(model))
             {

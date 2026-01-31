@@ -4,20 +4,20 @@ using System.Collections.Generic;
 
 namespace fAI
 {
-    public class FAI : Logger
-    {
-        public static IReadOnlyList<float> GenerateEmbeddings(string text)
-        {
-            return OpenAI.GenerateEmbeddings(text);
-        }
+    //public class FAI : Logger
+    //{
+    //    public static IReadOnlyList<float> GenerateEmbeddings(string text)
+    //    {
+    //        return OpenAI.GenerateEmbeddings(text);
+    //    }
 
-        public FAI(int timeOut = -1, string openAiKey = null)
-        {
-        }
+    //    public FAI(int timeOut = -1, string openAiKey = null)
+    //    {
+    //    }
 
-        public FAICompletions _completions = null;
-        public FAICompletions Completions => _completions ?? (_completions = new FAICompletions());
-    }
+    //    public FAICompletions _completions = null;
+    //    public FAICompletions Completions => _completions ?? (_completions = new FAICompletions());
+    //}
 
     public class OpenAI : HttpBase
     {

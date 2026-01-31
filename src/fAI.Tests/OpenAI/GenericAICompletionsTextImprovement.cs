@@ -39,7 +39,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 var client = new GenericAI();
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
-                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, ", this);
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
             }
         }
 
@@ -51,7 +51,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car", "policy");
-            var models = DS.List("gpt-5-mini", "gemini-2.0-flash");
+            var models = DS.List("claude-haiku-4-5", "gpt-5-mini", "gemini-2.0-flash");
 
             foreach (var model in models)
             {
@@ -65,7 +65,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.Equal(2, result.Contents.Count); // Query + Response
                 Assert.Equal("user", result.Contents[0].Role);
                 Assert.Equal(text, result.Contents[0].Parts[0].Text);
-                Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
+                Assert.True("Model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
 
                 var systemPrompt = @"You are a helpful assistant that analyzes English text"; // <<< Change the system prompt to force the LLM to answer the question and do not improve the text.
 
@@ -75,9 +75,9 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
                 Assert.Equal(4, result2.Contents.Count); // Query + Response
                 Assert.Equal("user", result2.Contents[0].Role);
-                Assert.True("model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
+                Assert.True("Model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
                 Assert.Equal("user", result2.Contents[2].Role);
-                Assert.True("model" == result2.Contents[3].Role || "assistant" == result2.Contents[1].Role);
+                Assert.True("Model" == result2.Contents[3].Role || "assistant" == result2.Contents[1].Role);
 
                 Assert.True(expectedWords.All(w => result2.Text.ToLower().Contains(w)));
 
@@ -89,14 +89,14 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
                 Assert.Equal(6, result3.Contents.Count); // Query + Response
                 Assert.Equal("user", result3.Contents[0].Role);
-                Assert.True("model" == result3.Contents[1].Role || "assistant" == result3.Contents[1].Role);
+                Assert.True("Model" == result3.Contents[1].Role || "assistant" == result3.Contents[1].Role);
                 Assert.Equal("user", result3.Contents[2].Role);
-                Assert.True("model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
+                Assert.True("Model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
                 Assert.Equal("user", result3.Contents[4].Role);
-                Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
+                Assert.True("Model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
 
                 sw.Stop();
-                HttpBase.Trace($"[CONVERSATION] model: {model}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
+                HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
             }
         }
 
@@ -140,7 +140,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[SUMMARIZATION] model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
             }
         }
 
@@ -152,7 +152,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
+                HttpBase.Trace($"[GENERATE-TITLE] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
             }
         }
 
@@ -164,7 +164,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage:"French",  model: model);
-                HttpBase.Trace($"[TRANSLATE] model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
+                HttpBase.Trace($"[TRANSLATE] Model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
 
@@ -176,7 +176,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-BULLETPOINT] model: {model}, Duration: {result.Duration:0.0}, Text: {result.Text}", this);
+                HttpBase.Trace($"[GENERATE-BULLETPOINT] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Text}", this);
             }
         }
 
@@ -202,7 +202,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 var client = new GenericAI();
                 var result = client.Completions.Conversation(text: CSharpJsonDotNetQuestion, model: model);
                 Assert.Contains("[JsonConverter(typeof(StringEnumConverter))]", result.Response);
-                HttpBase.Trace($"[CONVERSATION] model: {model}, Duration: {result.Duration:0.0}, Response: {result.Response}", this);
+                HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {result.Duration:0.0}, Response: {result.Response}", this);
             }
         }
     }

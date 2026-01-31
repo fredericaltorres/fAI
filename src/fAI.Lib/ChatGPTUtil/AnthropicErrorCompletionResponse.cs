@@ -43,7 +43,7 @@ namespace fAI
         
     }
 
-    public class AnthropicCompletionResponse  : BaseHttpResponse
+    public class AnthropicErrorCompletionResponse  : BaseHttpResponse
     {
         internal const string NEED_MORE_TOKENS_RETURN_CODE = "length";
         internal const string FULL_SUCCEES_RETURN_CODE = "stop";
@@ -55,12 +55,9 @@ namespace fAI
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        //[JsonProperty(PropertyName = "object")]
-        //public string @Object { get; set; }
-
         public int created { get; set; }
 
-        [JsonProperty(PropertyName = "model")]
+        [JsonProperty(PropertyName = "Model")]
         public string Model { get; set; }
 
         // https://platform.openai.com/docs/api-reference/completions/get-completion
@@ -77,9 +74,9 @@ namespace fAI
         [JsonProperty(PropertyName = "usage")]
         public AnthropicUsage Usage { get; set; }
 
-        public static AnthropicCompletionResponse FromJson(string json)
+        public static AnthropicErrorCompletionResponse FromJson(string json)
         {
-            var r = JsonUtils.FromJSON<AnthropicCompletionResponse>(json);
+            var r = JsonUtils.FromJSON<AnthropicErrorCompletionResponse>(json);
 
             if(r.Content != null && r.Content.Count > 0) // Anthropic and OpenAi have different structure, so I merge Anthropic into OpenAI structure 
             {

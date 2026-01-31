@@ -238,7 +238,7 @@ Improve the [language] for the following phrases, in more polished and business-
             }
         }
 
-        public AnthropicCompletionResponse Create(GPTPrompt p)
+        public AnthropicErrorCompletionResponse Create(GPTPrompt p)
         {
             throw new NotImplementedException();
         }

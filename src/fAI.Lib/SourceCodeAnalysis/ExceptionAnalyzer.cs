@@ -384,39 +384,41 @@ Source Code File ""{SourceCodeFileNameOnly}"":
 
         public string AnalyzeAndGenerateAnalysisReport(Anthropic_Prompt_Claude_3_5_Sonnet p)
         {
-            var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
-            {
-                System = this.Context,
-                Messages = DS.List(
-                     new AnthropicMessage(MessageRole.user, DS.List<AnthropicContentMessage>(
-                            new AnthropicContentText(this.PromptAnalyzeCodeProposeExplanation))
-                     )
-                 )
-            };
+            //var prompt = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            //{
+            //    System = this.Context,
+            //    Messages = DS.List(
+            //         new AnthropicMessage(MessageRole.user, DS.List<AnthropicContentMessage>(
+            //                new AnthropicContentText(this.PromptAnalyzeCodeProposeExplanation))
+            //         )
+            //     )
+            //};
 
-            var client = new FAI();
-            var response = client.Completions.Create(prompt);
-            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
-            return analysisReportFileName;
+            //var client = new Anthropic();
+            //var response = client.Completions.Create(prompt);
+            //var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
+            //return analysisReportFileName;
+            return null;
         }
 
         public string AnalyzeAndGenerateReport(Prompt_GPT_4o p)
         {
-            var client = new FAI();
-            var prompt = new Prompt_GPT_4o
-            {
-                Messages = new List<GPTMessage> {
-                    new GPTMessage { Role =  MessageRole.system, Content = this.Context },
-                    new GPTMessage { Role =  MessageRole.user, Content = this.PromptAnalyzeCodeProposeExplanation }
-                },
-            };
-            var response = client.Completions.Create(prompt);
-            var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
-            return analysisReportFileName;
+            //var client = new OpenAI();
+            //var prompt = new Prompt_GPT_4o
+            //{
+            //    Messages = new List<GPTMessage> {
+            //        new GPTMessage { Role =  MessageRole.system, Content = this.Context },
+            //        new GPTMessage { Role =  MessageRole.user, Content = this.PromptAnalyzeCodeProposeExplanation }
+            //    },
+            //};
+            //var response = client.Completions.Create(prompt);
+            //var analysisReportFileName = this.GenerateAnalysisReport(this.JsonFileName, prompt, response);
+            //return analysisReportFileName;
+            return null;
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, GPTPrompt prompt, AnthropicCompletionResponse completionResponse)
-        {
+        public string GenerateAnalysisReport(string jsonFileName, GPTPrompt prompt, fAI.AnthropicLib.AnthropicCompletionResponse completionResponse)
+         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();
             sb.AppendLine($"## Prompt({prompt.Model}):");
@@ -428,7 +430,7 @@ Source Code File ""{SourceCodeFileNameOnly}"":
             return reportFileName;
         }
 
-        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, AnthropicCompletionResponse completionResponse)
+        public string GenerateAnalysisReport(string jsonFileName, AnthropicPromptBase prompt, AnthropicErrorCompletionResponse completionResponse)
         {
             var reportFileName = Path.ChangeExtension(jsonFileName, ".report.md");
             var sb = new StringBuilder();

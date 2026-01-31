@@ -47,7 +47,7 @@ namespace fAI
             text = text.Replace(@"""",@"\""");
 
             string json = $"{{\"Text\": \"{text}\"}}";
-            string url = $"https://api.deepgram.com/v1/speak?model={model}&encoding={encoding}&bit_rate={bitRate}";
+            string url = $"https://api.deepgram.com/v1/speak?Model={model}&encoding={encoding}&bit_rate={bitRate}";
             string apiKey = DeepgramAI.GetKey();
 
             using (HttpClient httpClient = new HttpClient())

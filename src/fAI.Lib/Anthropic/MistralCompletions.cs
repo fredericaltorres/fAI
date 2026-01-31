@@ -116,7 +116,7 @@ namespace fAI
             return mc;
         }
 
-        public AnthropicCompletionResponse Create(MistralPromptBase p)
+        public AnthropicErrorCompletionResponse Create(MistralPromptBase p)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -152,7 +152,7 @@ namespace fAI
             if (!string.IsNullOrEmpty(response.Id))
             {
                 OpenAI.Trace(new { response.Choices[0].Message.Content }, this);
-                var r = new AnthropicCompletionResponse();
+                var r = new AnthropicErrorCompletionResponse();
                 r.Choices = new List<CompletionChoiceResponse>();
                 r.Choices.Add(new CompletionChoiceResponse { 
                     message = new GPTMessage { 
@@ -160,7 +160,7 @@ namespace fAI
                         //Role = response.Choices[0].
                     }
                 });
-                r.Choices[0].finish_reason = AnthropicCompletionResponse.FULL_SUCCEES_RETURN_CODE;
+                r.Choices[0].finish_reason = AnthropicErrorCompletionResponse.FULL_SUCCEES_RETURN_CODE;
                 r.Stopwatch = sw;
                 return r;
             }

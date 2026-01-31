@@ -104,7 +104,7 @@ namespace fAI.Tests
             var answer = response.Answer;
             Assert.Contains("Text:", blogPost);
 
-            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicErrorCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
         }
 
         [Fact()]
@@ -118,7 +118,7 @@ aa aa aa. bb bb bb.
 aa aa aa. bb bb bb. cc cc cc.
 zz zz zz zz
 ";
-            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicErrorCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
             var expectedBlogPost = @"Text:
 aa aa aa.
@@ -144,7 +144,7 @@ aa aa aa. bb bb bb.
 2. point B. Point B-1 continuation. Point B-2 continuation
 End of question
 ";
-            var formattedBogPost = AnthropicCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
+            var formattedBogPost = AnthropicErrorCompletionResponse.FormatChatGPTAnswerForTextDisplay(blogPost);
 
             var expectedBlogPost = @"Text:
 aa aa aa.

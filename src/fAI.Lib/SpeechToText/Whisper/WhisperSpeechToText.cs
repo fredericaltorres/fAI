@@ -49,7 +49,7 @@ namespace fAI
                 if (!File.Exists(fileNameOrUrl))
                     throw new ArgumentException($"File name {fileNameOrUrl} not found");
 
-                var options = new Dictionary<string, string> { ["model"] = model };
+                var options = new Dictionary<string, string> { ["Model"] = model };
 
                 // With Whisper, you get or the text or the VTT but not both
                 if (extractCaptions)

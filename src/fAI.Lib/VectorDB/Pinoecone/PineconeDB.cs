@@ -174,7 +174,7 @@ namespace fAI.VectorDB
             {
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
-                var r = AnthropicCompletionResponse.FromJson(response.Text);
+                var r = AnthropicErrorCompletionResponse.FromJson(response.Text);
                 r.Stopwatch = sw;
                 WaitForConsistency();
                 return CheckIndex(DescribeIndex(indexName));
