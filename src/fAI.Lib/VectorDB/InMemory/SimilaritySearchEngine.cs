@@ -26,7 +26,7 @@ namespace fAI.VectorDB
             List<float> queryVector, 
             List<EmbeddingRecord> embeddingRecords, int topK = 3, double minimumScore = 0.75)
         {
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(queryVector);
+            //var json = Newtonsoft.Json.JsonConvert.SerializeObject(queryVector);
             var r = new List<EmbeddingRecord>();
             foreach (var er in embeddingRecords)
             {

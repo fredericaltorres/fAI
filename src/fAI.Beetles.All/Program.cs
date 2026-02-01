@@ -35,13 +35,17 @@ namespace fAI.Beetles.All
         {
             Console.Clear();
             ///WebScrapLyrics();
-            ComputeEmbedding();
-            Environment.Exit(0);    
+            //ComputeEmbedding();
+            //Environment.Exit(0);    
+
             var embeddingSongRecords = LoadEmbeddingSongRecord();
 
-            var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
+            var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
 
+            var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
+
+
 
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
@@ -122,6 +126,7 @@ namespace fAI.Beetles.All
             var r = new List<EmbeddingSongRecord>();
             if (File.Exists(JsonOutputFilename))
                 r.AddRange(EmbeddingSongRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
+            
             return r;
         }
 
@@ -228,10 +233,9 @@ namespace fAI.Beetles.All
         {
             ///WebScrapLyrics();
             var embeddingSongRecords = LoadEmbeddingSongRecord();
-
-            //foreach (var e in embeddingSongRecords)
-            //    e.Embedding.Clear();
-            //SaveEmbeddingSongRecord(embeddingSongRecords);
+            foreach (var e in embeddingSongRecords)
+                e.Embedding.Clear();
+            SaveEmbeddingSongRecord(embeddingSongRecords);
 
             var client = new OpenAI();
             var i = 0;
