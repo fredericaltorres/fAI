@@ -27,7 +27,9 @@ namespace fAI
         const string __url = "https://api.openai.com/v1/embeddings";
 
 
-        public const string EmbeddingAda002 = "Text-embedding-ada-002";
+        //public const string EmbeddingAda002 = "Text-embedding-ada-002";
+        public const string Embedding3Small = "text-embedding-3-small";
+        
         public const int EmbeddingAda002Dimension = 1536;
 
         const int MaxTextLength = 4096;
@@ -52,7 +54,7 @@ namespace fAI
             return r;
         }
         
-        public EmbeddingResponse Create(string input, string model = EmbeddingAda002)
+        public EmbeddingResponse Create(string input, string model = Embedding3Small)
         {
             var sw = Stopwatch.StartNew();
             var body = new { input, model };
@@ -69,7 +71,7 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public List<EmbeddingResponse> CreateBatch(IEnumerable<string> inputs, string model = EmbeddingAda002, int maxBatchSize = 6)
+        public List<EmbeddingResponse> CreateBatch(IEnumerable<string> inputs, string model = Embedding3Small, int maxBatchSize = 6)
         {
             try
             {

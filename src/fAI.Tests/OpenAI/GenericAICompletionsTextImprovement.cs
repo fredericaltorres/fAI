@@ -51,7 +51,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", /*"claude-haiku-4-5",*/ "gpt-5-mini" );
+            var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", "claude-haiku-4-5", "gpt-5-mini" );
 
             foreach (var model in models)
             {
@@ -82,7 +82,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True(expectedWords.All(w => result2.Text.ToLower().Contains(w)));
 
                 // Conversation step 3
-                var text3 = @"Is finding a suitable car insurance problem solved? Answer with YES or NO only.";
+                var text3 = @"is the car insurance proposal approved? Answer with YES or NO only.";
 
                 var result3 = client.Completions.TextImprovement(text: text3, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
                 Assert.Contains("yes", result3.Text.ToLower());

@@ -35,7 +35,8 @@ namespace fAI.Beetles.All
         {
             Console.Clear();
             ///WebScrapLyrics();
-            //ComputeEmbedding()
+            ComputeEmbedding();
+            Environment.Exit(0);    
             var embeddingSongRecords = LoadEmbeddingSongRecord();
 
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
@@ -227,17 +228,22 @@ namespace fAI.Beetles.All
         {
             ///WebScrapLyrics();
             var embeddingSongRecords = LoadEmbeddingSongRecord();
+
+            //foreach (var e in embeddingSongRecords)
+            //    e.Embedding.Clear();
+            //SaveEmbeddingSongRecord(embeddingSongRecords);
+
             var client = new OpenAI();
             var i = 0;
             foreach (var e in embeddingSongRecords)
             {
                 Console.WriteLine($"{i} - {e.Album} - {e.Title}");
-                if (e.Embedding.Count == 0)
+                if (e.Embedding == null || e.Embedding.Count == 0)
                 {
                     var r = client.Embeddings.Create(e.Text);
                     e.Embedding = r.Data[0].Embedding;
 
-                    if (i++ % 4 == 0)
+                    if (i++ % 10 == 0)
                         SaveEmbeddingSongRecord(embeddingSongRecords);
                 }
             }
