@@ -57,7 +57,7 @@ namespace fAI
 
         public int created { get; set; }
 
-        [JsonProperty(PropertyName = "Model")]
+        [JsonProperty(PropertyName = "model")]
         public string Model { get; set; }
 
         // https://platform.openai.com/docs/api-reference/completions/get-completion

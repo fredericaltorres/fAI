@@ -22,9 +22,51 @@ namespace fAI
             {
                 return $"FileName:{this.FileName}, SampleRate:{this.SampleRate}, BitsPerSample:{this.BitsPerSample}, Duration(s):{this.Duration}, DurationAsDouble(s):{this.DurationAsDouble:0.00}";
             }
-
         }
 
+        public static string ConcatenateWavFiles(string inputFilePath1, string inputFilePath2, string outputFilePath, bool asMp3 = true)
+        {
+            var wavFilePart1 = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".wav");
+            try
+            {
+                using (var reader1 = new WaveFileReader(inputFilePath1))
+                {
+                    using (var reader2 = new WaveFileReader(inputFilePath2))
+                    {
+                        // Create a new WaveFormat with the same sample rate and channel count as the input files
+                        var waveFormat = new WaveFormat(reader1.WaveFormat.SampleRate, reader1.WaveFormat.BitsPerSample, reader1.WaveFormat.Channels);
+
+                        // Create a new WaveFileWriter to write the output file
+                        using (var writer = new WaveFileWriter(wavFilePart1, waveFormat))
+                        {
+                            // Read and write data from the first input file
+                            byte[] buffer1 = new byte[reader1.Length];
+                            reader1.Read(buffer1, 0, buffer1.Length);
+                            writer.Write(buffer1, 0, buffer1.Length);
+
+                            // Read and write data from the second input file
+                            byte[] buffer2 = new byte[reader2.Length];
+                            reader2.Read(buffer2, 0, buffer2.Length);
+                            writer.Write(buffer2, 0, buffer2.Length);
+                        }
+                    }
+                }
+                if (asMp3)
+                {
+                    var mp3Out = ConvertWavToMP3(wavFilePart1, outputFilePath); // Create MP3 file with the same name
+                    return mp3Out;
+                }
+                else
+                {
+                    File.Copy(wavFilePart1, outputFilePath);
+                    return outputFilePath;
+                }
+            }
+            finally
+            {
+                DeleteFile(wavFilePart1);
+            }
+        }
 
         public static bool PlayMp3WithWindowsPlayer(string mp3FileName)
         {
@@ -78,7 +120,6 @@ namespace fAI
                 };
             }
         }
-
 
         public static string ConvertMp3ToWav(string mp3FileName, string wavFileName = null)
         {

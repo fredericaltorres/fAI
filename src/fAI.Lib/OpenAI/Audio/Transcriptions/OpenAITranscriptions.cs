@@ -35,7 +35,7 @@ namespace fAI
             var wc = InitWebClient(addJsonContentType: false);
             var properties = new Dictionary<string, string>()
             {
-                    ["Model"] = model,
+                    ["model"] = model,
                     // ["response_format"] = responseFormat,
             };
             var response = wc.POST(__url, audioFile, properties);

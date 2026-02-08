@@ -125,7 +125,7 @@ namespace fAI
         [JsonProperty(PropertyName = "data")]
         public List<Datum> Data { get; set; }
 
-        [JsonProperty(PropertyName = "Model")]
+        [JsonProperty(PropertyName = "model")]
         public string Model { get; set; }
 
         [JsonProperty(PropertyName = "usage")]
