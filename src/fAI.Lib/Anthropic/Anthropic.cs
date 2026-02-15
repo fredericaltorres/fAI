@@ -11,10 +11,11 @@ namespace fAI
         public static List<string> GetModels()
         {
             return DS.List(
+                "claude-opus-4-6",
                 "claude-sonnet-4-5", 
-                "claude-haiku-4-5",
-                "claude-opus-4-1",
-                "claude-opus-4-0"
+                "claude-haiku-4-5"
+                //"claude-opus-4-1",
+                //"claude-opus-4-0"
                 //"claude-3-7-sonnet-latest",
                 //"claude-3-5-haiku-latest"
             );
