@@ -93,6 +93,7 @@
     <Compile Include="HumeAI\HumeAI.Audio.Speech.Tests.cs" />
     <Compile Include="OpenAI\GenericAICompletionsTextImprovement.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
+    <Compile Include="SkillManager\SkillManager.Tests.cs" />
     <Compile Include="WhisperSpeechToText\WhiperSpeechToText.Tests.cs" />
     <Compile Include="SpeechToText\SpeechToText.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.CodeGeneration.cs" />
@@ -829,6 +830,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ff94f88a-9cca-4a62-9bbc-6710e863e741..json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Skills\DataAnalysisAndInsights\SKILL.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Skills\WordDocumentGeneration\SKILL.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
