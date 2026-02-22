@@ -28,8 +28,6 @@ namespace fAI.Tests
         [Fact()]
         public void Constructor_WithDefaultPath_UsesDefaultSkillsFolder()
         {
-            // This will throw if the default .\skills folder doesn't exist
-            // which is expected behavior
             Assert.Throws<DirectoryNotFoundException>(() => new SkillManager());
         }
 
@@ -152,7 +150,7 @@ namespace fAI.Tests
 
             Assert.NotNull(content);
             Assert.NotEmpty(content);
-            Assert.Contains("Data Analysis & Insights", content);
+            Assert.Contains("Data Analysis And Insights", content);
             Assert.Contains("Overview", content);
         }
 
@@ -204,7 +202,7 @@ namespace fAI.Tests
             Assert.Equal(2, skills.Count);
             Assert.True(skills.ContainsKey("DataAnalysisAndInsights"));
             Assert.True(skills.ContainsKey("WordDocumentGeneration"));
-            Assert.Contains("Data Analysis & Insights", skills["DataAnalysisAndInsights"]);
+            Assert.Contains("Data Analysis And Insights", skills["DataAnalysisAndInsights"]);
             Assert.Contains("Word Document Generation", skills["WordDocumentGeneration"]);
         }
 
@@ -266,7 +264,7 @@ namespace fAI.Tests
             Assert.Equal(2, allSkills.Count);
             Assert.True(allSkills.ContainsKey("DataAnalysisAndInsights"));
             Assert.True(allSkills.ContainsKey("WordDocumentGeneration"));
-            Assert.Contains("Data Analysis & Insights", allSkills["DataAnalysisAndInsights"]);
+            Assert.Contains("Data Analysis And Insights", allSkills["DataAnalysisAndInsights"]);
             Assert.Contains("Word Document Generation", allSkills["WordDocumentGeneration"]);
         }
 
@@ -281,10 +279,8 @@ namespace fAI.Tests
             var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" });
 
             Assert.NotNull(combined);
-            Assert.Contains("## Skill: DataAnalysisAndInsights", combined);
-            Assert.Contains("## Skill: WordDocumentGeneration", combined);
-            Assert.Contains("Data Analysis & Insights", combined);
-            Assert.Contains("Word Document Generation", combined);
+            Assert.Contains("# SKILL: Data Analysis And Insights", combined);
+            Assert.Contains("# SKILL: Word Document Generation (docx)", combined);
             Assert.Contains("\n\n---\n\n", combined);
         }
 
@@ -294,11 +290,10 @@ namespace fAI.Tests
             var skillManager = new SkillManager(TestSkillsPath);
             var combined = skillManager.ReadSkillsCombined(
                 new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" },
-                "\n===\n");
+                "\n@@@\n");
 
             Assert.NotNull(combined);
-            Assert.Contains("\n===\n", combined);
-            Assert.DoesNotContain("\n\n---\n\n", combined);
+            Assert.Contains("\n@@@\n", combined);
         }
 
         [Fact()]

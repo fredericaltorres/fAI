@@ -34,6 +34,9 @@ namespace fAI
                 throw new ArgumentException("Root path must not be null or empty.", nameof(rootPath));
 
             _rootPath = Path.GetFullPath(rootPath);
+
+            if (!Directory.Exists(_rootPath))
+                throw new DirectoryNotFoundException($"skills directory not found: {_rootPath}");
         }
 
         public string ReadSkill(string skillName)
