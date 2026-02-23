@@ -195,6 +195,14 @@ namespace fAI
         }
     }
 
+    public class Anthropic_Prompt_Claude_4_6_Sonnet : AnthropicPromptBase
+    {
+        public Anthropic_Prompt_Claude_4_6_Sonnet() : base()
+        {
+            Model = "claude-opus-4-6";
+        }
+    }
+
     public class Anthropic_Prompt_Claude_3_5_Sonnet : AnthropicPromptBase
     {
         public Anthropic_Prompt_Claude_3_5_Sonnet() : base()

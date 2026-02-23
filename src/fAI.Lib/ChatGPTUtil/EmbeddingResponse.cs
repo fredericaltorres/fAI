@@ -76,10 +76,21 @@ namespace fAI
             {
                 if (string.IsNullOrEmpty(this.Text))
                     return null;
-                if (this.Text.StartsWith("{"))
+
+                var t = this.Text.Trim();
+                var jsonMarker = "```json";
+                var jsonMarker2 = "```";
+                if (t.StartsWith(jsonMarker))
                 {
-                    OpenAI.Trace(this.Text, this);
-                    return JObject.Parse(this.Text);
+                    t = t.Substring(jsonMarker.Length);
+                    if (t.EndsWith(jsonMarker2))
+                        t = t.Substring(0, t.Length - jsonMarker2.Length);
+                }
+                t = t.Trim();
+                if (t.StartsWith("{"))
+                {
+                    OpenAI.Trace(t, this);
+                    return JObject.Parse(t);
                 }
                 return null;
             }

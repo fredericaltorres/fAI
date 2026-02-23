@@ -19,7 +19,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Nusbio_Led_Control()
         {
-            var p = new Anthropic_Prompt_Claude_3_5_Sonnet()
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 System = null,
                 Messages = new List<AnthropicMessage>()
@@ -63,7 +63,7 @@ For each character of the word ""HELLO""
         [TestBeforeAfter]
         public void Completion_Summarize()
         {
-            var p = new Anthropic_Prompt_Claude_3_Opus()
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 System = @"
 Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. 
@@ -115,7 +115,7 @@ Discussion:
         [TestBeforeAfter]
         public void AnalyseTextAndExtractCodeInformation_Airport_Code_Analyst()
         {
-            var p = new Anthropic_Prompt_Claude_3_Opus()
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 System = @"Your task is to analyze the provided Text and identify 
                 city airport codes and 
@@ -145,7 +145,7 @@ Discussion:
         [TestBeforeAfter]
         public void Completion_JsonMode_WorldCup()
         {
-            var p = new Anthropic_Prompt_Claude_3_Opus()
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new List<AnthropicMessage>()
                 {
@@ -167,7 +167,7 @@ Discussion:
         [TestBeforeAfter]
         public void Completion_JsonMode_WhatIsLatinForAnt()
         {
-            var p = new Anthropic_Prompt_Claude_3_Opus()
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new List<AnthropicMessage>()
                 {
@@ -183,6 +183,7 @@ Discussion:
             var answer = response.JsonObject["answer"];
             Assert.Equal("C", answer);
         }
+        
 
         [Fact()]
         [TestBeforeAfter]
@@ -191,7 +192,7 @@ Discussion:
             var imageFileName = base.GetTestFile("code.question.1.jpg");
             Assert.True(File.Exists(imageFileName));
 
-            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new AnthropicMessages(
                     new AnthropicMessage(
@@ -213,8 +214,7 @@ Discussion:
         {
             var imageFileName = base.GetTestFile("code.question.1.jpg");
             Assert.True(File.Exists(imageFileName));
-
-            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new AnthropicMessages(
                     new AnthropicMessage(
@@ -237,7 +237,7 @@ Discussion:
             var imageFileName = base.GetTestFile("code.question.2.jpg");
             Assert.True(File.Exists(imageFileName));
 
-            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new AnthropicMessages(
                     new AnthropicMessage(
@@ -254,7 +254,6 @@ Discussion:
             // ISSUE WITH AI Assert.Contains(@"Database Error Page", response.Text);
         }
 
-
         // C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\images
 
         [Fact()]
@@ -264,7 +263,7 @@ Discussion:
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
             Assert.True(File.Exists(imageFileName));
 
-            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new AnthropicMessages(
                     new AnthropicMessage(
@@ -287,7 +286,7 @@ Discussion:
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
             Assert.True(File.Exists(imageFileName));
 
-            var prompt = new Anthropic_Image_Prompt_Claude_3_Opus()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new AnthropicMessages(
                     new AnthropicMessage(
