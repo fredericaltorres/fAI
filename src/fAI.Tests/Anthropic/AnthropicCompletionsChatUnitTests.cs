@@ -159,7 +159,7 @@ Discussion:
 
             var response = new Anthropic().Completions.Create(p);
             Assert.True(response.Success);
-            var answer = response.JsonObject["winner"];
+            var answer = response.JsonObject["winner"].ToString();
             Assert.Equal("France", answer);
         }
 
@@ -180,7 +180,7 @@ Discussion:
 
             var response = new Anthropic().Completions.Create(p);
             Assert.True(response.Success);
-            var answer = response.JsonObject["answer"];
+            var answer = response.JsonObject["answer"].ToString();
             Assert.Equal("C", answer);
         }
         
