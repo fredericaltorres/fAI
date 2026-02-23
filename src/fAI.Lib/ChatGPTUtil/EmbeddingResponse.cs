@@ -63,10 +63,13 @@ namespace fAI
             {
                 if (string.IsNullOrEmpty(this.Text))
                     return null;
-                if (this.Text.StartsWith("["))
+
+                var t = StringUtil.SmartExtractJson(this.Text);
+
+                if (t.StartsWith("["))
                 {
-                    OpenAI.Trace(this.Text, this);
-                    return JArray.Parse(this.Text);
+                    OpenAI.Trace(t, this);
+                    return JArray.Parse(t);
                 }
                 return null;
             }

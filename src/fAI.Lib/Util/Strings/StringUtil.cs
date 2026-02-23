@@ -22,9 +22,14 @@ namespace fAI.Util.Strings
                 var firstCurly = t.IndexOf("{");
                 var lastCurly = t.LastIndexOf("}");
                 if (firstCurly >= 0 && lastCurly > firstCurly)
-                {
                     t = t.Substring(firstCurly, lastCurly - firstCurly + 1);
-                }
+            }
+            else if (t.Contains("["))
+            {
+                var firstCurly = t.IndexOf("[");
+                var lastCurly = t.LastIndexOf("]");
+                if (firstCurly >= 0 && lastCurly > firstCurly)
+                    t = t.Substring(firstCurly, lastCurly - firstCurly + 1);
             }
             return t.Trim();
         }

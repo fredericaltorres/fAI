@@ -138,9 +138,14 @@ Discussion:
 
             var response = new Anthropic().Completions.Create(p);
             Assert.True(response.Success);
-            var airportCode = response.JsonArray[0]["airportCode"];
-            var cityName = response.JsonArray[0]["cityName"];
-            var timeZoneName = response.JsonArray[0]["timeZone"];
+            var airportCode = response.JsonArray[0]["airportCode"].ToString();
+            Assert.Equal("SEA", airportCode);
+
+            var cityName = response.JsonArray[0]["cityName"].ToString();
+            Assert.Equal("Seattle", cityName);
+
+            var timeZoneName = response.JsonArray[0]["timeZone"].ToString();
+            Assert.Equal("America/Los_Angeles", timeZoneName);
         }
 
         [Fact()]
