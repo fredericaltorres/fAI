@@ -8,11 +8,56 @@ using System.Linq;
 
 namespace fAI
 {
-
     public enum AnthropicContentMessageType
     {
         text,
         image
+    }
+
+    public class AnthropicTool
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("input_schema")]
+        public InputSchema InputSchema { get; set; }
+    }
+
+    public class InputSchema
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; } = "object";
+
+        [JsonProperty("properties")]
+        public Dictionary<string, SchemaProperty> Properties { get; set; } = new Dictionary<string, SchemaProperty>();
+
+        [JsonProperty("required", NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Required { get; set; }
+    }
+
+    public class SchemaProperty
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }  // "string", "number", "integer", "boolean", "array", "object"
+
+        [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
+        public string Description { get; set; }
+
+        [JsonProperty("items", NullValueHandling = NullValueHandling.Ignore)]
+        public SchemaProperty Items { get; set; }
+
+        [JsonProperty("properties", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, SchemaProperty> Properties { get; set; }
+
+        [JsonProperty("enum", NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Enum { get; set; }
+
+        /// <summary>Default value hint (informational)</summary>
+        [JsonProperty("default", NullValueHandling = NullValueHandling.Ignore)]
+        public object Default { get; set; }
     }
 
     public class AnthropicContentMessage
@@ -122,7 +167,7 @@ namespace fAI
         public string Url { get; set; }
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
         public string Model { get; set; }
-        public int OutputMaxTokens { get; set; } = 1024*4;
+        public int OutputMaxTokens { get; set; } = 1024 * 4;
         public int InputMaxTokens { get; set; } = 200000;
         public string System { get; set; } = null;
         public int Temperature { get; set; } = 1;
@@ -136,9 +181,9 @@ namespace fAI
         {
             if (this.Messages != null && this.Messages.Count > 0)
             {
-                if(this.System == null)
+                if (this.System == null)
                 {
-                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages,max_tokens = OutputMaxTokens, temperature = Temperature });
+                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages, max_tokens = OutputMaxTokens, temperature = Temperature });
                 }
                 else
                 {
@@ -164,16 +209,16 @@ namespace fAI
 
                 if (this.Messages.Count > 0)
                 {
-                    foreach(var m in this.Messages)
+                    foreach (var m in this.Messages)
                     {
                         sb.Append($"{m.Role}: ");
-                        foreach(var c in m.Content)
+                        foreach (var c in m.Content)
                         {
-                            if(c is AnthropicContentText textContent)
+                            if (c is AnthropicContentText textContent)
                                 sb.AppendLine($"{textContent.Text}");
                             else if (c is AnthropicContentMessage textMessage)
                                 sb.AppendLine($"(Type: {textMessage.Type})"); // Should not happen, but just in case.
-                            else if(c is AnthropicContentImage imageContent)
+                            else if (c is AnthropicContentImage imageContent)
                                 sb.AppendLine($"  Image: {imageContent.Source["media_type"]} (base64 data)");
                         }
                     }
@@ -197,9 +242,26 @@ namespace fAI
 
     public class Anthropic_Prompt_Claude_4_6_Sonnet : AnthropicPromptBase
     {
+        [JsonProperty("tools", NullValueHandling = NullValueHandling.Ignore)]
+        public List<AnthropicTool> Tools { get; set; } = null;
+
         public Anthropic_Prompt_Claude_4_6_Sonnet() : base()
         {
             Model = "claude-opus-4-6";
+        }
+        public override string GetPostBody()
+        {
+            var d = new Dictionary<string, string>();
+            if(System != null) d.Add("system", System);
+            d.Add("model", Model);
+            d.Add("messages", JsonConvert.SerializeObject(this.Messages));
+            d.Add("max_tokens", OutputMaxTokens.ToString());
+            d.Add("temperature", Temperature.ToString());
+            if(Tools != null) d.Add("tools", JsonConvert.SerializeObject(Tools));
+
+            var json = JsonConvert.SerializeObject(d);
+            return json;
+            //return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages,  max_tokens = OutputMaxTokens, temperature = Temperature, tools = Tools });
         }
     }
 

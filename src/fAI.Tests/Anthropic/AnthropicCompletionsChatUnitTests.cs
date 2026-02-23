@@ -308,6 +308,43 @@ Discussion:
             Assert.True(response.Success);
             //DS.Assert.Words(response.Text, "sea & waves & sailor");
         }
+
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_With_Tools()
+        {
+            var tool = new AnthropicTool()
+            {
+                Name = "get_weather",
+                Description = "Get the current weather in a given location",
+                InputSchema = new InputSchema()
+                {
+                    Properties = new Dictionary<string, SchemaProperty>()
+                    {
+                        { "location", new SchemaProperty() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
+                        { "unit", new SchemaProperty() { Type = "string", Description = "The unit of temperature to return, either 'celsius' or 'fahrenheit'" } }
+                    },
+                    Required = new List<string>() { "location" }
+                }
+            };
+
+            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
+            {
+                Messages = new List<AnthropicMessage>()
+                {
+                    new AnthropicMessage { Role =  MessageRole.user,
+                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(@"What's the weather like in Boston right now?"))
+                    }
+                },
+                Tools = new List<AnthropicTool>() { tool }
+            };
+
+            var response = new Anthropic().Completions.Create(p);
+            Assert.True(response.Success);
+            var answer = response.Text;
+        }
     }
 }
 
