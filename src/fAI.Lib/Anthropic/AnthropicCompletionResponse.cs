@@ -14,14 +14,46 @@ namespace fAI.AnthropicLib
         public int ephemeral_1h_input_tokens { get; set; }
     }
 
+    public class ContentCaller
+    {
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
+    }
+
     public class Content
     {
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
+
         [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
 
         public bool IsText => Type == "text";
+
+        public bool IsToolUse => Type == "tool_use";
+
+
+        // In case of tool calls, there will be a name property with the name of the tool being called. This is useful for tools that return text, but we want to know which tool was called.
+        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        [JsonProperty(PropertyName = "input", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Input { get; set; }
+
+        [JsonProperty(PropertyName = "caller", NullValueHandling = NullValueHandling.Ignore)]
+        public ContentCaller Caller { get; set; }
+    }
+
+    public class Contents : List<Content>
+    {
+        public Content FindToolUse()
+        {
+            return this.FirstOrDefault(c => c.IsToolUse);
+        }
+        public Content FindToolByName(string name)
+        {
+            return this.FirstOrDefault(c => c.Name == name);
+        }
     }
 
     public class AnthropicCompletionResponse : BaseHttpResponse
@@ -35,11 +67,13 @@ namespace fAI.AnthropicLib
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 
+        public bool IsToolUse => this.StopReason == "tool_use";
+
         [JsonProperty(PropertyName = "role")]
         public string Role { get; set; }
 
         [JsonProperty(PropertyName = "content")]
-        public List<Content> Content { get; set; }
+        public Contents Content { get; set; }
 
         [JsonProperty(PropertyName = "stop_reason")]
         public string StopReason { get; set; }
@@ -52,7 +86,15 @@ namespace fAI.AnthropicLib
 
         public static AnthropicCompletionResponse FromJson(string json) => Newtonsoft.Json.JsonConvert.DeserializeObject<AnthropicCompletionResponse>(json);
 
-        public override string Text => this.Content.FirstOrDefault(c => c.IsText).Text;
+        public override string Text 
+        { 
+            get {
+                var o = this.Content.FirstOrDefault(c => c.IsText);
+                if(o == null)
+                    return null;
+                return o.Text;
+            }
+        }
         public override string AsJson => StringUtil.SmartExtractJson(this.Text);
     }
 

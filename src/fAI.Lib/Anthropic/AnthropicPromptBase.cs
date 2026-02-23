@@ -251,13 +251,13 @@ namespace fAI
         }
         public override string GetPostBody()
         {
-            var d = new Dictionary<string, string>();
+            var d = new Dictionary<string, object>();
             if(System != null) d.Add("system", System);
             d.Add("model", Model);
-            d.Add("messages", JsonConvert.SerializeObject(this.Messages));
-            d.Add("max_tokens", OutputMaxTokens.ToString());
-            d.Add("temperature", Temperature.ToString());
-            if(Tools != null) d.Add("tools", JsonConvert.SerializeObject(Tools));
+            d.Add("messages", this.Messages);
+            d.Add("max_tokens", OutputMaxTokens);
+            d.Add("temperature", Temperature);
+            if(Tools != null) d.Add("tools", Tools);
 
             var json = JsonConvert.SerializeObject(d);
             return json;

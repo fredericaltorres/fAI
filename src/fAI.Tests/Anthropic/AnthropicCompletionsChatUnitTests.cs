@@ -343,6 +343,13 @@ Discussion:
 
             var response = new Anthropic().Completions.Create(p);
             Assert.True(response.Success);
+            Assert.True(response.IsToolUse);
+            var toolContent = response.Content.FindToolUse();
+            Assert.True(toolContent.IsToolUse);
+            Assert.Equal("get_weather", toolContent.Name);
+            Assert.Equal("Boston, MA", toolContent.Input["location"]);
+            //Assert.Equal("fahrenheit", toolContent.Input["unit"]);
+
             var answer = response.Text;
         }
     }
