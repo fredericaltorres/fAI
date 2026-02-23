@@ -29,12 +29,14 @@
                 r.FileName = file;
                 return r;
             }
-                
+
         }
 
         public static AppOptions FromJSON(string json)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<AppOptions>(json);
         }
+
+   
     }
 }

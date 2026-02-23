@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using fAI.Util.Strings;
+using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace fAI.AnthropicLib
@@ -52,6 +53,7 @@ namespace fAI.AnthropicLib
         public static AnthropicCompletionResponse FromJson(string json) => Newtonsoft.Json.JsonConvert.DeserializeObject<AnthropicCompletionResponse>(json);
 
         public override string Text => this.Content.FirstOrDefault(c => c.IsText).Text;
+        public override string AsJson => StringUtil.SmartExtractJson(this.Text);
     }
 
     public class Usage

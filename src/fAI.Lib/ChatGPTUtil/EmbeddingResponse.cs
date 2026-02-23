@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using fAI.Util.Strings;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -49,10 +50,11 @@ namespace fAI
         public bool Success => Exception == null;
 
         public virtual string Text { get; set; }
+        public virtual string AsJson { get; }
 
         public T Deserialize<T>()
         {
-            return JsonConvert.DeserializeObject<T>(this.Text);
+            return JsonConvert.DeserializeObject<T>(this.AsJson);
         }
 
         public JArray JsonArray
@@ -77,16 +79,8 @@ namespace fAI
                 if (string.IsNullOrEmpty(this.Text))
                     return null;
 
-                var t = this.Text.Trim();
-                var jsonMarker = "```json";
-                var jsonMarker2 = "```";
-                if (t.StartsWith(jsonMarker))
-                {
-                    t = t.Substring(jsonMarker.Length);
-                    if (t.EndsWith(jsonMarker2))
-                        t = t.Substring(0, t.Length - jsonMarker2.Length);
-                }
-                t = t.Trim();
+                var t = StringUtil.SmartExtractJson(this.Text);
+
                 if (t.StartsWith("{"))
                 {
                     OpenAI.Trace(t, this);

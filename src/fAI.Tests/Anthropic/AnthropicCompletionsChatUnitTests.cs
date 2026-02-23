@@ -4,6 +4,7 @@ using System.Linq;
 using Xunit;
 using DynamicSugar;
 using System.Text.Json.Serialization;
+using System.Runtime.InteropServices;
 
 namespace fAI.Tests
 {
@@ -47,6 +48,7 @@ For each character of the word ""HELLO""
             var response = new Anthropic().Completions.Create(p);
             Assert.True(response.Success);
             var text = response.Text;
+            var asJson = response.AsJson;
             var sequence = response.Deserialize<LedSequence>();
 
             Assert.Equal(5, sequence.Sequences.Count);
