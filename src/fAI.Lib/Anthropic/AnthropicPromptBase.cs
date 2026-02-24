@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.AnthropicLib;
 using MimeTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -11,7 +12,9 @@ namespace fAI
     public enum AnthropicContentMessageType
     {
         text,
-        image
+        image,
+        tool_use,
+        tool_result
     }
 
     public class AnthropicTool
@@ -62,9 +65,37 @@ namespace fAI
 
     public class AnthropicContentMessage
     {
+        [JsonProperty(PropertyName = "id", NullValueHandling = NullValueHandling.Ignore)]
+        public string Id { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "type")]
         public AnthropicContentMessageType Type { get; set; } = AnthropicContentMessageType.text;
+
+        [JsonProperty(PropertyName = "text", NullValueHandling = NullValueHandling.Ignore)]
+        public string Text { get; set; }
+
+        [JsonProperty(PropertyName = "content", NullValueHandling = NullValueHandling.Ignore)]
+        public string Content { get; set; }
+
+        [JsonProperty(PropertyName = "tool_use_id", NullValueHandling = NullValueHandling.Ignore)]
+        public string toolUseId { get; set; }
+
+        [JsonIgnore]
+        public bool IsText => Type == AnthropicContentMessageType.text;
+
+        [JsonIgnore]
+        public bool IsToolUse => Type == AnthropicContentMessageType.tool_use;
+
+        // In case of tool calls, there will be a name property with the name of the tool being called. This is useful for tools that return text, but we want to know which tool was called.
+        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        [JsonProperty(PropertyName = "input", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Input { get; set; }
+
+        [JsonProperty(PropertyName = "caller", NullValueHandling = NullValueHandling.Ignore)]
+        public ContentCaller Caller { get; set; }
     }
 
     public class AnthropicContents : List<AnthropicContentMessage>
