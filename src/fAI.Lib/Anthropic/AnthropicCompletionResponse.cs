@@ -1,9 +1,11 @@
 ﻿using fAI.Util.Strings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+//using System.Text.Json.Serialization;
 
 namespace fAI.AnthropicLib
 {
@@ -57,6 +59,17 @@ namespace fAI.AnthropicLib
         }
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum StopReason
+    {
+        end_turn,
+        tool_use,
+        max_tokens,
+        stop_sequence,
+        pause_turn,
+        refusal
+    }
+
     public class AnthropicCompletionResponse : BaseHttpResponse
     {
         [JsonProperty(PropertyName = "model")]
@@ -68,7 +81,8 @@ namespace fAI.AnthropicLib
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 
-        public bool IsToolUse => this.StopReason == "tool_use";
+        [Newtonsoft.Json.JsonIgnore]
+        public bool IsToolUse => this.StopReason == StopReason.tool_use;
 
         [JsonProperty(PropertyName = "role")]
         public string Role { get; set; }
@@ -76,8 +90,9 @@ namespace fAI.AnthropicLib
         [JsonProperty(PropertyName = "content")]
         public Contents Content { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "stop_reason")]
-        public string StopReason { get; set; }
+        public StopReason StopReason { get; set; }
 
         [JsonProperty(PropertyName = "stop_sequence")]
         public object StopSequence { get; set; }
@@ -85,7 +100,17 @@ namespace fAI.AnthropicLib
         [JsonProperty(PropertyName = "usage")]
         public Usage Usage { get; set; }
 
-        public static AnthropicCompletionResponse FromJson(string json) => Newtonsoft.Json.JsonConvert.DeserializeObject<AnthropicCompletionResponse>(json);
+        public static AnthropicCompletionResponse FromJson(string json)
+        {
+            try
+            {
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<AnthropicCompletionResponse>(json);
+            }
+            catch (Exception ex)
+            {
+                throw new ChatGPTException($"Error deserializing AnthropicCompletionResponse: {ex.Message}", ex);
+            }
+        }
 
         public override string Text 
         { 

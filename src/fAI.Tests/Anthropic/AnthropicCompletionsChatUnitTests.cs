@@ -340,7 +340,9 @@ Discussion:
             };
 
             var response = new Anthropic().Completions.Create(p);
+            
             Assert.True(response.Success);
+            Assert.Equal(AnthropicLib.StopReason.tool_use, response.StopReason);
             Assert.True(response.IsToolUse);
             var toolContent = response.Content.FindToolUse();
             Assert.True(toolContent.IsToolUse);
@@ -363,6 +365,7 @@ Discussion:
             };
 
             var response2 = new Anthropic().Completions.Create(p2);
+            Assert.Equal(AnthropicLib.StopReason.end_turn, response2.StopReason);
         }
     }
 }
