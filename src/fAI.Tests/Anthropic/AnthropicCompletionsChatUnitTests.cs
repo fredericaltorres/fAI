@@ -353,7 +353,7 @@ Discussion:
             //Assert.Equal("fahrenheit", toolContent.Input["unit"]);
 
             // Pretend to call the tool and return a result
-            var toolResult = toolContent.Name == "get_weather" ? "72 degree fahrenheit, partly cloudy with a light breeze." : "No data available.";
+            var toolResult = toolContent.Name == "get_weather" ? "72 degree Fahrenheit, partly cloudy with a light breeze." : "No data available.";
 
             var p2 = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
