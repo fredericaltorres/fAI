@@ -345,6 +345,7 @@ Discussion:
             Assert.Equal(AnthropicLib.StopReason.tool_use, response.StopReason);
             Assert.True(response.IsToolUse);
             var toolContent = response.Content.FindToolUse();
+            var toolContent2 = response.Content;
             Assert.True(toolContent.IsToolUse);
             Assert.StartsWith("tool", toolContent.Id);
             Assert.Equal("get_weather", toolContent.Name);
@@ -352,14 +353,14 @@ Discussion:
             //Assert.Equal("fahrenheit", toolContent.Input["unit"]);
 
             // Pretend to call the tool and return a result
-            var toolResult = toolContent.Name == "get_weather" ? "72°F, partly cloudy with a light breeze." : "No data available.";
+            var toolResult = toolContent.Name == "get_weather" ? "72 degree fahrenheit, partly cloudy with a light breeze." : "No data available.";
 
             var p2 = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new List<AnthropicMessage>()
                 {
                     new AnthropicMessage { Role =  MessageRole.user, Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(@"What's the weather like in Boston right now?")) },
-                    new AnthropicMessage { Role =  MessageRole.assistant, Content = DS.List<AnthropicContentMessage>(toolContent) },
+                    new AnthropicMessage { Role =  MessageRole.assistant, Content = toolContent2 },
                     new AnthropicMessage { Role =  MessageRole.user, Content = DS.List<AnthropicContentMessage>( new AnthropicContentMessage() { Type = AnthropicContentMessageType.tool_result, toolUseId = toolContent.Id, Content = toolResult })},
                 },
             };

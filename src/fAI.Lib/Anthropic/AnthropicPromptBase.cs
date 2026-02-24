@@ -195,13 +195,26 @@ namespace fAI
 
     public class AnthropicPromptBase
     {
+        [JsonProperty("url")]
         public string Url { get; set; }
+
+        [JsonProperty("messages")]
         public List<AnthropicMessage> Messages { get; set; } = new List<AnthropicMessage>();
+
+        [JsonProperty("model")]
         public string Model { get; set; }
-        public int OutputMaxTokens { get; set; } = 1024 * 4;
-        public int InputMaxTokens { get; set; } = 200000;
+
+        [JsonProperty("output_max_tokens")]
+        public int OutputMaxTokens { get; set; } = 1024 * 16;
+
+        //[JsonProperty("input_max_tokens")]
+        //public int InputMaxTokens { get; set; } = 200000;
+
+        [JsonProperty("system", NullValueHandling = NullValueHandling.Ignore)]
         public string System { get; set; } = null;
-        public int Temperature { get; set; } = 1;
+
+        //[JsonProperty("temperature")]
+        //public int Temperature { get; set; } = 1;
 
         public override string ToString()
         {
@@ -214,11 +227,11 @@ namespace fAI
             {
                 if (this.System == null)
                 {
-                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages, max_tokens = OutputMaxTokens, temperature = Temperature });
+                    return JsonConvert.SerializeObject(new { model = Model, messages = this.Messages, max_tokens = OutputMaxTokens});
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = OutputMaxTokens, temperature = Temperature });
+                    return JsonConvert.SerializeObject(new { system = System, model = Model, messages = this.Messages, max_tokens = OutputMaxTokens });
                 }
             }
             else throw new System.Exception("No messages to send");
@@ -230,6 +243,7 @@ namespace fAI
             Url = "https://api.anthropic.com/v1/messages";
         }
 
+        [JsonIgnore]
         public string FullPrompt
         {
             get
@@ -287,8 +301,8 @@ namespace fAI
             d.Add("model", Model);
             d.Add("messages", this.Messages);
             d.Add("max_tokens", OutputMaxTokens);
-            d.Add("temperature", Temperature);
-            if(Tools != null) d.Add("tools", Tools);
+            if(this.Tools != null && this.Tools.Count > 0)
+                if (Tools != null) d.Add("tools", Tools);
 
             var json = JsonConvert.SerializeObject(d);
             return json;
