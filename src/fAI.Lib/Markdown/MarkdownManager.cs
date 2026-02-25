@@ -3,6 +3,7 @@ using Markdig;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Text;
 
@@ -13,6 +14,46 @@ namespace fAI
     public class MarkdownManager
     {
         static TestFileHelper _testFileHelper = new TestFileHelper();
+
+        public static string HtmlTemplate = @"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <style>
+        body {
+            font-family: Consolas,'Segoe UI', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 40px auto;
+            color: #333;
+        }
+        h1 {
+            font-size: 2em;
+            font-family: Consolas, 'Georgia', serif;
+        }
+        h2 {
+            font-size: 1.5em;
+            font-family: Consolas, 'Georgia', serif;
+        }
+        p {
+            font-size: 1rem;
+        }
+        code {
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 0.9em;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    [body]
+</body>
+</html>
+";
 
         public static void Clean()
         {
@@ -27,7 +68,9 @@ namespace fAI
         public static string ConvertToHtmlFile(string markdown, bool openInBrowser = false)
         {
             var tempHtmlFile = Path.Combine(Path.GetTempPath(), "fAI."+ (Guid.NewGuid().ToString()) + ".html");
-            File.WriteAllText(tempHtmlFile, ConvertToHtml(markdown));
+
+            var html = HtmlTemplate.Replace("[body]", ConvertToHtml(markdown));
+            File.WriteAllText(tempHtmlFile, html);
 
             _testFileHelper.TrackFile(tempHtmlFile);
 

@@ -31,7 +31,7 @@ namespace fAI.Tests
         const string markDownContentTestPlan1 = @"
 # Test Plans
 
-# Module Test Plans
+## Module Test Plans
 
 | # | Module Test Plan |
 |---|-----------|
@@ -47,7 +47,7 @@ namespace fAI.Tests
 | 10 | UnzipScormMonitor  |
 | 11 | SlideAudioConverterContext |
 | 12 | ViewEndMonitor |
-| 13  DeliveryMonitor (EmailDeliveryHandler) |
+| 13 | DeliveryMonitor (EmailDeliveryHandler) |
 ";
 
         const string MarkDownEditorSystemPrompt = @"
@@ -118,7 +118,7 @@ namespace fAI.Tests
 
         public void Dispose()
         {
-            MarkdownManager.Clean();
+            // MarkdownManager.Clean();
         }
     }
 }
