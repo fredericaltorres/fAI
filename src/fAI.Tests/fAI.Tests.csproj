@@ -86,6 +86,7 @@
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
     <Compile Include="Anthropic\AnthropicCompletionsUnitTests.cs" />
+    <Compile Include="GenericAI\GenericAICompletionsMarkdownManipulation_UnitTests.cs" />
     <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />

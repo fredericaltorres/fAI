@@ -20,7 +20,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class GenericAICompletionsMarkdownManipulation_UnitTests : OpenAIUnitTestsBase
+    public class GenericAICompletionsMarkdownManipulation_UnitTests : OpenAIUnitTestsBase, IDisposable
     {
         public GenericAICompletionsMarkdownManipulation_UnitTests()
         {
@@ -50,15 +50,7 @@ namespace fAI.Tests
 | 13  DeliveryMonitor (EmailDeliveryHandler) |
 ";
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Conversation_GenericAI_MarkDownManipulation()
-        {
-            var instruction = "mark test plan 2 as done";
-
-            var markdownContent = markDownContentTestPlan1;
-
-            var MarkDownEditorSystemPrompt = $@"
+        const string MarkDownEditorSystemPrompt = @"
                     You are a markdown editor.
                     Your job is to apply the requested changes to the markdown content and return ONLY the updated markdown 
                     with no explanation or commentary.
@@ -70,10 +62,14 @@ namespace fAI.Tests
                     Return ONLY the updated markdown content.
             ";
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void Conversation_GenericAI_MarkDownManipulation()
+        {
+            var instruction = "mark test plan 2 as done";
+            var markdownContent = markDownContentTestPlan1;
             var prompt = $@"
-
                     Instruction: {instruction}.
-
                     Markdown Content:
                     {markdownContent}
             ";
@@ -85,6 +81,7 @@ namespace fAI.Tests
                 var client = new GenericAI();
                 var (text, contents) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
                 sw.Stop();
+                text += "⚠️";
                 var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
                 HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000.0:0.0}, Response: {text}", this);
             }
@@ -92,7 +89,15 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void Markdown_Generation()
+        public void Markdown_Generation_2()
+        {
+            var text = markDownContentTestPlan1;
+            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_Generation_1()
         {
             var text = @"
 # Issue Icon Reference
@@ -109,6 +114,11 @@ namespace fAI.Tests
 | ❗ | `:exclamation:` | Urgent issue |
 ";
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+        }
+
+        public void Dispose()
+        {
+            MarkdownManager.Clean();
         }
     }
 }
