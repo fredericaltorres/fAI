@@ -45,6 +45,9 @@
     <PackageReference Include="DynamicSugarStandard">
       <Version>1.0.83</Version>
     </PackageReference>
+    <PackageReference Include="Markdig">
+      <Version>1.0.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.CognitiveServices.Speech">
       <Version>1.33.0</Version>
     </PackageReference>
@@ -63,6 +66,7 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anthropic\AnthropicCompletionsWithToolsUnitTests..cs" />
     <Compile Include="Anthropic\LedSequence.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysisTests.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysis_Cases\CodeAnalysis_Case4.cs" />
@@ -81,7 +85,7 @@
     <Compile Include="CSRunTimeErrorAnalysis\RunTimeAnalysis_Cases\RunTimeAnalysis_Case1.cs" />
     <Compile Include="Deepgram\Deepgram.Audio.Transcriptions.Tests.cs" />
     <Compile Include="Deepgram\UnitTestBase.cs" />
-    <Compile Include="Anthropic\AnthropicCompletionsChatUnitTests.cs" />
+    <Compile Include="Anthropic\AnthropicCompletionsUnitTests.cs" />
     <Compile Include="Groq\Groq.Complettions.Chat.cs" />
     <Compile Include="Leonardo\LeonardoImageTests.cs" />
     <Compile Include="Microsoft.Cognitive.Services\Search\MicrosoftAzureVectorDatabasePaulGrahamEssaysTests.cs" />
@@ -91,7 +95,7 @@
     <Compile Include="OpenAI\GenerateContent.cs" />
     <Compile Include="OpenAI\Chain.Tests.cs" />
     <Compile Include="HumeAI\HumeAI.Audio.Speech.Tests.cs" />
-    <Compile Include="OpenAI\GenericAICompletionsTextImprovement.cs" />
+    <Compile Include="GenericAI\GenericAICompletionsTextImprovement.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
     <Compile Include="SkillManager\SkillManager.Tests.cs" />
     <Compile Include="WhisperSpeechToText\WhiperSpeechToText.Tests.cs" />

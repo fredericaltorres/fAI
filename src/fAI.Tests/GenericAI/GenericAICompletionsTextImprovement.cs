@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using fAI;
+using Markdig;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace fAI.Tests
         {
             OpenAI.TraceOn = true;
         }
-       
+
         [Fact()]
         [TestBeforeAfter]
         public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle()
@@ -51,7 +52,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", "claude-haiku-4-5", "gpt-5-mini" );
+            var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", "claude-haiku-4-5", "gpt-5-mini");
 
             foreach (var model in models)
             {
@@ -163,7 +164,7 @@ glycemic control and overall well-being.
             foreach (var model in GenericAI.GetModels())
             {
                 var client = new GenericAI();
-                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage:"French",  model: model);
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
                 HttpBase.Trace($"[TRANSLATE] Model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
