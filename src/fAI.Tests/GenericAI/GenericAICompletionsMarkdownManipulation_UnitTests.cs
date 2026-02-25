@@ -55,7 +55,7 @@ namespace fAI.Tests
                     Your job is to apply the requested changes to the markdown content and return ONLY the updated markdown 
                     with no explanation or commentary.
 
-                    Comment should always be in italic.
+                    Comment should always be in italic and in parenthesis.
 
                     When marking an item as ""done"", add a ✅ emoji at the end of that row.
                     When marking an item with some ""issue"", add a ❌ emoji at the end of that row.
@@ -85,7 +85,8 @@ namespace fAI.Tests
                     Markdown Content:
                     {markdownContent}";
 
-                var models = DS.List("gemini-2.0-flash"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
+                ///var models = DS.List("gemini-2.0-flash"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
+                var models = DS.List("claude-haiku-4-5"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
                 foreach (var model in models)
                 {
                     var sw = Stopwatch.StartNew();
