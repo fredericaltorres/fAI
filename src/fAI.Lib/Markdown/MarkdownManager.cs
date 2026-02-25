@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
@@ -65,8 +66,20 @@ namespace fAI
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(htmlFile) { UseShellExecute = true });
         }
 
-        public static string ConvertToHtmlFile(string markdown, bool openInBrowser = false)
+        public static string CheckForMarkDownTick(string text)
         {
+            var marker1 = "```markdown";
+            if (text.StartsWith(marker1))
+                text = text.Substring(marker1.Length);
+            var marker2 = "```";
+            if (text.EndsWith(marker2))
+                text = text.Substring(0, text.Length - marker2.Length);
+            return text.Trim();
+        }
+
+        public static (string htmlFileName, string markDown) ConvertToHtmlFile(string markdown, bool openInBrowser = false)
+        {
+            markdown = CheckForMarkDownTick(markdown);
             var tempHtmlFile = Path.Combine(Path.GetTempPath(), "fAI."+ (Guid.NewGuid().ToString()) + ".html");
 
             var html = HtmlTemplate.Replace("[body]", ConvertToHtml(markdown));
@@ -76,7 +89,7 @@ namespace fAI
 
             if (openInBrowser)
                 OpenHtmlFileInBrowser(tempHtmlFile);
-            return tempHtmlFile;
+            return (tempHtmlFile, markdown);
         }
 
         public static string ConvertToHtml(string markdown)

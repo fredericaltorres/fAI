@@ -55,6 +55,8 @@ namespace fAI.Tests
                     Your job is to apply the requested changes to the markdown content and return ONLY the updated markdown 
                     with no explanation or commentary.
 
+                    Comment should always be in italic.
+
                     When marking an item as ""done"", add a ✅ emoji at the end of that row.
                     When marking an item with some ""issue"", add a ❌ emoji at the end of that row.
                     When marking an item with ""warning"", add a ⚠️ emoji at the end of that row.
@@ -66,24 +68,33 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Conversation_GenericAI_MarkDownManipulation()
         {
-            var instruction = "mark test plan 2 as done";
+            var instructions = DS.List(
+                "Add comment to test plan 1, 'Very high priority'",
+                "mark test plan 13 with a warning",
+                "mark test plan 2 as done",
+                "mark test plan 3 with an error"
+                );
+
             var markdownContent = markDownContentTestPlan1;
-            var prompt = $@"
+            var htmlMarkDownFileName = "";
+
+            foreach (var instruction in instructions)
+            {
+                var prompt = $@"
                     Instruction: {instruction}.
                     Markdown Content:
-                    {markdownContent}
-            ";
+                    {markdownContent}";
 
-            var models = DS.List("gemini-2.0-flash", "claude-haiku-4-5"); // , "claude-sonnet-4-5", , "gpt-5-mini"
-            foreach (var model in models)
-            {
-                var sw = Stopwatch.StartNew();
-                var client = new GenericAI();
-                var (text, contents) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
-                sw.Stop();
-                text += "⚠️";
-                var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
-                HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000.0:0.0}, Response: {text}", this);
+                var models = DS.List("gemini-2.0-flash"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
+                foreach (var model in models)
+                {
+                    var sw = Stopwatch.StartNew();
+                    var client = new GenericAI();
+                    var (text, contents) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
+                    sw.Stop();
+                    (htmlMarkDownFileName, markdownContent) = MarkdownManager.ConvertToHtmlFile(text, true);
+                    HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000.0:0.0}, Response: {text}", this);
+                }
             }
         }
 
