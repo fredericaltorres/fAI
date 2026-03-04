@@ -27,8 +27,9 @@ namespace fAI
             font-size: 16px;
             line-height: 1.6;
             max-width: 800px;
-            margin: 40px auto;
-            color: #333;
+            margin: 10px 10px 10px 10px;
+            color: #000000;
+            background-color: #f5f5f5;
         }
         h1 {
             font-size: 2em;
@@ -66,7 +67,7 @@ namespace fAI
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(htmlFile) { UseShellExecute = true });
         }
 
-        public static string CheckForMarkDownTick(string text)
+        public static string RemoveMarkDownTick(string text)
         {
             var marker1 = "```markdown";
             if (text.StartsWith(marker1))
@@ -79,7 +80,7 @@ namespace fAI
 
         public static (string htmlFileName, string markDown) ConvertToHtmlFile(string markdown, bool openInBrowser = false)
         {
-            markdown = CheckForMarkDownTick(markdown);
+            markdown = RemoveMarkDownTick(markdown);
             var tempHtmlFile = Path.Combine(Path.GetTempPath(), "fAI."+ (Guid.NewGuid().ToString()) + ".html");
 
             var html = HtmlTemplate.Replace("[body]", ConvertToHtml(markdown));

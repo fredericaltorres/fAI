@@ -23,6 +23,64 @@ namespace fAI.VectorDB
         }
 
         public static List<EmbeddingRecord> SimilaritySearch(
+        List<float> queryVector,
+        List<EmbeddingRecord> embeddingRecords,
+        int topK = 3,
+        double minimumScore = 0.75)
+        {
+            if (queryVector == null || queryVector.Count == 0)
+                throw new ArgumentException("Query vector cannot be null or empty.");
+
+            if (embeddingRecords == null || embeddingRecords.Count == 0)
+                return new List<EmbeddingRecord>();
+
+            var scored = new List<EmbeddingRecord>();
+            double maxScore = double.MinValue;
+
+            foreach (var record in embeddingRecords)
+            {
+                if (record.Embedding == null || record.Embedding.Count != queryVector.Count)
+                    continue; // skip invalid vectors
+
+                var score = CosineSimilarity(queryVector, record.Embedding);
+                record.Score = score;
+                maxScore = Math.Max(maxScore, score);
+
+                if (score >= minimumScore)
+                {
+                    scored.Add(record);
+                }
+            }
+
+            return scored
+                .OrderByDescending(x => x.Score)
+                .Take(topK)
+                .Select(x => x)
+                .ToList();
+        }
+
+        private static double CosineSimilarity(List<float> v1, List<float> v2)
+        {
+            double dot = 0.0;
+            double norm1 = 0.0;
+            double norm2 = 0.0;
+
+            for (int i = 0; i < v1.Count; i++)
+            {
+                dot += v1[i] * v2[i];
+                norm1 += v1[i] * v1[i];
+                norm2 += v2[i] * v2[i];
+            }
+
+            if (norm1 == 0 || norm2 == 0)
+                return 0;
+
+            return dot / (Math.Sqrt(norm1) * Math.Sqrt(norm2));
+        }
+
+
+
+        public static List<EmbeddingRecord> SimilaritySearch_old(
             List<float> queryVector, 
             List<EmbeddingRecord> embeddingRecords, int topK = 3, double minimumScore = 0.75)
         {
@@ -30,7 +88,7 @@ namespace fAI.VectorDB
             var r = new List<EmbeddingRecord>();
             foreach (var er in embeddingRecords)
             {
-                var score = CalculateCosineSimilarity(queryVector, er.Embedding);
+                var score = CalculateCosineSimilarity_old(queryVector, er.Embedding);
                 if (score > minimumScore)
                 {
                     er.Score = (float)Math.Round(score, 4);
@@ -42,16 +100,16 @@ namespace fAI.VectorDB
             return rr;
         }
 
-        public static double CalculateCosineSimilarity(List<float> vecA, List<float> vecB)
+        public static double CalculateCosineSimilarity_old(List<float> vecA, List<float> vecB)
         {
-            var dotProduct = DotProduct(vecA.ToArray(), vecB.ToArray());
-            var magnitudeOfA = Magnitude(vecA.ToArray());
-            var magnitudeOfB = Magnitude(vecB.ToArray());
+            var dotProduct = DotProduct_old(vecA.ToArray(), vecB.ToArray());
+            var magnitudeOfA = Magnitude_old(vecA.ToArray());
+            var magnitudeOfB = Magnitude_old(vecB.ToArray());
 
             return dotProduct / (magnitudeOfA * magnitudeOfB);
         }
 
-        private static double DotProduct(float[] vecA, float[] vecB)
+        private static double DotProduct_old(float[] vecA, float[] vecB)
         {
             double dotProduct = 0;
             for (var i = 0; i < vecA.Length; i++)
@@ -60,9 +118,9 @@ namespace fAI.VectorDB
             return dotProduct;
         }
         
-        private static double Magnitude(float[] vector)
+        private static double Magnitude_old(float[] vector)
         {
-            return Math.Sqrt(DotProduct(vector, vector));
+            return Math.Sqrt(DotProduct_old(vector, vector));
         }
     }
 }

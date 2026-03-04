@@ -36,12 +36,11 @@ namespace fAI.Beetles.All
             Console.Clear();
             ///WebScrapLyrics();
             //ComputeEmbedding();
-            //Environment.Exit(0);    
+            //Environment.Exit(0);
 
             var embeddingSongRecords = LoadEmbeddingSongRecord();
 
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
-
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
 
@@ -51,8 +50,8 @@ namespace fAI.Beetles.All
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
 
-            var minimumScore = 0.75f;
-            var topK = 3;
+            var minimumScore = 0.15f; // with new model score does not count
+            var topK = 6;
 
             while (true)
             {
