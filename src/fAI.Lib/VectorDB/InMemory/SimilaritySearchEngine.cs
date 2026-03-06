@@ -46,7 +46,7 @@ namespace fAI.VectorDB
                 record.Score = score;
                 maxScore = Math.Max(maxScore, score);
 
-                if (score >= minimumScore)
+                if (score >= minimumScore || score == -1f)
                 {
                     scored.Add(record);
                 }

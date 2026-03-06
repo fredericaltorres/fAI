@@ -50,8 +50,8 @@ namespace fAI.Beetles.All
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
 
-            var minimumScore = 0.15f; // with new model score does not count
-            var topK = 6;
+            var minimumScore = -1.0; // with new model score does not count
+            var topK = 10;
 
             while (true)
             {
@@ -62,6 +62,12 @@ namespace fAI.Beetles.All
                 if (!criteria.IsNullOrEmpty())
                 {
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), embeddingRecords, topK, minimumScore);
+                    var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
+                    minimumScore = bestScore * 0.75f;
+                    inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
+
+                    Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
+
                     foreach (var r in inMemoryResponse)
                         WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
                     Console.WriteLine($"");

@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,19 @@ namespace fAI
 
 
         //public const string EmbeddingAda002 = "Text-embedding-ada-002";
-        public const string Embedding3Small = "text-embedding-3-small";
-        
+        public const string Embedding3SmallModel = "text-embedding-3-small";
+        public const string Embedding3LargeModel = "text-embedding-3-large";
+        public const string EmbeddingDefaultModel = Embedding3LargeModel;
+
+/*
+        Model Typical Similar       Range
+        text-embedding-ada-002	0.70 – 0.90
+        text-embedding-3-small	0.40 – 0.70
+        text-embedding-3-large	0.15 – 0.50
+*/
+
+
+
         public const int EmbeddingAda002Dimension = 1536;
 
         const int MaxTextLength = 4096;
@@ -54,7 +66,7 @@ namespace fAI
             return r;
         }
         
-        public EmbeddingResponse Create(string input, string model = Embedding3Small)
+        public EmbeddingResponse Create(string input, string model = EmbeddingDefaultModel)
         {
             var sw = Stopwatch.StartNew();
             var body = new { input, model };
@@ -71,7 +83,7 @@ namespace fAI
             else throw new ChatGPTException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public List<EmbeddingResponse> CreateBatch(IEnumerable<string> inputs, string model = Embedding3Small, int maxBatchSize = 6)
+        public List<EmbeddingResponse> CreateBatch(IEnumerable<string> inputs, string model = Embedding3SmallModel, int maxBatchSize = 6)
         {
             try
             {
