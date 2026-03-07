@@ -24,7 +24,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void CalculateCosineSimilarity_Equal_1()
         {
-            var distance = SimilaritySearchEngine.CalculateCosineSimilarity(PineconeTests.Helloworld_VECTOR, PineconeTests.Helloworld_VECTOR);
+            var distance = SimilaritySearchEngine.CalculateCosineSimilarity_old(PineconeTests.Helloworld_VECTOR, PineconeTests.Helloworld_VECTOR);
             Assert.Equal(0.99999999999999978, distance);
         }
 
@@ -32,7 +32,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void CalculateCosineSimilarity_()
         {
-            var distance = SimilaritySearchEngine.CalculateCosineSimilarity(TimothyLearyVector, TomorrowNeverKnowsVector);
+            var distance = SimilaritySearchEngine.CalculateCosineSimilarity_old(TimothyLearyVector, TomorrowNeverKnowsVector);
             Assert.Equal(0.777245647027691, distance);
         }
 

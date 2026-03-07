@@ -13,14 +13,13 @@ using System.Threading.Tasks;
 /*
     https://themurph.hashnode.dev/supabase-csharp
     https://supabase.com/docs/reference/csharp/using-modifiers
-
  */
 namespace SupabaseThoughts
 {
     class Program
     {
         private const string ProjectUrl = "https://qqxkpjxwutfhvzwywbdl.supabase.co";
-        private const string AnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxeGtwanh3dXRmaHZ6d3l3YmRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NTczOTgsImV4cCI6MjA4ODEzMzM5OH0.qW7ZMsoT28CEIzBmvjIjZHb86bDjkirwsP5uLMLvhyE";
+        private static string AnonKey => Environment.GetEnvironmentVariable("SUPABASE_ANON_KEY") ?? throw new ApplicationException("SUPABASE_ANON_KEY environment variable is not set.");
 
         static void Main(string[] args)
         {
@@ -80,17 +79,14 @@ namespace SupabaseThoughts
 
         static async Task RunAsync()
         {
-            Console.WriteLine("=== Supabase BeatlesSongs Console App ===");
-            Console.WriteLine();
+            WriteQuestion("=== Supabase BeatlesSongs Console App ===");
 
             var supabase = new Supabase.Client(ProjectUrl, AnonKey, new Supabase.SupabaseOptions { AutoConnectRealtime = true });
             await supabase.InitializeAsync();
 
-            // await PopulateBeastleSongsTableInSupabase(supabase);
-
+            //await PopulateBeatlesSongsTableInSupabase(supabase);
 
             var embeddingSongRecords = EmbeddingRecord.LoadEmbeddingSongRecord();
-
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
 
@@ -98,8 +94,9 @@ namespace SupabaseThoughts
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
 
+            var minimumScoreInSupaBase = 0.2f; // with new model score does not count
             var minimumScore = -1.0; // with new model score does not count
-            var topK = 10;
+            var topK = 5;
 
             while (true)
             {
@@ -107,26 +104,38 @@ namespace SupabaseThoughts
                 if (criteria == "exit" || criteria == "quit")
                     break;
 
+                if (criteria == "cls")
+                {
+                    Console.Clear();
+                    WriteQuestion(message);
+                    continue;
+                }
+                    
+
                 if (!string.IsNullOrEmpty( criteria))
                 {
                     var parameters = new Dictionary<string, object>
                     {
                         { "query_embedding", ToVector(criteria) },
-                        { "match_threshold", 0.2f },
+                        { "match_threshold", minimumScoreInSupaBase },
                         { "match_count", 20 }
                     };
                     var response = await supabase.Rpc("search_beatles_songs", parameters);
                     var s = response.Content;
                     var inMemoryResponse = JsonConvert.DeserializeObject<List<BeatlesSongResult>>(s);
+                    var inMemoryResponse2 = inMemoryResponse;
 
                     var bestScore = inMemoryResponse.Select(r => r.Similarity).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.80f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Similarity >= minimumScore).ToList();
 
-                    Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
+                    Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}, minimumScoreInSupaBase: {minimumScoreInSupaBase}, RecordReturned: {inMemoryResponse2.Count}");
+                    var index = 0;
                     foreach (var r in inMemoryResponse)
-                        WriteAnswer($"Id: {r.Id}, {r.Similarity:0.0000}");
-                    Console.WriteLine($"");
+                    {
+                        WriteAnswer($"[{index++}]Id: {r.Id}, {r.Similarity:0.0000}");
+                    }
+                    Console.WriteLine($"--");
                 }
                 WriteQuestion(message);
             }
@@ -135,7 +144,7 @@ namespace SupabaseThoughts
             Console.ReadKey();
         }
 
-        private static async Task PopulateBeastleSongsTableInSupabase(Supabase.Client supabase)
+        private static async Task PopulateBeatlesSongsTableInSupabase(Supabase.Client supabase)
         {
             var result = await supabase.From<BeatlesSongs>().Get();
             foreach (var song in result.Models)

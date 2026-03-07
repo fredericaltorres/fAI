@@ -14,7 +14,6 @@ namespace fAI
         public int TextLength => this.Text.Length;
         public int TextLengthKb => this.Text.Length / 1024;
 
-
         const string JsonOutputFilename = @".\Beatles.All.json";
 
         public static List<EmbeddingSongRecord> LoadEmbeddingSongRecord()

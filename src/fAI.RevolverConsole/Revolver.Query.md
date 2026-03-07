@@ -1,19 +1,23 @@
 ﻿sailing
 medecine and pills
 sad people
+sad religious people
 endless love
 IRS
 laughing
 life and death
 Tibetan Book
 Tibetan Book of the Dead
-Psychedelic Experience
+~~NO~~Psychedelic Experience
 Timothy Leary
     Timothy Leary around 1962/1964 wrote a book
     The Psychedelic Experience: A Manual Based on The Tibetan Book of the Dead 
 Meditation
 LSD
 bright light
+kaleidoscope ears
+yellow and green flowers
+
 
 https://www.azlyrics.com/b/beatles.html
 
