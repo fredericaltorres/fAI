@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 
 namespace fAI
@@ -13,6 +14,24 @@ namespace fAI
         public int TextLength => this.Text.Length;
         public int TextLengthKb => this.Text.Length / 1024;
 
+
+        const string JsonOutputFilename = @".\Beatles.All.json";
+
+        public static List<EmbeddingSongRecord> LoadEmbeddingSongRecord()
+        {
+            var r = new List<EmbeddingSongRecord>();
+            if (File.Exists(JsonOutputFilename))
+                r.AddRange(EmbeddingSongRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
+
+            return r;
+        }
+
+        public static void SaveEmbeddingSongRecord(List<EmbeddingSongRecord> embeddingSongRecord)
+        {
+            if (File.Exists(JsonOutputFilename))
+                File.Delete(JsonOutputFilename);
+            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), JsonOutputFilename);
+        }
 
         [Newtonsoft.Json.JsonIgnore]
         public double Score { get; set; }

@@ -31,8 +31,7 @@ namespace fAI
         //public const string EmbeddingAda002 = "Text-embedding-ada-002";
         public const string Embedding3SmallModel = "text-embedding-3-small";
         public const string Embedding3LargeModel = "text-embedding-3-large";
-        public const string EmbeddingDefaultModel = Embedding3LargeModel;
-
+        public const string EmbeddingDefaultModel = Embedding3SmallModel;
 /*
         Model Typical Similar       Range
         text-embedding-ada-002	0.70 – 0.90

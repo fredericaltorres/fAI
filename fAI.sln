@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.CodeSearcher", "src\fAI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnthropicConsole", "AnthropicConsole\AnthropicConsole.csproj", "{7B3F1C5F-0737-4B5A-8E7B-4E7E9C85875F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.Beetles.All.supabase", "src\fAI.Beetles.All.supabase\fAI.Beetles.All.supabase.csproj", "{E4E458A8-B7E8-79DE-4E35-1F39BCEC90DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{7B3F1C5F-0737-4B5A-8E7B-4E7E9C85875F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B3F1C5F-0737-4B5A-8E7B-4E7E9C85875F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B3F1C5F-0737-4B5A-8E7B-4E7E9C85875F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E458A8-B7E8-79DE-4E35-1F39BCEC90DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E458A8-B7E8-79DE-4E35-1F39BCEC90DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E458A8-B7E8-79DE-4E35-1F39BCEC90DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E458A8-B7E8-79DE-4E35-1F39BCEC90DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
