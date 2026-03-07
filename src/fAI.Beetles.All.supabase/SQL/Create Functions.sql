@@ -1,5 +1,7 @@
 ﻿-- Semantic search function
-create or replace function match_thoughts(
+-- drop function match_thoughts(query_embedding, match_threshold, match_count);
+-- using c# and supabase and the supabase nuget package
+create or replace function search_beatles_songs(
   query_embedding vector(1536),
   match_threshold float default 0.2,
   match_count int default 10

@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using fAI;
+using Newtonsoft.Json;
 using Supabase.Interfaces;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using fAI;
 
 /*
     https://themurph.hashnode.dev/supabase-csharp
@@ -63,6 +64,20 @@ namespace SupabaseThoughts
             }
         }
 
+        public class BeatlesSongResult
+        {
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
+
+            [JsonPropertyName("title")]
+            public string Title { get; set; }
+
+            [JsonPropertyName("similarity")]
+            public float Similarity { get; set; }
+
+            // Add other columns your function returns
+        }
+
         static async Task RunAsync()
         {
             Console.WriteLine("=== Supabase BeatlesSongs Console App ===");
@@ -94,16 +109,24 @@ namespace SupabaseThoughts
 
                 if (!string.IsNullOrEmpty( criteria))
                 {
-                    var vectorToSearch = ToVector(criteria);
-                    
-                    //var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
-                    //minimumScore = bestScore * 0.80f;
-                    //inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "query_embedding", ToVector(criteria) },
+                        { "match_threshold", 0.2f },
+                        { "match_count", 20 }
+                    };
+                    var response = await supabase.Rpc("search_beatles_songs", parameters);
+                    var s = response.Content;
+                    var inMemoryResponse = JsonConvert.DeserializeObject<List<BeatlesSongResult>>(s);
 
-                    //Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
-                    //foreach (var r in inMemoryResponse)
-                    //    WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
-                    //Console.WriteLine($"");
+                    var bestScore = inMemoryResponse.Select(r => r.Similarity).DefaultIfEmpty(0).Max();
+                    minimumScore = bestScore * 0.80f;
+                    inMemoryResponse = inMemoryResponse.Where(r => r.Similarity >= minimumScore).ToList();
+
+                    Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
+                    foreach (var r in inMemoryResponse)
+                        WriteAnswer($"Id: {r.Id}, {r.Similarity:0.0000}");
+                    Console.WriteLine($"");
                 }
                 WriteQuestion(message);
             }
