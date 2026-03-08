@@ -96,7 +96,6 @@ namespace SupabaseThoughts
 
             var minimumScoreInSupaBase = 0.2f; // with new model score does not count
             var minimumScore = -1.0; // with new model score does not count
-            var topK = 5;
 
             while (true)
             {
@@ -110,7 +109,6 @@ namespace SupabaseThoughts
                     WriteQuestion(message);
                     continue;
                 }
-                    
 
                 if (!string.IsNullOrEmpty( criteria))
                 {

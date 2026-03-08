@@ -16,6 +16,7 @@ Meditation
 LSD
 bright light
 kaleidoscope ears
+kaleidoscope ears yellow and green flowers
 yellow and green flowers
 
 
