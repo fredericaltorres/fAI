@@ -110,24 +110,32 @@ namespace SupabaseThoughts
                     continue;
                 }
 
-                if (!string.IsNullOrEmpty( criteria))
+                if (!string.IsNullOrEmpty(criteria))
                 {
+                    var swQueryVector = System.Diagnostics.Stopwatch.StartNew();
+                    var queryVector = ToVector(criteria);
+                    swQueryVector.Stop();
+
                     var parameters = new Dictionary<string, object>
                     {
-                        { "query_embedding", ToVector(criteria) },
+                        { "query_embedding",  queryVector},
                         { "match_threshold", minimumScoreInSupaBase },
                         { "match_count", 20 }
                     };
+                    var swSimilaritySearch = System.Diagnostics.Stopwatch.StartNew();
                     var response = await supabase.Rpc("search_beatles_songs", parameters);
+                    swSimilaritySearch.Stop();
+
                     var s = response.Content;
                     var inMemoryResponse = JsonConvert.DeserializeObject<List<BeatlesSongResult>>(s);
                     var inMemoryResponse2 = inMemoryResponse;
 
                     var bestScore = inMemoryResponse.Select(r => r.Similarity).DefaultIfEmpty(0).Max();
-                    minimumScore = bestScore * 0.80f;
+                    minimumScore = bestScore * 0.90f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Similarity >= minimumScore).ToList();
 
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}, minimumScoreInSupaBase: {minimumScoreInSupaBase}, RecordReturned: {inMemoryResponse2.Count}");
+                    Console.WriteLine($"Query Vector creation Time: {swQueryVector.ElapsedMilliseconds/100.0}, Similarity Search Time: {swSimilaritySearch.ElapsedMilliseconds/100.0}, Total Time: {(swQueryVector.ElapsedMilliseconds+ swSimilaritySearch.ElapsedMilliseconds) / 100.0}, ");
                     var index = 0;
                     foreach (var r in inMemoryResponse)
                     {
