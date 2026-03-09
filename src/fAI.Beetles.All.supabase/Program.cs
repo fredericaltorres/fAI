@@ -112,6 +112,7 @@ namespace SupabaseThoughts
 
                 if (!string.IsNullOrEmpty(criteria))
                 {
+                    var swTotalTime = System.Diagnostics.Stopwatch.StartNew();
                     var swQueryVector = System.Diagnostics.Stopwatch.StartNew();
                     var queryVector = ToVector(criteria);
                     swQueryVector.Stop();
@@ -130,12 +131,25 @@ namespace SupabaseThoughts
                     var inMemoryResponse = JsonConvert.DeserializeObject<List<BeatlesSongResult>>(s);
                     var inMemoryResponse2 = inMemoryResponse;
 
+                    // Dynamic Thresholding based on best score. This is needed as the new model return variable score
+                    // and we need to relax the threshold to get relevant results.
+                    // With old model, we can set a fixed threshold and get good results.
                     var bestScore = inMemoryResponse.Select(r => r.Similarity).DefaultIfEmpty(0).Max();
-                    minimumScore = bestScore * 0.90f;
+                    if(bestScore > 0.4f)
+                        minimumScore = bestScore * 0.80f;
+                    else if (bestScore > 0.35f)
+                        minimumScore = bestScore * 0.85f;
+                    else if (bestScore > 0.3f)
+                        minimumScore = bestScore * 0.90f;
+                    else if (bestScore > 0.2f)
+                        minimumScore = bestScore * 0.95f;
+
                     inMemoryResponse = inMemoryResponse.Where(r => r.Similarity >= minimumScore).ToList();
 
+                    swTotalTime.Stop();
+
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}, minimumScoreInSupaBase: {minimumScoreInSupaBase}, RecordReturned: {inMemoryResponse2.Count}");
-                    Console.WriteLine($"Query Vector creation Time: {swQueryVector.ElapsedMilliseconds/100.0}, Similarity Search Time: {swSimilaritySearch.ElapsedMilliseconds/100.0}, Total Time: {(swQueryVector.ElapsedMilliseconds+ swSimilaritySearch.ElapsedMilliseconds) / 100.0}, ");
+                    Console.WriteLine($"Query Vector creation Time: {swQueryVector.ElapsedMilliseconds/1000.0}, Similarity Search Time: {swSimilaritySearch.ElapsedMilliseconds/100.0}, Total Time: {(swQueryVector.ElapsedMilliseconds+ swSimilaritySearch.ElapsedMilliseconds) / 1000.0}, Total Time2: {swTotalTime.ElapsedMilliseconds / 1000.0}");
                     var index = 0;
                     foreach (var r in inMemoryResponse)
                     {

@@ -1,14 +1,11 @@
-﻿sailing
-medecine and pills
+﻿medecine and pills
 sad people
 sad religious people
 endless love
 IRS
-laughing
-life and death
+life and death -- Tomorrow Never Knows
 Tibetan Book
 Tibetan Book of the Dead
-~~NO~~Psychedelic Experience
 Timothy Leary
     Timothy Leary around 1962/1964 wrote a book
     The Psychedelic Experience: A Manual Based on The Tibetan Book of the Dead 
