@@ -128,6 +128,96 @@ namespace fAI.Tests
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
         }
 
+        const string BASIC_MARKDOWN_1 = @"
+# Markdown Showcase
+
+This file demonstrates common **Markdown features**.
+
+---
+
+## 1. Headings
+
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+
+---
+
+## 2. Text Formatting
+
+- **Bold text**
+- *Italic text*
+- ***Bold and italic***
+- ~~Strikethrough~~
+- `Inline code`
+
+---
+
+## 3. Lists
+
+### Unordered list
+
+- Item 1
+- Item 2
+  - Sub item 2.1
+  - Sub item 2.2
+
+### Ordered list
+
+1. First
+2. Second
+3. Third
+
+---
+
+## 4. Links
+
+[OpenAI](https://openai.com)
+
+---
+
+## 5. Images
+
+![Sample Image](https://via.placeholder.com/150)
+
+---
+
+## 6. Code blocks
+
+### C#
+
+```csharp
+public static void Main()
+{
+    Console.WriteLine(""Hello Markdown"");
+}
+```
+
+## 7. Table
+
+| Icon | Code | Usage |
+|------|------|-------|
+| ❌ | `:x:` | Broken, failed, or blocked |
+| ⚠️ | `:warning:` | Needs attention, non-critical |
+| 🔴 | `:red_circle:` | Critical issue |
+| 🟡 | `:yellow_circle:` | Warning / in progress |
+| 🟢 | `:green_circle:` | All good |
+| ❗ | `:exclamation:` | Urgent issue |
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Basic_Markdown_Generation_1()
+        {
+            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
+            htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate02);
+            htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate03);
+        }
+
+
         public void Dispose()
         {
             // MarkdownManager.Clean();
