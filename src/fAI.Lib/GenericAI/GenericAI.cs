@@ -421,6 +421,77 @@ Use the following rules to guide your summarization:
             };
         }
 
+        public enum PhraseType
+        {
+            Question,
+            Order,
+            Statement
+        }
+
+        public class DetermineTheTypeOfPhraseResult
+        {
+            [JsonProperty("classification")]
+            public string Classification { get; set; }
+            public static DetermineTheTypeOfPhraseResult FromJson(string json)
+            {
+                return JsonConvert.DeserializeObject<DetermineTheTypeOfPhraseResult>(json);
+            }
+
+            public PhraseType PhraseType
+            {
+                get
+                {
+                    if (Enum.TryParse(Classification, out PhraseType result))
+                    {
+                        return result;
+                    }
+                    else
+                    {
+                        throw new Exception($"Unable to parse classification '{Classification}' to PhraseType enum.");
+                    }
+                }
+            }
+        }
+
+        public PhraseType DetermineTheTypeOfPhrase(
+           string text,
+           string model,
+           string systemPrompt = @"
+You are a linguistic classifier. 
+Your job is to analyze the provided phrase and categorize it into exactly one of the following three categories:
+
+1.  **Question**: The phrase is asking for information.
+2.  **Order**: The phrase is an imperative command or request for action.
+3.  **Statement**: The phrase is declarative, providing facts, opinions, or descriptions.
+
+You must respond strictly with a JSON object representing your classification. 
+The JSON object must have a single key named ""classification"" holding the selected category as a string value. 
+Do not include markdown formatting (like ```json) in the output.
+
+Examples:
+Phrase: ""Could you tell me the time?""
+Output: {""classification"": ""Question""}
+
+Phrase: ""Close the door immediately.""
+Output: {""classification"": ""Order""}
+
+Phrase: ""It is raining outside.""
+Output: {""classification"": ""Statement""}
+
+Phrase: ""[text]""
+Output:
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { text }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var (json, _) = Create(text, systemPrompt, model);
+            sw.Stop();
+            var o = DetermineTheTypeOfPhraseResult.FromJson(json);
+            return o.PhraseType;
+        }
+
+
         public class GenerateBulletPointResult
         {
             public string Text { get; set; }
