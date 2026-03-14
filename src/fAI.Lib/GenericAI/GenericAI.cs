@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.Util.Strings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -423,6 +424,7 @@ Use the following rules to guide your summarization:
 
         public enum PhraseType
         {
+            Undefined,
             Question,
             Order,
             Statement
@@ -524,7 +526,7 @@ A: [question]
             var sw = Stopwatch.StartNew();
             var (answer, _) = Create(question, systemPrompt, model);
             sw.Stop();
-            return answer;
+            return StringUtil.SuperTrim(answer);
         }
 
 

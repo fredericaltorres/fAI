@@ -6,6 +6,8 @@ namespace fAI.Util.Strings
 {
     public static class StringUtil
     {
+        public static string SuperTrim(string input) => input?.Trim().Trim('"', '\'', '.', ';', ',').Trim();
+
         public static string SmartExtractJson(string text)
         {
             var jsonMarker = "```json";
