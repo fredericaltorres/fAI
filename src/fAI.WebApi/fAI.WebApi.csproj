@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicSugarStandard" Version="1.0.83" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.85" />
     <PackageReference Include="Fredis.Lib" Version="1.1.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />

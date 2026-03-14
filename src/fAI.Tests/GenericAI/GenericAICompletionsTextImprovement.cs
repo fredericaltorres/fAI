@@ -217,5 +217,28 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model));
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model));
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RePhraseQuestionIntoAffirmation()
+        {
+            var model = "gemini-2.0-flash";
+            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+            var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model);
+            Assert.Contains("Your highest priority is __SOMETHING__", answer);
+            var j = answer.ToJSON();
+
+            answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do?", model: model);
+            Assert.Contains("Your next task to do is __SOMETHING__", answer);
+
+            answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do with the highest priority?", model: model);
+            Assert.Contains("Your next task to do with the highest priority is __SOMETHING__", answer);
+
+            answer = client.Completions.RePhraseQuestionIntoAffirmation("When is my next meeting?", model: model);
+            Assert.Contains("Your next meeting is at __SOMETHING__", answer);
+
+            answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model);
+            Assert.Contains("Your next meeting is with __SOMETHING__", answer);
+        }
     }
 }

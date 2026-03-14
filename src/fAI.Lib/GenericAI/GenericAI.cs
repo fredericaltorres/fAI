@@ -73,7 +73,7 @@ namespace fAI
 
         public class ContentMessagePart
         {
-            [JsonProperty("text")]
+            [JsonProperty("question")]
             public string Text { get; set; }
         }
 
@@ -478,7 +478,7 @@ Output: {""classification"": ""Order""}
 Phrase: ""It is raining outside.""
 Output: {""classification"": ""Statement""}
 
-Phrase: ""[text]""
+Phrase: ""[question]""
 Output:
             "
            )
@@ -489,6 +489,42 @@ Output:
             sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
             return o.PhraseType;
+        }
+
+        public string RePhraseQuestionIntoAffirmation(
+           string question,
+           string model,
+           string systemPrompt = @"
+Task: Convert the user question into declarative answer templates. 
+Change ""my"" to ""your"" and use ""__SOMETHING__"" as the placeholder for the unknown information.
+
+Examples:
+Q: ""What is my number one task to do?""
+A: ""Your number one task to do is __SOMETHING__.""
+
+Q: ""What is the capital city of France?""
+A: ""The capital city of France is SOMETHING.""
+
+Q: ""When is my next scheduled meeting with Sarah?""
+A: ""Your next scheduled meeting with Sarah is at SOMETHING.""
+
+Q: ""What is my current checking account balance?""
+A: ""Your current checking account balance is SOMETHING.""
+
+Q: ""What is my frequent flyer number for Delta airlines?""
+A: ""Your frequent flyer number for Delta airlines is SOMETHING.""
+
+Current Task:
+Q: ""What is my to-do number one in personal section?""
+A: [question]
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { question }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var (answer, _) = Create(question, systemPrompt, model);
+            sw.Stop();
+            return answer;
         }
 
 

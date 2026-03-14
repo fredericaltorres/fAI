@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Anthropic" Version="12.8.0" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.85" />
   </ItemGroup>
 
 </Project>
