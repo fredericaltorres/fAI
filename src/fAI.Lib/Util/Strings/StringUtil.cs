@@ -1,11 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace fAI.Util.Strings
 {
     public static class StringUtil
     {
+        public static string SuperTrimComment(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // Remove all content within parentheses (including nested ones) and the parentheses themselves
+            int safetyLimit = 100; // prevent infinite loops for malformed input
+            while (safetyLimit-- > 0)
+            {
+                string result = Regex.Replace(input, @"\([^()]*\)", string.Empty);
+                if (result == input)
+                    break;
+                input = result;
+            }
+
+            return input;
+        }
+
         public static string SuperTrim(string input) => input?.Trim().Trim('"', '\'', '.', ';', ',').Trim();
 
         public static string SmartExtractJson(string text)

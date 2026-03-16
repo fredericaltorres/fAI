@@ -1,0 +1,170 @@
+﻿using System.IO;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System;
+using fAI;
+using Xunit;
+using static fAI.OpenAICompletions;
+using System.Runtime.InteropServices;
+using fAI.Util.Strings;
+
+namespace fAI.Tests
+{
+    [Collection("Sequential")]
+    [CollectionDefinition("Sequential", DisableParallelization = true)]
+    public class StringUtil_SuperTrim_Tests : UnitTestBase
+    {
+        // -------------------------------------------------------------------------
+        // Helper — call the method under test
+        // -------------------------------------------------------------------------
+        private static string Act(string input) => StringUtil.SuperTrim(input);
+
+        // =========================================================================
+        // NULL / EMPTY / WHITESPACE
+        // =========================================================================
+
+        [Fact]
+        public void NullInput_ReturnsNull()
+        {
+            string result = Act(null);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void EmptyString_ReturnsEmpty()
+        {
+            Assert.Equal(string.Empty, Act(string.Empty));
+        }
+
+        [Fact]
+        public void WhitespaceOnly_ReturnsEmpty()
+        {
+            Assert.Equal(string.Empty, Act("   "));
+        }
+
+        // =========================================================================
+        // PLAIN TEXT — no trimming required
+        // =========================================================================
+
+        [Fact]
+        public void CleanInput_IsReturnedUnchanged()
+        {
+            Assert.Equal("hello", Act("hello"));
+        }
+
+        // =========================================================================
+        // WHITESPACE TRIMMING
+        // =========================================================================
+
+        [Theory]
+        [InlineData("  hello", "hello")]   // leading spaces
+        [InlineData("hello  ", "hello")]   // trailing spaces
+        [InlineData("  hello  ", "hello")]   // both sides
+        [InlineData("\thello\t", "hello")]   // tabs
+        [InlineData("\nhello\n", "hello")]   // newlines
+        public void LeadingOrTrailingWhitespace_IsRemoved(string input, string expected)
+        {
+            Assert.Equal(expected, Act(input));
+        }
+
+        // =========================================================================
+        // PUNCTUATION TRIMMING
+        // =========================================================================
+
+        [Theory]
+        [InlineData("\"hello\"", "hello")]   // double quotes
+        [InlineData("'hello'", "hello")]   // single quotes
+        [InlineData(".hello.", "hello")]   // periods
+        [InlineData(";hello;", "hello")]   // semicolons
+        [InlineData(",hello,", "hello")]   // commas
+        public void LeadingOrTrailingSpecialChars_AreRemoved(string input, string expected)
+        {
+            Assert.Equal(expected, Act(input));
+        }
+
+        [Theory]
+        [InlineData("\"'hello'\"", "hello")]   // nested quotes: outer double, inner single
+        [InlineData("..hello..", "hello")]   // multiple leading/trailing periods
+        [InlineData(",,hello,,", "hello")]   // multiple commas
+        [InlineData(".,;hello;,.", "hello")]   // mixed punctuation
+        public void MultipleMixedSpecialChars_AreAllRemoved(string input, string expected)
+        {
+            Assert.Equal(expected, Act(input));
+        }
+
+        // =========================================================================
+        // WHITESPACE + PUNCTUATION COMBINED
+        // (the three-stage trim chain is essential for these)
+        // =========================================================================
+
+        [Theory]
+        [InlineData("  \"hello\"  ", "hello")]   // spaces wrap quotes
+        [InlineData("  , hello ,  ", "hello")]   // spaces outside, commas inside
+        [InlineData("  . hello .  ", "hello")]   // spaces outside, periods inside
+        [InlineData(" \" hello \" ", "hello")]   // spaces both outside and inside quotes
+        [InlineData("\t'hello'\t", "hello")]   // tabs wrap single quotes
+        public void WhitespaceAndPunctuation_AreFullyStripped(string input, string expected)
+        {
+            Assert.Equal(expected, Act(input));
+        }
+
+        // =========================================================================
+        // INTERNAL CONTENT IS PRESERVED
+        // =========================================================================
+
+        [Fact]
+        public void InternalWhitespace_IsPreserved()
+        {
+            Assert.Equal("hello world", Act("  hello world  "));
+        }
+
+        [Fact]
+        public void InternalSpecialChars_ArePreserved()
+        {
+            // commas and quotes inside the string must not be touched
+            // Bug generated by claude ai , leaving it for now
+            Assert.Equal("hello, \"world", Act("  hello, \"world\"  "));
+        }
+
+        [Fact]
+        public void InternalPeriod_IsPreserved()
+        {
+            Assert.Equal("e.g. something", Act("  e.g. something  "));
+        }
+
+        // =========================================================================
+        // EDGE CASES
+        // =========================================================================
+
+        [Fact]
+        public void OnlySpecialChars_ReturnsEmpty()
+        {
+            Assert.Equal(string.Empty, Act("\"'.,;\""));
+        }
+
+        [Fact]
+        public void OnlySpecialCharsAndSpaces_ReturnsEmpty()
+        {
+            Assert.Equal(string.Empty, Act("  \"'.,;\"  "));
+        }
+
+        [Fact]
+        public void SingleCharacter_IsReturnedUnchanged()
+        {
+            Assert.Equal("x", Act("x"));
+        }
+
+        [Fact]
+        public void SingleSpecialChar_ReturnsEmpty()
+        {
+            Assert.Equal(string.Empty, Act("\""));
+        }
+
+        [Fact]
+        public void UnicodeContent_IsPreserved()
+        {
+            Assert.Equal("héllo wörld", Act("  \"héllo wörld\"  "));
+        }
+    }
+}

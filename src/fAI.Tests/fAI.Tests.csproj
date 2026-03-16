@@ -99,6 +99,8 @@
     <Compile Include="GenericAI\GenericAICompletionsTextImprovement.cs" />
     <Compile Include="OpenAI\OpenAiCompletionsChatUnitTests.cs" />
     <Compile Include="SkillManager\SkillManager.Tests.cs" />
+    <Compile Include="StringUtil\StringUtil_SuperTrim_Tests.cs" />
+    <Compile Include="StringUtil\StringUtil_SuperTrimComment_Tests.cs" />
     <Compile Include="WhisperSpeechToText\WhiperSpeechToText.Tests.cs" />
     <Compile Include="SpeechToText\SpeechToText.Tests.cs" />
     <Compile Include="OpenAI\OpenAi.Complettions.CodeGeneration.cs" />

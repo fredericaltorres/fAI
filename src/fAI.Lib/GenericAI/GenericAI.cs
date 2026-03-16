@@ -529,6 +529,31 @@ A: [question]
             return StringUtil.SuperTrim(answer);
         }
 
+        public string FixPhrase(
+           string phrase,
+           string language,
+           string model,
+           string systemPrompt = @"
+Rewrite the provided phrase into natural, grammatically standard [language].
+Constraints:
+- Provide only the single best corrected version.
+- Do not provide any explanations, context, or alternative options.
+
+            ",
+           string prompt = @"
+Phrase to fix:
+""[phrase]""
+"
+           )
+        {
+
+            systemPrompt = systemPrompt.Template(new { language, phrase }, "[", "]");
+            prompt = prompt.Template(new { language, phrase }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var (answer, _) = Create(prompt, systemPrompt, model);
+            sw.Stop();
+            return StringUtil.SuperTrim(answer);
+        }
 
         public class GenerateBulletPointResult
         {

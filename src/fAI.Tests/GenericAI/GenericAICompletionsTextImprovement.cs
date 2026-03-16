@@ -240,5 +240,17 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model);
             Assert.Contains("Your next meeting is with __SOMETHING__", answer);
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void FixPhrase()
+        {
+            var model = "gemini-2.0-flash";
+            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+            var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model);
+            //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
+            fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model);
+            fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
+        }
     }
 }
