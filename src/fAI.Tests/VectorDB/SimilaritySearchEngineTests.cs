@@ -40,7 +40,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void SimilaritySearch()
         {
-            var inMemoryEmbeddingRecords = EmbeddingRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.RevolverConsole\Revolver.json");
+            var inMemoryEmbeddingRecords = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.RevolverConsole\Revolver.json");
             var criteria = "Timothy Leary";
             var topK = 1;
             var minimumScore = 0.77f;

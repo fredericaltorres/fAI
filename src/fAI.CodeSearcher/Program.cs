@@ -43,7 +43,7 @@ namespace fAI.Beetles.All
             //ComputeEmbedding();
             //Environment.Exit(0);
 
-            var embeddingRecords = embeddingSourceCodeRecords.Select(e => e as EmbeddingRecord).ToList();
+            var embeddingRecords = embeddingSourceCodeRecords.Select(e => e as EmbeddingCommonRecord).ToList();
             var message = $"{embeddingSourceCodeRecords.Count} Source File / Chunk . Enter search criteria about the source code";
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
@@ -105,7 +105,7 @@ namespace fAI.Beetles.All
         { 
             if(File.Exists(JsonOutputFilename))
                 File.Delete(JsonOutputFilename);
-            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), JsonOutputFilename);
+            EmbeddingCommonRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingCommonRecord).ToList(), JsonOutputFilename);
         }
 
         static void ComputeEmbedding()

@@ -149,9 +149,9 @@ namespace fAI
             return s.Replace(Environment.NewLine, ". ").Replace("\n", ". ").Replace("\r", ". ").Replace("..", ".").Replace(". . ", ". ");
         }
 
-        public EmbeddingRecord GenerateEmbeddingRecord(string id)
+        public EmbeddingCommonRecord GenerateEmbeddingRecord(string id)
         {
-            var er = new EmbeddingRecord();
+            var er = new EmbeddingCommonRecord();
             er.Text = Text;
             er.Embedding = Data[0].Embedding;
             er.Id = id;

@@ -79,7 +79,7 @@ namespace fAI.VectorDB
         public SimilaritySearchPayLoad SimilaritySearch(PineconeIndex index, string query, int topK, bool includeValues = false, string @namespace = "ns1", float minimumScore = -1)
         {
             var client = new OpenAI();
-            var ebs = new List<EmbeddingRecord>();
+            var ebs = new List<EmbeddingCommonRecord>();
             var queryVector = ToVector(query);
             if (queryVector != null)
             {

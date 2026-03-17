@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\fAI.Lib\ChatGPTUtil\EmbeddingRecord.cs" Link="EmbeddingRecord.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="..\fAI.Beetles.All\Beatles.All.json" Link="Beatles.All.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

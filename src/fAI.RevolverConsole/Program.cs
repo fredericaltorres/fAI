@@ -20,7 +20,7 @@ namespace fAI.RevolverConsole
             if (!client.ExistsIndex(BeatlesRevolverIndexName))
             {
                 var index = client.CreateIndex(BeatlesRevolverIndexName);
-                var e = EmbeddingRecord.FromJsonFile(@".\Revolver.json");
+                var e = EmbeddingCommonRecord.FromJsonFile(@".\Revolver.json");
 
                 foreach (var er in e)
                 {

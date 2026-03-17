@@ -31,6 +31,8 @@ namespace fAI.Beetles.All
         static void WriteInformation(string message) => WriteLine(message, ConsoleColor.White);
         static void WriteAnswer(string message) => WriteLine(message, ConsoleColor.Green);
 
+        const string JsonOutputFilename = @".\Beatles.All.json";
+
         static void Main(string[] args)
         {
             Console.Clear();
@@ -38,11 +40,11 @@ namespace fAI.Beetles.All
             ComputeEmbedding();
             Environment.Exit(0);
 
-            var embeddingSongRecords = EmbeddingRecord.LoadEmbeddingSongRecord();
+            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
-            var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
+            var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
 
 
 
@@ -174,7 +176,9 @@ namespace fAI.Beetles.All
             var v = string.Empty;
             var lines = File.ReadAllText(@".\All.Beetles.txt").SplitByCRLF();
 
-            var embeddingSongRecord = EmbeddingRecord.LoadEmbeddingSongRecord();
+            const string JsonOutputFilename = @".\Beatles.All.json";
+
+            var embeddingSongRecord = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
             foreach (var line in lines)
             {
@@ -223,7 +227,7 @@ namespace fAI.Beetles.All
                             Embedding = new List<float>()
                         });
 
-                        EmbeddingRecord. SaveEmbeddingSongRecord(embeddingSongRecord);
+                        EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecord, JsonOutputFilename);
                         SleepForRandomTime();
                     }
                     continue;
@@ -237,10 +241,11 @@ namespace fAI.Beetles.All
         static void ComputeEmbedding()
         {
             ///WebScrapLyrics();
-            var embeddingSongRecords = EmbeddingRecord.LoadEmbeddingSongRecord();
+            const string JsonOutputFilename = @".\Beatles.All.json";
+            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
             foreach (var e in embeddingSongRecords)
                 e.Embedding.Clear();
-            EmbeddingRecord.SaveEmbeddingSongRecord(embeddingSongRecords);
+            EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
 
 
             var client = new OpenAI();
@@ -254,10 +259,10 @@ namespace fAI.Beetles.All
                     e.Embedding = r.Data[0].Embedding;
 
                     if (i++ % 10 == 0)
-                        EmbeddingRecord.SaveEmbeddingSongRecord(embeddingSongRecords);
+                        EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
                 }
             }
-            EmbeddingRecord.SaveEmbeddingSongRecord(embeddingSongRecords);
+            EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
         }
     }
 }

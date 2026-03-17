@@ -127,7 +127,7 @@ namespace fAI.Tests
             
             Assert.True(index.totalVectorCount == 0);
 
-            var e = EmbeddingRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
+            var e = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
 
             foreach(var er in e)
             {

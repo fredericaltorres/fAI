@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace fAI.VectorDB
@@ -10,6 +11,21 @@ namespace fAI.VectorDB
     // https://cookbook.openai.com/
     public static class SimilaritySearchEngine
     {
+        public static float GetOpenAIEmbeddingDynamicScore(float bestScore)
+        {
+            var minimumScore = 0f;
+            if (bestScore > 0.4f)
+                minimumScore = bestScore * 0.80f;
+            else if (bestScore > 0.35f)
+                minimumScore = bestScore * 0.85f;
+            else if (bestScore > 0.3f)
+                minimumScore = bestScore * 0.90f;
+            else if (bestScore > 0.2f)
+                minimumScore = bestScore * 0.95f;
+
+            return minimumScore;
+        }
+
         public static List<float> ToVector(string text)
         {
             var client = new OpenAI();
@@ -22,9 +38,9 @@ namespace fAI.VectorDB
                 return null;
         }
 
-        public static List<EmbeddingRecord> SimilaritySearch(
+        public static List<EmbeddingCommonRecord> SimilaritySearch(
         List<float> queryVector,
-        List<EmbeddingRecord> embeddingRecords,
+        List<EmbeddingCommonRecord> embeddingRecords,
         int topK = 3,
         double minimumScore = 0.75)
         {
@@ -32,9 +48,9 @@ namespace fAI.VectorDB
                 throw new ArgumentException("Query vector cannot be null or empty.");
 
             if (embeddingRecords == null || embeddingRecords.Count == 0)
-                return new List<EmbeddingRecord>();
+                return new List<EmbeddingCommonRecord>();
 
-            var scored = new List<EmbeddingRecord>();
+            var scored = new List<EmbeddingCommonRecord>();
             double maxScore = double.MinValue;
 
             foreach (var record in embeddingRecords)
@@ -80,12 +96,12 @@ namespace fAI.VectorDB
 
 
 
-        public static List<EmbeddingRecord> SimilaritySearch_old(
+        public static List<EmbeddingCommonRecord> SimilaritySearch_old(
             List<float> queryVector, 
-            List<EmbeddingRecord> embeddingRecords, int topK = 3, double minimumScore = 0.75)
+            List<EmbeddingCommonRecord> embeddingRecords, int topK = 3, double minimumScore = 0.75)
         {
             //var json = Newtonsoft.Json.JsonConvert.SerializeObject(queryVector);
-            var r = new List<EmbeddingRecord>();
+            var r = new List<EmbeddingCommonRecord>();
             foreach (var er in embeddingRecords)
             {
                 var score = CalculateCosineSimilarity_old(queryVector, er.Embedding);

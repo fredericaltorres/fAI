@@ -560,7 +560,7 @@ Of the beginning, of the beginning
         {
             var title = Revolver.Keys.First();
             var client = new OpenAI();
-            var ebs = new List<EmbeddingRecord>();
+            var ebs = new List<EmbeddingCommonRecord>();
             var itemIndex = 0;
             foreach (var e in Revolver)
             {
@@ -572,7 +572,7 @@ Of the beginning, of the beginning
                 ebs.Add(r.GenerateEmbeddingRecord(id));
                 itemIndex += 1;
             }
-            EmbeddingRecord.ToJsonFile(ebs, @"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
+            EmbeddingCommonRecord.ToJsonFile(ebs, @"C:\DVT\fAI\src\fAI.Tests\VectorDB\Revolver.json");
 
             //var input = "Hello world.";
             //var r = client.Embeddings.Create(input);

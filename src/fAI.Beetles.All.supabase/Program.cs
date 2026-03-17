@@ -1,4 +1,5 @@
 ﻿using fAI;
+using fAI.VectorDB;
 using Newtonsoft.Json;
 using Supabase.Interfaces;
 using System;
@@ -77,8 +78,11 @@ namespace SupabaseThoughts
             // Add other columns your function returns
         }
 
+        const string JsonOutputFilename = @".\Beatles.All.json";
+
         static async Task RunAsync()
         {
+            
             WriteQuestion("=== Supabase BeatlesSongs Console App ===");
 
             var supabase = new Supabase.Client(ProjectUrl, AnonKey, new Supabase.SupabaseOptions { AutoConnectRealtime = true });
@@ -86,9 +90,9 @@ namespace SupabaseThoughts
 
             //await PopulateBeatlesSongsTableInSupabase(supabase);
 
-            var embeddingSongRecords = EmbeddingRecord.LoadEmbeddingSongRecord();
+            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
-            var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingRecord).ToList();
+            var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
 
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
@@ -131,18 +135,11 @@ namespace SupabaseThoughts
                     var inMemoryResponse = JsonConvert.DeserializeObject<List<BeatlesSongResult>>(s);
                     var inMemoryResponse2 = inMemoryResponse;
 
-                    // Dynamic Thresholding based on best score. This is needed as the new model return variable score
+                    // tutu Dynamic Thresholding based on best score. This is needed as the new model return variable score
                     // and we need to relax the threshold to get relevant results.
                     // With old model, we can set a fixed threshold and get good results.
                     var bestScore = inMemoryResponse.Select(r => r.Similarity).DefaultIfEmpty(0).Max();
-                    if(bestScore > 0.4f)
-                        minimumScore = bestScore * 0.80f;
-                    else if (bestScore > 0.35f)
-                        minimumScore = bestScore * 0.85f;
-                    else if (bestScore > 0.3f)
-                        minimumScore = bestScore * 0.90f;
-                    else if (bestScore > 0.2f)
-                        minimumScore = bestScore * 0.95f;
+                    minimumScore = SimilaritySearchEngine.GetOpenAIEmbeddingDynamicScore(bestScore);
 
                     inMemoryResponse = inMemoryResponse.Where(r => r.Similarity >= minimumScore).ToList();
 
@@ -171,7 +168,7 @@ namespace SupabaseThoughts
             {
                 await supabase.From<BeatlesSongs>().Delete(song);
             }
-            var embeddingSongRecords = EmbeddingRecord.LoadEmbeddingSongRecord();
+            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
             foreach (var r in embeddingSongRecords)
             {
                 Console.WriteLine($"Inserting {r.Title} from {r.Album} ({r.Year})...");

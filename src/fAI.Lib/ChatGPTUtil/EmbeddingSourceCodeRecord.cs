@@ -1,66 +1,10 @@
 ﻿using DynamicSugar;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace fAI
 {
-    public class EmbeddingRecord
-    {
-        public string Id { get; set; }
-        public string Text { get; set; }
-        public List<float> Embedding { get; set; }
-        public int TextLength => this.Text.Length;
-        public int TextLengthKb => this.Text.Length / 1024;
-
-        const string JsonOutputFilename = @".\Beatles.All.json";
-
-        public static List<EmbeddingSongRecord> LoadEmbeddingSongRecord()
-        {
-            var r = new List<EmbeddingSongRecord>();
-            if (File.Exists(JsonOutputFilename))
-                r.AddRange(EmbeddingSongRecord.FromJsonFile(JsonOutputFilename).Select(rr => rr as EmbeddingSongRecord));
-
-            return r;
-        }
-
-        public static void SaveEmbeddingSongRecord(List<EmbeddingSongRecord> embeddingSongRecord)
-        {
-            if (File.Exists(JsonOutputFilename))
-                File.Delete(JsonOutputFilename);
-            EmbeddingRecord.ToJsonFile(embeddingSongRecord.Select(r => r as EmbeddingRecord).ToList(), JsonOutputFilename);
-        }
-
-        [Newtonsoft.Json.JsonIgnore]
-        public double Score { get; set; }
-
-        public static void ToJsonFile(List<EmbeddingRecord> embeddingRecords, string fileName)
-        {
-            var json = JsonUtils.ToJSON(embeddingRecords);
-            File.WriteAllText(fileName, json);
-        }
-        public static List<EmbeddingRecord> FromJsonFile(string fileName)
-        {
-            var json = File.ReadAllText(fileName);
-            return JsonUtils.FromJSON<List<EmbeddingRecord>>(json);
-        }
-    }
-
-    public class EmbeddingSongRecord : EmbeddingRecord
-    {
-        public string Album { get; set; }
-        public string Title { get; set; }
-        public int Year { get; set; }
-
-        public new static List<EmbeddingSongRecord> FromJsonFile(string fileName)
-        {
-            var json = File.ReadAllText(fileName);
-            return JsonUtils.FromJSON<List<EmbeddingSongRecord>>(json);
-        }
-    }
-
-    public class EmbeddingSourceCodeRecord : EmbeddingRecord
+    public class EmbeddingSourceCodeRecord : EmbeddingCommonRecord
     {
         public const int MAX_TEXT_LENGTH = 4096;
 
