@@ -1,11 +1,13 @@
 ﻿using DynamicSugar;
 using Markdig;
+using Smdn.LibHighlightSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
@@ -539,6 +541,56 @@ namespace fAI
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             string html = Markdown.ToHtml(markdown, pipeline);
             return html;
+        }
+
+        public static string ExtractStyleBlock(string htmlStr)
+        {
+            if (string.IsNullOrWhiteSpace(htmlStr))
+                return null;
+
+            string pattern = @"<style\s+type=""text/css""[\s\S]*?</style>";
+
+            Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+
+            return match.Success ? match.Value : null;
+        }
+
+        /// <summary>
+        /// Extracts the full <body>...</body> block from an HTML string.
+        /// </summary>
+        /// <param name="htmlStr">The HTML string to search.</param>
+        /// <returns>The full body block including tags, or null if not found.</returns>
+        public static string ExtractBodyBlock(string htmlStr)
+        {
+            if (string.IsNullOrWhiteSpace(htmlStr))
+                return null;
+
+            string pattern = @"<body[\s\S]*?</body>";
+
+            Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+
+            return match.Success ? match.Value : null;
+        }
+
+        public static void ConvertCodeToHtmlFile(string code, string syntaxFile, string themeFile, string htmlFile)
+        {
+            var (html, _, __) = ConvertCodeToHtml(code, syntaxFile, themeFile);
+            File.WriteAllText(htmlFile, html);
+        }
+
+        // https://github.com/smdn/Smdn.LibHighlightSharp/tree/main
+        public static (string html, string style, string body)ConvertCodeToHtml(string code, string syntaxFile, string themeFile)
+        {
+            // Creates an instance that generates code highlighted as a HTML document.
+            using (var hl = new Highlight(GeneratorOutputType.Html))
+            {
+                hl.SetThemeFromFile(themeFile);
+                hl.SetSyntaxFromFile(syntaxFile);
+                hl.SetIncludeStyle(true);
+                var html = hl.Generate(code);
+
+                return (html, ExtractStyleBlock(html) , ExtractBodyBlock(html));
+            }
         }
     }
 }

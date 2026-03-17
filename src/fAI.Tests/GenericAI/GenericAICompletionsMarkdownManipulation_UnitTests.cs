@@ -2,6 +2,7 @@
 using fAI;
 using Markdig;
 using Newtonsoft.Json;
+using Smdn.LibHighlightSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -217,7 +218,60 @@ public static void Main()
             htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate03);
         }
 
+        const string github_theme = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\themes\github.theme";
+        const string csharp_lang = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\langDefs\csharp.lang";
 
+        const string CSCHARP_CODE_SAMPLE_1 = @"
+/// <summary>
+/// Extracts the full <body>...</body> block from an HTML string.
+/// </summary>
+/// <param name=""htmlStr"">The HTML string to search.</param>
+/// <returns>The full body block including tags, or null if not found.</returns>
+public static string ExtractBodyBlock(string htmlStr)
+{
+    if (string.IsNullOrWhiteSpace(htmlStr))
+        return null;
+    string pattern = @""<body[\s\S]*?</body>"";
+    Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+    return match.Success ? match.Value : null;
+}
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void RenderCSharp_1()
+        {
+            var (html, style, body)  = MarkdownManager.ConvertCodeToHtml(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme);
+            var tfh = new TestFileHelper();
+            var tempHtmlFile = tfh.GetTempFileName(".html");
+            MarkdownManager.ConvertCodeToHtmlFile(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme, tempHtmlFile);
+            Assert.True(File.Exists(tempHtmlFile), "HTML file was not created.");
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_Generation_With_CSharpCode()
+        {
+            var text = @"
+# Some markdown with some c#
+
+## Overview
+About this code.
+
+## Sample code
+
+```csharp
+public static string ExtractBodyBlock(string htmlStr)
+{
+    string pattern = @""<body[\s\S]*?</body>"";
+    Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+    return match.Success ? match.Value : null;
+}
+
+```
+";
+            // var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+        }
         public void Dispose()
         {
             // MarkdownManager.Clean();
