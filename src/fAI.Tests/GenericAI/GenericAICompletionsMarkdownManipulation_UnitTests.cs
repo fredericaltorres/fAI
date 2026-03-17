@@ -2,7 +2,7 @@
 using fAI;
 using Markdig;
 using Newtonsoft.Json;
-using Smdn.LibHighlightSharp;
+//using Smdn.LibHighlightSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -237,6 +237,9 @@ public static string ExtractBodyBlock(string htmlStr)
 }
 ";
 
+
+
+/*
         [Fact()]
         [TestBeforeAfter]
         public void RenderCSharp_1()
@@ -272,6 +275,7 @@ public static string ExtractBodyBlock(string htmlStr)
 ";
             // var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
         }
+*/
         public void Dispose()
         {
             // MarkdownManager.Clean();

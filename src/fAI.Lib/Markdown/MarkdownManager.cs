@@ -1,6 +1,5 @@
 ﻿using DynamicSugar;
 using Markdig;
-using Smdn.LibHighlightSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -572,25 +571,25 @@ namespace fAI
             return match.Success ? match.Value : null;
         }
 
-        public static void ConvertCodeToHtmlFile(string code, string syntaxFile, string themeFile, string htmlFile)
-        {
-            var (html, _, __) = ConvertCodeToHtml(code, syntaxFile, themeFile);
-            File.WriteAllText(htmlFile, html);
-        }
+        //public static void ConvertCodeToHtmlFile(string code, string syntaxFile, string themeFile, string htmlFile)
+        //{
+        //    var (html, _, __) = ConvertCodeToHtml(code, syntaxFile, themeFile);
+        //    File.WriteAllText(htmlFile, html);
+        //}
 
-        // https://github.com/smdn/Smdn.LibHighlightSharp/tree/main
-        public static (string html, string style, string body)ConvertCodeToHtml(string code, string syntaxFile, string themeFile)
-        {
-            // Creates an instance that generates code highlighted as a HTML document.
-            using (var hl = new Highlight(GeneratorOutputType.Html))
-            {
-                hl.SetThemeFromFile(themeFile);
-                hl.SetSyntaxFromFile(syntaxFile);
-                hl.SetIncludeStyle(true);
-                var html = hl.Generate(code);
+        //// https://github.com/smdn/Smdn.LibHighlightSharp/tree/main
+        //public static (string html, string style, string body)ConvertCodeToHtml(string code, string syntaxFile, string themeFile)
+        //{
+        //    // Creates an instance that generates code highlighted as a HTML document.
+        //    using (var hl = new Highlight(GeneratorOutputType.Html))
+        //    {
+        //        hl.SetThemeFromFile(themeFile);
+        //        hl.SetSyntaxFromFile(syntaxFile);
+        //        hl.SetIncludeStyle(true);
+        //        var html = hl.Generate(code);
 
-                return (html, ExtractStyleBlock(html) , ExtractBodyBlock(html));
-            }
-        }
+        //        return (html, ExtractStyleBlock(html) , ExtractBodyBlock(html));
+        //    }
+        //}
     }
 }

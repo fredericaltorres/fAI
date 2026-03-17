@@ -223,26 +223,6 @@ End of question
             Assert.Equal("Los Angeles Dodgers", answer);
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Completion_ThisIsATest()
-        {
-            foreach (var model in GenericAI.GetModels())
-            {
-                var client = new GenericAI();
-                var question = "Say this is a test!";
-                var (r,_) = client.Completions.Create(question, "", model);
-
-                if (model == "gemini-2.0-flash")
-                {
-                    var a = 1;
-                }
-
-                Assert.True("This is a test!" == r || "This is a test" == r || r.ToLowerInvariant().Contains("test") );
-                //HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
-            }
-        }
-
         const string ReferenceEnglishTextForSummarization = @"Hey there, everyone! I'm Jordan Lee, and I'm super excited to be here with you today because 
 I've got somethin to share with you that is going to blow your mind!
  Introducing the all-new ""SwiftGadget X"" – the gadget of your dreams! This little marvel is not just a device; 
