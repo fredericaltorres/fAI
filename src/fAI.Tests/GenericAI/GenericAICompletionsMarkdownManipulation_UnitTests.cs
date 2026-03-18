@@ -209,6 +209,15 @@ public static void Main()
 | ❗ | `:exclamation:` | Urgent issue |
 ";
 
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Basic_Markdown_ToText()
+        {
+            var textMarkDown = MarkdownManager.ConvertToText(BASIC_MARKDOWN_1);
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Basic_Markdown_Generation_1()

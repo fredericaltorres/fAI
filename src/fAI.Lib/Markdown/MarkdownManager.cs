@@ -535,6 +535,12 @@ namespace fAI
             return (tempHtmlFile, markdown);
         }
 
+        public static string ConvertToText(string markdown)
+        {
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            return Markdown.ToPlainText(markdown, pipeline);
+        }
+
         public static string ConvertToHtml(string markdown)
         {
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
