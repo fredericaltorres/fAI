@@ -105,7 +105,10 @@ namespace fAI.Tests
         public void Markdown_Generation_2()
         {
             var text = markDownContentTestPlan1;
-            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+            var (htmlFile, markDown) = MarkdownManager.ConvertToHtmlFile(text);
+            Assert.True(File.Exists(htmlFile), "HTML file was not created.");
+            Assert.Contains("Module Test Plan", File.ReadAllText(htmlFile));
+            Assert.Contains(@"font-family: Consolas,'Segoe UI', Arial, sans-serif;", File.ReadAllText(htmlFile));
         }
 
         [Fact()]
@@ -126,7 +129,10 @@ namespace fAI.Tests
 | 🟢 | `:green_circle:` | All good |
 | ❗ | `:exclamation:` | Urgent issue |
 ";
-            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+            var (htmlFile, markDown) = MarkdownManager.ConvertToHtmlFile(text);
+            Assert.True(File.Exists(htmlFile), "HTML file was not created.");
+            Assert.Contains("Broken, failed, or blocked", File.ReadAllText(htmlFile));
+            Assert.Contains(@"font-family: Consolas,'Segoe UI', Arial, sans-serif;", File.ReadAllText(htmlFile));
         }
 
         const string BASIC_MARKDOWN_1 = @"
@@ -218,6 +224,55 @@ public static void Main()
             var textMarkDown = MarkdownManager.ConvertToText(BASIC_MARKDOWN_1);
         }
 
+        [Fact]
+        public void ExtractTitle_WithValidH1Heading_ReturnsTitle()
+        {
+            var markdown = "# My Blog Post\nThis is some content.";
+            var result = MarkdownManager.ExtractTitle(markdown);
+
+            Assert.Equal("My Blog Post", result);
+        }
+
+        [Fact]
+        public void ExtractTitle_WithMultipleHeadings_ReturnsFirstH1()
+        {
+            var markdown = "## Section\n# Main Title\n# Another Title";
+            var result = MarkdownManager.ExtractTitle(markdown);
+            Assert.Equal("Main Title", result);
+        }
+
+        [Fact]
+        public void ExtractTitle_WithOnlyH2AndH3_ReturnsH2()
+        {
+            var markdown = "## Section\n### Subsection\nContent here.";
+            var result = MarkdownManager.ExtractTitle(markdown);
+            Assert.Equal("Section", result);
+        }
+
+        [Fact]
+        public void ExtractTitle_WithNoSectionAtAll_ReturnNull()
+        {
+            var markdown = ".. Section\n... Subsection\nContent here.";
+            var result = MarkdownManager.ExtractTitle(markdown);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void ExtractFirstHeading_WithOnlyH2_ReturnsH2()
+        {
+            var markdown = "## Introduction\nSome content.";
+            var result = MarkdownManager.ExtractFirstHeading(markdown);
+            Assert.Equal("Introduction", result);
+        }
+
+        [Fact]
+        public void ExtractFirstHeading_WithMultipleHeadings_ReturnsFirstOne()
+        {
+            var markdown = "## Second\n# First\n### Third";
+            var result = MarkdownManager.ExtractFirstHeading(markdown);
+            Assert.Equal("Second", result);
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Basic_Markdown_Generation_1()
@@ -287,7 +342,7 @@ public static string ExtractBodyBlock(string htmlStr)
 */
         public void Dispose()
         {
-            // MarkdownManager.Clean();
+             MarkdownManager.Clean();
         }
     }
 }

@@ -1,4 +1,29 @@
-﻿using DynamicSugar;
+﻿// ---------------------------------------------------------------------------
+// <copyright file="MarkdownManager.cs" author="Frederic Torres">
+//   Copyright (c) 2026 Frederic Torres. All rights reserved.
+// </copyright>
+//
+// MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
+// ---------------------------------------------------------------------------
+using DynamicSugar;
 using Markdig;
 using System;
 using System.Collections.Generic;
@@ -547,6 +572,49 @@ namespace fAI
             string html = Markdown.ToHtml(markdown, pipeline);
             return html;
         }
+
+        public static string ExtractTitle(string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return null;
+
+            // Split into lines and look for the first H1 heading
+            var lines = markdown.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            foreach (var line in lines)
+            {
+                var match = Regex.Match(line.Trim(), @"^(#+)\s+(.+)$");
+
+                if (match.Success)
+                {
+                    var headingLevel = match.Groups[1].Value.Length;
+                    var headingText = match.Groups[2].Value.Trim();
+                    if (headingLevel == 1) // If it's an H1 heading, return it as the title
+                        return headingText;
+                }
+            }
+
+            return ExtractFirstHeading(markdown);
+        }
+
+        public static string ExtractFirstHeading(string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return null;
+
+            var lines = markdown.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            foreach (var line in lines)
+            {
+                var match = Regex.Match(line.Trim(), @"^(#+)\s+(.+)$");
+                if (match.Success)
+                    return match.Groups[2].Value.Trim();
+            }
+
+            return null;
+        }
+
+
 
         public static string ExtractStyleBlock(string htmlStr)
         {
