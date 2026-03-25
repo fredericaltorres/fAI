@@ -26,13 +26,17 @@
 // ---------------------------------------------------------------------------
 using DynamicSugar;
 using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
@@ -567,6 +571,51 @@ namespace fAI
             return Markdown.ToPlainText(markdown, pipeline);
         }
 
+        public static void AnalyseDescendants(List<MarkdownObject> descendants, List<LinkInline> images)
+        {
+            foreach (var node in descendants)
+            {
+                var ss = node.GetType().Name;
+
+                if(node is LinkInline)
+                {
+                    var nodeLinkInline = node as LinkInline;
+                    if(nodeLinkInline.IsImage)
+                    {
+                        images.Add(nodeLinkInline);
+                    }
+                }
+
+                if(node.Descendants().ToList().Count > 0)
+                {
+                    AnalyseDescendants(node.Descendants().ToList(), images);
+                }
+            }
+        }
+
+        public class ImageInfo
+        {
+            public string Url { get; set; }
+            public string Title { get; set; }
+            public string AltText { get; set; }
+        }
+
+        public static List<ImageInfo> GetImages(string markdown)
+        {
+            var r= new List<ImageInfo>();
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            var document = Markdown.Parse(markdown, pipeline);
+
+            var images = new List<LinkInline>();
+            AnalyseDescendants(document.Descendants().ToList(), images);
+            foreach(var image in images)
+            {
+                r.Add(new ImageInfo() { Url = image.Url, Title = image.Title, AltText = image.FirstChild?.ToString() });
+            }
+
+            return r;
+        }
+
         public static string ConvertToHtml(string markdown)
         {
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -674,3 +723,4 @@ namespace fAI
         //}
     }
 }
+
