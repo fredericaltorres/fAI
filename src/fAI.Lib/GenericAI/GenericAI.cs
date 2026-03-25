@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using fAI.Util.Strings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -635,6 +636,58 @@ Use ONLY the provided article delimited by triple quotes to answer the question:
                 Duration = sw.ElapsedMilliseconds / 1000.0,
                 Model = model
             };
+        }
+
+        public class AIMetaData
+        {
+            public Dictionary<string, List<string>> MetaData { get; set; }
+        }
+
+        public AIMetaData ExtractMetaDataFromNotes(
+           string text,
+           string model,
+           string systemPrompt = @"
+Extract metadata from notes. Return one JSON object with:
+- ""people"": array of people mentioned (empty if none)
+- ""action_items"": array of implied to-dos (empty if none)
+- ""dates_mentioned"": array of dates YYYY-MM-DD (empty if none)
+- ""topics"": array of 1-3 short topic tags (always at least one)
+- ""type"": one of ""observation"", ""task"", ""idea"", ""reference"", ""person_note""
+Only extract what's explicitly there.,
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { tutu=1 }, "[", "]");
+            var sw = Stopwatch.StartNew();
+            var (json, _) = Create(text, systemPrompt, model);
+            var result = new HttpBase().GetJsonObject(json).ToString();
+            sw.Stop();
+            return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)) };
+        }
+
+        public static Dictionary<string, List<string>> JObjectToDictionary(JObject jObject)
+        {
+            var dictionary = new Dictionary<string, List<string>>();
+
+            foreach (var kvp in jObject)
+            {
+                var s = JArrayToList((JArray)kvp.Value);
+                dictionary[kvp.Key] = s;
+            }
+
+            return dictionary;
+        }
+
+        public static List<string> JArrayToList(JArray jArray)
+        {
+            var list = new List<string>();
+
+            foreach (var item in jArray)
+            {
+                list.Add(item.Value<string>());
+            }
+
+            return list;
         }
     }
 }

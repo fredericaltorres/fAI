@@ -1,4 +1,5 @@
 ﻿// ---------------------------------------------------------------------------
+// fAI .NET Library - Markdown Manager 
 // <copyright file="MarkdownManager.cs" author="Frederic Torres">
 //   Copyright (c) 2026 Frederic Torres. All rights reserved.
 // </copyright>
@@ -614,7 +615,13 @@ namespace fAI
             return null;
         }
 
-
+        public static bool IsMarkdownFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
+            string extension = Path.GetExtension(filePath).ToLower();
+            return extension == ".md" || extension == ".markdown";
+        }
 
         public static string ExtractStyleBlock(string htmlStr)
         {

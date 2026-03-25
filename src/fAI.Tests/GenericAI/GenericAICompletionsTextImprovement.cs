@@ -252,5 +252,25 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model);
             fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
         }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractMetaData()
+        {
+            var model = "gemini-2.0-flash";
+            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+
+            var notes1 = @"
+on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project.
+The meeting was at 10 AM and it lasted for 1 hour.
+I need to prepare a presentation for the next meeting on July 20th, 2026
+";
+            var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
+            Assert.Equal("John Smith", medataDictionary["people"].First());
+            Assert.Equal("January 15th, 2026", medataDictionary["dates_mentioned"].First());
+            Assert.Equal("10 AM", medataDictionary["topics"].First());
+            Assert.Equal("Salesforce integration project", medataDictionary["type"].First());
+        }
     }
 }
