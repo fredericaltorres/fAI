@@ -8,6 +8,9 @@ using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 
+/*
+ https://agentskills.io/what-are-skills
+ */
 namespace fAI.Tests
 {
     [Collection("Sequential")]
@@ -146,7 +149,7 @@ namespace fAI.Tests
         public void ReadSkill_WithValidSkill_ReturnsContent()
         {
             var skillManager = new SkillManager(TestSkillsPath);
-            var content = skillManager.ReadSkill("DataAnalysisAndInsights");
+            var content = skillManager.ReadSkill("DataAnalysisAndInsights").LoadSkill().MarkdownBody;
 
             Assert.NotNull(content);
             Assert.NotEmpty(content);
@@ -158,7 +161,7 @@ namespace fAI.Tests
         public void ReadSkill_WithDifferentSkill_ReturnsDifferentContent()
         {
             var skillManager = new SkillManager(TestSkillsPath);
-            var content = skillManager.ReadSkill("WordDocumentGeneration");
+            var content = skillManager.ReadSkill("WordDocumentGeneration").LoadSkill().MarkdownBody;
 
             Assert.NotNull(content);
             Assert.NotEmpty(content);
@@ -202,8 +205,8 @@ namespace fAI.Tests
             Assert.Equal(2, skills.Count);
             Assert.True(skills.ContainsKey("DataAnalysisAndInsights"));
             Assert.True(skills.ContainsKey("WordDocumentGeneration"));
-            Assert.Contains("Data Analysis And Insights", skills["DataAnalysisAndInsights"]);
-            Assert.Contains("Word Document Generation", skills["WordDocumentGeneration"]);
+            Assert.Contains("Data Analysis And Insights", skills["DataAnalysisAndInsights"].LoadSkill().MarkdownBody);
+            Assert.Contains("Word Document Generation", skills["WordDocumentGeneration"].LoadSkill().MarkdownBody);
         }
 
         [Fact()]
@@ -264,63 +267,34 @@ namespace fAI.Tests
             Assert.Equal(2, allSkills.Count);
             Assert.True(allSkills.ContainsKey("DataAnalysisAndInsights"));
             Assert.True(allSkills.ContainsKey("WordDocumentGeneration"));
-            Assert.Contains("Data Analysis And Insights", allSkills["DataAnalysisAndInsights"]);
-            Assert.Contains("Word Document Generation", allSkills["WordDocumentGeneration"]);
+            Assert.Contains("Data Analysis And Insights", allSkills["DataAnalysisAndInsights"].LoadSkill().MarkdownBody);
+            Assert.Contains("Word Document Generation", allSkills["WordDocumentGeneration"].LoadSkill().MarkdownBody);
+
+            foreach(var skill in allSkills)
+            {
+                Assert.NotNull(skill.Value.LoadSkill());
+                Assert.NotEmpty(skill.Value.FilePath);
+            }
         }
 
         #endregion
 
-        #region ReadSkillsCombined Tests
+
 
         [Fact()]
-        public void ReadSkillsCombined_WithDefaultSeparator_CombinesSkills()
+        public void GetSkillInfo_YamlAndMarkDown()
         {
             var skillManager = new SkillManager(TestSkillsPath);
-            var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" });
+            var info = skillManager.GetSkillInfo("DataAnalysisAndInsights");
 
-            Assert.NotNull(combined);
-            Assert.Contains("# Data Analysis And Insights", combined);
-            Assert.Contains("# Word Document Generation", combined);
-            Assert.Contains("\n\n---\n\n", combined);
+            Assert.NotNull(info);
+            Assert.Equal("DataAnalysisAndInsights", info.Name);
+            var skill = info.LoadSkill();
+
+            Assert.Equal("data-analysis-and-insights", skill.Frontmatter.Name);
+            Assert.Equal("Perform data analysis, statistical summaries, trend detection, and insight generation from structured data. Use this skill when the user wants to analyze a dataset, find patterns, generate charts, compute statistics, clean data, or summarize findings from CSV, Excel, JSON, or database sources. Trigger when the user mentions data analysis, insights, trends, statistics, visualizations, dashboards, or asks questions like \"what does this data show\" or \"analyze my data\".", skill.Frontmatter.Description);
         }
 
-        [Fact()]
-        public void ReadSkillsCombined_WithCustomSeparator_UsesCustomSeparator()
-        {
-            var skillManager = new SkillManager(TestSkillsPath);
-            var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" }, "\n@@@\n");
-            Assert.NotNull(combined);
-            Assert.Contains("\n@@@\n", combined);
-        }
-
-        [Fact()]
-        public void ReadSkillsCombined_WithSingleSkill_NoSeparator()
-        {
-            var skillManager = new SkillManager(TestSkillsPath);
-            var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights" });
-
-            Assert.NotNull(combined);
-            Assert.Contains("# Data Analysis And Insights", combined);
-        }
-
-        [Fact()]
-        public void ReadSkillsCombined_WithNullSkillNames_Throw()
-        {
-            var skillManager = new SkillManager(TestSkillsPath);
-            Assert.Throws<ArgumentException>(() => skillManager.ReadSkillsCombined(null));
-            
-        }
-
-        [Fact()]
-        public void ReadSkillsCombined_WithEmptyArray_Throw()
-        {
-            var skillManager = new SkillManager(TestSkillsPath);
-            Assert.Throws<ArgumentException>(() => skillManager.ReadSkillsCombined(new string[] { }));
-        }
-
-        #endregion
-
-        #region GetSkillInfo Tests
 
         [Fact()]
         public void GetSkillInfo_WithValidSkill_ReturnsInfo()
@@ -353,7 +327,6 @@ namespace fAI.Tests
             Assert.Equal(fileInfo.Length, info.SizeBytes);
         }
 
-        #endregion
 
         #region GetAllSkillInfos Tests
 
@@ -376,7 +349,7 @@ namespace fAI.Tests
             var skillManager = new SkillManager(TestSkillsPath);
             var infos = skillManager.GetAllSkillInfos();
 
-            Assert.IsAssignableFrom<IReadOnlyList<SkillManager.SkillFileInfo>>(infos);
+            Assert.IsAssignableFrom<IReadOnlyList<SkillFileInfo>>(infos);
         }
 
         #endregion
