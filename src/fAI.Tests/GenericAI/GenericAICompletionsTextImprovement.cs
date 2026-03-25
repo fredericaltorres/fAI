@@ -256,7 +256,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
 
         [Fact()]
         [TestBeforeAfter]
-        public void ExtractMetaData()
+        public void ExtractMetaData_1()
         {
             var model = "gemini-2.0-flash";
             var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
@@ -268,9 +268,30 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
 ";
             var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
             Assert.Equal("John Smith", medataDictionary["people"].First());
-            Assert.Equal("January 15th, 2026", medataDictionary["dates_mentioned"].First());
-            Assert.Equal("10 AM", medataDictionary["topics"].First());
-            Assert.Equal("Salesforce integration project", medataDictionary["type"].First());
+            Assert.Equal("2026-01-15", medataDictionary["dates_mentioned"].First());
+            Assert.Equal("Salesforce integration", medataDictionary["topics"].First());
+            Assert.Equal("task", medataDictionary["type"].First());
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtractMetaData_2()
+        {
+            var models = DS.List("gpt-5.2", "claude-opus-4-6", "gemini-2.0-flash");
+
+            foreach (var model in models)
+            {
+                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+                var notes1 = "On March 3rd, 2026, I had an extended strategy session with Sarah Mitchell, David Chen, and the newly onboarded project lead, Rebecca Torres, regarding the long-overdue overhaul of our legacy CRM platform and its proposed integration with both the Salesforce Enterprise suite and the third-party analytics tool, DataBridge Pro. The meeting, originally scheduled for 9:00 AM in Conference Room B, was pushed back by forty-five minutes due to a last-minute conflict with David's call with the Singapore office, ultimately running well past its allotted two-hour window and wrapping up closer to 12:30 PM. During the session, we reviewed the preliminary scoping document that Rebecca had circulated the previous Thursday, flagged several unresolved dependencies around the legacy data migration, and agreed that the engineering team would need at least three additional weeks to complete their technical audit before any development work could begin. Following up on action items, I need to revise the project timeline and budget estimates in collaboration with the finance liaison, Mark Huang, and submit a consolidated report to the VP of Operations no later than April 11th, 2026. Additionally, Sarah has requested that I prepare a detailed risk assessment and a stakeholder presentation, both of which are due before our next cross-functional review meeting, currently penciled in for May 7th, 2026 at 2:00 PM, with a follow-up executive briefing tentatively set for the week of June 22nd, 2026.";
+
+                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
+                Assert.Equal(4, medataDictionary["people"].Count);
+                Assert.Equal(4, medataDictionary["dates_mentioned"].Count);
+                Assert.Equal(2, medataDictionary["action_items"].Count);
+                Assert.Equal(3, medataDictionary["topics"].Count);
+                Assert.Equal("task", medataDictionary["type"].First());
+            }
         }
     }
 }

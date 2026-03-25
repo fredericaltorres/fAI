@@ -671,8 +671,16 @@ Only extract what's explicitly there.,
 
             foreach (var kvp in jObject)
             {
-                var s = JArrayToList((JArray)kvp.Value);
-                dictionary[kvp.Key] = s;
+                if (kvp.Value is JArray)
+                {
+                    var s = JArrayToList((JArray)kvp.Value);
+                    dictionary[kvp.Key] = s;
+                }
+                if (kvp.Value is JValue)
+                {
+                    var s = kvp.Value?.ToString();
+                    dictionary[kvp.Key] = new List<string>() { s };
+                }
             }
 
             return dictionary;
