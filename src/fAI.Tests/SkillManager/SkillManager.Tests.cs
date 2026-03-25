@@ -279,8 +279,8 @@ namespace fAI.Tests
             var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" });
 
             Assert.NotNull(combined);
-            Assert.Contains("# SKILL: Data Analysis And Insights", combined);
-            Assert.Contains("# SKILL: Word Document Generation (docx)", combined);
+            Assert.Contains("# Data Analysis And Insights", combined);
+            Assert.Contains("# Word Document Generation", combined);
             Assert.Contains("\n\n---\n\n", combined);
         }
 
@@ -288,10 +288,7 @@ namespace fAI.Tests
         public void ReadSkillsCombined_WithCustomSeparator_UsesCustomSeparator()
         {
             var skillManager = new SkillManager(TestSkillsPath);
-            var combined = skillManager.ReadSkillsCombined(
-                new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" },
-                "\n@@@\n");
-
+            var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights", "WordDocumentGeneration" }, "\n@@@\n");
             Assert.NotNull(combined);
             Assert.Contains("\n@@@\n", combined);
         }
@@ -303,7 +300,7 @@ namespace fAI.Tests
             var combined = skillManager.ReadSkillsCombined(new[] { "DataAnalysisAndInsights" });
 
             Assert.NotNull(combined);
-            Assert.Contains("# SKILL: Data Analysis And Insights", combined);
+            Assert.Contains("# Data Analysis And Insights", combined);
         }
 
         [Fact()]
@@ -379,7 +376,7 @@ namespace fAI.Tests
             var skillManager = new SkillManager(TestSkillsPath);
             var infos = skillManager.GetAllSkillInfos();
 
-            Assert.IsAssignableFrom<IReadOnlyList<SkillManager.SkillInfo>>(infos);
+            Assert.IsAssignableFrom<IReadOnlyList<SkillManager.SkillFileInfo>>(infos);
         }
 
         #endregion

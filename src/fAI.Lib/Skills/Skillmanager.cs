@@ -22,7 +22,7 @@ namespace fAI
     ///       SKILL.md
     ///     ...
     /// </summary>
-    public class SkillManager
+    public partial class SkillManager
     {
         private readonly string _rootPath;
         public string RootPath => _rootPath;
@@ -112,20 +112,25 @@ namespace fAI
             return File.Exists(path);
         }
 
-        public class SkillInfo
+        public class SkillFileInfo
         {
             public string Name { get; set; }
             public string FilePath { get; set; }
             public long SizeBytes { get; set; }
             public DateTime LastModified { get; set; }
+
+            public SkillFile LoadSkill()
+            {
+                return SkillFile.LoadSkillMd(FilePath);
+            }
         }
 
-        public SkillInfo GetSkillInfo(string skillName)
+        public SkillFileInfo GetSkillInfo(string skillName)
         {
             var path = ResolveSkillPath(skillName);
             var fileInfo = new FileInfo(path);
 
-            return new SkillInfo
+            return new SkillFileInfo
             {
                 Name = skillName,
                 FilePath = path,
@@ -134,7 +139,7 @@ namespace fAI
             };
         }
 
-        public IReadOnlyList<SkillInfo> GetAllSkillInfos()
+        public IReadOnlyList<SkillFileInfo> GetAllSkillInfos()
         {
             return ListSkills()
                 .Select(GetSkillInfo)

@@ -253,7 +253,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
         }
 
-
         [Fact()]
         [TestBeforeAfter]
         public void ExtractMetaData_1()
@@ -278,8 +277,6 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
         [TestBeforeAfter]
         public void ExtractMetaData_2()
         {
-            
-
             var notes2 = @"
 On March 3rd, 2026, I had an extended strategy session with 
 Sarah Mitchell, 
