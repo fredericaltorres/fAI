@@ -232,7 +232,7 @@ public static void Main()
         public void Basic_Markdown_GetImages()
         {
             var images = MarkdownManager.GetImages(BASIC_MARKDOWN_WITH_IMAGE);
-            var imageFile = images.First().DownloadAsync();
+            var imageFile = images.First().DownloadImage();
         }
 
         [Fact()]

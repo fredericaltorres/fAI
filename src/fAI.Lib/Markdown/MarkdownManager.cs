@@ -604,7 +604,7 @@ namespace fAI
             public string Title { get; set; }
             public string AltText { get; set; }
 
-            public string DownloadAsync()
+            public string DownloadImage()
             {
                 if (string.IsNullOrWhiteSpace(Url))
                     throw new InvalidOperationException("Url is not set.");
@@ -620,13 +620,17 @@ namespace fAI
                     Directory.CreateDirectory(destinationFolder);
 
                 var destinationPath = Path.Combine(destinationFolder, fileName);
+                if(File.Exists(destinationPath))
+                    File.Delete(destinationPath);
 
                 using (HttpResponseMessage response = client.GetAsync(Url, HttpCompletionOption.ResponseHeadersRead).GetAwaiter().GetResult())
                 {
                     response.EnsureSuccessStatusCode();
                     Stream contentStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-                    FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true);
-                    contentStream.CopyToAsync(fileStream).GetAwaiter().GetResult();
+                    using (FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true))
+                    {
+                        contentStream.CopyToAsync(fileStream).GetAwaiter().GetResult();
+                    }
                 }
 
                 return destinationPath;
