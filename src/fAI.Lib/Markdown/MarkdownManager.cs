@@ -34,8 +34,10 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -593,11 +595,42 @@ namespace fAI
             }
         }
 
+
+        static HttpClient client = new HttpClient();
+
         public class ImageInfo
         {
             public string Url { get; set; }
             public string Title { get; set; }
             public string AltText { get; set; }
+
+            public string DownloadAsync()
+            {
+                if (string.IsNullOrWhiteSpace(Url))
+                    throw new InvalidOperationException("Url is not set.");
+
+                // Derive a file name from the URL if one was not provided
+                var fileName = Path.GetFileName(new Uri(Url).LocalPath);
+
+                if (string.IsNullOrWhiteSpace(fileName))
+                    throw new InvalidOperationException("Could not determine a file name from the URL. Please provide one explicitly.");
+
+                var destinationFolder = Path.Combine(Path.GetTempPath(), "fAI.Images");
+                if(!Directory.Exists(destinationFolder))
+                    Directory.CreateDirectory(destinationFolder);
+
+                var destinationPath = Path.Combine(destinationFolder, fileName);
+
+                using (HttpResponseMessage response = client.GetAsync(Url, HttpCompletionOption.ResponseHeadersRead).GetAwaiter().GetResult())
+                {
+                    response.EnsureSuccessStatusCode();
+                    Stream contentStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+                    FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true);
+                    contentStream.CopyToAsync(fileStream).GetAwaiter().GetResult();
+                }
+
+                return destinationPath;
+            }
         }
 
         public static List<ImageInfo> GetImages(string markdown)

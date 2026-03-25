@@ -219,9 +219,11 @@ public static void Main()
         const string BASIC_MARKDOWN_WITH_IMAGE = @"
 # ShowPad / Brainshark Innovation Week 2026 - (Frederic Torres) `
 
-![Brainshark](https://fredcloud2026.blob.core.windows.net/public/Brainshark/Brainshark.Markdown.InnovationWeek2026.FredericTorres.1.jpg)
+![Brainshark1](https://fredcloud2026.blob.core.windows.net/public/Brainshark/Brainshark.Markdown.InnovationWeek2026.FredericTorres.1.jpg)
 
 ## Proposal
+
+![Brainshark2](https://fredcloud2026.blob.core.windows.net/public/Brainshark/Brainshark.Markdown.InnovationWeek2026.FredericTorres.1.jpg)
 
 ";
 
@@ -229,9 +231,9 @@ public static void Main()
         [TestBeforeAfter]
         public void Basic_Markdown_GetImages()
         {
-            var textMarkDown = MarkdownManager.GetImages(BASIC_MARKDOWN_WITH_IMAGE);
+            var images = MarkdownManager.GetImages(BASIC_MARKDOWN_WITH_IMAGE);
+            var imageFile = images.First().DownloadAsync();
         }
-
 
         [Fact()]
         [TestBeforeAfter]
