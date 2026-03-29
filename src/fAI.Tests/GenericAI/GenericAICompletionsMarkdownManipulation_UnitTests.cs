@@ -144,12 +144,12 @@ This file demonstrates common **Markdown features**.
 
 ## 1. Headings
 
-# Heading 1
-## Heading 2
-### Heading 3
-#### Heading 4
-##### Heading 5
-###### Heading 6
+\# Heading 1
+\## Heading 2
+\### Heading 3
+\#### Heading 4
+\##### Heading 5
+\###### Heading 6
 
 ---
 
@@ -226,6 +226,13 @@ public static void Main()
 ![Brainshark2](https://fredcloud2026.blob.core.windows.net/public/Brainshark/Brainshark.Markdown.InnovationWeek2026.FredericTorres.1.jpg)
 
 ";
+
+        [Fact]
+        public void SplitByHeading1and2()
+        {
+            var result = MarkdownManager.SplitByHeadings(BASIC_MARKDOWN_1);
+            Assert.Equal(8, result.Count);
+        }
 
         [Fact()]
         [TestBeforeAfter]

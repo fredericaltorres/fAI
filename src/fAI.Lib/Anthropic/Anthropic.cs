@@ -11,6 +11,8 @@ namespace fAI
         public static List<string> GetModels()
         {
             return DS.List(
+                /// "claude-opus-4-6-fast", // 4-6-fast is the same as 4-6 but with a faster response time, but it may be less accurate. It is not recommended for use in production.
+                /// FAST is not available for the sonnet and haiku models, but it is available for the opus models.
                 "claude-opus-4-6",
                 "claude-sonnet-4-5", 
                 "claude-haiku-4-5"

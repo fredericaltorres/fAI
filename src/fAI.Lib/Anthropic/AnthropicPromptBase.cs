@@ -195,6 +195,9 @@ namespace fAI
 
     public class AnthropicPromptBase
     {
+        [JsonProperty("speed")]
+        public string Speed { get; set; } = null;
+
         [JsonProperty("url")]
         public string Url { get; set; }
 

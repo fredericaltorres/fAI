@@ -121,119 +121,145 @@ namespace fAI
 
         public (string, GenericAI.Contents) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
         {
-            contents = contents == null ? new GenericAI.Contents() : contents;
-
-            contents.Add(new GenericAI.ContentMessage
+            var orginalModel = model;
+            var sw = Stopwatch.StartNew();
+            try
             {
-                Role = "user", // A conversation always starts with user message
-                Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
-            });
+                contents = contents == null ? new GenericAI.Contents() : contents;
 
-            if (Anthropic.GetModels().Contains(model))
-            {
-                var p = new Anthropic_Prompt_Generic(model)
+                contents.Add(new GenericAI.ContentMessage
                 {
-                    System = systemPrompt,
-                    Messages = new List<AnthropicMessage>()
+                    Role = "user", // A conversation always starts with user message
+                    Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
+                });
+
+                if (Anthropic.GetModels().Contains(model))
+                {
+                    var isAnthpropicFastMode = model.ToLowerInvariant().EndsWith("-fast");
+                    model = model.Replace("-fast", "");
+
+                    var p = new Anthropic_Prompt_Generic(model)
+                    {
+                        System = systemPrompt,
+                        Messages = new List<AnthropicMessage>()
                     {
                         new AnthropicMessage { Role =  MessageRole.user,
                              Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(prompt))
                         }
                     }
-                };
+                    };
 
-                var anthropicContents = contents.GetAnthropicContents();
-                if(anthropicContents.Count > 1)
-                {
-                    p.Messages = anthropicContents;
-                }
+                    var anthropicContents = contents.GetAnthropicContents();
+                    if (anthropicContents.Count > 1)
+                    {
+                        p.Messages = anthropicContents;
+                    }
 
-                if (string.IsNullOrEmpty(base._key))
-                    base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+                    if (string.IsNullOrEmpty(base._key))
+                        base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
 
-                var response = new Anthropic(key: base._key).Completions.Create(p);
 
-                // Update the contents discussion with the answer from the AI
-                var answerContent = response.Content.FirstOrDefault(c => c.IsText);
-                contents.Add(new GenericAI.ContentMessage
-                {
-                    Role = response.Role,
-                    Parts = new List<GenericAI.ContentMessagePart>
+                    var headerDictionary = new Dictionary<string, string>();
+                    if (isAnthpropicFastMode)
+                    {
+                        p.Speed = "fast";
+                        headerDictionary = new Dictionary<string, string>()
+                        {
+                            ["anthropic-beta"] = "fast-mode-2026-02-01",
+                            //["anthropic-version"] = "2023-06-01"
+                        };
+                    }
+
+                    var response = new Anthropic(key: base._key).Completions.Create(p, headerDictionary);
+
+                    // Update the contents discussion with the answer from the AI
+                    var answerContent = response.Content.FirstOrDefault(c => c.IsText);
+                    contents.Add(new GenericAI.ContentMessage
+                    {
+                        Role = response.Role,
+                        Parts = new List<GenericAI.ContentMessagePart>
                     {
                         new GenericAI.ContentMessagePart { Text = answerContent.Text }
                     }
-                });
+                    });
 
-                return (answerContent.Text, contents);
-            }
-            else if (GoogleAI.GetModels().Contains(model))
-            {
-                if(string.IsNullOrEmpty(base._key))
-                    base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
-
-                var googleAIClient = new GoogleAI(apiKey: base._key);
-
-                // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
-                var googleContents = contents.GetGoogleContents();
-                var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
-                var url = googleAIClient.Completions.GetUrl(model);
-                var r = googleAIClient.Completions.Create(p, url, model);
-
-                // Update the contents discussion with the answer from the AI
-                var answerContent = r.candidates[0].content;
-                contents.Add(new GenericAI.ContentMessage
+                    return (answerContent.Text, contents);
+                }
+                else if (GoogleAI.GetModels().Contains(model))
                 {
-                    Role = answerContent.role,
-                    Parts = new List<GenericAI.ContentMessagePart>
+                    if (string.IsNullOrEmpty(base._key))
+                        base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
+
+                    var googleAIClient = new GoogleAI(apiKey: base._key);
+
+                    // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
+                    var googleContents = contents.GetGoogleContents();
+                    var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
+                    var url = googleAIClient.Completions.GetUrl(model);
+                    var r = googleAIClient.Completions.Create(p, url, model);
+
+                    // Update the contents discussion with the answer from the AI
+                    var answerContent = r.candidates[0].content;
+                    contents.Add(new GenericAI.ContentMessage
+                    {
+                        Role = answerContent.role,
+                        Parts = new List<GenericAI.ContentMessagePart>
                     {
                         new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
                     }
-                });
-                
-                return (r.GetText(), contents);
-            }
-            else if (OpenAI.GetModels().Contains(model))
-            {
-                if (string.IsNullOrEmpty(base._key))
-                    base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+                    });
 
-                var openAIContents = contents.GetOpenAIContents(systemPrompt);
-                var openAIClient = new OpenAI(apiKey: base._key);
-                var p = new Prompt_GPT_4
+                    return (r.GetText(), contents);
+                }
+                else if (OpenAI.GetModels().Contains(model))
                 {
-                    Messages = new List<GPTMessage>()
+                    if (string.IsNullOrEmpty(base._key))
+                        base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+                    var openAIContents = contents.GetOpenAIContents(systemPrompt);
+                    var openAIClient = new OpenAI(apiKey: base._key);
+                    var p = new Prompt_GPT_4
+                    {
+                        Messages = new List<GPTMessage>()
                     {
                         new GPTMessage{ Role =  MessageRole.system, Content = systemPrompt },
                         new GPTMessage{ Role =  MessageRole.user, Content = prompt },
                     },
-                    Model = model
-                };
+                        Model = model
+                    };
 
-                if(openAIContents.Count > 1)
-                {
-                    p.Messages = openAIContents;
-                }
-
-                var response = openAIClient.Completions.Create(p);
-                if (response.Success)
-                {
-                    // Update the contents discussion with the answer from the AI
-                    var answerContent = response.Choices.First().message;
-                    contents.Add(new GenericAI.ContentMessage
+                    if (openAIContents.Count > 1)
                     {
-                        Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
-                        Parts = new List<GenericAI.ContentMessagePart>
+                        p.Messages = openAIContents;
+                    }
+
+                    var response = openAIClient.Completions.Create(p);
+                    if (response.Success)
+                    {
+                        // Update the contents discussion with the answer from the AI
+                        var answerContent = response.Choices.First().message;
+                        contents.Add(new GenericAI.ContentMessage
+                        {
+                            Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
+                            Parts = new List<GenericAI.ContentMessagePart>
                         {
                             new GenericAI.ContentMessagePart { Text = answerContent.Content }
                         }
-                    });
+                        });
 
-                    var responseText = response.Text;
-                    return (responseText, contents);
+                        var responseText = response.Text;
+                        return (responseText, contents);
+                    }
+                    else return (null, contents);
                 }
-                else return (null, contents);
+                return (null, contents);
             }
-            return (null, contents);
+            finally
+            {
+                sw.Stop();
+                model = orginalModel; // because of the possible modification of the model variable for Anthropic fast mode, we want to log the original model name.
+                OpenAI.Trace(new { model, duration = sw.ElapsedMilliseconds/1000.0}, this);
+            }
         }
 
         public class TextImprovementResult
@@ -658,10 +684,10 @@ Only extract what's explicitly there.,
            )
         {
             systemPrompt = systemPrompt.Template(new { tutu=1 }, "[", "]");
-            var sw = Stopwatch.StartNew();
+
             var (json, _) = Create(text, systemPrompt, model);
+
             var result = new HttpBase().GetJsonObject(json).ToString();
-            sw.Stop();
             return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)) };
         }
 

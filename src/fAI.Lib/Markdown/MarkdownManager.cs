@@ -701,6 +701,49 @@ namespace fAI
             return null;
         }
 
+        public static List<string> SplitByHeadings(string markdown)
+        {
+            if (string.IsNullOrWhiteSpace(markdown))
+                return new List<string>();
+
+            // Matches H1 or H2 headings: lines starting with exactly one or two '#' characters,
+            // NOT followed by a third '#' (to exclude H3+).
+            Regex headingPattern = new Regex(@"^(#{1,2})(?!#)\s+.+", RegexOptions.Multiline);
+
+            List<string> sections = new List<string>();
+            MatchCollection matches = headingPattern.Matches(markdown);
+
+            if (matches.Count == 0)
+            {
+                // No headings found — return the entire content as one section
+                sections.Add(markdown.Trim());
+                return sections;
+            }
+
+            // Capture any content that appears before the first heading
+            int preambleEnd = matches[0].Index;
+            if (preambleEnd > 0)
+            {
+                string preamble = markdown.Substring(0, preambleEnd).Trim();
+                if (!string.IsNullOrWhiteSpace(preamble))
+                    sections.Add(preamble);
+            }
+
+            // Slice the string from each heading start to the next heading start
+            for (int i = 0; i < matches.Count; i++)
+            {
+                int start = matches[i].Index;
+                int end = (i + 1 < matches.Count) ? matches[i + 1].Index : markdown.Length;
+                int length = end - start;
+
+                string section = markdown.Substring(start, length).Trim();
+                if (!string.IsNullOrWhiteSpace(section))
+                    sections.Add(section);
+            }
+
+            return sections;
+        }
+
         public static bool IsMarkdownFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))

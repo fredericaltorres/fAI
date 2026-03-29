@@ -32,7 +32,7 @@ namespace fAI
             return mc;
         }
 
-        public AnthropicCompletionResponse Create(AnthropicPromptBase p)
+        public AnthropicCompletionResponse Create(AnthropicPromptBase p, Dictionary<string, string> extraHeaders = null)
         {
             OpenAI.Trace(new { p.Url }, this);
             OpenAI.Trace(new { Prompt = p }, this);
@@ -40,7 +40,15 @@ namespace fAI
             OpenAI.Trace(new { BodyLength = body.Length, Body = body }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(p.Url, body);
+            var wc = InitWebClient();
+
+            if (extraHeaders != null)
+            {
+                foreach(var kv in extraHeaders)
+                    wc.AddHeader(kv.Key, kv.Value);
+            }
+
+            var response = wc.POST(p.Url, body);
             sw.Stop();
             if (response.Success)
             {
