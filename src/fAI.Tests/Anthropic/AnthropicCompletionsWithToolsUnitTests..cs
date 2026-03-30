@@ -103,7 +103,7 @@ namespace fAI.Tests
             // CALL STEP 1
             var url = googleAIClient.Completions.GetUrl(model);
             var r = googleAIClient.Completions.Create(p, url, model, tools: DS.List(tool));
-
+            Assert.True(r.HasFunctionCall);
         }
     }
 }

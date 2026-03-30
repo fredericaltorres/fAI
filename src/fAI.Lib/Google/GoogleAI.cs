@@ -66,12 +66,25 @@ namespace fAI
             {
                 public List<Part> parts { get; set; }
                 public string role { get; set; }
+
+                public bool HasFunctionCall => parts != null && parts.Any(p => p.IsFunctionCall);
+            }
+
+            public class FunctionCall
+            {
+                public string name { get; set; }
+                public string id { get; set; }
+                public Dictionary<string, string> args { get; set; }
             }
 
             public class Part
             {
                 public string text { get; set; }
                 public string thoughtSignature { get; set; }
+                public FunctionCall functionCall { get; set; }
+
+                public bool IsFunctionCall => functionCall != null;
+
             }
 
             public class PromptTokensDetail
@@ -86,6 +99,8 @@ namespace fAI
                 public UsageMetadata usageMetadata { get; set; }
                 public string modelVersion { get; set; }
                 public string responseId { get; set; }
+
+                public bool HasFunctionCall => candidates != null && candidates.Count > 0 && candidates[0].content.HasFunctionCall;
 
                 public static GeminiResponse FromJson(string text)
                 {
@@ -239,7 +254,6 @@ Improve the [language] for the following phrases, in more polished and business-
                 OpenAI.Trace(new { response.Text }, this);
                 var geminiResponse = GeminiResponse.FromJson(response.Text);
                 return geminiResponse;
-                `
             }
             else
             {
