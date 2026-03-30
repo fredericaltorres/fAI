@@ -94,9 +94,14 @@ namespace fAI
             {
                 public string text { get; set; }
                 public string thoughtSignature { get; set; }
+
+                [JsonProperty("functionCall", NullValueHandling = NullValueHandling.Ignore)]
                 public FunctionCall functionCall { get; set; }
+
+                [JsonProperty("functionResponse", NullValueHandling = NullValueHandling.Ignore)]
                 public FunctionResponse functionResponse { get; set; }
 
+                [JsonIgnore]
                 public bool IsFunctionCall => functionCall != null;
 
             }

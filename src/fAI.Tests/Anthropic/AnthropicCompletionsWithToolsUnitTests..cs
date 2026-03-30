@@ -107,6 +107,8 @@ namespace fAI.Tests
             var r = googleAIClient.Completions.Create(p, url, model, tools: DS.List(tool));
             Assert.True(r.HasFunctionCall);
             var func = r.candidates.First().content.GetFunctionCall();
+
+            // CALL STEP 2 , LLM ASK for a function call
             if (func.name == "get_weather")
             {
                 var location = func.args.Get("location", "");
@@ -114,6 +116,7 @@ namespace fAI.Tests
                 Assert.Equal("Boston, MA", location);
                 Assert.Equal("celsius", unit);
 
+                // CALL STEP 3 , Call Function and to get result for LLM 
                 var weatherDataJson = JsonConvert.SerializeObject(new
                 {
                     requested_location = location,
@@ -122,6 +125,8 @@ namespace fAI.Tests
                     humidity = "75%",
                     wind = "10 mph NW"
                 });
+
+                // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
                 p.contents.Add(r.candidates.First().content);
                 p.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content {
                     role = "function",
