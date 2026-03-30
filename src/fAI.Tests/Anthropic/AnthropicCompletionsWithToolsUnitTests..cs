@@ -26,15 +26,15 @@ namespace fAI.Tests
             return new AnthropicTool()
             {
                 Name = "get_weather",
-                Description = "Get the current weather in a given location",
+                Description = "Get the current weather in a given p1Requested",
                 InputSchema = new InputSchema()
                 {
                     Properties = new Dictionary<string, SchemaProperty>()
                     {
-                        { "location", new SchemaProperty() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
+                        { "p1Requested", new SchemaProperty() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
                         { "unit", new SchemaProperty() { Type = "string", Description = "The unit of temperature to return, either 'celsius' or 'fahrenheit'" } }
                     },
-                    Required = new List<string>() { "location" }
+                    Required = new List<string>() { "p1Requested" }
                 }
             };
         }
@@ -70,7 +70,7 @@ namespace fAI.Tests
             Assert.True(toolContent.IsToolUse);
             Assert.StartsWith("tool", toolContent.Id);
             Assert.Equal("get_weather", toolContent.Name);
-            Assert.Equal("Boston, MA", toolContent.Input["location"]);
+            Assert.Equal("Boston, MA", toolContent.Input["p1Requested"]);
             //Assert.Equal("fahrenheit", toolContent.Input["unit"]);
 
             // Pretend to call the tool and return a result
@@ -92,22 +92,55 @@ namespace fAI.Tests
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(markDown, true);
         }
 
+        FunctionCallers GetFunctionCallersForUnitTests()
+        {
+            var f1 = new FunctionCaller()
+            {
+                Name = "get_weather",
+                Type = FunctionCallerType.InProcess,
+                Arguments = new Dictionary<string, object>()
+                {
+                    { "location", "Boston, MA" },
+                    { "unit", "celsius" }
+                },
+                F1 = (arg1) =>
+                {
+                    return new
+                    {
+                        requested_location = arg1,
+                        temperature_f = 62,
+                        condition = "Partly Cloudy",
+                        humidity = "75%",
+                        wind = "10 mph NW"
+                    };
+                }
+            };
+
+            var functionCallers = new FunctionCallers();
+            functionCallers.Add(f1.Name, f1);
+            return functionCallers;
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Completion_With_Tools__Google()
         {
+            var functionCallers = GetFunctionCallersForUnitTests();
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
             var userPrompt = @"What's the weather like in Boston right now?";
             var systemPrompt = "";
             var model = "gemini-3-flash-preview";
-
+            var sw = new System.Diagnostics.Stopwatch();
             var googleAIClient = new GoogleAI();
             var prompt = googleAIClient.Completions.GetPrompt(userPrompt, systemPrompt, model);
             var url = googleAIClient.Completions.GetUrl(model);
             var agenticLoopOn = true;
+            var agenticLoopCounter = 0;
 
             while (agenticLoopOn)
             {
+                OpenAI.Trace($"[AGENTIC_LOOP, {agenticLoopCounter}] {DS.Dictionary(new { model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
+                
                 // CALL STEP 1
                 var r = googleAIClient.Completions.Create(prompt, url, model, tools: DS.List(tool));
                 if (!r.Success)
@@ -122,22 +155,22 @@ namespace fAI.Tests
                 }
                 else if (r.Success && r.HasFunctionCall)
                 {
-                    var func = r.candidates.First().content.GetFunctionCall();
-                    if (func.name == "get_weather") // CALL STEP 2 , LLM ASK for a function call
+                    var funcRequested = r.candidates.First().content.GetFunctionCall();
+                    if(functionCallers.ContainsKey(funcRequested.name)) 
                     {
-                        var location = func.args.Get("location", "");
-                        var unit = func.args.Get("unit", "celsius");
-                        Assert.Equal("Boston, MA", location);
-                        Assert.Equal("celsius", unit);
+                        var fn = functionCallers[funcRequested.name];
+                        var p1Name = fn.Arguments.Keys.ToList()[0];
+                        var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
+                        var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
                         
-                        var funcData = new // CALL STEP 3 , Call Function and to get result for LLM 
-                        {
-                            requested_location = location,
-                            temperature_f = 62,
-                            condition = "Partly Cloudy",
-                            humidity = "75%",
-                            wind = "10 mph NW"
-                        };
+                        //var funcData = new // CALL STEP 3 , Call Function and to get result for LLM 
+                        //{
+                        //    requested_location = p1Requested,
+                        //    temperature_f = 62,
+                        //    condition = "Partly Cloudy",
+                        //    humidity = "75%",
+                        //    wind = "10 mph NW"
+                        //};
 
                         // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
                         prompt.contents.Add(r.candidates.First().content);
@@ -150,7 +183,7 @@ namespace fAI.Tests
                                 {
                                     functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() 
                                     {
-                                        name = func.name,
+                                        name = funcRequested.name,
                                         response = funcData
                                     }
                                 }
@@ -159,6 +192,7 @@ namespace fAI.Tests
                     }
                 }
 
+                agenticLoopCounter += 1;
             } // agenticLoopOn
         }
     }

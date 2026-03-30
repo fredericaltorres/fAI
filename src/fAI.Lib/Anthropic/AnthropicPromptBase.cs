@@ -17,6 +17,36 @@ namespace fAI
         Anthropic,
         Google
     }
+    public enum FunctionCallerType
+    {
+        WebApi,
+        InProcess
+    }
+
+    public class FunctionCaller
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public FunctionCallerType Type { get; set; }
+        public Dictionary<string, object> Arguments { get; set; }
+        public Func<string, object> F1 { get; set; }
+        public object Call(string p1)
+        {
+            return F1(p1);
+        }
+    }
+
+    public class FunctionCallers : Dictionary<string, FunctionCaller>
+    {
+        public void AddWebApiCaller(string name, string url, Dictionary<string, object> arguments)
+        {
+            this[name] = new FunctionCaller { Name = name, Type = FunctionCallerType.WebApi, Arguments = arguments, Url = url };
+        }
+        public void AddInProcessCaller(string name, Func<string, string> func, Dictionary<string, object> arguments)
+        {
+            this[name] = new FunctionCaller { Name = name, Type = FunctionCallerType.InProcess, F1 = func, Arguments = arguments };
+        }
+    }
 
     public static class ToolFactory
     {
@@ -127,6 +157,7 @@ namespace fAI
 
         [JsonProperty("input_schema")]
         public InputSchema InputSchema { get; set; }
+
     }
 
     public class InputSchema
