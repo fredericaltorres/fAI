@@ -5,6 +5,7 @@ using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -21,6 +22,36 @@ namespace fAI.Tests
         {
         }
 
+        FunctionCallers GetFunctionCallersForUnitTests()
+        {
+            var f1 = new FunctionCaller()
+            {
+                Name = "get_weather",
+                Type = FunctionCallerType.InProcess,
+                Arguments = new Dictionary<string, object>()
+                {
+                    { "location", "Boston, MA" },
+                    { "unit", "celsius" }
+                },
+                F1 = (arg1) =>
+                {
+                    return new
+                    {
+                        requested_location = arg1,
+                        temperature_f = 62,
+                        condition = "Partly Cloudy",
+                        humidity = "75%",
+                        wind = "10 mph NW"
+                    };
+                }
+            };
+
+            var functionCallers = new FunctionCallers();
+            functionCallers.Add(f1.Name, f1);
+            return functionCallers;
+        }
+
+
         AnthropicTool GetWeatherTool()
         {
             return new AnthropicTool()
@@ -31,15 +62,13 @@ namespace fAI.Tests
                 {
                     Properties = new Dictionary<string, SchemaProperty>()
                     {
-                        { "p1Requested", new SchemaProperty() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
+                        { "location", new SchemaProperty() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
                         { "unit", new SchemaProperty() { Type = "string", Description = "The unit of temperature to return, either 'celsius' or 'fahrenheit'" } }
                     },
-                    Required = new List<string>() { "p1Requested" }
+                    Required = new List<string>() { "location" }
                 }
             };
         }
-
-
 
         [Fact()]
         [TestBeforeAfter]
@@ -92,54 +121,28 @@ namespace fAI.Tests
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(markDown, true);
         }
 
-        FunctionCallers GetFunctionCallersForUnitTests()
-        {
-            var f1 = new FunctionCaller()
-            {
-                Name = "get_weather",
-                Type = FunctionCallerType.InProcess,
-                Arguments = new Dictionary<string, object>()
-                {
-                    { "location", "Boston, MA" },
-                    { "unit", "celsius" }
-                },
-                F1 = (arg1) =>
-                {
-                    return new
-                    {
-                        requested_location = arg1,
-                        temperature_f = 62,
-                        condition = "Partly Cloudy",
-                        humidity = "75%",
-                        wind = "10 mph NW"
-                    };
-                }
-            };
-
-            var functionCallers = new FunctionCallers();
-            functionCallers.Add(f1.Name, f1);
-            return functionCallers;
-        }
-
+        
         [Fact()]
         [TestBeforeAfter]
         public void Completion_With_Tools__Google()
         {
             var functionCallers = GetFunctionCallersForUnitTests();
-            var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
             var userPrompt = @"What's the weather like in Boston right now?";
             var systemPrompt = "";
             var model = "gemini-3-flash-preview";
-            var sw = new System.Diagnostics.Stopwatch();
+
+            var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
+            var sw = Stopwatch.StartNew();
             var googleAIClient = new GoogleAI();
             var prompt = googleAIClient.Completions.GetPrompt(userPrompt, systemPrompt, model);
             var url = googleAIClient.Completions.GetUrl(model);
             var agenticLoopOn = true;
             var agenticLoopCounter = 0;
+            var answer = "";
 
             while (agenticLoopOn)
             {
-                OpenAI.Trace($"[AGENTIC_LOOP, {agenticLoopCounter}] {DS.Dictionary(new { model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
+                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
                 
                 // CALL STEP 1
                 var r = googleAIClient.Completions.Create(prompt, url, model, tools: DS.List(tool));
@@ -149,7 +152,7 @@ namespace fAI.Tests
                 }
                 else if (r.Success && !r.HasFunctionCall)
                 {
-                    var answer = r.GetText();
+                    answer = r.GetText();
                     agenticLoopOn = false;
                     break;
                 }
@@ -163,15 +166,6 @@ namespace fAI.Tests
                         var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
                         var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
                         
-                        //var funcData = new // CALL STEP 3 , Call Function and to get result for LLM 
-                        //{
-                        //    requested_location = p1Requested,
-                        //    temperature_f = 62,
-                        //    condition = "Partly Cloudy",
-                        //    humidity = "75%",
-                        //    wind = "10 mph NW"
-                        //};
-
                         // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
                         prompt.contents.Add(r.candidates.First().content);
                         prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
@@ -194,6 +188,12 @@ namespace fAI.Tests
 
                 agenticLoopCounter += 1;
             } // agenticLoopOn
+
+            sw.Stop();
+            OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
+
+            var a = answer;
+            Assert.Contains("partly cloudy", a.ToLowerInvariant());
         }
     }
 }
