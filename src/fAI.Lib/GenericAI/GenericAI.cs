@@ -56,16 +56,16 @@ namespace fAI
                 return anthropicContents;
             }
 
-            public List<GoogleAICompletionsBody.Content> GetGoogleContents()
+            public List<Content> GetGoogleContents()
             {
                 // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
-                var googleContents = List<GoogleAICompletionsBody.Content>();
+                var googleContents = List<Content>();
                 foreach (var c in this)
                 {
-                    var googleContent = new GoogleAICompletionsBody.Content
+                    var googleContent = new Content
                     {
                         role = c.Role,
-                        parts = new List<GoogleAICompletionsBody.Part>() { new GoogleAICompletionsBody.Part { text = c.Parts[0].Text } }
+                        parts = new List<Part>() { new Part { text = c.Parts[0].Text } }
                     };
                     googleContents.Add(googleContent);
                 }

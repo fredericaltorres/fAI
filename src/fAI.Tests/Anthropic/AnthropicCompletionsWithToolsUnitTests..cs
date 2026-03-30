@@ -2,6 +2,7 @@
 using fAI.Google;
 using Markdig;
 using Mistral.SDK.DTOs;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -98,12 +99,43 @@ namespace fAI.Tests
 
             var googleAIClient = new GoogleAI();
             var model = "gemini-3-flash-preview";
+
             var p = googleAIClient.Completions.GetPrompt(@"What's the weather like in Boston right now?", "", model);
 
             // CALL STEP 1
             var url = googleAIClient.Completions.GetUrl(model);
             var r = googleAIClient.Completions.Create(p, url, model, tools: DS.List(tool));
             Assert.True(r.HasFunctionCall);
+            var func = r.candidates.First().content.GetFunctionCall();
+            if (func.name == "get_weather")
+            {
+                var location = func.args.Get("location", "");
+                var unit = func.args.Get("unit", "celsius");
+                Assert.Equal("Boston, MA", location);
+                Assert.Equal("celsius", unit);
+
+                var weatherDataJson = JsonConvert.SerializeObject(new
+                {
+                    requested_location = location,
+                    temperature_f = 62,
+                    condition = "Partly Cloudy",
+                    humidity = "75%",
+                    wind = "10 mph NW"
+                });
+                p.contents.Add(r.candidates.First().content);
+                p.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content {
+                    role = "function",
+                    parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>() { 
+                        new GoogleAICompletions.GoogleAICompletionsResponse.Part() { 
+                              functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() { 
+                                  name = func.name,
+                                  response = weatherDataJson
+                              }
+                        }
+                    }
+                });
+                var rr = googleAIClient.Completions.Create(p, url, model);
+            }
         }
     }
 }

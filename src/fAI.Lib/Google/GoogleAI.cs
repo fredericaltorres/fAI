@@ -60,6 +60,7 @@ namespace fAI
                 public Content content { get; set; }
                 public string finishReason { get; set; }
                 public int index { get; set; }
+                public string finishMessage { get; set; }
             }
 
             public class Content
@@ -68,6 +69,12 @@ namespace fAI
                 public string role { get; set; }
 
                 public bool HasFunctionCall => parts != null && parts.Any(p => p.IsFunctionCall);
+                public FunctionCall GetFunctionCall()
+                {
+                    if (HasFunctionCall)
+                        return parts.First(p => p.IsFunctionCall).functionCall;
+                    return null;
+                }
             }
 
             public class FunctionCall
@@ -77,11 +84,18 @@ namespace fAI
                 public Dictionary<string, string> args { get; set; }
             }
 
+            public class FunctionResponse
+            {
+                public string name { get; set; }
+                public string response { get; set; }
+            }
+
             public class Part
             {
                 public string text { get; set; }
                 public string thoughtSignature { get; set; }
                 public FunctionCall functionCall { get; set; }
+                public FunctionResponse functionResponse { get; set; }
 
                 public bool IsFunctionCall => functionCall != null;
 
@@ -133,12 +147,11 @@ namespace fAI
 
         public class GoogleAICompletionsBody
         {
-            // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-            public class Content
-            {
-                public string role { get; set; }
-                public List<Part> parts { get; set; }
-            }
+            //public class Content
+            //{
+            //    public string role { get; set; }
+            //    public List<Part> parts { get; set; }
+            //}
 
             public class Part
             {
@@ -185,7 +198,7 @@ namespace fAI
 
         const string DEFAULT_MODEL = "gemini-3-flash-preview";
 
-        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<GoogleAICompletionsBody.Content> contents = null)
+        public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<Content> contents = null)
         {
             var r = new GoogleAICompletionsBody.GeminiPrompt();
             r.system_instruction = new GoogleAICompletionsBody.SystemInstruction
@@ -194,11 +207,11 @@ namespace fAI
             };
             if (contents == null)
             {
-                r.contents = new List<GoogleAICompletionsBody.Content>();
-                r.contents.Add(new GoogleAICompletionsBody.Content
+                r.contents = new List<Content>();
+                r.contents.Add(new Content
                 {
                     role = "user",
-                    parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = userPrompt } }
+                    parts = new List<Part> { new Part { text = userPrompt } }
                 });
             }
             else
