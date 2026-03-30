@@ -19,11 +19,9 @@ namespace fAI.Tests
         {
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Completion_With_Tools__Anthropic()
+        AnthropicTool GetWeatherTool() 
         {
-            var tool = new AnthropicTool()
+            return new AnthropicTool()
             {
                 Name = "get_weather",
                 Description = "Get the current weather in a given location",
@@ -37,6 +35,15 @@ namespace fAI.Tests
                     Required = new List<string>() { "location" }
                 }
             };
+        }
+
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_With_Tools__Anthropic()
+        {
+            var tool = GetWeatherTool();
 
             var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
@@ -87,23 +94,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Completion_With_Tools__Google()
         {
-            var tool = new GoogleTool();
-
-            tool.FunctionDeclarations.Add(new FunctionDeclaration
-            {
-                Name = "get_weather",
-                Description = "Get the current weather in a given location",
-                Parameters = new ParameterSchema()
-                {
-                    Type = "object",
-                    Properties = new Dictionary<string, PropertyDetail>()
-                    {
-                        { "location",   new PropertyDetail() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
-                        { "unit",       new PropertyDetail() { Type = "string", Description = "The unit of temperature to return, either 'celsius' or 'fahrenheit'" } }
-                    },
-                    Required = new List<string>() { "location" }
-                }
-            });
+            var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
 
             var googleAIClient = new GoogleAI();
             var model = "gemini-3-flash-preview";

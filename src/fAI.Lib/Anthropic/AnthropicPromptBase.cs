@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using fAI.AnthropicLib;
+using fAI.Google;
 using MimeTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -7,6 +8,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+namespace fAI
+{
+
+    public enum LLMProvider
+    {
+        OpenAI,
+        Anthropic,
+        Google
+    }
+
+    public static class ToolFactory
+    {
+        public static object CreateTool(LLMProvider provider, AnthropicTool tool)
+        {
+            switch (provider)
+            {
+                case LLMProvider.Anthropic:
+                    return tool;
+
+                case LLMProvider.Google:
+                    return GoogleTool.From(tool);
+
+                case LLMProvider.OpenAI:
+                default:
+                    throw new ArgumentException("Unsupported LLM provider.");
+            }
+        }
+    }
+}
 
 namespace fAI.Google
 {
@@ -14,6 +44,26 @@ namespace fAI.Google
     {
         [JsonProperty("function_declarations")]
         public List<FunctionDeclaration> FunctionDeclarations { get; set; } = new List<FunctionDeclaration>();
+
+        public static GoogleTool From(AnthropicTool tool)
+        {
+            var gt = new GoogleTool();
+            gt.FunctionDeclarations.Add(new FunctionDeclaration {
+                Name = tool.Name,
+                Description = tool.Description,
+                Parameters = new ParameterSchema
+                {
+                    Type = "object",
+                    Properties = tool.InputSchema.Properties.ToDictionary(kvp => kvp.Key, kvp => new PropertyDetail
+                    {
+                        Type = kvp.Value.Type,
+                        Description = kvp.Value.Description
+                    }),
+                    Required = tool.InputSchema.Required
+                }
+            });
+            return gt;
+        }
     }
 
     public class FunctionDeclaration
@@ -59,9 +109,6 @@ namespace fAI.Google
 
 namespace fAI
 {
-
- 
-
     public enum AnthropicContentMessageType
     {
         text,

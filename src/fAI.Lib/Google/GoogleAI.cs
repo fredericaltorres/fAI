@@ -239,7 +239,7 @@ Improve the [language] for the following phrases, in more polished and business-
                 OpenAI.Trace(new { response.Text }, this);
                 var geminiResponse = GeminiResponse.FromJson(response.Text);
                 return geminiResponse;
-
+                `
             }
             else
             {
