@@ -3,6 +3,7 @@ using fAI.Google;
 using Markdig;
 using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace fAI.Tests
         {
         }
 
-        AnthropicTool GetWeatherTool() 
+        AnthropicTool GetWeatherTool()
         {
             return new AnthropicTool()
             {
@@ -96,51 +97,69 @@ namespace fAI.Tests
         public void Completion_With_Tools__Google()
         {
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
-
-            var googleAIClient = new GoogleAI();
+            var userPrompt = @"What's the weather like in Boston right now?";
+            var systemPrompt = "";
             var model = "gemini-3-flash-preview";
 
-            var p = googleAIClient.Completions.GetPrompt(@"What's the weather like in Boston right now?", "", model);
-
-            // CALL STEP 1
+            var googleAIClient = new GoogleAI();
+            var prompt = googleAIClient.Completions.GetPrompt(userPrompt, systemPrompt, model);
             var url = googleAIClient.Completions.GetUrl(model);
-            var r = googleAIClient.Completions.Create(p, url, model, tools: DS.List(tool));
-            Assert.True(r.HasFunctionCall);
-            var func = r.candidates.First().content.GetFunctionCall();
+            var agenticLoopOn = true;
 
-            // CALL STEP 2 , LLM ASK for a function call
-            if (func.name == "get_weather")
+            while (agenticLoopOn)
             {
-                var location = func.args.Get("location", "");
-                var unit = func.args.Get("unit", "celsius");
-                Assert.Equal("Boston, MA", location);
-                Assert.Equal("celsius", unit);
-
-                // CALL STEP 3 , Call Function and to get result for LLM 
-                var weatherDataJson = JsonConvert.SerializeObject(new
+                // CALL STEP 1
+                var r = googleAIClient.Completions.Create(prompt, url, model, tools: DS.List(tool));
+                if (!r.Success)
                 {
-                    requested_location = location,
-                    temperature_f = 62,
-                    condition = "Partly Cloudy",
-                    humidity = "75%",
-                    wind = "10 mph NW"
-                });
+                    throw new ApplicationException($"Request failed  {DS.Dictionary(new { r.FinishReason }).Format()} ");
+                }
+                else if (r.Success && !r.HasFunctionCall)
+                {
+                    var answer = r.GetText();
+                    agenticLoopOn = false;
+                    break;
+                }
+                else if (r.Success && r.HasFunctionCall)
+                {
+                    var func = r.candidates.First().content.GetFunctionCall();
+                    if (func.name == "get_weather") // CALL STEP 2 , LLM ASK for a function call
+                    {
+                        var location = func.args.Get("location", "");
+                        var unit = func.args.Get("unit", "celsius");
+                        Assert.Equal("Boston, MA", location);
+                        Assert.Equal("celsius", unit);
+                        
+                        var funcData = new // CALL STEP 3 , Call Function and to get result for LLM 
+                        {
+                            requested_location = location,
+                            temperature_f = 62,
+                            condition = "Partly Cloudy",
+                            humidity = "75%",
+                            wind = "10 mph NW"
+                        };
 
-                // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
-                p.contents.Add(r.candidates.First().content);
-                p.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content {
-                    role = "function",
-                    parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>() { 
-                        new GoogleAICompletions.GoogleAICompletionsResponse.Part() { 
-                              functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() { 
-                                  name = func.name,
-                                  response = weatherDataJson
-                              }
-                        }
+                        // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
+                        prompt.contents.Add(r.candidates.First().content);
+                        prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+                        {
+                            role = "function",
+                            parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>() 
+                            {
+                                new GoogleAICompletions.GoogleAICompletionsResponse.Part() 
+                                {
+                                    functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() 
+                                    {
+                                        name = func.name,
+                                        response = funcData
+                                    }
+                                }
+                            }
+                        });
                     }
-                });
-                var rr = googleAIClient.Completions.Create(p, url, model);
-            }
+                }
+
+            } // agenticLoopOn
         }
     }
 }

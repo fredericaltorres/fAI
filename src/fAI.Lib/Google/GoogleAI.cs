@@ -68,7 +68,9 @@ namespace fAI
                 public List<Part> parts { get; set; }
                 public string role { get; set; }
 
+                [JsonIgnore]
                 public bool HasFunctionCall => parts != null && parts.Any(p => p.IsFunctionCall);
+
                 public FunctionCall GetFunctionCall()
                 {
                     if (HasFunctionCall)
@@ -87,7 +89,7 @@ namespace fAI
             public class FunctionResponse
             {
                 public string name { get; set; }
-                public string response { get; set; }
+                public object response { get; set; }
             }
 
             public class Part
@@ -119,7 +121,14 @@ namespace fAI
                 public string modelVersion { get; set; }
                 public string responseId { get; set; }
 
+                [JsonIgnore]
                 public bool HasFunctionCall => candidates != null && candidates.Count > 0 && candidates[0].content.HasFunctionCall;
+
+                [JsonIgnore]
+                public string FinishReason => candidates != null && candidates.Count > 0 ? candidates[0].finishReason : null;
+
+                [JsonIgnore]
+                public bool Success => FinishReason == "STOP";
 
                 public static GeminiResponse FromJson(string text)
                 {
