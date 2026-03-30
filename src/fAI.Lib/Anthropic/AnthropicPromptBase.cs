@@ -7,8 +7,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+namespace fAI.Google
+{
+    public class GoogleTool
+    {
+        [JsonProperty("function_declarations")]
+        public List<FunctionDeclaration> FunctionDeclarations { get; set; } = new List<FunctionDeclaration>();
+    }
+
+    public class FunctionDeclaration
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        // Description is allowed here (describes the function)
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("parameters")]
+        public ParameterSchema Parameters { get; set; }
+    }
+
+    public class ParameterSchema
+    {
+        // NOTE: Do NOT put a "description" property at this level. 
+        // That is often the cause of the error you saw.
+
+        [JsonProperty("type")]
+        public string Type { get; set; } = "OBJECT";
+
+        [JsonProperty("properties")]
+        // Dictionary maps argument names (e.g., "location") to their schema
+        public Dictionary<string, PropertyDetail> Properties { get; set; }
+
+        [JsonProperty("required")]
+        public List<string> Required { get; set; }
+    }
+
+    public class PropertyDetail
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        // Description is allowed here (describes the specific argument)
+        [JsonProperty("description")]
+        public string Description { get; set; }
+    }
+    // ----------------------------------------
+}
+
 namespace fAI
 {
+
+ 
+
     public enum AnthropicContentMessageType
     {
         text,

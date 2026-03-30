@@ -1,5 +1,7 @@
 ﻿using DynamicSugar;
+using fAI.Google;
 using Markdig;
+using Mistral.SDK.DTOs;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +21,7 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_With_Tools()
+        public void Completion_With_Tools__Anthropic()
         {
             var tool = new AnthropicTool()
             {
@@ -47,10 +49,12 @@ namespace fAI.Tests
                 Tools = new List<AnthropicTool>() { tool }
             };
 
+            // CALL STEP 1
             var response = new Anthropic().Completions.Create(p);
 
-            Assert.True(response.Success);
+            // Return an answer which is to call a tool
             Assert.Equal(AnthropicLib.StopReason.tool_use, response.StopReason);
+            Assert.True(response.Success);
             Assert.True(response.IsToolUse);
             var toolContent = response.Content.FindToolUse();
             var toolContent2 = response.Content;
@@ -77,6 +81,38 @@ namespace fAI.Tests
             Assert.Equal(AnthropicLib.StopReason.end_turn, response2.StopReason);
             var markDown = response2.Text;
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(markDown, true);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_With_Tools__Google()
+        {
+            var tool = new GoogleTool();
+
+            tool.FunctionDeclarations.Add(new FunctionDeclaration
+            {
+                Name = "get_weather",
+                Description = "Get the current weather in a given location",
+                Parameters = new ParameterSchema()
+                {
+                    Type = "object",
+                    Properties = new Dictionary<string, PropertyDetail>()
+                    {
+                        { "location",   new PropertyDetail() { Type = "string", Description = "The city and state, e.g. San Francisco, CA" } },
+                        { "unit",       new PropertyDetail() { Type = "string", Description = "The unit of temperature to return, either 'celsius' or 'fahrenheit'" } }
+                    },
+                    Required = new List<string>() { "location" }
+                }
+            });
+
+            var googleAIClient = new GoogleAI();
+            var model = "gemini-3-flash-preview";
+            var p = googleAIClient.Completions.GetPrompt(@"What's the weather like in Boston right now?", "", model);
+
+            // CALL STEP 1
+            var url = googleAIClient.Completions.GetUrl(model);
+            var r = googleAIClient.Completions.Create(p, url, model, tools: DS.List(tool));
+
         }
     }
 }

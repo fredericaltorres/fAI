@@ -135,6 +135,9 @@ namespace fAI
                 public SystemInstruction system_instruction { get; set; }
                 public List<Content> contents { get; set; }
 
+                [JsonProperty("tools", NullValueHandling = NullValueHandling.Ignore)]
+                public List<fAI.Google.GoogleTool> Tools { get; set; } = null;
+
                 public override string ToString()
                 {
                     return ToJson();
@@ -176,6 +179,7 @@ namespace fAI
             };
             if (contents == null)
             {
+                r.contents = new List<GoogleAICompletionsBody.Content>();
                 r.contents.Add(new GoogleAICompletionsBody.Content
                 {
                     role = "user",
@@ -211,9 +215,14 @@ Improve the [language] for the following phrases, in more polished and business-
             return r.GetText();
         }
 
-        public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url, string model)
+        public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url, string model, List<fAI.Google.GoogleTool> tools = null)
         {
             var sw = Stopwatch.StartNew();
+
+            if(tools != null && tools.Count > 0)
+            {
+                p.Tools = tools;
+            }
             var body = JsonConvert.SerializeObject(p);
 
             OpenAI.Trace(new { Url = url }, this);
