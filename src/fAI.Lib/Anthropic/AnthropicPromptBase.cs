@@ -216,7 +216,7 @@ namespace fAI
         public bool IsText => Type == AnthropicContentMessageType.text;
 
         [JsonIgnore]
-        public bool IsToolUse => Type == AnthropicContentMessageType.tool_use;
+        public bool HasFunctionCall => Type == AnthropicContentMessageType.tool_use;
 
         // In case of tool calls, there will be a name property with the name of the tool being called. This is useful for tools that return text, but we want to know which tool was called.
         [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]

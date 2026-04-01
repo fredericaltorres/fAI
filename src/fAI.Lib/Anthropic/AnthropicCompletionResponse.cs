@@ -51,7 +51,7 @@ namespace fAI.AnthropicLib
     {
         public AnthropicContentMessage FindToolUse()
         {
-            return this.FirstOrDefault(c => c.IsToolUse);
+            return this.FirstOrDefault(c => c.HasFunctionCall);
         }
         public AnthropicContentMessage FindToolByName(string name)
         {
@@ -82,7 +82,7 @@ namespace fAI.AnthropicLib
         public string Type { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
-        public bool IsToolUse => this.StopReason == StopReason.tool_use;
+        public bool HasFunctionCall => this.StopReason == StopReason.tool_use;
 
         [JsonProperty(PropertyName = "role")]
         public string Role { get; set; }
