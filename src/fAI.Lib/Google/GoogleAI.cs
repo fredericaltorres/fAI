@@ -296,9 +296,9 @@ Improve the [language] for the following phrases, in more polished and business-
                     if (functionCallers.ContainsKey(funcRequested.name))
                     {
                         var fn = functionCallers[funcRequested.name];
-                        var p1Name = fn.Arguments.Keys.ToList()[0];
-                        var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
-                        var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
+                        var param1Name = fn.Arguments.Keys.ToList()[0];
+                        var param1Value = funcRequested.args.Get(funcRequested.args[param1Name], "");
+                        var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
 
                         // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
                         p.contents.Add(rr.candidates.First().content);

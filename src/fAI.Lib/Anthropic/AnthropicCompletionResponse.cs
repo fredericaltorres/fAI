@@ -49,7 +49,7 @@ namespace fAI.AnthropicLib
 
     public class Contents : List<AnthropicContentMessage>
     {
-        public AnthropicContentMessage FindToolUse()
+        public AnthropicContentMessage GetFunctionCall()
         {
             return this.FirstOrDefault(c => c.HasFunctionCall);
         }
