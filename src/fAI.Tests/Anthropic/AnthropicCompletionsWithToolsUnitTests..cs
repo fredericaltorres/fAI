@@ -134,65 +134,66 @@ namespace fAI.Tests
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
             var sw = Stopwatch.StartNew();
             var googleAIClient = new GoogleAI();
+            
             var prompt = googleAIClient.Completions.GetPrompt(userPrompt, systemPrompt, model);
             var url = googleAIClient.Completions.GetUrl(model);
-            var agenticLoopOn = true;
-            var agenticLoopCounter = 0;
-            var answer = "";
 
-            while (agenticLoopOn)
-            {
-                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
-                
-                // CALL STEP 1
-                var r = googleAIClient.Completions.Create(prompt, url, model, tools: DS.List(tool));
-                if (!r.Success)
-                {
-                    throw new ApplicationException($"Request failed  {DS.Dictionary(new { r.FinishReason }).Format()} ");
-                }
-                else if (r.Success && !r.HasFunctionCall)
-                {
-                    answer = r.GetText();
-                    agenticLoopOn = false;
-                    break;
-                }
-                else if (r.Success && r.HasFunctionCall)
-                {
-                    var funcRequested = r.candidates.First().content.GetFunctionCall();
-                    if(functionCallers.ContainsKey(funcRequested.name)) 
-                    {
-                        var fn = functionCallers[funcRequested.name];
-                        var p1Name = fn.Arguments.Keys.ToList()[0];
-                        var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
-                        var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
-                        
-                        // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
-                        prompt.contents.Add(r.candidates.First().content);
-                        prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
-                        {
-                            role = "function",
-                            parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>() 
-                            {
-                                new GoogleAICompletions.GoogleAICompletionsResponse.Part() 
-                                {
-                                    functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() 
-                                    {
-                                        name = funcRequested.name,
-                                        response = funcData
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
+            var r = googleAIClient.Completions.CreateAgenticLoop(prompt, url, model, tools: DS.List(tool), functionCallers: functionCallers);
+            var a = r.GetText();
 
-                agenticLoopCounter += 1;
-            } // agenticLoopOn
+            //while (agenticLoopOn)
+            //{
+            //    OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
 
-            sw.Stop();
-            OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
+            //    // CALL STEP 1
+            //    var r = googleAIClient.Completions.Create(prompt, url, model, tools: DS.List(tool));
+            //    if (!r.Success)
+            //    {
+            //        throw new ApplicationException($"Request failed  {DS.Dictionary(new { r.FinishReason }).Format()} ");
+            //    }
+            //    else if (r.Success && !r.HasFunctionCall)
+            //    {
+            //        answer = r.GetText();
+            //        agenticLoopOn = false;
+            //        break;
+            //    }
+            //    else if (r.Success && r.HasFunctionCall)
+            //    {
+            //        var funcRequested = r.candidates.First().content.GetFunctionCall();
+            //        if(functionCallers.ContainsKey(funcRequested.name)) 
+            //        {
+            //            var fn = functionCallers[funcRequested.name];
+            //            var p1Name = fn.Arguments.Keys.ToList()[0];
+            //            var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
+            //            var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
 
-            var a = answer;
+            //            // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
+            //            prompt.contents.Add(r.candidates.First().content);
+            //            prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+            //            {
+            //                role = "function",
+            //                parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>() 
+            //                {
+            //                    new GoogleAICompletions.GoogleAICompletionsResponse.Part() 
+            //                    {
+            //                        functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse() 
+            //                        {
+            //                            name = funcRequested.name,
+            //                            response = funcData
+            //                        }
+            //                    }
+            //                }
+            //            });
+            //        }
+            //    }
+
+            //    agenticLoopCounter += 1;
+            //} // agenticLoopOn
+
+            //sw.Stop();
+            //OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, userPrompt, sw.ElapsedMilliseconds }).Format()}", this);
+
+            //var a = answer;
             Assert.Contains("partly cloudy", a.ToLowerInvariant());
         }
     }

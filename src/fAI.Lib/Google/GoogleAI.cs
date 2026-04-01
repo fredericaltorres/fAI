@@ -1,10 +1,12 @@
 ﻿using DynamicSugar;
+using Mistral.SDK.Common;
 using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static DynamicSugar.DS;
 using static fAI.GenericAI;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 
@@ -255,6 +257,76 @@ Improve the [language] for the following phrases, in more polished and business-
             var url = GetUrl(model);
             var r = Create(p, url, model);
             return r.GetText();
+        }
+
+        public GeminiResponse CreateAgenticLoop(GoogleAICompletionsBody.GeminiPrompt p, string url, string model, 
+            List<fAI.Google.GoogleTool> tools = null,
+            FunctionCallers functionCallers = null)
+        {
+            var sw = Stopwatch.StartNew();
+            var r = new GeminiResponse();
+
+            sw.Stop();
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, model }, this);
+
+            var agenticLoopOn = true;
+            var agenticLoopCounter = 0;
+            var answer = "";
+
+            while (agenticLoopOn)
+            {
+                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
+
+                // CALL STEP 1
+                var rr = this.Create(p, url, model, tools: tools);
+                if (!rr.Success)
+                {
+                    throw new ApplicationException($"Request failed  {DS.Dictionary(new { rr.FinishReason }).Format()} ");
+                }
+                else if (rr.Success && !rr.HasFunctionCall)
+                {
+                    answer = rr.GetText();
+                    agenticLoopOn = false;
+                    r = rr;
+                    break;
+                }
+                else if (rr.Success && rr.HasFunctionCall)
+                {
+                    var funcRequested = rr.candidates.First().content.GetFunctionCall();
+                    if (functionCallers.ContainsKey(funcRequested.name))
+                    {
+                        var fn = functionCallers[funcRequested.name];
+                        var p1Name = fn.Arguments.Keys.ToList()[0];
+                        var p1Requested = funcRequested.args.Get(funcRequested.args[p1Name], "");
+                        var funcData = fn.Call(p1Requested); // CALL STEP 2 , Call the function with the arguments provided by LLM
+
+                        // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
+                        p.contents.Add(rr.candidates.First().content);
+                        p.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+                        {
+                            role = "function",
+                            parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>()
+                            {
+                                new GoogleAICompletions.GoogleAICompletionsResponse.Part()
+                                {
+                                    functionResponse = new GoogleAICompletions.GoogleAICompletionsResponse.FunctionResponse()
+                                    {
+                                        name = funcRequested.name,
+                                        response = funcData
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+
+                agenticLoopCounter += 1;
+            } // agenticLoopOn
+
+            sw.Stop();
+            OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, sw.ElapsedMilliseconds }).Format()}", this);
+
+            return r;
         }
 
         public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url, string model, List<fAI.Google.GoogleTool> tools = null)
