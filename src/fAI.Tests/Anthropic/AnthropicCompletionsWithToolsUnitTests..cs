@@ -99,6 +99,7 @@ namespace fAI.Tests
                 "gemini-2.0-flash",
                 "gemini-2.5-pro", 
                 "gemini-2.5-flash");
+
             models.ForEach(model =>
             {
                 var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);

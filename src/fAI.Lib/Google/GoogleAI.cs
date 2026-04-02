@@ -217,10 +217,14 @@ namespace fAI
         public GoogleAICompletionsBody.GeminiPrompt GetPrompt(string userPrompt, string systemPrompt, string model = DEFAULT_MODEL, List<Content> contents = null)
         {
             var r = new GoogleAICompletionsBody.GeminiPrompt();
-            r.system_instruction = new GoogleAICompletionsBody.SystemInstruction
+
+            if (!string.IsNullOrEmpty(systemPrompt))
             {
-                parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = systemPrompt } }
-            };
+                r.system_instruction = new GoogleAICompletionsBody.SystemInstruction
+                {
+                    parts = new List<GoogleAICompletionsBody.Part> { new GoogleAICompletionsBody.Part { text = systemPrompt } }
+                };
+            }
             if (contents == null)
             {
                 r.contents = new List<Content>();
@@ -296,7 +300,7 @@ Improve the [language] for the following phrases, in more polished and business-
                     {
                         var fn = functionCallers[funcRequested.name];
                         var param1Name = fn.Arguments.Keys.ToList()[0];
-                        var param1Value = funcRequested.args.Get(funcRequested.args[param1Name], "");
+                        var param1Value = funcRequested.args.Get(param1Name, "");
                         var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
 
                         // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
