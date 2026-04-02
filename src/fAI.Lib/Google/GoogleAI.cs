@@ -277,7 +277,7 @@ Improve the [language] for the following phrases, in more polished and business-
                 OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
 
                 // CALL STEP 1
-                var rr = this.Create(p, url, model, tools: tools);
+                var rr = this.Create(prompt, url, model, tools: tools);
                 if (!rr.Success)
                 {
                     throw new ApplicationException($"Request failed  {DS.Dictionary(new { rr.FinishReason }).Format()} ");
@@ -300,8 +300,8 @@ Improve the [language] for the following phrases, in more polished and business-
                         var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
 
                         // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
-                        p.contents.Add(rr.candidates.First().content);
-                        p.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+                        prompt.contents.Add(rr.candidates.First().content);
+                        prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
                         {
                             role = "function",
                             parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>()

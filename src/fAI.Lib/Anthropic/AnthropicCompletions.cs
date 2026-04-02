@@ -36,6 +36,7 @@ namespace fAI
 
         public AnthropicCompletionResponse CreateAgenticLoop( 
             string userPrompt,
+            string model,
             string systemPrompt = null,
             List<AnthropicTool> tools = null,
             FunctionCallers functionCallers = null)
@@ -44,8 +45,9 @@ namespace fAI
             var agenticLoopOn = true;
             var agenticLoopCounter = 0;
             var answer = "";
+            var r = new AnthropicCompletionResponse();
 
-            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
+            AnthropicPromptBase prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new List<AnthropicMessage>()
                 {
@@ -54,6 +56,9 @@ namespace fAI
                 Tools = tools, 
                 System = string.IsNullOrEmpty(systemPrompt) ? null:systemPrompt,
             };
+
+            if (model == "claude-sonnet-4-5" || model == "claude-haiku-4-5")
+                prompt.Model = model;
 
             while (agenticLoopOn)
             {
@@ -65,7 +70,8 @@ namespace fAI
                 }
                 else if (response.Success && response.CompletionDone)
                 {
-                    return response;
+                    r = response;
+                    agenticLoopOn = false;
                 }
                 else if (response.Success && response.HasFunctionCall)
                 {
@@ -88,9 +94,13 @@ namespace fAI
                         })
                     });
                 }
+                agenticLoopCounter += 1;
             }
 
-            return null;
+            sw.Stop();
+            OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, sw.ElapsedMilliseconds }).Format()}", this);
+
+            return r;
         }
 
         public AnthropicCompletionResponse Create(AnthropicPromptBase p, Dictionary<string, string> extraHeaders = null)

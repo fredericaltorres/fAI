@@ -70,16 +70,22 @@ namespace fAI.Tests
             };
         }
 
+        const string userPrompt = @"What's the weather like in Boston right now?";
+
         [Fact()]
         [TestBeforeAfter]
         public void Completion_With_Tools__Anthropic()
         {
             var tool = ToolFactory.CreateTool(LLMProvider.Anthropic, GetWeatherTool()) as AnthropicTool;
             var functionCallers = GetFunctionCallersForUnitTests();
-
-            var userPrompt = @"What's the weather like in Boston right now?";
             var anthropicClient = new Anthropic();
-            var r = anthropicClient.Completions.CreateAgenticLoop(userPrompt, tools: DS.List(tool), functionCallers: functionCallers);
+            var models = DS.List("claude-opus-4-6", "claude-sonnet-4-5", "claude-haiku-4-5");
+            models.ForEach(model =>
+            {
+                var r = anthropicClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
+                var a = r.Text;
+                Assert.Contains("partly cloudy", a.ToLowerInvariant());
+            });
         }
         
         [Fact()]
@@ -87,17 +93,11 @@ namespace fAI.Tests
         public void Completion_With_Tools__Google()
         {
             var functionCallers = GetFunctionCallersForUnitTests();
-            var userPrompt = @"What's the weather like in Boston right now?";
-            var systemPrompt = "";
             var model = "gemini-3-flash-preview";
-
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
-            var sw = Stopwatch.StartNew();
             var googleAIClient = new GoogleAI();
-
             var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
             var a = r.GetText();
-       
             Assert.Contains("partly cloudy", a.ToLowerInvariant());
         }
     }
