@@ -265,10 +265,6 @@ Improve the [language] for the following phrases, in more polished and business-
         {
             var sw = Stopwatch.StartNew();
             var r = new GeminiResponse();
-
-            sw.Stop();
-            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, model }, this);
-
             var agenticLoopOn = true;
             var agenticLoopCounter = 0;
             var answer = "";

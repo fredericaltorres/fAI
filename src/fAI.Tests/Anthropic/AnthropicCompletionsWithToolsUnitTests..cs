@@ -74,100 +74,13 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Completion_With_Tools__Anthropic()
         {
-            //var tool = GetWeatherTool();
-
             var tool = ToolFactory.CreateTool(LLMProvider.Anthropic, GetWeatherTool()) as AnthropicTool;
-
-            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
-            {
-                Messages = new List<AnthropicMessage>()
-                {
-                    new AnthropicMessage { Role =  MessageRole.user,
-                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(@"What's the weather like in Boston right now?"))
-                    }
-                },
-                Tools = new List<AnthropicTool>() { tool }
-            };
-
-            var sw = Stopwatch.StartNew();
-
-            var model = "claude-sonnet-4-5";
-            var agenticLoopOn = true;
-            var agenticLoopCounter = 0;
-            var answer = "";
-
             var functionCallers = GetFunctionCallersForUnitTests();
 
-            while (agenticLoopOn)
-            {
-                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
-
-                // CALL STEP 1
-                var response = new Anthropic().Completions.Create(p);
-
-                if (!response.Success)
-                {
-                    throw new ApplicationException($"Request failed  {DS.Dictionary(new { response.StopReason }).Format()} ");
-                }
-                else if (response.Success && !response.HasFunctionCall)
-                {
-                    response = response;
-                }
-                else if (response.Success && !response.HasFunctionCall)
-                {
-                    var funcRequested = response.Content.GetFunctionCall();
-                    var contentForNextCall = response.Content;
-                    Assert.True(funcRequested.HasFunctionCall);
-                    var fn = functionCallers[funcRequested.Name];
-
-                    var param1Name = funcRequested.Input.Keys.ToList()[0];
-                    var param1Value = funcRequested.Input[param1Name].ToString();
-                    var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
-
-                    p.Messages.Add(new AnthropicMessage { Role = MessageRole.assistant, Content = contentForNextCall });
-                    p.Messages.Add(new AnthropicMessage { Role = MessageRole.user, Content = 
-                        DS.List<AnthropicContentMessage>(new AnthropicContentMessage() { 
-                            Type = AnthropicContentMessageType.tool_result, 
-                            toolUseId = funcRequested.Id, 
-                            Content = DS.Dictionary(funcData).Format()
-                        }) 
-                    });
-                }
-                //// Return an answer which is to call a tool
-                //Assert.Equal(AnthropicLib.StopReason.tool_use, response.StopReason);
-                //Assert.True(response.Success);
-                //Assert.True(response.HasFunctionCall);
-                //var toolContent = response.Content.GetFunctionCall();
-                //var toolContent2 = response.Content;
-                //Assert.True(toolContent.HasFunctionCall);
-                //Assert.StartsWith("tool", toolContent.Id);
-                //Assert.Equal("get_weather", toolContent.Name);
-                //Assert.Equal("Boston, MA", toolContent.Input.Values.ToList()[0]);
-                ////Assert.Equal("fahrenheit", toolContent.Input["unit"]);
-
-                // Pretend to call the tool and return a result
-                var toolResult = toolContent.Name == "get_weather" ? "72 degree Fahrenheit, partly cloudy with a light breeze." : "No data available.";
-
-                //var p2 = new Anthropic_Prompt_Claude_4_6_Sonnet()
-                //{
-                //    Messages = new List<AnthropicMessage>()
-                //{
-                //    new AnthropicMessage { Role =  MessageRole.user, Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(@"What's the weather like in Boston right now?")) },
-                //    new AnthropicMessage { Role =  MessageRole.assistant, Content = toolContent2 },
-                //    new AnthropicMessage { Role =  MessageRole.user, Content = DS.List<AnthropicContentMessage>( new AnthropicContentMessage() { Type = AnthropicContentMessageType.tool_result, toolUseId = toolContent.Id, Content = toolResult })},
-                //},
-                //};
-
-                var response2 = new Anthropic().Completions.Create(p2);
-                Assert.Equal(AnthropicLib.StopReason.end_turn, response2.StopReason);
-                var markDown = response2.Text;
-                var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(markDown, true);
-            }
-
-            sw.Stop();
-            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, model }, this);
+            var userPrompt = @"What's the weather like in Boston right now?";
+            var anthropicClient = new Anthropic();
+            var r = anthropicClient.Completions.CreateAgenticLoop(userPrompt, tools: DS.List(tool),  functionCallers: functionCallers);
         }
-
         
         [Fact()]
         [TestBeforeAfter]
