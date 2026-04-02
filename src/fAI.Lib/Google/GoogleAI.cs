@@ -140,7 +140,7 @@ namespace fAI
                 [JsonIgnore]
                 public string Text => GetText();
 
-                [JsonIgnore]
+                
                 public string GetText()
                 {
                     if (candidates != null && candidates.Count > 0)
