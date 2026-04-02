@@ -118,7 +118,8 @@ namespace fAI.Tests
             var genericAIClient = new GenericAI();
             var models = DS.List(
                 "claude-opus-4-6", "claude-sonnet-4-5", "claude-haiku-4-5",
-                "gemini-3-flash-preview", "gemini-2.0-flash", "gemini-2.5-pro", "gemini-2.5-flash"
+                "gemini-3-flash-preview", 
+                "gemini-2.0-flash", "gemini-2.5-flash", "gemini-2.5-pro" 
             );
             models.ForEach(model =>
             {
