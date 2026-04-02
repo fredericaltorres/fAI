@@ -259,7 +259,8 @@ Improve the [language] for the following phrases, in more polished and business-
             return r.GetText();
         }
 
-        public GeminiResponse CreateAgenticLoop(GoogleAICompletionsBody.GeminiPrompt p, string url, string model, 
+        public GeminiResponse CreateAgenticLoop(string userPrompt, string model, 
+            string systemPrompt = null,
             List<fAI.Google.GoogleTool> tools = null,
             FunctionCallers functionCallers = null)
         {
@@ -268,6 +269,8 @@ Improve the [language] for the following phrases, in more polished and business-
             var agenticLoopOn = true;
             var agenticLoopCounter = 0;
             var answer = "";
+            var url = this.GetUrl(model);
+            var prompt = this.GetPrompt(userPrompt, systemPrompt, model);
 
             while (agenticLoopOn)
             {

@@ -84,6 +84,9 @@ namespace fAI.AnthropicLib
         [Newtonsoft.Json.JsonIgnore]
         public bool HasFunctionCall => this.StopReason == StopReason.tool_use;
 
+        [Newtonsoft.Json.JsonIgnore]
+        public bool CompletionDone => this.StopReason == StopReason.end_turn;
+
         [JsonProperty(PropertyName = "role")]
         public string Role { get; set; }
 

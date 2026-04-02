@@ -57,7 +57,7 @@ namespace fAI.Tests
             return new AnthropicTool()
             {
                 Name = "get_weather",
-                Description = "Get the current weather in a given p1Requested",
+                Description = "Get the current weather in a given location",
                 InputSchema = new InputSchema()
                 {
                     Properties = new Dictionary<string, SchemaProperty>()
@@ -79,7 +79,7 @@ namespace fAI.Tests
 
             var userPrompt = @"What's the weather like in Boston right now?";
             var anthropicClient = new Anthropic();
-            var r = anthropicClient.Completions.CreateAgenticLoop(userPrompt, tools: DS.List(tool),  functionCallers: functionCallers);
+            var r = anthropicClient.Completions.CreateAgenticLoop(userPrompt, tools: DS.List(tool), functionCallers: functionCallers);
         }
         
         [Fact()]
@@ -94,11 +94,8 @@ namespace fAI.Tests
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
             var sw = Stopwatch.StartNew();
             var googleAIClient = new GoogleAI();
-            
-            var prompt = googleAIClient.Completions.GetPrompt(userPrompt, systemPrompt, model);
-            var url = googleAIClient.Completions.GetUrl(model);
 
-            var r = googleAIClient.Completions.CreateAgenticLoop(prompt, url, model, tools: DS.List(tool), functionCallers: functionCallers);
+            var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
             var a = r.GetText();
        
             Assert.Contains("partly cloudy", a.ToLowerInvariant());

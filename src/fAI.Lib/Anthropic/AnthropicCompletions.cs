@@ -45,24 +45,25 @@ namespace fAI
             var agenticLoopCounter = 0;
             var answer = "";
 
-            var p = new Anthropic_Prompt_Claude_4_6_Sonnet()
+            var prompt = new Anthropic_Prompt_Claude_4_6_Sonnet()
             {
                 Messages = new List<AnthropicMessage>()
                 {
                     new AnthropicMessage { Role =  MessageRole.user, Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(userPrompt)) }
                 },
-                Tools = new List<AnthropicTool>() { tools }
+                Tools = tools, 
+                System = string.IsNullOrEmpty(systemPrompt) ? null:systemPrompt,
             };
 
             while (agenticLoopOn)
             {
-                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, p.Model, sw.ElapsedMilliseconds }).Format()}", this);
-                var response = new Anthropic().Completions.Create(p);
+                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, prompt.Model, sw.ElapsedMilliseconds }).Format()}", this);
+                var response = new Anthropic().Completions.Create(prompt);
                 if (!response.Success)
                 {
                     throw new ApplicationException($"Request failed  {DS.Dictionary(new { response.StopReason }).Format()} ");
                 }
-                else if (response.Success && !response.HasFunctionCall)
+                else if (response.Success && response.CompletionDone)
                 {
                     return response;
                 }
@@ -75,8 +76,8 @@ namespace fAI
                     var param1Value = funcRequested.Input[param1Name].ToString();
                     var funcData = fn.Call(param1Value);
 
-                    p.Messages.Add(new AnthropicMessage { Role = MessageRole.assistant, Content = contentForNextCall });
-                    p.Messages.Add(new AnthropicMessage
+                    prompt.Messages.Add(new AnthropicMessage { Role = MessageRole.assistant, Content = contentForNextCall });
+                    prompt.Messages.Add(new AnthropicMessage
                     {
                         Role = MessageRole.user,
                         Content = DS.List<AnthropicContentMessage>(new AnthropicContentMessage()

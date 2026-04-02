@@ -32,6 +32,7 @@ namespace fAI
         public Func<string, object> F1 { get; set; }
         public object Call(string p1)
         {
+            OpenAI.Trace($"[FUNCTION_CALL] Calling function {Name} with argument: {p1}", this);
             return F1(p1);
         }
     }
