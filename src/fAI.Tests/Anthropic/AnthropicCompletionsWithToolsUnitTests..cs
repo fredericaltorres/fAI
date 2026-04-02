@@ -93,12 +93,18 @@ namespace fAI.Tests
         public void Completion_With_Tools__Google()
         {
             var functionCallers = GetFunctionCallersForUnitTests();
-            var model = "gemini-3-flash-preview";
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as GoogleTool;
             var googleAIClient = new GoogleAI();
-            var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
-            var a = r.GetText();
-            Assert.Contains("partly cloudy", a.ToLowerInvariant());
+            var models = DS.List("gemini-3-flash-preview",
+                "gemini-2.0-flash",
+                "gemini-2.5-pro", 
+                "gemini-2.5-flash");
+            models.ForEach(model =>
+            {
+                var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
+                var a = r.GetText();
+                Assert.Contains("partly cloudy", a.ToLowerInvariant());
+            });
         }
     }
 }
