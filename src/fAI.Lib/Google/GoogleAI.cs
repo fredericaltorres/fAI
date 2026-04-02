@@ -269,7 +269,7 @@ Improve the [language] for the following phrases, in more polished and business-
 
         public GeminiResponse CreateAgenticLoop(string userPrompt, string model, 
             string systemPrompt = null,
-            List<fAI.Google.GoogleTool> tools = null,
+            List<AnthropicTool> tools = null,
             FunctionCallers functionCallers = null)
         {
             var sw = Stopwatch.StartNew();
@@ -283,9 +283,10 @@ Improve the [language] for the following phrases, in more polished and business-
             while (agenticLoopOn)
             {
                 OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
+                var gootleTools = tools.Select(t => (Google.GoogleTool)ToolFactory.CreateTool(LLMProvider.Google, t)).ToList();
 
                 // CALL STEP 1
-                var rr = this.Create(prompt, url, model, tools: tools);
+                var rr = this.Create(prompt, url, model, tools: gootleTools);
                 if (!rr.Success)
                 {
                     throw new ApplicationException($"Request failed  {DS.Dictionary(new { rr.FinishReason }).Format()} ");

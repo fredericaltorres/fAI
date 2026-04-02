@@ -131,8 +131,7 @@ namespace fAI
             }
             else if (GoogleAI.GetModels().Contains(model))
             {
-                var googleTools = tools.Select(t => ToolFactory.CreateTool(LLMProvider.Google, t) as GoogleTool).ToList();
-                return new GoogleAI(apiKey: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, googleTools, functionCallers);
+                return new GoogleAI(apiKey: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
             }
             else throw new Exception($"Model {model} not supported for agentic loop.");
         }
