@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.Google;
 using fAI.Util.Strings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -119,6 +120,23 @@ namespace fAI
             _key = ApiKey;
         }
 
+        public object CreateAgenticLoop(string userPrompt, string model,
+           string systemPrompt = null,
+           List<AnthropicTool> tools = null,
+           FunctionCallers functionCallers = null)
+        {
+            if (Anthropic.GetModels().Contains(model))
+            {
+                return new Anthropic(key: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
+            }
+            else if (GoogleAI.GetModels().Contains(model))
+            {
+                var googleTools = tools.Select(t => ToolFactory.CreateTool(LLMProvider.Google, t) as GoogleTool).ToList();
+                return new GoogleAI(apiKey: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, googleTools, functionCallers);
+            }
+            else throw new Exception($"Model {model} not supported for agentic loop.");
+        }
+
         public (string, GenericAI.Contents) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
         {
             var orginalModel = model;
@@ -142,11 +160,11 @@ namespace fAI
                     {
                         System = systemPrompt,
                         Messages = new List<AnthropicMessage>()
-                    {
-                        new AnthropicMessage { Role =  MessageRole.user,
-                             Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(prompt))
+                        {
+                            new AnthropicMessage { Role = MessageRole.user,
+                                Content = DS.List<AnthropicContentMessage>(new AnthropicContentText(prompt))
+                            }
                         }
-                    }
                     };
 
                     var anthropicContents = contents.GetAnthropicContents();
@@ -178,9 +196,9 @@ namespace fAI
                     {
                         Role = response.Role,
                         Parts = new List<GenericAI.ContentMessagePart>
-                    {
-                        new GenericAI.ContentMessagePart { Text = answerContent.Text }
-                    }
+                        {
+                            new GenericAI.ContentMessagePart { Text = answerContent.Text }
+                        }
                     });
 
                     return (answerContent.Text, contents);
@@ -204,9 +222,9 @@ namespace fAI
                     {
                         Role = answerContent.role,
                         Parts = new List<GenericAI.ContentMessagePart>
-                    {
-                        new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
-                    }
+                        {
+                            new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
+                        }
                     });
 
                     return (r.GetText(), contents);
@@ -221,10 +239,10 @@ namespace fAI
                     var p = new Prompt_GPT_4
                     {
                         Messages = new List<GPTMessage>()
-                    {
-                        new GPTMessage{ Role =  MessageRole.system, Content = systemPrompt },
-                        new GPTMessage{ Role =  MessageRole.user, Content = prompt },
-                    },
+                        {
+                            new GPTMessage { Role = MessageRole.system, Content = systemPrompt },
+                            new GPTMessage { Role = MessageRole.user, Content = prompt },
+                        },
                         Model = model
                     };
 
@@ -242,9 +260,9 @@ namespace fAI
                         {
                             Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
                             Parts = new List<GenericAI.ContentMessagePart>
-                        {
-                            new GenericAI.ContentMessagePart { Text = answerContent.Content }
-                        }
+                            {
+                                new GenericAI.ContentMessagePart { Text = answerContent.Content }
+                            }
                         });
 
                         var responseText = response.Text;
@@ -258,7 +276,7 @@ namespace fAI
             {
                 sw.Stop();
                 model = orginalModel; // because of the possible modification of the model variable for Anthropic fast mode, we want to log the original model name.
-                OpenAI.Trace(new { model, duration = sw.ElapsedMilliseconds/1000.0}, this);
+                OpenAI.Trace(new { model, duration = sw.ElapsedMilliseconds / 1000.0 }, this);
             }
         }
 

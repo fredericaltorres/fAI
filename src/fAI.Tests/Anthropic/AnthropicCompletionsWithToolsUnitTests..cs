@@ -107,6 +107,29 @@ namespace fAI.Tests
                 Assert.Contains("partly cloudy", a.ToLowerInvariant());
             });
         }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_With_Tools__GenericAI()
+        {
+            var functionCallers = GetFunctionCallersForUnitTests();
+            var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as AnthropicTool;
+            var genericAIClient = new GenericAI();
+            var models = DS.List(
+                "claude-opus-4-6", "claude-sonnet-4-5", "claude-haiku-4-5",
+                "gemini-3-flash-preview",
+                "gemini-2.0-flash",
+                "gemini-2.5-pro",
+                "gemini-2.5-flash");
+
+            models.ForEach(model =>
+            {
+                dynamic r = genericAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
+                var a = r.Text;
+                Assert.Contains("partly cloudy", a.ToLowerInvariant());
+            });
+        }
     }
 }
 
