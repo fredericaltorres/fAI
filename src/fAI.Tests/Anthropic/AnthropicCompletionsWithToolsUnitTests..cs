@@ -60,7 +60,7 @@ namespace fAI.Tests
                     return new
                     {
                         meeting_title = "team status",
-                        participants = DS.List("Alice", "Bob", "Charlie")
+                        participants = DS.List("Alice", "Bob", "Charlie").Format()
                     };
                 }
             };
@@ -184,21 +184,26 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_With_Tools__GenericAI__gemini_2_0_flash()
+        public void Completion_With_Tools__GenericAI__QueryCalendar()
         {
             var functionCallers = GetFunctionCallersForUnitTests();
             var weatherTool = ToolFactory.CreateTool(LLMProvider.Anthropic, GetWeatherTool()) as AnthropicTool;
             var calendarTool = ToolFactory.CreateTool(LLMProvider.Anthropic, GetCalendarTool()) as AnthropicTool;
             var genericAIClient = new GenericAI();
-            var models = DS.List("gemini-2.0-flash");
+            var models = DS.List(
+             "claude-opus-4-6", "claude-sonnet-4-5", "claude-haiku-4-5",
+             "gemini-3-flash-preview",
+             "gemini-2.0-flash", "gemini-2.5-flash", "gemini-2.5-pro"
+            );
 
-            var userPrompt = "What are my meetings for tomorrow Friday 2026/04/03?";
+            var userPrompt = "What are my meetings for tomorrow Friday 2026/04/03? list the all participants";
 
             models.ForEach(model =>
             {
-                dynamic r = genericAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(weatherTool, calendarTool), functionCallers: functionCallers);
+                dynamic r = genericAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(calendarTool), functionCallers: functionCallers);
                 var a = r.Text;
-                Assert.Contains("partly cloudy", a.ToLowerInvariant());
+                Assert.Contains("team status", a.ToLowerInvariant());
+                Assert.Contains("alice", a.ToLowerInvariant());
             });
         }
     }
