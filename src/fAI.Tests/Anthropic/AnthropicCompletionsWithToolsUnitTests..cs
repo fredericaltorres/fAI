@@ -196,6 +196,8 @@ namespace fAI.Tests
              "gemini-2.0-flash", "gemini-2.5-flash", "gemini-2.5-pro"
             );
 
+            models = DS.List("gemini-2.0-flash", "claude-haiku-4-5");
+
             var userPrompt = "What are my meetings for tomorrow Friday 2026/04/03? list the all participants";
 
             models.ForEach(model =>
