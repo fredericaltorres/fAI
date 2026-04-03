@@ -178,6 +178,9 @@ namespace fAI
         [JsonProperty("type")]
         public string Type { get; set; }  // "string", "number", "integer", "boolean", "array", "object"
 
+        [JsonProperty("format", NullValueHandling = NullValueHandling.Ignore)]
+        public string Format { get; set; }  // "date-time
+
         [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
         public string Description { get; set; }
 
