@@ -57,9 +57,10 @@ namespace fAI
             this.InMemoryOnly = inMemoryOnly;
         }
 
-        public static List<float> ToVector(string text, string openAiKey)
+        public static List<float> ToVector(string text, string openAiKey = null)
         {
-            var client = new OpenAI(apiKey: openAiKey);
+            OpenAI client = null;
+            client =  string.IsNullOrEmpty(openAiKey) ? new OpenAI() : new OpenAI(apiKey: openAiKey);
             var r = client.Embeddings.Create(text);
             if (r.Success)
             {
@@ -69,16 +70,9 @@ namespace fAI
                 return null;
         }
 
-        public void Add(string openAiKey, AIMemory d)
+        public void Add(AIMemory d, string openAiKey = null)
         {
-            //var existingDoc = GetFromId(id);
-            //if (existingDoc != null)
-            //{
-            //    this.Remove(existingDoc);
-            //}
-            //d.Id = id;
-            if (openAiKey != null && d.Embeddings == null || d.Embeddings.Count == 0)
-                d.Embeddings = ToVector(d.Text, openAiKey);
+            ComputeEmbeddings(d, openAiKey);
 
             d.Init();
 
@@ -87,6 +81,12 @@ namespace fAI
                 var col = db.GetCollection<AIMemory>(CollectionName);
                 col.Insert(d);
             }
+        }
+
+        public void ComputeEmbeddings(AIMemory d, string openAiKey = null)
+        {
+            if (d.Embeddings == null || d.Embeddings.Count == 0)
+                d.Embeddings = ToVector(d.Text, openAiKey);
         }
 
         public void Update(AIMemory d)

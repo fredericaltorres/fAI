@@ -1,7 +1,5 @@
 ﻿using DynamicSugar;
 using fAI;
-using fAI.AIMemory;
-using Markdig;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +25,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Add_Update_Search_Delete()
         {
-            var aiMI = new AIMemoryManager(TestDBName);
+            var aiManager = new AIMemoryManager(TestDBName);
             var aiMemory = new AIMemory()
             {
                 PublishedUrl = "https://www.example.com/article1",
@@ -37,7 +35,29 @@ namespace fAI.Tests
                 LocalFile = null,
             };
 
-            aiMI.Add(Environment.GetEnvironmentVariable("OPENAI_API_KEY"), aiMemory);
+            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+            var __id__ = aiMemory.Id;
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiMemory.PublishedUrl += " - Updated";
+            aiMemory.Title += " - Updated";
+            aiMemory.Text += " - Updated";
+
+            
+
+            aiManager.Update(aiMemory);
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiManager.Delete(aiMemory);
+            aiMemory = aiManager.GetFromId(aiMemory.Id);
+            Assert.Null(aiMemory);
+        }
+
+        private static void VerifyAIMemoryInDB(AIMemoryManager aiMI, AIMemory aiMemory)
+        {
             var aiMemory2 = aiMI.GetFromId(aiMemory.Id);
             Assert.NotNull(aiMemory2);
             Assert.Equal(aiMemory.PublishedUrl, aiMemory2.PublishedUrl);
