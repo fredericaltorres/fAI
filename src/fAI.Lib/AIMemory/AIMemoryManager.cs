@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using DynamicSugar;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -87,9 +88,23 @@ namespace fAI
             }
         }
 
+
+        public bool __simulate_embedding_computation__ = false;
+
         public void ComputeEmbeddings(AIMemory d, string openAiKey = null)
         {
-            d.Embeddings = ToVector(d.Text, openAiKey);
+            if (__simulate_embedding_computation__)
+            {
+                d.Embeddings = new List<float>();
+                for (var c= 0; c< 1536; c++)
+                {
+                    d.Embeddings.Add((float)(c * 0.113416));
+                }
+            }
+            else
+            {
+                d.Embeddings = ToVector(d.Text, openAiKey);
+            }
         }
 
         public void Update(AIMemory d)

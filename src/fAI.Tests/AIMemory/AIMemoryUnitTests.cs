@@ -26,9 +26,9 @@ namespace fAI.Tests
         public void ToJson()
         {
             var aiManager = new AIMemoryManager(TestDBName);
-            var aiMemories = new AIMemorys();
+            aiManager.__simulate_embedding_computation__ = true;
 
-            for(var i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 if (i % 10 == 0)
                 {
@@ -41,7 +41,7 @@ namespace fAI.Tests
                         LocalFile = $"C:\\temp\\article{i}.md",
                     };
                     Assert.True(aiMemory2.IsMarkDownFile());
-                    aiMemories.Add(aiMemory2);
+                    aiManager.Add(aiMemory2);
                 }
                 else
                 {
@@ -53,7 +53,7 @@ namespace fAI.Tests
                         Type = PublishedDocumentInfoType.AI_Generated_Note,
                         LocalFile = null,
                     };
-                    aiMemories.Add(aiMemory);
+                    aiManager.Add(aiMemory);
                 }
             }
 
@@ -65,6 +65,8 @@ namespace fAI.Tests
         public void Add_Update_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
+            aiManager.__simulate_embedding_computation__ = true;
+
             var aiMemory = new AIMemory()
             {
                 PublishedUrl = "https://www.example.com/article1",
