@@ -24,5 +24,11 @@ namespace fAI.Tests
         {
             OpenAI.TraceOn = true;
         }
+
+        public void DeleteFile(string fileName)
+        {
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+        }
     }
 }

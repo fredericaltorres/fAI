@@ -22,7 +22,10 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Chain_TellThreeInterrestingFactAbout()
         {
-            var chain = new Chain();
+
+
+
+                var chain = new Chain();
             var prompt = new Prompt_GPT_4
             {
                 Messages = new List<GPTMessage> 

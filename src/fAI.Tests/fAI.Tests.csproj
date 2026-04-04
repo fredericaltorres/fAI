@@ -45,6 +45,9 @@
     <PackageReference Include="DynamicSugarStandard">
       <Version>1.0.86</Version>
     </PackageReference>
+    <PackageReference Include="LiteDB">
+      <Version>5.0.21</Version>
+    </PackageReference>
     <PackageReference Include="Markdig">
       <Version>1.0.0</Version>
     </PackageReference>
@@ -66,6 +69,7 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIMemory\AIMemoryUnitTests.cs" />
     <Compile Include="Anthropic\AnthropicCompletionsWithToolsUnitTests..cs" />
     <Compile Include="Anthropic\LedSequence.cs" />
     <Compile Include="CSRunTimeErrorAnalysis\CodeAnalysisTests.cs" />
