@@ -110,6 +110,14 @@ namespace fAI.Tests
             Assert.Equal(aiMemory.Text, aiMemory2.Text);
             Assert.Equal(aiMemory.Type, aiMemory2.Type);
             Assert.Equal(aiMemory.LocalFile, aiMemory2.LocalFile);
+            AssertFloatArrayEqual(aiMemory.Embeddings.ToArray(), aiMemory2.Embeddings.ToArray(), 0);
+        }
+
+        public static void AssertFloatArrayEqual(float[] expected, float[] actual, float tolerance = 1e-5f)
+        {
+            Assert.Equal(expected.Length, actual.Length);
+            for (int i = 0; i < expected.Length; i++)
+                Assert.True(Math.Abs(expected[i] - actual[i]) <= tolerance,$"Index {i}: expected {expected[i]} but got {actual[i]} (tolerance {tolerance})");
         }
     }
 }

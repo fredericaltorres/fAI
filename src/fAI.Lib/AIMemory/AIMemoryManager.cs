@@ -43,7 +43,7 @@ namespace fAI
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
         [JsonIgnore]
-        public byte[] EmbeddingsBuffer { get; set; }
+        public byte[] __embeddingsBuffer { get; set; }
 
         [BsonIgnore]
         public float Score { get; set; }
@@ -66,7 +66,7 @@ namespace fAI
             this.ModifiedDate = DateTime.UtcNow;
             if (Embeddings != null && Embeddings.Count > 0)
             {
-                EmbeddingsBuffer = __ZipEmbeddings();
+                __embeddingsBuffer = __ZipEmbeddings();
                 Embeddings = null; // Clear the original list to save space
             }
             return this;
@@ -74,10 +74,10 @@ namespace fAI
 
         internal AIMemory PrepareAfterLoading()
         {
-            if (EmbeddingsBuffer != null && EmbeddingsBuffer.Length > 0)
+            if (__embeddingsBuffer != null && __embeddingsBuffer.Length > 0)
             {
-                __UnzipEmbeddings(EmbeddingsBuffer);
-                EmbeddingsBuffer = null; // Clear the buffer after loading
+                __UnzipEmbeddings(__embeddingsBuffer);
+                __embeddingsBuffer = null; // Clear the buffer after loading
             }
             return this;
         }
@@ -173,7 +173,10 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
+                var embeddings = d.Embeddings;
                 col.Insert(d.PrepareForSaving());
+                d.Embeddings = embeddings; // Restore the original list after saving
+                d.__embeddingsBuffer = null; // Clear the buffer after saving
             }
         }
 
@@ -201,7 +204,10 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
+                var embeddings = d.Embeddings;
                 col.Update(d.PrepareForSaving());
+                d.Embeddings = embeddings; // Restore the original list after saving
+                d.__embeddingsBuffer = null; // Clear the buffer after saving
             }
         }
 
