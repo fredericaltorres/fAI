@@ -28,7 +28,7 @@ namespace fAI.Tests
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
 
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 200; i++)
             {
                 if (i % 10 == 0)
                 {
@@ -44,7 +44,7 @@ namespace fAI.Tests
                     aiManager.Add(aiMemory2);
                 }
                 else
-                {
+                { 
                     var aiMemory = new AIMemory()
                     {
                         PublishedUrl = $"https://www.example.com/article{i}",

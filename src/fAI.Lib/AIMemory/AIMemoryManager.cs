@@ -22,27 +22,33 @@ namespace fAI
     public class AIMemorys : List<AIMemory>
     {
     }
+    /// <summary>
+    /// https://github.com/litedb-org/LiteDB.Studio
+    /// https://www.litedb.org/docs/getting-started/
+    /// </summary>
     public class AIMemory
     {
         [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
 
-        public string MID => Id.ToString();
-
-        public float Score { get; set; }
-
+        
         public PublishedDocumentInfoType Type { get; set; }
         public string PublishedUrl { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
         public string LocalFile { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
         [JsonIgnore]
         public byte[] EmbeddingsBuffer { get; set; }
 
-        public DateTime CreateDate { get; set; }
+        [BsonIgnore]
+        public float Score { get; set; }
+        [BsonIgnore]
+        public string MID => Id.ToString();
 
         public void Init()
         {
@@ -55,8 +61,9 @@ namespace fAI
         public bool IsTextFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".txt", StringComparison.OrdinalIgnoreCase);
         public bool IsHtmlFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".html", StringComparison.OrdinalIgnoreCase);
 
-        public AIMemory ZipEmbeddings()
+        internal AIMemory PrepareForSaving()
         {
+            this.ModifiedDate = DateTime.UtcNow;
             if (Embeddings != null && Embeddings.Count > 0)
             {
                 EmbeddingsBuffer = __ZipEmbeddings();
@@ -65,7 +72,7 @@ namespace fAI
             return this;
         }
 
-        public AIMemory UnZipEmbeddings()
+        internal AIMemory PrepareAfterLoading()
         {
             if (EmbeddingsBuffer != null && EmbeddingsBuffer.Length > 0)
             {
@@ -166,7 +173,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                col.Insert(d.ZipEmbeddings());
+                col.Insert(d.PrepareForSaving());
             }
         }
 
@@ -194,7 +201,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                col.Update(d.ZipEmbeddings());
+                col.Update(d.PrepareForSaving());
             }
         }
 
@@ -214,7 +221,7 @@ namespace fAI
                 var col = db.GetCollection<AIMemory>(CollectionName);
                 var results = col.Query().Where(x => x.Id == id).ToList();
                 if (results.Count > 0)
-                    return results[0].UnZipEmbeddings();
+                    return results[0].PrepareAfterLoading();
                 else
                     return null;
             }
@@ -226,7 +233,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                var results = col.Query().Where(x => ids.Contains(x.Id)).Select(e => e.UnZipEmbeddings()).ToList();
+                var results = col.Query().Where(x => ids.Contains(x.Id)).Select(e => e.PrepareAfterLoading()).ToList();
                 return results;
             }
         }
@@ -236,7 +243,12 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                return col.Query().Select(e => e.UnZipEmbeddings()).ToList();
+                var l = col.Query().ToList();
+                foreach (var m in l)
+                {
+                    m.PrepareAfterLoading();
+                }
+                return l;
             }
         }
 
