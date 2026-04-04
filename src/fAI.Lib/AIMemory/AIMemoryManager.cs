@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using System.Text;
 using System.Xml.Linq;
 using static fAI.HumeAISpeech;
@@ -17,6 +18,9 @@ namespace fAI
         Markdown_File,
     }
 
+    public class AIMemorys : List<AIMemory>
+    {
+    }
     public class AIMemory
     {
         public LiteDB.ObjectId Id { get; set; }
@@ -85,8 +89,7 @@ namespace fAI
 
         public void ComputeEmbeddings(AIMemory d, string openAiKey = null)
         {
-            if (d.Embeddings == null || d.Embeddings.Count == 0)
-                d.Embeddings = ToVector(d.Text, openAiKey);
+            d.Embeddings = ToVector(d.Text, openAiKey);
         }
 
         public void Update(AIMemory d)
@@ -129,6 +132,29 @@ namespace fAI
                 var results = col.Query().Where(x => ids.Contains(x.Id)).ToList();
                 return results;
             }
+        }
+
+        public List<AIMemory> GetAll()
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemory>(CollectionName);
+                return col.Query().ToList();
+            }
+        }
+
+        public string ToJsonFile()
+        {
+            var json = ToJSON();
+            var jsonFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName( this.FileName) + ".json");
+            File.WriteAllText(jsonFileName, json);
+            return jsonFileName;
+        }
+
+        public string ToJSON()
+        {
+            var all = GetAll();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(all, Newtonsoft.Json.Formatting.Indented);
         }
     }
 }

@@ -23,6 +23,45 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
+        public void ToJson()
+        {
+            var aiManager = new AIMemoryManager(TestDBName);
+            var aiMemories = new AIMemorys();
+
+            for(var i = 0; i < 100; i++)
+            {
+                if (i % 10 == 0)
+                {
+                    var aiMemory2 = new AIMemory()
+                    {
+                        PublishedUrl = $"https://www.example.com/article{i}",
+                        Title = $"Example Article {i}",
+                        Text = $"This is the text of the example article {i}.",
+                        Type = PublishedDocumentInfoType.Markdown_File,
+                        LocalFile = $"C:\\temp\\article{i}.md",
+                    };
+                    Assert.True(aiMemory2.IsMarkDownFile());
+                    aiMemories.Add(aiMemory2);
+                }
+                else
+                {
+                    var aiMemory = new AIMemory()
+                    {
+                        PublishedUrl = $"https://www.example.com/article{i}",
+                        Title = $"Example Article {i}",
+                        Text = $"This is the text of the example article {i}.",
+                        Type = PublishedDocumentInfoType.AI_Generated_Note,
+                        LocalFile = null,
+                    };
+                    aiMemories.Add(aiMemory);
+                }
+            }
+
+            var jsonFile = aiManager.ToJsonFile();
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Add_Update_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -44,8 +83,7 @@ namespace fAI.Tests
             aiMemory.PublishedUrl += " - Updated";
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
-
-            
+            aiManager.ComputeEmbeddings(aiMemory);
 
             aiManager.Update(aiMemory);
 
