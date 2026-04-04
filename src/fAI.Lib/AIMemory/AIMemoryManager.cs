@@ -3,7 +3,7 @@ using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
 using static fAI.HumeAISpeech;
@@ -39,9 +39,10 @@ namespace fAI
 
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
+        [JsonIgnore]
+        public byte[] EmbeddingsBuffer { get; set; }
 
         public DateTime CreateDate { get; set; }
-
 
         public void Init()
         {
@@ -53,6 +54,80 @@ namespace fAI
         public bool IsMarkDownFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".md", StringComparison.OrdinalIgnoreCase);
         public bool IsTextFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".txt", StringComparison.OrdinalIgnoreCase);
         public bool IsHtmlFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".html", StringComparison.OrdinalIgnoreCase);
+
+        public AIMemory ZipEmbeddings()
+        {
+            if (Embeddings != null && Embeddings.Count > 0)
+            {
+                EmbeddingsBuffer = __ZipEmbeddings();
+                Embeddings = null; // Clear the original list to save space
+            }
+            return this;
+        }
+
+        public AIMemory UnZipEmbeddings()
+        {
+            if (EmbeddingsBuffer != null && EmbeddingsBuffer.Length > 0)
+            {
+                __UnzipEmbeddings(EmbeddingsBuffer);
+                EmbeddingsBuffer = null; // Clear the buffer after loading
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Compresses the Embeddings list into a GZip-compressed byte array.
+        /// </summary>
+        private byte[] __ZipEmbeddings()
+        {
+            if (Embeddings == null || Embeddings.Count == 0)
+                return new byte[0];
+
+            // Convert List<float> → raw bytes (4 bytes per float)
+            byte[] rawBytes = new byte[Embeddings.Count * sizeof(float)];
+            Buffer.BlockCopy(Embeddings.ToArray(), 0, rawBytes, 0, rawBytes.Length);
+
+            // GZip compress the raw bytes
+            using (var outputStream = new MemoryStream())
+            {
+                using (var gzip = new GZipStream(outputStream, CompressionLevel.Optimal))
+                {
+                    gzip.Write(rawBytes, 0, rawBytes.Length);
+                }
+
+                return outputStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decompresses a GZip-compressed byte array back into the Embeddings list.
+        /// </summary>
+        private void __UnzipEmbeddings(byte[] compressedData)
+        {
+            if (compressedData == null || compressedData.Length == 0)
+            {
+                Embeddings = new List<float>();
+                return;
+            }
+
+            // GZip decompress back to raw bytes
+            using (var inputStream = new MemoryStream(compressedData))
+            using (var outputStream = new MemoryStream())
+            {
+                using (var gzip = new GZipStream(inputStream, CompressionMode.Decompress))
+                {
+                    gzip.CopyTo(outputStream);
+                }
+
+                byte[] rawBytes = outputStream.ToArray();
+
+                // Convert raw bytes → float[]  (4 bytes per float)
+                float[] floats = new float[rawBytes.Length / sizeof(float)];
+                Buffer.BlockCopy(rawBytes, 0, floats, 0, rawBytes.Length);
+
+                Embeddings = new List<float>(floats);
+            }
+        }
     }
 
     public class AIMemoryManager
@@ -91,7 +166,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                col.Insert(d);
+                col.Insert(d.ZipEmbeddings());
             }
         }
 
@@ -119,7 +194,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                col.Update(d);
+                col.Update(d.ZipEmbeddings());
             }
         }
 
@@ -139,7 +214,7 @@ namespace fAI
                 var col = db.GetCollection<AIMemory>(CollectionName);
                 var results = col.Query().Where(x => x.Id == id).ToList();
                 if (results.Count > 0)
-                    return results[0];
+                    return results[0].UnZipEmbeddings();
                 else
                     return null;
             }
@@ -151,7 +226,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                var results = col.Query().Where(x => ids.Contains(x.Id)).ToList();
+                var results = col.Query().Where(x => ids.Contains(x.Id)).Select(e => e.UnZipEmbeddings()).ToList();
                 return results;
             }
         }
@@ -161,7 +236,7 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(CollectionName);
-                return col.Query().ToList();
+                return col.Query().Select(e => e.UnZipEmbeddings()).ToList();
             }
         }
 
