@@ -24,17 +24,24 @@ namespace fAI
     }
     public class AIMemory
     {
+        [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
 
+        public string MID => Id.ToString();
+
         public float Score { get; set; }
+
         public PublishedDocumentInfoType Type { get; set; }
         public string PublishedUrl { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
-        public int TextLength => !string.IsNullOrEmpty(Text) ? Text.Length : 0;
         public string LocalFile { get; set; }
+
+        [JsonIgnore]
         public List<float> Embeddings { get; set; }
+
         public DateTime CreateDate { get; set; }
+
 
         public void Init()
         {
@@ -170,6 +177,44 @@ namespace fAI
         {
             var all = GetAll();
             return Newtonsoft.Json.JsonConvert.SerializeObject(all, Newtonsoft.Json.Formatting.Indented);
+        }
+
+        public void AddFile(string id, string fileName)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var storage = db.GetStorage<string>();
+                storage.Upload(id, fileName);
+            }
+        }
+
+        public string GetFile(string id, string fileName)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var storage = db.GetStorage<string>();
+                storage.Download(id, fileName, true);
+                return fileName;
+            }
+        }
+
+        public void UpdateFile(string id, string fileName)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var storage = db.GetStorage<string>();
+                storage.Delete(id);
+                storage.Upload(id, fileName);
+            }
+        }
+
+        public void DeleteFle(string id)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var storage = db.GetStorage<string>();
+                storage.Delete(id);
+            }
         }
     }
 }
