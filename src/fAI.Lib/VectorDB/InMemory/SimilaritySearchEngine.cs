@@ -75,7 +75,7 @@ namespace fAI.VectorDB
                 .ToList();
         }
 
-        private static double CosineSimilarity(List<float> v1, List<float> v2)
+        internal static double CosineSimilarity(List<float> v1, List<float> v2)
         {
             double dot = 0.0;
             double norm1 = 0.0;

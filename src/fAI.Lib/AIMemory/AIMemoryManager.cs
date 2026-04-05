@@ -1,6 +1,8 @@
 ﻿using DynamicSugar;
+using fAI.VectorDB;
 using LiteDB;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -25,6 +27,7 @@ namespace fAI
     /// <summary>
     /// https://github.com/litedb-org/LiteDB.Studio
     /// https://www.litedb.org/docs/getting-started/
+    /// C:\DVT\LiteDB.Studio\LiteDB.Studio\bin\Debug\LiteDB.Studio.exe
     /// </summary>
     public class AIMemory
     {
@@ -60,8 +63,9 @@ namespace fAI
         public bool IsMarkDownFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".md", StringComparison.OrdinalIgnoreCase);
         public bool IsTextFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".txt", StringComparison.OrdinalIgnoreCase);
         public bool IsHtmlFile() => !string.IsNullOrEmpty(LocalFile) && LocalFile.EndsWith(".html", StringComparison.OrdinalIgnoreCase);
-
+        
         internal AIMemory PrepareForSaving()
+            
         {
             this.ModifiedDate = DateTime.UtcNow;
             if (Embeddings != null && Embeddings.Count > 0)
@@ -195,7 +199,8 @@ namespace fAI
             }
             else
             {
-                d.Embeddings = ToVector(d.Text, openAiKey);
+                if(d.Embeddings == null || d.Embeddings.Count == 0)
+                    d.Embeddings = ToVector(d.Text, openAiKey);
             }
         }
 
@@ -244,6 +249,34 @@ namespace fAI
             }
         }
 
+        private AIMemorys ReFineResultWithDynamicScore(AIMemorys docInfo)
+        {
+            var maxScore = docInfo.ToArray().Select(rr => (float)rr.Score).DefaultIfEmpty(0).Max();
+            var minimumScore = SimilaritySearchEngine.GetOpenAIEmbeddingDynamicScore(maxScore);
+            var items = docInfo.Where(e => e.Score >= minimumScore).ToList();
+            var r = new AIMemorys();
+            r.AddRange(items);
+            return r;
+        }
+
+        public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f)
+        {
+            var result = new AIMemorys();
+            foreach (var e in this.GetAll())
+            {
+                if (e.Embeddings != null && e.Embeddings.Count > 0)
+                {
+                    var score = SimilaritySearchEngine.CosineSimilarity(e.Embeddings, embeddingsQuery);
+                    if (score >= minimumScore)
+                    {
+                        e.Score = (float)score;
+                        result.Add(e);
+                    }
+                }
+            }
+            return ReFineResultWithDynamicScore(result);
+        }
+
         public List<AIMemory> GetAll()
         {
             using (var db = new LiteDatabase(this.FileName))
@@ -251,9 +284,7 @@ namespace fAI
                 var col = db.GetCollection<AIMemory>(CollectionName);
                 var l = col.Query().ToList();
                 foreach (var m in l)
-                {
                     m.PrepareAfterLoading();
-                }
                 return l;
             }
         }
