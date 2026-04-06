@@ -48,6 +48,9 @@ namespace fAI
         public byte[] __embeddingsBuffer { get; set; }
 
         [BsonIgnore]
+        public int TextLength => this.Text?.Length ?? 0;
+
+        [BsonIgnore]
         public float Score { get; set; }
         [BsonIgnore]
         public string MID => Id.ToString();
@@ -217,7 +220,7 @@ namespace fAI
             else
             {
                 if(d.Embeddings == null || d.Embeddings.Count == 0)
-                    d.Embeddings = ToVector(d.Text, openAiKey);
+                    d.Embeddings = ToVector($"{d.Title}. {d.Text}", openAiKey);
             }
         }
 
