@@ -103,6 +103,43 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
+        public void Add_Update_Markdown_Search_Delete()
+        {
+            var aiManager = new AIMemoryManager(TestDBName);
+            aiManager.__simulate_embedding_computation__ = true;
+
+            var aiMemory = new AIMemory()
+            {
+                PublishedUrl = $"https://www.example.com/article",
+                Title = $"Example Article",
+                Text = $"This is the text of the example article.",
+                Type = PublishedDocumentInfoType.Markdown_File,
+                LocalFile = $"C:\\temp\\article.md",
+            };
+
+            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+            var __id__ = aiMemory.Id;
+            var __mid__ = aiMemory.MID;
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiMemory.PublishedUrl += " - Updated";
+            aiMemory.Title += " - Updated";
+            aiMemory.Text += " - Updated";
+            aiManager.ComputeEmbeddings(aiMemory);
+
+            aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiManager.Delete(aiMemory);
+            aiMemory = aiManager.GetFromId(aiMemory.Id);
+            Assert.Null(aiMemory);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Add_Update_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);

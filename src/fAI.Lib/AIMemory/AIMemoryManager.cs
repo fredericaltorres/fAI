@@ -34,7 +34,6 @@ namespace fAI
         [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
 
-        
         public PublishedDocumentInfoType Type { get; set; }
         public string PublishedUrl { get; set; }
         public string Title { get; set; }
@@ -146,8 +145,6 @@ namespace fAI
         public bool InMemoryOnly { get; set; } = false;
         public string FileName { get; set; }
 
-        const string CollectionName = "AIMemory";
-
         public AIMemoryManager(string fileName = null, bool inMemoryOnly = false)
         {
             if (fileName != null)
@@ -168,6 +165,26 @@ namespace fAI
                 return null;
         }
 
+        public void AddUpdate(AIMemory d, string localFile, string openAiKey = null)
+        {
+            var allMemories = GetAll();
+            var exists = allMemories.Where(e => e.LocalFile == localFile).ToList();
+            if (exists.Count > 0)
+            {
+                var existingAIMemory = exists[0];
+                existingAIMemory.Text = d.Text;
+                existingAIMemory.Title = d.Title;
+                existingAIMemory.PublishedUrl = d.PublishedUrl;
+
+                ComputeEmbeddings(existingAIMemory, openAiKey);
+                Update(existingAIMemory);
+            }
+            else
+            {
+                Add(d, openAiKey);
+            }
+        }
+
         public void Add(AIMemory d, string openAiKey = null)
         {
             ComputeEmbeddings(d, openAiKey);
@@ -176,7 +193,7 @@ namespace fAI
 
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
                 var embeddings = d.Embeddings;
                 col.Insert(d.PrepareForSaving());
                 d.Embeddings = embeddings; // Restore the original list after saving
@@ -208,7 +225,7 @@ namespace fAI
         {
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
                 var embeddings = d.Embeddings;
                 col.Update(d.PrepareForSaving());
                 d.Embeddings = embeddings; // Restore the original list after saving
@@ -216,12 +233,22 @@ namespace fAI
             }
         }
 
+        public void Delete(string id)
+        {
+            Delete(new ObjectId(id));
+        }
+
         public void Delete(AIMemory d)
+        {
+            Delete(d.Id);
+        }
+
+        public void Delete(ObjectId id)
         {
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
-                col.Delete(d.Id);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
+                col.Delete(id);
             }
         }
 
@@ -229,7 +256,7 @@ namespace fAI
         {
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
                 var results = col.Query().Where(x => x.Id == id).ToList();
                 if (results.Count > 0)
                     return results[0].PrepareAfterLoading();
@@ -243,7 +270,7 @@ namespace fAI
             var r = new List<AIMemory>();
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
                 var results = col.Query().Where(x => ids.Contains(x.Id)).Select(e => e.PrepareAfterLoading()).ToList();
                 return results;
             }
@@ -281,7 +308,7 @@ namespace fAI
         {
             using (var db = new LiteDatabase(this.FileName))
             {
-                var col = db.GetCollection<AIMemory>(CollectionName);
+                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
                 var l = col.Query().ToList();
                 foreach (var m in l)
                     m.PrepareAfterLoading();
