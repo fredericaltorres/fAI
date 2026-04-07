@@ -1,11 +1,13 @@
 ﻿using DynamicSugar;
 using fAI.VectorDB;
 using LiteDB;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using static fAI.HumeAISpeech;
@@ -34,7 +36,9 @@ namespace fAI
         [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public PublishedDocumentInfoType Type { get; set; }
+
         public string PublishedUrl { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
