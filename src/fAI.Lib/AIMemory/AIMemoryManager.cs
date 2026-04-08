@@ -19,8 +19,8 @@ namespace fAI
     public enum PublishedDocumentInfoType
     {
         Undefined,
-        AI_Generated_Note,
-        Markdown_File,
+        UserAINote,
+        MarkdownFile,
     }
 
     public class AIMemorys : List<AIMemory>

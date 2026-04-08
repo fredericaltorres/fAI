@@ -73,7 +73,7 @@ namespace fAI.Tests
                         PublishedUrl = $"https://www.example.com/article{i}",
                         Title = $"Example Article {i}",
                         Text = $"This is the text of the example article {i}.",
-                        Type = PublishedDocumentInfoType.Markdown_File,
+                        Type = PublishedDocumentInfoType.MarkdownFile,
                         LocalFile = $"C:\\temp\\article{i}.md",
                     };
                     Assert.True(aiMemory2.IsMarkDownFile());
@@ -86,7 +86,7 @@ namespace fAI.Tests
                         PublishedUrl = $"https://www.example.com/article{i}",
                         Title = $"Example Article {i}",
                         Text = $"This is the text of the example article {i}.",
-                        Type = PublishedDocumentInfoType.AI_Generated_Note,
+                        Type = PublishedDocumentInfoType.UserAINote,
                         LocalFile = null,
                     };
                     aiManager.Add(aiMemory);
@@ -113,7 +113,7 @@ namespace fAI.Tests
                 PublishedUrl = $"https://www.example.com/article",
                 Title = $"Example Article",
                 Text = $"This is the text of the example article.",
-                Type = PublishedDocumentInfoType.Markdown_File,
+                Type = PublishedDocumentInfoType.MarkdownFile,
                 LocalFile = $"C:\\temp\\article.md",
             };
 
@@ -150,7 +150,7 @@ namespace fAI.Tests
                 PublishedUrl = "https://www.example.com/article1",
                 Title = "Example Article 1",
                 Text = "This is the text of the example article 1.",
-                Type = PublishedDocumentInfoType.AI_Generated_Note,
+                Type = PublishedDocumentInfoType.UserAINote,
                 LocalFile = null,
             };
 

@@ -311,12 +311,11 @@ both of which are due before our next cross-functional review meeting,
 currently penciled in for May 7th, 2026 at 2:00 PM, 
 with a follow-up executive briefing tentatively set for the week of June 22nd, 2026.";
 
-            var models = DS.List("gpt-5.2", "claude-opus-4-6", "gemini-2.0-flash");
+            var models = DS.List("gemini-2.0-flash", "gpt-5.2", "claude-opus-4-6");
 
             foreach (var model in models)
             {
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-
                 var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model).MetaData;
                 Assert.Equal(4, medataDictionary["people"].Count);
                 Assert.Equal(4, medataDictionary["dates_mentioned"].Count);
