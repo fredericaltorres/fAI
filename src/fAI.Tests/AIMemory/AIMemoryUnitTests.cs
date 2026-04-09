@@ -72,7 +72,7 @@ namespace fAI.Tests
                     {
                         PublishedUrl = $"https://www.example.com/article{i}",
                         Title = $"Example Article {i}",
-                        Text = $"This is the text of the example article {i}.",
+                        Text = DefaultMarkdownText + $" {i}",
                         Type = PublishedDocumentInfoType.MarkdownFile,
                         LocalFile = $"C:\\temp\\article{i}.md",
                     };
@@ -101,6 +101,8 @@ namespace fAI.Tests
             Assert.Equal(new FileInfo(jsonFile).Length, new FileInfo(newJsonFile).Length);
         }
 
+        const string DefaultMarkdownText = "This is the text of the example article. created March 31 2026, in Boston, MA, USA By Richard Harrison. Richard Harrison created an important note about Windows user and Productivity";
+
         [Fact()]
         [TestBeforeAfter]
         public void Add_Update_Markdown_Search_Delete()
@@ -112,7 +114,7 @@ namespace fAI.Tests
             {
                 PublishedUrl = $"https://www.example.com/article",
                 Title = $"Example Article",
-                Text = $"This is the text of the example article.",
+                Text = DefaultMarkdownText,
                 Type = PublishedDocumentInfoType.MarkdownFile,
                 LocalFile = $"C:\\temp\\article.md",
             };
@@ -127,7 +129,6 @@ namespace fAI.Tests
             aiMemory.PublishedUrl += " - Updated";
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
-            aiManager.ComputeEmbeddings(aiMemory);
 
             aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
 
@@ -149,7 +150,7 @@ namespace fAI.Tests
             {
                 PublishedUrl = "https://www.example.com/article1",
                 Title = "Example Article 1",
-                Text = "This is the text of the example article 1.",
+                Text = DefaultMarkdownText,
                 Type = PublishedDocumentInfoType.UserAINote,
                 LocalFile = null,
             };
@@ -163,7 +164,7 @@ namespace fAI.Tests
             aiMemory.PublishedUrl += " - Updated";
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
-            aiManager.ComputeEmbeddings(aiMemory);
+            aiManager.ComputeEmbeddingsAndMetaData(aiMemory);
 
             aiManager.Update(aiMemory);
 
@@ -183,6 +184,7 @@ namespace fAI.Tests
             Assert.Equal(aiMemory.Text, aiMemory2.Text);
             Assert.Equal(aiMemory.Type, aiMemory2.Type);
             Assert.Equal(aiMemory.LocalFile, aiMemory2.LocalFile);
+            Assert.True(aiMemory2.AIMetaData.MetaData.Count > 0);
             AssertFloatArrayEqual(aiMemory.Embeddings.ToArray(), aiMemory2.Embeddings.ToArray(), 0);
         }
 

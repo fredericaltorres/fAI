@@ -681,11 +681,7 @@ Use ONLY the provided article delimited by triple quotes to answer the question:
             };
         }
 
-        public class AIMetaData
-        {
-            public Dictionary<string, List<string>> MetaData { get; set; }
-        }
-
+     
         public AIMetaData ExtractMetaDataFromNotes(
            string text,
            string model,
