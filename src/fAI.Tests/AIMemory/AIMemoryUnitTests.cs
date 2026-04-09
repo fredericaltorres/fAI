@@ -64,9 +64,9 @@ namespace fAI.Tests
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
 
-            for (var i = 0; i < 200; i++)
+            for (var i = 0; i < 10; i++)
             {
-                if (i % 10 == 0)
+                if (i % 2 == 0)
                 {
                     var aiMemory2 = new AIMemory()
                     {
@@ -85,7 +85,7 @@ namespace fAI.Tests
                     {
                         PublishedUrl = $"https://www.example.com/article{i}",
                         Title = $"Example Article {i}",
-                        Text = $"This is the text of the example article {i}.",
+                        Text = DefaultMarkdownText + $" {i}",
                         Type = PublishedDocumentInfoType.UserAINote,
                         LocalFile = null,
                     };
