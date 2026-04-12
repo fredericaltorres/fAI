@@ -82,29 +82,38 @@ namespace fAI
             return r;
         }
 
-        public void AddUpdate(AIMemory d, string localFile, string openAiKey = null, bool clearEmbeddings = false)
+        public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, bool clearEmbeddings = false)
         {
-            var allMemories = GetAll();
-            var exists = allMemories.Where(e => e.LocalFile == localFile).ToList();
-            if (exists.Count > 0)
+            var r = true;
+            try
             {
-                var existingAIMemory = exists[0];
-                existingAIMemory.Text = d.Text;
-                existingAIMemory.Title = d.Title;
-                existingAIMemory.PublishedUrl = d.PublishedUrl;
-
-                if(clearEmbeddings)
+                var allMemories = GetAll();
+                var exists = allMemories.Where(e => e.LocalFile == localFile).ToList();
+                if (exists.Count > 0)
                 {
-                    existingAIMemory.Embeddings.Clear();
-                }
+                    var existingAIMemory = exists[0];
+                    existingAIMemory.Text = d.Text;
+                    existingAIMemory.Title = d.Title;
+                    existingAIMemory.PublishedUrl = d.PublishedUrl;
 
-                ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
-                Update(existingAIMemory);
+                    if (clearEmbeddings)
+                    {
+                        existingAIMemory.Embeddings.Clear();
+                    }
+
+                    ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
+                    Update(existingAIMemory);
+                }
+                else
+                {
+                    Add(d, openAiKey);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Add(d, openAiKey);
+                r = false;
             }
+            return r;
         }
 
         public void Add(AIMemory d, string openAiKey = null)
