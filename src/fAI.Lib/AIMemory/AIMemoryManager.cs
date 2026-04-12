@@ -45,29 +45,41 @@ namespace fAI
                 return null;
         }
 
-        public void AddUpdate(AIMemory d,  string openAiKey = null, bool clearEmbeddings = false)
+        public bool AddUpdate(AIMemory d,  string openAiKey = null, bool clearEmbeddings = false)
         {
-            var allMemories = GetAll();
-            var exists = allMemories.Where(e => e.Id == d.Id).ToList();
-            if (exists.Count > 0)
+            var r = true;
+            try
             {
-                var existingAIMemory = exists[0];
-                existingAIMemory.Text = d.Text;
-                existingAIMemory.Title = d.Title;
-                existingAIMemory.PublishedUrl = d.PublishedUrl;
-
-                if (clearEmbeddings)
+                var allMemories = GetAll();
+                var exists = allMemories.Where(e => e.Id == d.Id).ToList();
+                if (exists.Count > 0)
                 {
-                    existingAIMemory.Embeddings.Clear();
-                }
+                    var existingAIMemory = exists[0];
+                    existingAIMemory.Text = d.Text;
+                    existingAIMemory.Title = d.Title;
+                    existingAIMemory.PublishedUrl = d.PublishedUrl;
 
-                ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
-                Update(existingAIMemory);
+                    if (clearEmbeddings)
+                    {
+                        existingAIMemory.Embeddings.Clear();
+                    }
+
+                    if (!ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey))
+                    {
+                        r = false;
+                    }
+                    Update(existingAIMemory);
+                }
+                else
+                {
+                    Add(d, openAiKey);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Add(d, openAiKey);
+                r = false;
             }
+            return r;
         }
 
         public void AddUpdate(AIMemory d, string localFile, string openAiKey = null, bool clearEmbeddings = false)
@@ -113,34 +125,51 @@ namespace fAI
 
         public bool __simulate_embedding_computation__ = false;
 
-        public void ComputeEmbeddingsAndMetaData(AIMemory d, string embeddingsApiKey = null, string model = "gemini-2.0-flash", string llmApiKey = null)
+        public bool ComputeEmbeddingsAndMetaData(AIMemory d, string embeddingsApiKey = null, string model = "gemini-2.0-flash", string llmApiKey = null)
         {
-            ComputeEmbeddings(d, embeddingsApiKey);
-            ExtractMetaDataFromText(d, model, llmApiKey);
+            var r1 = ComputeEmbeddings(d, embeddingsApiKey);
+            var r2 = ExtractMetaDataFromText(d, model, llmApiKey);
+
+            return r1 && r2;
         }
 
-        public void ExtractMetaDataFromText(AIMemory d, string model = "gemini-2.0-flash", string llmApiKey = null)
+        public bool ExtractMetaDataFromText(AIMemory d, string model = "gemini-2.0-flash", string llmApiKey = null)
         {
-            var client = new GenericAI(ApiKey: llmApiKey);
-
-            var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
-            d.AIMetaData = medataDictionary;
-        }
-
-        public void ComputeEmbeddings(AIMemory d, string openAiKey = null)
-        {
-            if (__simulate_embedding_computation__)
+            try
             {
-                d.Embeddings = new List<float>();
-                for (var c= 0; c< 1536; c++)
-                {
-                    d.Embeddings.Add((float)(c * 0.113416));
-                }
+                var client = new GenericAI(ApiKey: llmApiKey);
+                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
+                d.AIMetaData = medataDictionary;
+                return true;
             }
-            else
+            catch (Exception ex)
             {
-                if(d.Embeddings == null || d.Embeddings.Count == 0)
-                    d.Embeddings = ToVector($"{d.Title}. {d.Text}", openAiKey);
+                return false;
+            }
+        }
+
+        public bool ComputeEmbeddings(AIMemory d, string openAiKey = null)
+        {
+            try
+            {
+                if (__simulate_embedding_computation__)
+                {
+                    d.Embeddings = new List<float>();
+                    for (var c = 0; c < 1536; c++)
+                    {
+                        d.Embeddings.Add((float)(c * 0.113416));
+                    }
+                }
+                else
+                {
+                    if (d.Embeddings == null || d.Embeddings.Count == 0)
+                        d.Embeddings = ToVector($"{d.Title}. {d.Text}", openAiKey);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 
