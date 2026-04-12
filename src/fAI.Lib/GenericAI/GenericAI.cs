@@ -690,9 +690,10 @@ Extract metadata from notes. Return one JSON object with:
 - ""people"": array of people mentioned (empty if none)
 - ""action_items"": array of implied to-dos (empty if none)
 - ""dates_mentioned"": array of dates YYYY-MM-DD (empty if none)
+- ""locations"": array of location, town, country, places, street address (empty if none)
 - ""topics"": array of 1-3 short topic tags (always at least one)
 - ""type"": one of ""observation"", ""task"", ""idea"", ""reference"", ""person_note""
-Only extract what's explicitly there.,
+Only extract what's explicitly there.
             "
            )
         {

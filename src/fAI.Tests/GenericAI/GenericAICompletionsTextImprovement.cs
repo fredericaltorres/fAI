@@ -261,12 +261,13 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
 
             var notes1 = @"
-on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project.
+on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project in Paris.
 The meeting was at 10 AM and it lasted for 1 hour.
 I need to prepare a presentation for the next meeting on July 20th, 2026
 ";
             var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
             Assert.Equal("John Smith", medataDictionary["people"].First());
+            Assert.Equal("Paris", medataDictionary["locations"].First());
             Assert.Equal("2026-01-15", medataDictionary["dates_mentioned"].First());
             Assert.Equal("Salesforce integration", medataDictionary["topics"].First());
             Assert.Equal("task", medataDictionary["type"].First());
