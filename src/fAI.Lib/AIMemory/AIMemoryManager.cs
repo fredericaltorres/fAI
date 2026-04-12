@@ -244,6 +244,11 @@ namespace fAI
             var items = docInfo.Where(e => e.Score >= minimumScore).ToList();
             var r = new AIMemorys();
             r.AddRange(items);
+
+            var rrr = r.OrderByDescending(e => e.Score).ToList();
+            r.Clear();
+            r.AddRange(rrr);
+
             return r;
         }
 
