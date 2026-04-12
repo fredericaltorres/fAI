@@ -45,7 +45,32 @@ namespace fAI
                 return null;
         }
 
-        public void AddUpdate(AIMemory d, string localFile, string openAiKey = null)
+        public void AddUpdate(AIMemory d,  string openAiKey = null, bool clearEmbeddings = false)
+        {
+            var allMemories = GetAll();
+            var exists = allMemories.Where(e => e.Id == d.Id).ToList();
+            if (exists.Count > 0)
+            {
+                var existingAIMemory = exists[0];
+                existingAIMemory.Text = d.Text;
+                existingAIMemory.Title = d.Title;
+                existingAIMemory.PublishedUrl = d.PublishedUrl;
+
+                if (clearEmbeddings)
+                {
+                    existingAIMemory.Embeddings.Clear();
+                }
+
+                ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
+                Update(existingAIMemory);
+            }
+            else
+            {
+                Add(d, openAiKey);
+            }
+        }
+
+        public void AddUpdate(AIMemory d, string localFile, string openAiKey = null, bool clearEmbeddings = false)
         {
             var allMemories = GetAll();
             var exists = allMemories.Where(e => e.LocalFile == localFile).ToList();
@@ -55,6 +80,11 @@ namespace fAI
                 existingAIMemory.Text = d.Text;
                 existingAIMemory.Title = d.Title;
                 existingAIMemory.PublishedUrl = d.PublishedUrl;
+
+                if(clearEmbeddings)
+                {
+                    existingAIMemory.Embeddings.Clear();
+                }
 
                 ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
                 Update(existingAIMemory);
