@@ -567,7 +567,6 @@ Q: ""What is my frequent flyer number for Delta airlines?""
 A: ""Your frequent flyer number for Delta airlines is SOMETHING.""
 
 Current Task:
-Q: ""What is my to-do number one in personal section?""
 A: [question]
             "
            )
