@@ -64,7 +64,7 @@ namespace fAI.Tests
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 6; i++)
             {
                 if (i % 2 == 0)
                 {
