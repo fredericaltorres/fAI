@@ -14,7 +14,13 @@ namespace fAI.VectorDB
         public static float GetOpenAIEmbeddingDynamicScore(float bestScore)
         {
             var minimumScore = 0f;
-            if (bestScore > 0.4f)
+            if (bestScore > 0.7f)
+                minimumScore = bestScore * 0.65f;
+            else if (bestScore > 0.6f)
+                minimumScore = bestScore * 0.70f;
+            else if (bestScore > 0.5f)
+                minimumScore = bestScore * 0.75f;
+            else if (bestScore > 0.4f)
                 minimumScore = bestScore * 0.80f;
             else if (bestScore > 0.35f)
                 minimumScore = bestScore * 0.85f;
