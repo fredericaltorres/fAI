@@ -45,44 +45,44 @@ namespace fAI
                 return null;
         }
 
-        public bool AddUpdate(AIMemory d,  string openAiKey = null, bool clearEmbeddings = false)
-        {
-            var r = true;
-            try
-            {
-                var allMemories = GetAll();
-                var exists = allMemories.Where(e => e.Id == d.Id).ToList();
-                if (exists.Count > 0)
-                {
-                    var existingAIMemory = exists[0];
-                    existingAIMemory.Text = d.Text;
-                    existingAIMemory.Title = d.Title;
-                    existingAIMemory.PublishedUrl = d.PublishedUrl;
+        //public bool AddUpdate(AIMemory d, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
+        //{
+        //    var r = true;
+        //    try
+        //    {
+        //        var allMemories = GetAll();
+        //        var exists = allMemories.Where(e => e.Id == d.Id).ToList();
+        //        if (exists.Count > 0)
+        //        {
+        //            var existingAIMemory = exists[0];
+        //            existingAIMemory.Text = d.Text;
+        //            existingAIMemory.Title = d.Title;
+        //            existingAIMemory.PublishedUrl = d.PublishedUrl;
 
-                    if (clearEmbeddings)
-                    {
-                        existingAIMemory.Embeddings.Clear();
-                    }
+        //            if (clearEmbeddings)
+        //            {
+        //                existingAIMemory.Embeddings.Clear();
+        //            }
 
-                    if (!ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey))
-                    {
-                        r = false;
-                    }
-                    Update(existingAIMemory);
-                }
-                else
-                {
-                    Add(d, openAiKey);
-                }
-            }
-            catch (Exception ex)
-            {
-                r = false;
-            }
-            return r;
-        }
+        //            if (!ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey))
+        //            {
+        //                r = false;
+        //            }
+        //            Update(existingAIMemory);
+        //        }
+        //        else
+        //        {
+        //            Add(d, openAiKey);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        r = false;
+        //    }
+        //    return r;
+        //}
 
-        public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, bool clearEmbeddings = false)
+        public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
             var r = true;
             try
@@ -101,7 +101,7 @@ namespace fAI
                         existingAIMemory.Embeddings.Clear();
                     }
 
-                    ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey);
+                    ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey);
                     Update(existingAIMemory);
                 }
                 else
@@ -134,7 +134,13 @@ namespace fAI
 
         public bool __simulate_embedding_computation__ = false;
 
-        public bool ComputeEmbeddingsAndMetaData(AIMemory d, string embeddingsApiKey = null, string model = "gemini-2.0-flash", string llmApiKey = null)
+        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.5-flash";
+
+        public bool ComputeEmbeddingsAndMetaData(AIMemory d, 
+            string embeddingsApiKey = null, 
+            string llmApiKey = null,
+            string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION
+            )
         {
             var r1 = ComputeEmbeddings(d, embeddingsApiKey);
             var r2 = ExtractMetaDataFromText(d, model, llmApiKey);
@@ -142,7 +148,7 @@ namespace fAI
             return r1 && r2;
         }
 
-        public bool ExtractMetaDataFromText(AIMemory d, string model = "gemini-2.0-flash", string llmApiKey = null)
+        public bool ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null)
         {
             try
             {

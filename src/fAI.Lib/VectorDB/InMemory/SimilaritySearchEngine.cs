@@ -32,9 +32,9 @@ namespace fAI.VectorDB
             return minimumScore;
         }
 
-        public static List<float> ToVector(string text)
+        public static List<float> ToVector(string text, string apiKey = null)
         {
-            var client = new OpenAI();
+            var client = new OpenAI(apiKey: apiKey);
             var r = client.Embeddings.Create(text);
             if (r.Success)
             {
