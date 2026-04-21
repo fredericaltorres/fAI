@@ -252,7 +252,10 @@ namespace fAI
             return r;
         }
 
-        public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f)
+        public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f, 
+            float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
+            int scoreToNotApplyRefiningTopK = 3
+            )
         {
             var result = new AIMemorys();
             foreach (var e in this.GetAll())
@@ -267,6 +270,18 @@ namespace fAI
                     }
                 }
             }
+
+            if(scoreToNotApplyRefining != -1)
+            {
+                var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).ToList();
+                if(aiMemoryWithHighScore.Count >= scoreToNotApplyRefiningTopK)
+                {
+                    var am = new AIMemorys();
+                    am.AddRange(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
+                    return am;
+                }
+            }
+
             return ReFineResultWithDynamicScore(result);
         }
 
