@@ -504,11 +504,12 @@ Use the following rules to guide your summarization:
            string model,
            string systemPrompt = @"
 You are a linguistic classifier. 
-Your job is to analyze the provided phrase and categorize it into exactly one of the following three categories:
+Your job is to analyze the provided phrase and categorize it into one of the following four categories:
 
 1.  **Question**: The phrase is asking for information.
 2.  **Order**: The phrase is an imperative command or request for action.
 3.  **Statement**: The phrase is declarative, providing facts, opinions, or descriptions.
+4.  **Unknown**: The phrase does not fit into any of the above categories.
 
 You must respond strictly with a JSON object representing your classification. 
 The JSON object must have a single key named ""classification"" holding the selected category as a string value. 
