@@ -44,44 +44,7 @@ namespace fAI
             else
                 return null;
         }
-
-        //public bool AddUpdate(AIMemory d, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
-        //{
-        //    var r = true;
-        //    try
-        //    {
-        //        var allMemories = GetAll();
-        //        var exists = allMemories.Where(e => e.Id == d.Id).ToList();
-        //        if (exists.Count > 0)
-        //        {
-        //            var existingAIMemory = exists[0];
-        //            existingAIMemory.Text = d.Text;
-        //            existingAIMemory.Title = d.Title;
-        //            existingAIMemory.PublishedUrl = d.PublishedUrl;
-
-        //            if (clearEmbeddings)
-        //            {
-        //                existingAIMemory.Embeddings.Clear();
-        //            }
-
-        //            if (!ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey))
-        //            {
-        //                r = false;
-        //            }
-        //            Update(existingAIMemory);
-        //        }
-        //        else
-        //        {
-        //            Add(d, openAiKey);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        r = false;
-        //    }
-        //    return r;
-        //}
-
+       
         public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
             var r = true;
@@ -284,11 +247,22 @@ namespace fAI
                 {
                     var am = new AIMemorys();
                     am.AddRange(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
+
+                    am.ForEach(m =>
+                    {
+                        HttpBase.Trace($"Search score {m.Score}, title: {m.Title}", this);
+                    });
+
                     return am;
                 }
             }
 
-            return ReFineResultWithDynamicScore(result);
+            var am2 = ReFineResultWithDynamicScore(result);
+            am2.ForEach(m =>
+            {
+                HttpBase.Trace($"Search score {m.Score}, title: {m.Title}", this);
+            });
+            return am2;
         }
 
         public List<AIMemory> GetAll()
