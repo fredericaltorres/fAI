@@ -372,21 +372,25 @@ Answer the question to the best of your ability.
            string language,
            string model,
            string systemPrompt = @"
-Summarize the following [language] question.
+Summarize the following [language] text.
 Use the following rules to guide your summarization:
 <rules>
 - Do NOT use MARKDOWN formatting.
 - Insert a new line between paragraphs.
-- Maintain the context of the question without altering its meaning.
-- Keep the bulletPointsText concise and to the point.
+- Maintain the context of the text without altering its meaning.
+- Keep the bullet points text concise and to the point.
 - Use formal language suitable for business communication.
-- Ensure that all key information is included in the bulletPointsText.
+- Ensure that all key information is included in the bullet points Text.
  </rules>
  ===================================
-            "
+            ",
+           int summarizeWordCount = -1
            )
         {
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
+            if(summarizeWordCount > 0)
+                systemPrompt = systemPrompt.Replace("<rules>", $"<rules>\r\n- Summarize the text in about {summarizeWordCount} words.\r\n");
+
             var sw  = Stopwatch.StartNew();
             var (summary, _) = Create(text, systemPrompt, model);
             sw.Stop();
