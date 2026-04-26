@@ -36,12 +36,15 @@ namespace fAI.Tests
 
             var peopleCRT = CRTManager.Get("people");
             Assert.True(peopleCRT.Entries.Count > 0);
+            var peopleCRTReport = aiManager.GenerateReportCrossReferenceTable(peopleCRT);
 
             var locationsCRT = CRTManager.Get("locations");
             Assert.True(locationsCRT.Entries.Count > 0);
+            var locationsCRTReport = aiManager.GenerateReportCrossReferenceTable(locationsCRT);
 
-            var topicsCRT = CRTManager.Get("locations");
+            var topicsCRT = CRTManager.Get("topics");
             Assert.True(topicsCRT.Entries.Count > 0);
+            var topicsCRTReport = aiManager.GenerateReportCrossReferenceTable(topicsCRT);
         }
 
         [Fact()]

@@ -148,9 +148,7 @@ namespace fAI
                 {
                     var aiMemory = GetFromId(new ObjectId(v));
                     if (aiMemory != null)
-                    {
-                        sb.AppendLine($"- Title: {aiMemory.Title}");
-                    }
+                        sb.AppendLine($"- Document: {aiMemory.Title}, {aiMemory.ModifiedDate.ToString("yyyy-MM-dd HH")}, mid[{aiMemory.MID}]");
                 }
             }
             return sb.ToString();
