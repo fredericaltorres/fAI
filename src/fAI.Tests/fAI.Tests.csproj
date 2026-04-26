@@ -850,6 +850,9 @@
     <None Include="TestFiles\Skills\WordDocumentGeneration\SKILL.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\WinSpeak.AIMemory.test.1.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSRunTimeErrorAnalysis\Results\" />

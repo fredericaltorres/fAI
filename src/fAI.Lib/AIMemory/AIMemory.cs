@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using static DynamicSugar.DS;
 using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace fAI
@@ -12,6 +14,69 @@ namespace fAI
     public class AIMetaData
     {
         public Dictionary<string, List<string>> MetaData { get; set; }
+    }
+
+    public class AIMemoryCrossReferenceTableManager
+    {
+        public AIMemoryManager _aiMemoryManager { get; }
+
+        public AIMemoryCrossReferenceTableManager(AIMemoryManager aiManager)
+        {
+            _aiMemoryManager = aiManager;
+        }
+
+        public void Sync ()
+        {
+            var peopleCRT = new AIMemoryCrossReferenceTable("people").Build(_aiMemoryManager);
+            _aiMemoryManager.AddCrossReferenceTable(peopleCRT);
+
+            var locationsCRT = new AIMemoryCrossReferenceTable("locations").Build(_aiMemoryManager);
+            _aiMemoryManager.AddCrossReferenceTable(locationsCRT);     
+
+            var topicsCRT = new AIMemoryCrossReferenceTable("topics").Build(_aiMemoryManager);
+            _aiMemoryManager.AddCrossReferenceTable(topicsCRT);
+        }
+
+        public AIMemoryCrossReferenceTable Get(string name)
+        {
+            return _aiMemoryManager.GetCrossReferenceTable(name);
+        }
+    } 
+
+    public class AIMemoryCrossReferenceTable 
+    {
+        public AIMemoryCrossReferenceTable(string name)
+        {
+            this.Id = ObjectId.NewObjectId();
+            this.Name = name;
+        }
+
+        public LiteDB.ObjectId Id { get; set; }
+
+        public string Name { get; set; }
+
+        public Dictionary<string, List<string>> Entries { get; set; } = new Dictionary<string, List<string>>();
+
+        public void AddReference(string key, string mid)
+        {
+            var kk = key.ToLowerInvariant();
+            if (this.Entries.ContainsKey(kk))
+                this.Entries[kk].Add(mid);
+            else
+                this.Entries[kk] = new List<string>() { mid };
+        }
+
+        public AIMemoryCrossReferenceTable Build(AIMemoryManager aiManager)
+        {
+            foreach (var ai in aiManager.GetAll())
+                if (ai.AIMetaData.MetaData.ContainsKey(this.Name) && ai.AIMetaData.MetaData[this.Name].Count > 0)
+                    foreach (var v in ai.AIMetaData.MetaData[this.Name])
+                        this.AddReference(v, ai.MID);
+            return this;
+        }
+
+        [BsonIgnore]
+        public List<string> SortedKeys => this.Entries.Keys.OrderBy(k => k).ToList();
     }
 
     /// <summary>

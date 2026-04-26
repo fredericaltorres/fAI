@@ -27,6 +27,25 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
+        public void CreateCrossReferenceTables()
+        {
+            var aiManager = new AIMemoryManager(@"C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db");
+
+            var CRTManager = new AIMemoryCrossReferenceTableManager(aiManager);
+            CRTManager.Sync();
+
+            var peopleCRT = CRTManager.Get("people");
+            Assert.True(peopleCRT.Entries.Count > 0);
+
+            var locationsCRT = CRTManager.Get("locations");
+            Assert.True(locationsCRT.Entries.Count > 0);
+
+            var topicsCRT = CRTManager.Get("locations");
+            Assert.True(topicsCRT.Entries.Count > 0);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void BeatlesSimilaritySearch()
         {
             var records = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Beetles.All\Beatles.All.json");

@@ -79,9 +79,44 @@ namespace fAI
             return r;
         }
 
-        public void Add(AIMemory d, string openAiKey = null)
+        public void AddCrossReferenceTable(AIMemoryCrossReferenceTable d)
         {
-            ComputeEmbeddingsAndMetaData(d, openAiKey);
+            var e = GetCrossReferenceTable(d.Name);
+            if(e != null)
+                DeleteCrossReferenceTable(d.Id);
+
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
+                col.Insert(d);
+            }
+        }
+
+        public AIMemoryCrossReferenceTable GetCrossReferenceTable(string name)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
+                var results = col.Query().Where(x => x.Name == name).ToList();
+                if (results.Count > 0)
+                    return results[0];
+                else
+                    return null;
+            }
+        }
+
+        public void DeleteCrossReferenceTable(ObjectId id)
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
+                col.Delete(id);
+            }
+        }
+
+        public void Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
+        {
+            ComputeEmbeddingsAndMetaData(d, embeddingsApiKey:openAiKey, llmApiKey: llmApiKey);
 
             d.Init();
 
