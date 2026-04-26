@@ -79,6 +79,16 @@ namespace fAI
             return r;
         }
 
+        public IEnumerable<AIMemoryCrossReferenceTable> GetAllCrossReferenceTable()
+        {
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
+                var l = col.Query().ToEnumerable();
+                return l.ToList();
+            }
+        }
+
         public void AddCrossReferenceTable(AIMemoryCrossReferenceTable d)
         {
             var e = GetCrossReferenceTable(d.Name);
@@ -105,6 +115,17 @@ namespace fAI
             }
         }
 
+        public void DeleteAllCrossReferenceTable()
+        {
+            var all = GetAllCrossReferenceTable();
+            using (var db = new LiteDatabase(this.FileName))
+            {
+                var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
+                foreach (var crt in all)
+                    col.Delete(crt.Id);
+            }
+        }
+
         public void DeleteCrossReferenceTable(ObjectId id)
         {
             using (var db = new LiteDatabase(this.FileName))
@@ -112,6 +133,27 @@ namespace fAI
                 var col = db.GetCollection<AIMemoryCrossReferenceTable>(nameof(AIMemoryCrossReferenceTable));
                 col.Delete(id);
             }
+        }
+
+        public string GenerateReportCrossReferenceTable(AIMemoryCrossReferenceTable d)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"# Cross Reference Table: {d.Name}");
+            sb.AppendLine($"- Total Entries: {d.Entries.Count}");
+            sb.AppendLine();
+            foreach (var entry in d.Entries)
+            {
+                sb.AppendLine($"## {entry.Key}");
+                foreach(var v in entry.Value) 
+                {
+                    var aiMemory = GetFromId(new ObjectId(v));
+                    if (aiMemory != null)
+                    {
+                        sb.AppendLine($"- Title: {aiMemory.Title}");
+                    }
+                }
+            }
+            return sb.ToString();
         }
 
         public void Add(AIMemory d, string openAiKey = null, string llmApiKey = null)

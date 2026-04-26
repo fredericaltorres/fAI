@@ -27,7 +27,7 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
-        public void CreateCrossReferenceTables()
+        public void CreateCrossReferenceTables_Sync()
         {
             var aiManager = new AIMemoryManager(@"C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db");
 

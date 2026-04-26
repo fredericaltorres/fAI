@@ -27,8 +27,12 @@ namespace fAI
 
         public void Sync ()
         {
+            _aiMemoryManager.DeleteAllCrossReferenceTable();
+
             var peopleCRT = new AIMemoryCrossReferenceTable("people").Build(_aiMemoryManager);
             _aiMemoryManager.AddCrossReferenceTable(peopleCRT);
+            var markdownReport = _aiMemoryManager.GenerateReportCrossReferenceTable(peopleCRT);
+
 
             var locationsCRT = new AIMemoryCrossReferenceTable("locations").Build(_aiMemoryManager);
             _aiMemoryManager.AddCrossReferenceTable(locationsCRT);     
