@@ -88,14 +88,15 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var embeddings = d.Embeddings;
+                //var embeddings = d.Embeddings;
                 col.Insert(d.PrepareForSaving());
-                d.Embeddings = embeddings; // Restore the original list after saving
-                d.__embeddingsBuffer = null; // Clear the buffer after saving
+                //d.Embeddings = embeddings; // Restore the original list after saving
+                //d.__embeddingsBuffer = null; // Clear the buffer after saving
             }
         }
 
         public bool __simulate_embedding_computation__ = false;
+        public bool __simulate_metatdata_computation__ = false;
 
         public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.5-flash";
 
@@ -115,9 +116,16 @@ namespace fAI
         {
             try
             {
-                var client = new GenericAI(ApiKey: llmApiKey);
-                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
-                d.AIMetaData = medataDictionary;
+                if (__simulate_metatdata_computation__)
+                {
+                    d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() };
+                }
+                else
+                {
+                    var client = new GenericAI(ApiKey: llmApiKey);
+                    var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
+                    d.AIMetaData = medataDictionary;
+                }
                 return true;
             }
             catch (Exception ex)
@@ -156,10 +164,10 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var embeddings = d.Embeddings;
+                //var embeddings = d.Embeddings;
                 col.Update(d.PrepareForSaving());
-                d.Embeddings = embeddings; // Restore the original list after saving
-                d.__embeddingsBuffer = null; // Clear the buffer after saving
+                //d.Embeddings = embeddings; // Restore the original list after saving
+                //d.__embeddingsBuffer = null; // Clear the buffer after saving
             }
         }
 
@@ -265,15 +273,16 @@ namespace fAI
             return am2;
         }
 
-        public List<AIMemory> GetAll()
+        public IEnumerable<AIMemory> GetAll()
         {
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var l = col.Query().ToList();
-                foreach (var m in l)
-                    m.PrepareAfterLoading();
-                return l;
+                var l = col.Query().ToEnumerable();
+                return l.ToList();
+                //foreach (var m in l)
+                //    m.PrepareAfterLoading();
+                //return l;
             }
         }
 

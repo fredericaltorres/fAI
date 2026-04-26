@@ -22,7 +22,7 @@ namespace fAI.Tests
         public AIMemoryUnitTests()
         {
             DeleteFile(TestDBName);
-            //DeleteFile(BeatlesTestDBName);
+            DeleteFile(BeatlesTestDBName);
         }
 
         [Fact()]
@@ -31,19 +31,21 @@ namespace fAI.Tests
         {
             var records = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Beetles.All\Beatles.All.json");
             var aiManager = new AIMemoryManager(BeatlesTestDBName);
+            aiManager.__simulate_metatdata_computation__ = true;
             if (!File.Exists(BeatlesTestDBName))
             {
                 foreach (var record in records)
                 {
-                    var aiMemory = new AIMemory()
+                    aiManager.Add(new AIMemory()
                     {
                         Text = record.Text,
                         Title = record.Id,
                         Embeddings = record.Embedding,
-                    };
-                    aiManager.Add(aiMemory);
+                    });
                 }
             }
+
+            aiManager.__simulate_metatdata_computation__ = false;
 
             //var vectorToSearch = SimilaritySearchEngine.ToVector(@"sad people in church");
             // var vectorToSearchStr = string.Join(",", vectorToSearch);

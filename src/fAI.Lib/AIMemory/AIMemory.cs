@@ -38,8 +38,8 @@ namespace fAI
 
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
-        [JsonIgnore]
-        public byte[] __embeddingsBuffer { get; set; }
+        //[JsonIgnore]
+        //public byte[] __embeddingsBuffer { get; set; }
 
         [BsonIgnore]
         public int TextLength => this.Text?.Length ?? 0;
@@ -64,21 +64,21 @@ namespace fAI
             
         {
             this.ModifiedDate = DateTime.UtcNow;
-            if (Embeddings != null && Embeddings.Count > 0)
-            {
-                __embeddingsBuffer = __ZipEmbeddings();
-                Embeddings = null; // Clear the original list to save space
-            }
+            //if (Embeddings != null && Embeddings.Count > 0)
+            //{
+            //    __embeddingsBuffer = __ZipEmbeddings();
+            //    Embeddings = null; // Clear the original list to save space
+            //}
             return this;
         }
 
         internal AIMemory PrepareAfterLoading()
         {
-            if (__embeddingsBuffer != null && __embeddingsBuffer.Length > 0)
-            {
-                __UnzipEmbeddings(__embeddingsBuffer);
-                __embeddingsBuffer = null; // Clear the buffer after loading
-            }
+            //if (__embeddingsBuffer != null && __embeddingsBuffer.Length > 0)
+            //{
+            //    __UnzipEmbeddings(__embeddingsBuffer);
+            //    __embeddingsBuffer = null; // Clear the buffer after loading
+            //}
             return this;
         }
 
