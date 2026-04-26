@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
 
@@ -34,17 +35,27 @@ namespace fAI.Tests
             var CRTManager = new AIMemoryCrossReferenceTableManager(aiManager);
             CRTManager.Sync();
 
+            var sbReport = new StringBuilder();
+            sbReport.AppendLine("# Cross Reference Table Report - WinSpeak.AIMemory.test.1.db").AppendLine();
+
             var peopleCRT = CRTManager.Get("people");
             Assert.True(peopleCRT.Entries.Count > 0);
             var peopleCRTReport = aiManager.GenerateReportCrossReferenceTable(peopleCRT);
+            sbReport.AppendLine(peopleCRTReport);
 
             var locationsCRT = CRTManager.Get("locations");
             Assert.True(locationsCRT.Entries.Count > 0);
             var locationsCRTReport = aiManager.GenerateReportCrossReferenceTable(locationsCRT);
+            sbReport.AppendLine(locationsCRTReport);
 
             var topicsCRT = CRTManager.Get("topics");
             Assert.True(topicsCRT.Entries.Count > 0);
             var topicsCRTReport = aiManager.GenerateReportCrossReferenceTable(topicsCRT);
+            sbReport.AppendLine(topicsCRTReport);
+
+            var fileReportMd = @"C:\Users\ftorres\Dropbox\MARKDOWN\USERNOTES\CrossReferenceTables.Report.md";
+            File.Delete(fileReportMd);
+            File.WriteAllText(fileReportMd, sbReport.ToString());
         }
 
         [Fact()]

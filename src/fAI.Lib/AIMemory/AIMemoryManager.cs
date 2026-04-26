@@ -138,7 +138,7 @@ namespace fAI
         public string GenerateReportCrossReferenceTable(AIMemoryCrossReferenceTable d)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"# Cross Reference Table: {d.Name}");
+            sb.AppendLine($"## Cross Reference Table: {d.Name}");
             sb.AppendLine($"- Total Entries: {d.Entries.Count}");
             sb.AppendLine();
             foreach (var entry in d.Entries)
