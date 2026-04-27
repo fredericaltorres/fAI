@@ -346,7 +346,7 @@ namespace fAI
 
                     am.ForEach(m =>
                     {
-                        HttpBase.Trace($"Search score {m.Score}, title: {m.Title}", this);
+                        HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this);
                     });
 
                     return am;

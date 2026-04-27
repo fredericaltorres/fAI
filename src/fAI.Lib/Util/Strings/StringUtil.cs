@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,6 +8,11 @@ namespace fAI.Util.Strings
 {
     public static class StringUtil
     {
+        public static List<string> GetCommonElements(List<string> l1, List<string> l2)
+        {
+            return l1.Intersect(l2).ToList();
+        }
+
         public static string CapitalizeWords(string input)
         {
             if (string.IsNullOrEmpty(input))
