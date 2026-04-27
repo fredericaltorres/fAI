@@ -333,7 +333,7 @@ namespace fAI
             public HybridSearchResultType Type { get; set; } = HybridSearchResultType.Undefined;
             public AIMemorys Bm25Results { get; set; }
             public AIMemorys SemanticResults { get; set; }
-            public AIMemorys FinalResults { get; set; }
+            public AIMemorys RRFResults { get; set; }
             public bool Succeeded => Exception == null;
             public Exception Exception { get; set; }
 
@@ -344,15 +344,15 @@ namespace fAI
 
                 sb.AppendLine().AppendLine($"{this.Bm25Results.Count} BM25 Results");
                 foreach(var z in this.Bm25Results)
-                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
+                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
 
                 sb.AppendLine().AppendLine($"{this.SemanticResults.Count} Semantic Results");
                 foreach (var z in this.SemanticResults)
-                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
+                    sb.AppendLine($"SEMA - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
 
-                sb.AppendLine().AppendLine($"{this.FinalResults.Count} Final Results");
-                foreach (var z in this.FinalResults)
-                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
+                sb.AppendLine().AppendLine($"{this.RRFResults.Count} Final Results");
+                foreach (var z in this.RRFResults)
+                    sb.AppendLine($"RRF  - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
 
                 sb.AppendLine("");
                 return sb.ToString();
@@ -382,7 +382,7 @@ namespace fAI
 
                     //results = bm25.WithinXPercentOfMaxScore(results.ToList(), 10); // Get only the 10 10% of the results that are closest to the max score
                     var bm25ResultIds = bm25Results.Select(rr => rr.BM25ID).ToList();
-                    z.Bm25Results = new AIMemorys(bm25Results.Cast<AIMemory>().ToList(), clone: true);
+                    z.Bm25Results = new AIMemorys(bm25Results.Cast<AIMemory>().ToList(), clone: true); // Do it now the Score property is the BM25 one
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: minimumScore,
@@ -399,10 +399,8 @@ namespace fAI
                         }
                     }
 
-                    var rrfResults = new AIMemorys(sResults.OrderByDescending(s => s.RRFScore).ToList());
-                    z.FinalResults = rrfResults;
+                    z.RRFResults = new AIMemorys(sResults.OrderByDescending(ss => ss.RRFScore).ToList());
                     z.SemanticResults = sResults;
-                    
                     z.Type = HybridSearchResultType.Hybrid;
                 }
                 else

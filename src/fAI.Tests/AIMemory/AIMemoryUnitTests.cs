@@ -59,10 +59,10 @@ namespace fAI.Tests
 
             var HybridSearchResults = aiManager.HybridSearch("Dr Mark Rounds", vectorToSearch, minimumScore: 0.25f, scoreToNotApplyRefining: 0.3f, scoreToNotApplyRefiningTopK: 3);
             Assert.True(HybridSearchResults.Succeeded, "Hybrid search succeeded");
-            Assert.True(HybridSearchResults.FinalResults.Count > 0, "results found for 'Dr Mark Rounds'");
+            Assert.True(HybridSearchResults.RRFResults.Count > 0, "results found for 'Dr Mark Rounds'");
 
             TraceBm25Score(HybridSearchResults.GetInformation());
-            HybridSearchResults.FinalResults.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+            HybridSearchResults.RRFResults.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
 
         [Fact()]
