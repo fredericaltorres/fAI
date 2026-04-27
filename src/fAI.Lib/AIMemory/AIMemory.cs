@@ -86,7 +86,7 @@ namespace fAI
     /// https://www.litedb.org/docs/getting-started/
     /// C:\DVT\LiteDB.Studio\LiteDB.Studio\bin\Debug\LiteDB.Studio.exe
     /// </summary>
-    public class AIMemory
+    public class AIMemory: IBm25Document
     {
         [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
@@ -112,9 +112,12 @@ namespace fAI
         public int TextLength => this.Text?.Length ?? 0;
 
         [BsonIgnore]
-        public float Score { get; set; }
+        public double Score { get; set; }
         [BsonIgnore]
         public string MID => Id.ToString();
+
+        public string BM25ID { get => MID; set => throw new NotImplementedException(); }
+        //double IBm25Document.Score { get => Score; set => throw new NotImplementedException(); }
 
         public void Init()
         {

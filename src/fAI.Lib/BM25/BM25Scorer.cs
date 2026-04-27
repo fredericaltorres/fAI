@@ -15,14 +15,24 @@ namespace fAI
     //      int[]      ranked = bm25.GetTopN("cat sat", n: 5);
     // ─────────────────────────────────────────────────────────────────────────────
 
-
-    public class Bm25Document
+    public interface IBm25Document
     {
-        public string ID { get; set; }
+        string BM25ID { get; set; }    
+        string Text { get; set; }
+        double Score { get; set; }
+        string Title { get; set; }
+        string LocalFile { get; set; }
+    }
+
+    public class Bm25Document : IBm25Document
+    {
+        public string BM25ID { get; set; }
         public string Text { get; set; }
         public double Score { get; set; }
         public string Title { get; set; }
+        public string LocalFile { get; set; }
     }
+
 
 
     /// <summary>
@@ -57,7 +67,7 @@ namespace fAI
         /// <param name="documents">Corpus documents (plain text).</param>
         /// <param name="k1">Term-frequency saturation parameter (default 1.5).</param>
         /// <param name="b">Length-normalisation parameter (default 0.75).</param>
-        public Bm25(IList<Bm25Document> documents, double k1 = 1.5, double b = 0.75)
+        public Bm25(IList<IBm25Document> documents, double k1 = 1.5, double b = 0.75)
         {
             if (documents == null) throw new ArgumentNullException(nameof(documents));
             if (documents.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(documents));
@@ -91,7 +101,7 @@ namespace fAI
         /// Returns a BM25 score for every document in the corpus against the query.
         /// Higher is more relevant. Documents are indexed in corpus order.
         /// </summary>
-        public double[] GetScores(string query, IList<Bm25Document> documents)
+        public double[] GetScores(string query, IList<IBm25Document> documents)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
 
@@ -129,7 +139,7 @@ namespace fAI
         /// Returns the indices of the top-<paramref name="n"/> documents,
         /// sorted from most to least relevant.
         /// </summary>
-        public int[] GetTopN(string query, int n, IList<Bm25Document> documents)
+        public int[] GetTopN(string query, int n, IList<IBm25Document> documents)
         {
             if (n <= 0) throw new ArgumentOutOfRangeException(nameof(n), "n must be positive.");
 
@@ -145,7 +155,7 @@ namespace fAI
         /// <summary>
         /// Returns the BM25 score of a single document (by index) for the query.
         /// </summary>
-        public double GetScore(string query, int documentIndex, IList<Bm25Document> documents)
+        public double GetScore(string query, int documentIndex, IList<IBm25Document> documents)
         {
             if ((uint)documentIndex >= (uint)_docCount)
                 throw new ArgumentOutOfRangeException(nameof(documentIndex));
@@ -166,7 +176,7 @@ namespace fAI
 
             return text
                 .ToLowerInvariant()
-                .Split(new[] { ' ', '\t', '\r', '\n', '.', ',', '!', '?', ';', ':', '-', '_', '(', ')' },
+                .Split(new[] { ' ', '\t', '\r', '\n', '.', ',', '!', '?', ';', ':', '-', '_', '(', ')', '|', '"', '\'', '+', '/', '*', '[', ']', '{', '}', '<', '>', '=', '@', '#', '$', '%', '^', '&','`'  },
                        StringSplitOptions.RemoveEmptyEntries);
         }
 
