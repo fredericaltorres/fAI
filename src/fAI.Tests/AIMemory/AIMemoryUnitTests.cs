@@ -32,10 +32,10 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void Basic_BM25()
         {
-            var corpus = new List<IBm25Document>
+            var corpus = new AIMemorys
             {
-                new Bm25Document { Text = "the cat sat on the mat" },   // doc 0 – contains 'cat'
-                new Bm25Document { Text = "the dog sat on the log" },   // doc 1 – no 'cat'
+                new AIMemory { Text = "the cat sat on the mat" },   // doc 0 – contains 'cat'
+                new AIMemory{ Text = "the dog sat on the log" },   // doc 1 – no 'cat'
             };
 
             var bm25 = new Bm25(corpus);
@@ -59,10 +59,10 @@ namespace fAI.Tests
 
             var HybridSearchResults = aiManager.HybridSearch("Dr Mark Rounds", vectorToSearch, minimumScore: 0.25f, scoreToNotApplyRefining: 0.3f, scoreToNotApplyRefiningTopK: 3);
             Assert.True(HybridSearchResults.Succeeded, "Hybrid search succeeded");
-            Assert.True(HybridSearchResults.RRFResults.Count > 0, "results found for 'Dr Mark Rounds'");
+            Assert.True(HybridSearchResults.Results.Count > 0, "results found for 'Dr Mark Rounds'");
 
             TraceBm25Score(HybridSearchResults.GetInformation());
-            HybridSearchResults.RRFResults.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+            HybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
 
         [Fact()]

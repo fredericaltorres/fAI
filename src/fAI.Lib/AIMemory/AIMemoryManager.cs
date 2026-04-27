@@ -401,29 +401,17 @@ namespace fAI
         {
             public string Query { get; set; }
             public HybridSearchResultType Type { get; set; } = HybridSearchResultType.Undefined;
-            public AIMemorys Bm25Results { get; set; }
-            public AIMemorys SemanticResults { get; set; }
-            public AIMemorys RRFResults { get; set; }
             public bool Succeeded => Exception == null;
             public Exception Exception { get; set; }
+            public RRF.RRFRanker RRFRanker { get; set; }
+            public AIMemorys Results { get; set; }
 
             public string GetInformation()
             {
                 var sb = new StringBuilder();
                 sb.AppendLine($"HybridSearchResult Type:{Type}, Query:{Query}" );
 
-                sb.AppendLine().AppendLine($"{this.Bm25Results.Count} BM25 Results");
-                foreach(var z in this.Bm25Results)
-                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
-
-                sb.AppendLine().AppendLine($"{this.SemanticResults.Count} Semantic Results");
-                foreach (var z in this.SemanticResults)
-                    sb.AppendLine($"SEMA - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
-
-                sb.AppendLine().AppendLine($"{this.RRFResults.Count} Final Results");
-                foreach (var z in this.RRFResults)
-                    sb.AppendLine($"RRF  - {z.MID} - {z.Score} [rrf:{z.RRFScore}, bm25:{z.Bm25Score}, sema:{z.SemanticScore}] - {z.Title} - ({z.LocalFile})");
-
+          
                 sb.AppendLine("");
                 return sb.ToString();
             }
@@ -445,7 +433,6 @@ namespace fAI
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results);
                 if (isBm25HasStrongResult)
                 {
-                    z.Bm25Results = bm25Results;
                     var ranker = new RRF.RRFRanker();
                     ranker.AddUpdateBm25Score(bm25Results);
 
@@ -456,14 +443,13 @@ namespace fAI
                         all: allAiMemories);
 
                     ranker.AddUpdateSemanticScore(sResults);
-                    var rrf = new AIMemorys(ranker.Rank().Cast<AIMemory>().ToList());
-                    z.RRFResults = rrf;
-                    z.SemanticResults = sResults;
+                    z.Results = new AIMemorys(ranker.Rank().Cast<AIMemory>().ToList());
+                    z.RRFRanker = ranker;
                     z.Type = HybridSearchResultType.Hybrid;
                 }
                 else
                 {
-                    z.SemanticResults = this.SimilaritySearch(embeddingsQuery,
+                    z.Results = this.SimilaritySearch(embeddingsQuery,
                        minimumScore: minimumScore,
                        scoreToNotApplyRefining: scoreToNotApplyRefining,
                        scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK);
