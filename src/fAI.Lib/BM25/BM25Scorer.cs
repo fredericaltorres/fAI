@@ -16,32 +16,30 @@ namespace fAI
     //      int[]      ranked = bm25.GetTopN("cat sat", n: 5);
     // ─────────────────────────────────────────────────────────────────────────────
 
-    public interface IBm25Document
-    {
-        string BM25ID { get; set; }    
-        string Text { get; set; }
-        double Score { get; set; }
-        string Title { get; set; }
-        string LocalFile { get; set; }
+    //public interface IBm25Document
+    //{
+    //    string BM25ID { get; set; }    
+    //    string Text { get; set; }
+    //    double Score { get; set; }
+    //    string Title { get; set; }
+    //    string LocalFile { get; set; }
 
 
-        double Bm25Score { get; set; }
-        double SemanticScore { get; set; }
-    }
+    //    double Bm25Score { get; set; }
+    //    double SemanticScore { get; set; }
+    //}
 
-    public class Bm25Document : IBm25Document
-    {
-        public string BM25ID { get; set; }
-        public string Text { get; set; }
-        public double Score { get; set; }
-        public string Title { get; set; }
-        public string LocalFile { get; set; }
+    //public class Bm25Document : IBm25Document
+    //{
+    //    public string BM25ID { get; set; }
+    //    public string Text { get; set; }
+    //    public double Score { get; set; }
+    //    public string Title { get; set; }
+    //    public string LocalFile { get; set; }
 
-        public double Bm25Score { get; set; }
-        public double SemanticScore { get; set; }
-    }
-
-
+    //    public double Bm25Score { get; set; }
+    //    public double SemanticScore { get; set; }
+    //}
 
     /// <summary>
     /// Okapi BM25 relevance scoring over a fixed document corpus.
@@ -79,7 +77,7 @@ namespace fAI
         /// <param name="documents">Corpus documents (plain text).</param>
         /// <param name="k1">Term-frequency saturation parameter (default 1.5).</param>
         /// <param name="b">Length-normalisation parameter (default 0.75).</param>
-        public Bm25(IList<IBm25Document> documents, double k1 = 1.5, double b = 0.75)
+        public Bm25(AIMemorys documents, double k1 = 1.5, double b = 0.75)
         {
             if (documents == null) throw new ArgumentNullException(nameof(documents));
             if (documents.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(documents));
@@ -113,7 +111,7 @@ namespace fAI
         /// Returns a BM25 score for every document in the corpus against the query.
         /// Higher is more relevant. Documents are indexed in corpus order.
         /// </summary>
-        public double[] GetScores(string query, IList<IBm25Document> documents)
+        public double[] GetScores(string query, AIMemorys documents)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
 
@@ -151,7 +149,7 @@ namespace fAI
         /// Returns the indices of the top-<paramref name="n"/> documents,
         /// sorted from most to least relevant.
         /// </summary>
-        public int[] GetTopN(string query, int n, IList<IBm25Document> documents)
+        public int[] GetTopN(string query, int n, AIMemorys documents)
         {
             if (n <= 0) throw new ArgumentOutOfRangeException(nameof(n), "n must be positive.");
 
@@ -167,7 +165,7 @@ namespace fAI
         /// <summary>
         /// Returns the BM25 score of a single document (by index) for the query.
         /// </summary>
-        public double GetScore(string query, int documentIndex, IList<IBm25Document> documents)
+        public double GetScore(string query, int documentIndex, AIMemorys documents)
         {
             if ((uint)documentIndex >= (uint)_docCount)
                 throw new ArgumentOutOfRangeException(nameof(documentIndex));
@@ -175,24 +173,24 @@ namespace fAI
             return GetScores(query, documents)[documentIndex];
         }
 
-        public double MaxScore(IList<IBm25Document> documents)
+        public double MaxScore(AIMemorys documents)
         {
             return documents.Max(d => d.Score);
         }
 
-        public IList<IBm25Document> WithinXPercentOfMaxScore(IList<IBm25Document> documents, int percent)
+        public IList<AIMemory> WithinXPercentOfMaxScore(AIMemorys documents, int percent)
         {
             var maxScore = MaxScore(documents);
             var threshold = maxScore - (maxScore * percent / 100);
             return documents.Where(d => d.Score >= threshold).ToList();
         }
 
-        public IList<IBm25Document> MinimumScore(IList<IBm25Document> documents, double miniumScore)
+        public AIMemorys MinimumScore(AIMemorys documents, double miniumScore)
         {
-            return documents.Where(d => d.Score >= miniumScore).ToList();
+            return new AIMemorys(documents.Where(d => d.Score >= miniumScore).ToList());
         }
 
-        public IList<IBm25Document> GetStrongScore(IList<IBm25Document> documents)
+        public IList<AIMemory> GetStrongScore(AIMemorys documents)
         {
             var s = MinimumScore(documents, Bm25.SCORE_STRONG_MATCH).ToList(); // Get only the results that have a score of at least 3.0
             return s.OrderByDescending(d => d.Score).ToList(); // Order the results by score, highest first

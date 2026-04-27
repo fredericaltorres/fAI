@@ -14,6 +14,75 @@ using JsonIgnore2Attribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 namespace fAI
 {
+    namespace RRF // Reciprocal Rank Fusion
+    {
+        public class RRFObject 
+        {
+            public string Id { get; set; } // Set by User
+            public object obj { get; set; } // Set by User
+            public float Bm25Score { get; set; }// Set by User
+            public float SemanticScore { get; set; }// Set by User
+
+            public float RRF_Bm25Score { get; set; } // Computed
+            public float RRF_SemanticScore { get; set; } // Computed
+            public float RRFScore { get; set; } = 0; // Computed
+        }
+
+        public class RRFRanker
+        {
+            public Dictionary<string, RRFObject> EntriesDictionary = new Dictionary<string, RRFObject>();
+
+            public void AddUpdateBm25Score(AIMemorys aIMemories)
+            {
+                foreach (var aim in aIMemories)
+                {
+                    var exists = this.EntriesDictionary.ContainsKey(aim.MID);
+                    if (!exists)
+                    {
+                        this.EntriesDictionary.Add(aim.MID, new RRFObject
+                        {
+                            Id = aim.MID,
+                            obj = aim,
+                        });
+                    }
+
+                    this.EntriesDictionary[aim.MID].Bm25Score = aim.Score;
+                }
+            }
+
+            public void AddUpdateSemanticScore(AIMemorys aIMemories)
+            {
+                foreach (var aim in aIMemories)
+                {
+                    var exists = this.EntriesDictionary.ContainsKey(aim.MID);
+                    if (!exists)
+                    {
+                        this.EntriesDictionary.Add(aim.MID, new RRFObject
+                        {
+                            Id = aim.MID,
+                            obj = aim,
+                        });
+                    }
+
+                    this.EntriesDictionary[aim.MID].SemanticScore= aim.Score;
+                }
+            }
+
+            public IEnumerable<object> Rank(float k = 60)
+            {
+                foreach (var entry in EntriesDictionary.Values)
+                {
+                    entry.RRF_Bm25Score = 1 / (k + entry.Bm25Score);
+                    entry.RRF_SemanticScore = 1 / (k + entry.SemanticScore);
+                    entry.RRFScore = entry.RRF_Bm25Score + entry.RRF_SemanticScore;
+                }
+                var entries = this.EntriesDictionary.Values.ToList();
+                var entriesOrdered = entries.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
+                return entriesOrdered;
+            }
+        }
+    }
+
     public enum PublishedDocumentInfoType
     {
         Undefined,
@@ -327,6 +396,7 @@ namespace fAI
             BM25Only,
             SemanticOnly,
         }
+
         public class HybridSearchResult
         {
             public string Query { get; set; }
@@ -371,18 +441,13 @@ namespace fAI
             try
             {
                 var allAiMemories = this.GetAll();
-                IList<IBm25Document> bm25Results = null;
+                AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results);
                 if (isBm25HasStrongResult)
                 {
-                    for (var i = 0; i < bm25Results.Count; i++) // Reciprocal Rank Fusion(RRF)
-                    {
-                        bm25Results[i].Bm25Score = 1 / (reciprocalRankFusionK + bm25Results[i].Score);
-                    }
-
-                    //results = bm25.WithinXPercentOfMaxScore(results.ToList(), 10); // Get only the 10 10% of the results that are closest to the max score
-                    var bm25ResultIds = bm25Results.Select(rr => rr.BM25ID).ToList();
-                    z.Bm25Results = new AIMemorys(bm25Results.Cast<AIMemory>().ToList(), clone: true); // Do it now the Score property is the BM25 one
+                    z.Bm25Results = bm25Results;
+                    var ranker = new RRF.RRFRanker();
+                    ranker.AddUpdateBm25Score(bm25Results);
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: minimumScore,
@@ -390,16 +455,9 @@ namespace fAI
                         scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK,
                         all: allAiMemories);
 
-                    for (var i = 0; i < bm25Results.Count; i++) // Reciprocal Rank Fusion(RRF)
-                    {
-                        if (i < sResults.Count)
-                        {
-                            sResults[i].SemanticScore = 1 / (reciprocalRankFusionK + bm25Results[i].Score);
-                            sResults[i].RRFScore = sResults[i].SemanticScore + sResults[i].Bm25Score;
-                        }
-                    }
-
-                    z.RRFResults = new AIMemorys(sResults.OrderByDescending(ss => ss.RRFScore).ToList());
+                    ranker.AddUpdateSemanticScore(sResults);
+                    var rrf = new AIMemorys(ranker.Rank().Cast<AIMemory>().ToList());
+                    z.RRFResults = rrf;
                     z.SemanticResults = sResults;
                     z.Type = HybridSearchResultType.Hybrid;
                 }
@@ -419,15 +477,14 @@ namespace fAI
             return z;
         }
 
-        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out IList<IBm25Document> bm25Results, double reciprocalRankFusionK = 60)
+        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, double reciprocalRankFusionK = 60)
         {
-            var corpus = new List<IBm25Document>() as IList<IBm25Document>;
-            foreach (var aiM in allAiMemories)
-                corpus.Add(aiM);
-            var bm25 = new Bm25(corpus);
-            bm25.GetScores(query, corpus);
-            corpus = corpus.OrderByDescending(d => d.Score).ToList();
-            bm25Results = corpus;
+            var aiMemories = new AIMemorys(allAiMemories.ToList());
+            var bm25 = new Bm25(aiMemories);
+            bm25.GetScores(query, aiMemories);
+
+            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > 0).ToList());
+            bm25Results = new AIMemorys(aiMemories);
             var tmpR = bm25.GetStrongScore(bm25Results).ToList();
             return tmpR.Count > 0;
         }

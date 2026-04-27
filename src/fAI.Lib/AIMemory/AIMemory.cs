@@ -87,7 +87,7 @@ namespace fAI
     /// https://www.litedb.org/docs/getting-started/
     /// C:\DVT\LiteDB.Studio\LiteDB.Studio\bin\Debug\LiteDB.Studio.exe
     /// </summary>
-    public class AIMemory: IBm25Document
+    public class AIMemory 
     {
         [JsonIgnore]
         public LiteDB.ObjectId Id { get; set; }
@@ -113,14 +113,7 @@ namespace fAI
         public int TextLength => this.Text?.Length ?? 0;
 
         [BsonIgnore]
-        public double Score { get; set; }
-
-        [BsonIgnore]
-        public double Bm25Score { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
-        [BsonIgnore]
-        public double SemanticScore { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
-        [BsonIgnore]
-        public double RRFScore { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
+        public float Score { get; set; }
         
         [BsonIgnore]
         public string MID => (this.Id == null ? "undefined" : Id.ToString());
