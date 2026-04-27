@@ -114,6 +114,14 @@ namespace fAI
 
         [BsonIgnore]
         public double Score { get; set; }
+
+        [BsonIgnore]
+        public double Bm25Score { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
+        [BsonIgnore]
+        public double SemanticScore { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
+        [BsonIgnore]
+        public double RRFScore { get; set; } // Use to compute Reciprocal Rank Fusion (RRF)
+        
         [BsonIgnore]
         public string MID => (this.Id == null ? "undefined" : Id.ToString());
 

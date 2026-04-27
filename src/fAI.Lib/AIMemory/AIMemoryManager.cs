@@ -344,15 +344,15 @@ namespace fAI
 
                 sb.AppendLine().AppendLine($"{this.Bm25Results.Count} BM25 Results");
                 foreach(var z in this.Bm25Results)
-                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} - {z.Title} - {z.PublishedUrl}");
+                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
 
                 sb.AppendLine().AppendLine($"{this.SemanticResults.Count} Semantic Results");
                 foreach (var z in this.SemanticResults)
-                    sb.AppendLine($"SEMA - {z.MID} - {z.Score} - {z.Title} - {z.PublishedUrl}");
+                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
 
                 sb.AppendLine().AppendLine($"{this.FinalResults.Count} Final Results");
                 foreach (var z in this.FinalResults)
-                    sb.AppendLine($"FINA - {z.MID} - {z.Score} - {z.Title} - {z.PublishedUrl}");
+                    sb.AppendLine($"BM25 - {z.MID} - {z.Score} [{z.Bm25Score}, {z.SemanticScore}] - {z.Title} - {z.LocalFile}");
 
                 sb.AppendLine("");
                 return sb.ToString();
@@ -364,7 +364,8 @@ namespace fAI
             List<float> embeddingsQuery, 
             float minimumScore = 0.2f,
             float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            int scoreToNotApplyRefiningTopK = 3)
+            int scoreToNotApplyRefiningTopK = 3, 
+            double reciprocalRankFusionK = 60)
         {
             var z = new HybridSearchResult() { Query = query };
             try
@@ -374,6 +375,11 @@ namespace fAI
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results);
                 if (isBm25HasStrongResult)
                 {
+                    for (var i = 0; i < bm25Results.Count; i++) // Reciprocal Rank Fusion(RRF)
+                    {
+                        bm25Results[i].Bm25Score = 1 / (reciprocalRankFusionK + bm25Results[i].Score);
+                    }
+
                     //results = bm25.WithinXPercentOfMaxScore(results.ToList(), 10); // Get only the 10 10% of the results that are closest to the max score
                     var bm25ResultIds = bm25Results.Select(rr => rr.BM25ID).ToList();
                     z.Bm25Results = new AIMemorys(bm25Results.Cast<AIMemory>().ToList(), clone: true);
@@ -384,10 +390,17 @@ namespace fAI
                         scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK,
                         all: allAiMemories);
 
-                    var similaritySearchResultIds = sResults.Select(rrr => rrr.MID).ToList();
-                    var finalIds = StringUtil.GetCommonElements(bm25ResultIds, similaritySearchResultIds);
-                    var finalAIMemories = allAiMemories.Where(m => finalIds.Contains(m.MID)).ToList();
-                    z.FinalResults = new AIMemorys(finalAIMemories);
+                    for (var i = 0; i < bm25Results.Count; i++) // Reciprocal Rank Fusion(RRF)
+                    {
+                        if (i < sResults.Count)
+                        {
+                            sResults[i].SemanticScore = 1 / (reciprocalRankFusionK + bm25Results[i].Score);
+                            sResults[i].RRFScore = sResults[i].SemanticScore + sResults[i].Bm25Score;
+                        }
+                    }
+
+                    var rrfResults = new AIMemorys(sResults.OrderByDescending(s => s.RRFScore).ToList());
+                    z.FinalResults = rrfResults;
                     z.SemanticResults = sResults;
                     
                     z.Type = HybridSearchResultType.Hybrid;
@@ -408,7 +421,7 @@ namespace fAI
             return z;
         }
 
-        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out IList<IBm25Document> bm25Results)
+        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out IList<IBm25Document> bm25Results, double reciprocalRankFusionK = 60)
         {
             var corpus = new List<IBm25Document>() as IList<IBm25Document>;
             foreach (var aiM in allAiMemories)
@@ -417,8 +430,8 @@ namespace fAI
             bm25.GetScores(query, corpus);
             corpus = corpus.OrderByDescending(d => d.Score).ToList();
             bm25Results = corpus;
-            bm25Results = bm25.GetStrongScore(bm25Results);
-            return bm25Results.Count > 0; // isBm25HasStrongResult
+            var tmpR = bm25.GetStrongScore(bm25Results).ToList();
+            return tmpR.Count > 0;
         }
 
         public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f, 

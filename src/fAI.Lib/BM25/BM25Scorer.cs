@@ -23,6 +23,10 @@ namespace fAI
         double Score { get; set; }
         string Title { get; set; }
         string LocalFile { get; set; }
+
+
+        double Bm25Score { get; set; }
+        double SemanticScore { get; set; }
     }
 
     public class Bm25Document : IBm25Document
@@ -32,6 +36,9 @@ namespace fAI
         public double Score { get; set; }
         public string Title { get; set; }
         public string LocalFile { get; set; }
+
+        public double Bm25Score { get; set; }
+        public double SemanticScore { get; set; }
     }
 
 
