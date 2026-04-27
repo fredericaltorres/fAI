@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace fAI
@@ -60,6 +61,10 @@ namespace fAI
 
         // ── Construction ─────────────────────────────────────────────────────────
 
+        public const double SCORE_NO_MATCH = 0.0;
+        public const double SCORE_WEAK_MATCH = 3.0;
+        public const double SCORE_STRONG_MATCH = 8.0;
+        public const double SCORE_VERY_STRONG_MATCH = 15.0;
 
         /// <summary>
         /// Builds BM25 index from a list of raw-text documents.
@@ -132,7 +137,7 @@ namespace fAI
             {
                 documents[i].Score = scores[i];
             }
-            return scores;
+            return scores.OrderByDescending(s => s).ToArray();
         }
 
         /// <summary>
@@ -161,6 +166,29 @@ namespace fAI
                 throw new ArgumentOutOfRangeException(nameof(documentIndex));
 
             return GetScores(query, documents)[documentIndex];
+        }
+
+        public double MaxScore(IList<IBm25Document> documents)
+        {
+            return documents.Max(d => d.Score);
+        }
+
+        public IList<IBm25Document> WithinXPercentOfMaxScore(IList<IBm25Document> documents, int percent)
+        {
+            var maxScore = MaxScore(documents);
+            var threshold = maxScore - (maxScore * percent / 100);
+            return documents.Where(d => d.Score >= threshold).ToList();
+        }
+
+        public IList<IBm25Document> MinimumScore(IList<IBm25Document> documents, double miniumScore)
+        {
+            return documents.Where(d => d.Score >= miniumScore).ToList();
+        }
+
+        public IList<IBm25Document> GetStrongScore(IList<IBm25Document> documents)
+        {
+            var s = MinimumScore(documents, Bm25.SCORE_STRONG_MATCH).ToList(); // Get only the results that have a score of at least 3.0
+            return s.OrderByDescending(d => d.Score).ToList(); // Order the results by score, highest first
         }
 
         // ── Internal helpers ─────────────────────────────────────────────────────
