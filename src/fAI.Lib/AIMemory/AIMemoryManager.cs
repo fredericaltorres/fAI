@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.Util.Strings;
 using fAI.VectorDB;
 using LiteDB;
 using Mistral.SDK.DTOs;
@@ -135,20 +136,32 @@ namespace fAI
             }
         }
 
-        public string GenerateReportCrossReferenceTable(AIMemoryCrossReferenceTable d)
+        private string LocalizePath(string p, string markdownRootFolder)
+        {
+            return p.Replace(markdownRootFolder, @".\").Replace(@"\\", @"\").Replace(@"\", @"/").Replace(@" ", @"%20");
+        }
+
+        private string GenerateLocalMarkdownLink(string p, string markdownRootFolder)
+        {
+            return $"[{Path.GetFileName(p)}]({LocalizePath(p, markdownRootFolder)})";
+        }
+
+        public string GenerateReportCrossReferenceTable(AIMemoryCrossReferenceTable d, string markdownRootFolder)
         {
             var sb = new StringBuilder();
+            sb.AppendLine($"---");
             sb.AppendLine($"## Cross Reference Table: {d.Name}");
             sb.AppendLine($"- Total Entries: {d.Entries.Count}");
+            sb.AppendLine($"---");
             sb.AppendLine();
             foreach (var entry in d.Entries)
             {
-                sb.AppendLine($"## {entry.Key}");
+                sb.AppendLine($"## {d.Name}:  {StringUtil.CapitalizeWords(entry.Key)}");
                 foreach(var v in entry.Value) 
                 {
                     var aiMemory = GetFromId(new ObjectId(v));
                     if (aiMemory != null)
-                        sb.AppendLine($"- Document: {aiMemory.Title}, {aiMemory.ModifiedDate.ToString("yyyy-MM-dd HH")}, mid[{aiMemory.MID}]");
+                        sb.AppendLine($"- Title: {aiMemory.Title}, {aiMemory.ModifiedDate.ToString("yyyy-MM-dd HH")}, {GenerateLocalMarkdownLink(aiMemory.LocalFile, markdownRootFolder)}");
                 }
             }
             return sb.ToString();

@@ -7,6 +7,22 @@ namespace fAI.Util.Strings
 {
     public static class StringUtil
     {
+        public static string CapitalizeWords(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            string[] words = input.Split(' ');
+
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].Length > 1)
+                    words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1);
+            }
+
+            return string.Join(" ", words);
+        }
+
         public static string SuperTrimComment(string input)
         {
             if (string.IsNullOrEmpty(input))
