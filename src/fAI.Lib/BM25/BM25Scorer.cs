@@ -140,7 +140,7 @@ namespace fAI
 
             for(int i = 0; i < _docCount; i++)
             {
-                documents[i].Score = scores[i];
+                documents[i].Score = scores[i] / 10f; /* Divide by 10 so the number are in the nsame range than the OpenAI Semantic search*/
             }
             return scores.OrderByDescending(s => s).ToArray();
         }
@@ -193,7 +193,7 @@ namespace fAI
             return new AIMemorys(documents.Where(d => d.Score >= miniumScore).ToList());
         }
 
-        public IList<AIMemory> GetStrongScore(AIMemorys documents, float percent = 20f)
+        public IList<AIMemory> GetStrongScore(AIMemorys documents, float percent = 50f)
         {
             var maxScore = MaxScore(documents);
             var threshold = maxScore - (maxScore * percent / 100f);

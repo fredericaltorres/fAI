@@ -81,7 +81,10 @@ namespace fAI
                     var id = entriesSortedForSemantic[rank].Id;
                     EntriesDictionary[id].RRFScore += (entriesSortedForSemantic[rank].SemanticScore * 1) / (k + rank + 1);
                 }
-                
+
+                foreach(var x in EntriesDictionary) // To make to score easier to read
+                    x.Value.RRFScore *= 100;
+
                 var entries2 = this.EntriesDictionary.Values.ToList();
                 foreach (var rrfo in entries2)
                     ReflectionHelper.SetProperty(rrfo.obj, "Score", rrfo.RRFScore);
