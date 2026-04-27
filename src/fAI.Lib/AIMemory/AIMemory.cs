@@ -116,13 +116,29 @@ namespace fAI
         [BsonIgnore]
         public string MID => Id.ToString();
 
+        [BsonIgnore]
         public string BM25ID { get => MID; set => throw new NotImplementedException(); }
-        //double IBm25Document.Score { get => Score; set => throw new NotImplementedException(); }
 
         public void Init()
         {
             this.Id = ObjectId.NewObjectId();
             this.CreateDate = DateTime.UtcNow;
+        }
+
+        public AIMemory Clone()
+        {
+            return new AIMemory
+            {
+                Type = this.Type,
+                PublishedUrl = this.PublishedUrl,
+                Title = this.Title,
+                Text = this.Text,
+                LocalFile = this.LocalFile,
+                CreateDate = this.CreateDate,
+                ModifiedDate = this.ModifiedDate,
+                AIMetaData = this.AIMetaData, // Note: This is a shallow copy. Consider deep copying if necessary.
+                Embeddings = this.Embeddings != null ? new List<float>(this.Embeddings) : null
+            };
         }
 
         public bool LocalFileExists() => !string.IsNullOrEmpty(LocalFile) && File.Exists(LocalFile);
