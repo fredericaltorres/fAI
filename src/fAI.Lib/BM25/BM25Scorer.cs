@@ -66,10 +66,10 @@ namespace fAI
 
         // ── Construction ─────────────────────────────────────────────────────────
 
-        public const float SCORE_NO_MATCH = 0.0f;
-        public const float SCORE_WEAK_MATCH = 3.0f;
-        public const float SCORE_STRONG_MATCH = 8.0f;
-        public const float SCORE_VERY_STRONG_MATCH = 15.0f;
+        //public const float SCORE_NO_MATCH = 0.0f;
+        //public const float SCORE_WEAK_MATCH = 3.0f;
+        //public const float SCORE_STRONG_MATCH = 8.0f;
+        //public const float SCORE_VERY_STRONG_MATCH = 15.0f;
 
         /// <summary>
         /// Builds BM25 index from a list of raw-text documents.
@@ -175,7 +175,10 @@ namespace fAI
 
         public float MaxScore(AIMemorys documents)
         {
-            return documents.Max(d => d.Score);
+            if(documents.Count > 0)
+                return documents.Max(d => d.Score);
+            else 
+                return 0f;
         }
 
         public IList<AIMemory> WithinXPercentOfMaxScore(AIMemorys documents, int percent)
@@ -190,9 +193,11 @@ namespace fAI
             return new AIMemorys(documents.Where(d => d.Score >= miniumScore).ToList());
         }
 
-        public IList<AIMemory> GetStrongScore(AIMemorys documents)
+        public IList<AIMemory> GetStrongScore(AIMemorys documents, float percent = 20f)
         {
-            var s = MinimumScore(documents, Bm25.SCORE_STRONG_MATCH).ToList(); // Get only the results that have a score of at least 3.0
+            var maxScore = MaxScore(documents);
+            var threshold = maxScore - (maxScore * percent / 100f);
+            var s = MinimumScore(documents, threshold).ToList(); // Get only the results that have a score of at least 3.0
             return s.OrderByDescending(d => d.Score).ToList(); // Order the results by score, highest first
         }
 

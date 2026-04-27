@@ -19,17 +19,19 @@ namespace fAI
         public class RRFObject 
         {
             public string Id { get; set; } // Set by User
+            public string Title { get; set; } // Set by User
+            public string LocalFile { get; set; } // Set by User
             public object obj { get; set; } // Set by User
             public float Bm25Score { get; set; }// Set by User
             public float SemanticScore { get; set; }// Set by User
 
-            public float RRF_Bm25Score { get; set; } // Computed
-            public float RRF_SemanticScore { get; set; } // Computed
+            //public float RRF_Bm25Score { get; set; } // Computed
+            //public float RRF_SemanticScore { get; set; } // Computed
             public float RRFScore { get; set; } = 0; // Computed
 
             public override string ToString()
             {
-                return $"Id: {Id}, Bm25Score: {Bm25Score}, SemanticScore: {SemanticScore}, RRF_Bm25Score: {RRF_Bm25Score}, RRF_SemanticScore: {RRF_SemanticScore}, RRFScore: {RRFScore}";
+                return $"Id: {Id}, Title: {Title}, Bm25Score: {Bm25Score}, SemanticScore: {SemanticScore}, RRFScore: {RRFScore}, LocalFile: ({LocalFile})";
             }
         }
 
@@ -43,13 +45,7 @@ namespace fAI
                 {
                     var exists = this.EntriesDictionary.ContainsKey(aim.MID);
                     if (!exists)
-                    {
-                        this.EntriesDictionary.Add(aim.MID, new RRFObject
-                        {
-                            Id = aim.MID,
-                            obj = aim,
-                        });
-                    }
+                        this.EntriesDictionary.Add(aim.MID, new RRFObject { Id = aim.MID, obj = aim, Title = aim.Title, LocalFile = aim.LocalFile });
 
                     this.EntriesDictionary[aim.MID].Bm25Score = aim.Score;
                 }
@@ -61,13 +57,7 @@ namespace fAI
                 {
                     var exists = this.EntriesDictionary.ContainsKey(aim.MID);
                     if (!exists)
-                    {
-                        this.EntriesDictionary.Add(aim.MID, new RRFObject
-                        {
-                            Id = aim.MID,
-                            obj = aim,
-                        });
-                    }
+                        this.EntriesDictionary.Add(aim.MID, new RRFObject { Id = aim.MID, obj = aim, Title = aim.Title, LocalFile = aim.LocalFile });
 
                     this.EntriesDictionary[aim.MID].SemanticScore= aim.Score;
                 }
@@ -75,14 +65,28 @@ namespace fAI
 
             public IEnumerable<object> Rank(float k = 60)
             {
-                foreach (var entry in EntriesDictionary.Values)
+                var entries = EntriesDictionary.Values.ToList();
+
+                var entriesSortedForBm25 = entries.OrderByDescending(e => e.Bm25Score).ToList();    
+                for(var rank = 0; rank < entriesSortedForBm25.Count; rank++)
                 {
-                    entry.RRF_Bm25Score = 1 / (k + entry.Bm25Score);
-                    entry.RRF_SemanticScore = 1 / (k + entry.SemanticScore);
-                    entry.RRFScore = entry.RRF_Bm25Score + entry.RRF_SemanticScore;
+                    var id = entriesSortedForBm25[rank].Id;
+                    
+                    EntriesDictionary[id].RRFScore += (entriesSortedForBm25[rank].Bm25Score * 1) / (k + rank + 1);
                 }
-                var entries = this.EntriesDictionary.Values.ToList();
-                var entriesOrdered = entries.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
+
+                var entriesSortedForSemantic = entries.OrderByDescending(e => e.SemanticScore).ToList();
+                for (var rank = 0; rank < entriesSortedForSemantic.Count; rank++)
+                {
+                    var id = entriesSortedForSemantic[rank].Id;
+                    EntriesDictionary[id].RRFScore += (entriesSortedForSemantic[rank].SemanticScore * 1) / (k + rank + 1);
+                }
+                
+                var entries2 = this.EntriesDictionary.Values.ToList();
+                foreach (var rrfo in entries2)
+                    ReflectionHelper.SetProperty(rrfo.obj, "Score", rrfo.RRFScore);
+
+                var entriesOrdered = entries2.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
                 return entriesOrdered;
             }
         }
@@ -415,18 +419,19 @@ namespace fAI
             {
                 var sb = new StringBuilder();
                 sb.AppendLine($"HybridSearchResult Type:{Type}, Query:{Query}" );
-                sb.AppendLine($"Rank");
 
-                foreach (var r in RRFRanker.EntriesDictionary)
+                if (Type == HybridSearchResultType.Hybrid)
                 {
-                    sb.AppendLine(r.ToString());
+                    sb.AppendLine($"Rank");
+                    foreach (var r in RRFRanker.EntriesDictionary)
+                        sb.AppendLine(r.Value.ToString());
+                    sb.AppendLine();
                 }
-
-                sb.AppendLine();
+                
                 sb.AppendLine($"AIMemory Results");
                 foreach (var rr in Results)
                 {
-                    sb.AppendLine($"Score: {rr.Score}, Title: {rr.Title}, ModifiedDate: {rr.ModifiedDate}");
+                    sb.AppendLine($"{rr.MID}, Score: {rr.Score}, Title: {rr.Title}, ModifiedDate: {rr.ModifiedDate}, LocalFile: ({rr.LocalFile})");
                 }
           
                 sb.AppendLine("");
@@ -484,10 +489,11 @@ namespace fAI
         {
             var aiMemories = new AIMemorys(allAiMemories.ToList());
             var bm25 = new Bm25(aiMemories);
-            bm25.GetScores(query, aiMemories);
-            bm25Results = new AIMemorys(aiMemories.Where(d => d.Score > 0).OrderByDescending(d => d.Score).ToList());
-            var tmpR = bm25.GetStrongScore(bm25Results).ToList();
-            return tmpR.Count > 0;
+            var scores = bm25.GetScores(query, aiMemories);
+            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > 0).OrderByDescending(d => d.Score).ToList());
+            bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories));
+            //var tmpR = bm25.GetStrongScore(bm25Results).ToList();
+            return bm25Results.Count > 0;
         }
 
         public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f, 
@@ -515,25 +521,14 @@ namespace fAI
             if(scoreToNotApplyRefining != -1)
             {
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).ToList();
-                if(aiMemoryWithHighScore.Count >= scoreToNotApplyRefiningTopK)
-                {
-                    var am = new AIMemorys();
-                    am.AddRange(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
-
-                    am.ForEach(m =>
-                    {
-                        HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this);
-                    });
-
-                    return am;
-                }
+                var am = new AIMemorys();
+                am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
+                am.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this); });
+                return am;
             }
 
             var am2 = ReFineResultWithDynamicScore(result);
-            am2.ForEach(m =>
-            {
-                HttpBase.Trace($"Search score {m.Score}, title: {m.Title}", this);
-            });
+            am2.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this); });
             return am2;
         }
 
@@ -603,3 +598,4 @@ namespace fAI
         }
     }
 }
+
