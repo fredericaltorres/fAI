@@ -26,6 +26,11 @@ namespace fAI
             public float RRF_Bm25Score { get; set; } // Computed
             public float RRF_SemanticScore { get; set; } // Computed
             public float RRFScore { get; set; } = 0; // Computed
+
+            public override string ToString()
+            {
+                return $"Id: {Id}, Bm25Score: {Bm25Score}, SemanticScore: {SemanticScore}, RRF_Bm25Score: {RRF_Bm25Score}, RRF_SemanticScore: {RRF_SemanticScore}, RRFScore: {RRFScore}";
+            }
         }
 
         public class RRFRanker
@@ -410,7 +415,19 @@ namespace fAI
             {
                 var sb = new StringBuilder();
                 sb.AppendLine($"HybridSearchResult Type:{Type}, Query:{Query}" );
+                sb.AppendLine($"Rank");
 
+                foreach (var r in RRFRanker.EntriesDictionary)
+                {
+                    sb.AppendLine(r.ToString());
+                }
+
+                sb.AppendLine();
+                sb.AppendLine($"AIMemory Results");
+                foreach (var rr in Results)
+                {
+                    sb.AppendLine($"Score: {rr.Score}, Title: {rr.Title}, ModifiedDate: {rr.ModifiedDate}");
+                }
           
                 sb.AppendLine("");
                 return sb.ToString();
@@ -468,9 +485,7 @@ namespace fAI
             var aiMemories = new AIMemorys(allAiMemories.ToList());
             var bm25 = new Bm25(aiMemories);
             bm25.GetScores(query, aiMemories);
-
-            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > 0).ToList());
-            bm25Results = new AIMemorys(aiMemories);
+            bm25Results = new AIMemorys(aiMemories.Where(d => d.Score > 0).OrderByDescending(d => d.Score).ToList());
             var tmpR = bm25.GetStrongScore(bm25Results).ToList();
             return tmpR.Count > 0;
         }
