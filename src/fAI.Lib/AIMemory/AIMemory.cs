@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using static DynamicSugar.DS;
 using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
@@ -114,7 +115,7 @@ namespace fAI
         [BsonIgnore]
         public double Score { get; set; }
         [BsonIgnore]
-        public string MID => Id.ToString();
+        public string MID => (this.Id == null ? "undefined" : Id.ToString());
 
         [BsonIgnore]
         public string BM25ID { get => MID; set => throw new NotImplementedException(); }
@@ -133,6 +134,7 @@ namespace fAI
                 PublishedUrl = this.PublishedUrl,
                 Title = this.Title,
                 Text = this.Text,
+                Score = this.Score,
                 LocalFile = this.LocalFile,
                 CreateDate = this.CreateDate,
                 ModifiedDate = this.ModifiedDate,
