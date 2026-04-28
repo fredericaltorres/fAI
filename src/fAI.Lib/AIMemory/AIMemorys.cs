@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace fAI
 {
@@ -22,6 +23,12 @@ namespace fAI
         }
         public AIMemorys() : base()
         {
+        }
+        public AIMemorys GetTopPercent(int percent)
+        {
+            var maxScore = this.Max(m => m.Score);
+            var threshold = maxScore - (maxScore * percent / 100.0);
+            return new AIMemorys(this.Where(m => m.Score >= threshold).ToList());
         }
     }
 }
