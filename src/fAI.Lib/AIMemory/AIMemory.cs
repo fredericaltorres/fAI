@@ -127,6 +127,11 @@ namespace fAI
             this.CreateDate = DateTime.UtcNow;
         }
 
+        public override string ToString()
+        {
+            return $"{MID}, Score: {Score}, Title: {Title}, ModifiedDate: {ModifiedDate}, LocalFile: ({LocalFile})";
+        }
+
         public AIMemory Clone()
         {
             return new AIMemory

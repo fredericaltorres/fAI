@@ -434,7 +434,7 @@ namespace fAI
                 sb.AppendLine($"AIMemory Results");
                 foreach (var rr in Results)
                 {
-                    sb.AppendLine($"{rr.MID}, Score: {rr.Score}, Title: {rr.Title}, ModifiedDate: {rr.ModifiedDate}, LocalFile: ({rr.LocalFile})");
+                    sb.AppendLine(rr.ToString());
                 }
           
                 sb.AppendLine("");
