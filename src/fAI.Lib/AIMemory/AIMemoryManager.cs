@@ -460,12 +460,14 @@ namespace fAI
                 {
                     var ranker = new RRF.RRFRanker();
                     ranker.AddUpdateBm25Score(bm25Results);
+                    
+                    var subAiMemories = allAiMemories.Where(m => bm25Results.Select(b => b.MID).Contains(m.MID)).ToList(); // Speed up the Semantic Search
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: minimumScore,
                         scoreToNotApplyRefining: scoreToNotApplyRefining,
                         scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK,
-                        all: allAiMemories);
+                        all: subAiMemories);
 
                     ranker.AddUpdateSemanticScore(sResults);
                     z.Results = new AIMemorys(ranker.Rank().Cast<AIMemory>().ToList());
