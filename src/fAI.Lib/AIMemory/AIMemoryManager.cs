@@ -31,7 +31,7 @@ namespace fAI
 
             public override string ToString()
             {
-                return $"Id: {Id}, Title: {Title}, Bm25Score: {Bm25Score}, SemanticScore: {SemanticScore}, RRFScore: {RRFScore}, LocalFile: ({LocalFile})";
+                return $"Id: {Id}, Scores [Bm25: {Bm25Score:0.000}, Semantic: {SemanticScore:0.000}, RRF: {RRFScore:0.000}], Title: {Title}, LocalFile: ({LocalFile})";
             }
         }
 
