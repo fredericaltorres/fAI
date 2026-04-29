@@ -13,6 +13,9 @@ namespace fAI
 
         public enum Voices
         {
+            marin ,
+            cedar,
+
             alloy,
             ash,
             ballad,

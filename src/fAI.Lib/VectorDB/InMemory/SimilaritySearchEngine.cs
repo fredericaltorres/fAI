@@ -45,10 +45,10 @@ namespace fAI.VectorDB
         }
 
         public static List<EmbeddingCommonRecord> SimilaritySearch(
-        List<float> queryVector,
-        List<EmbeddingCommonRecord> embeddingRecords,
-        int topK = 3,
-        double minimumScore = 0.75)
+            List<float> queryVector,
+            List<EmbeddingCommonRecord> embeddingRecords,
+            int topK = 3,
+            double minimumScore = 0.75)
         {
             if (queryVector == null || queryVector.Count == 0)
                 throw new ArgumentException("Query vector cannot be null or empty.");

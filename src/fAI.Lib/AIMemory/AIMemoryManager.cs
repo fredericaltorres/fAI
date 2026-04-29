@@ -499,9 +499,17 @@ namespace fAI
             return bm25Results.Count > 0;
         }
 
-        public AIMemorys SimilaritySearch(List<float> embeddingsQuery, float minimumScore = 0.2f, 
+        public AIMemorys SimilaritySearch(
+            List<float> embeddingsQuery, float minimumScore = 0.2f, 
+
+            // mode 0: default
+
+            // mode 1
             float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
             int scoreToNotApplyRefiningTopK = 3,
+
+            // mode 2
+            float topBestScorePercent = -1f, // If the best score is higher than this threshold, we will consider it as a strong match and we will not apply refining to improve performance, we just return the items
             IEnumerable<AIMemory> all = null
             )
         {
@@ -521,17 +529,29 @@ namespace fAI
                 }
             }
 
-            if(scoreToNotApplyRefining != -1)
+            // Mode 3, return the top X% best score
+            if (topBestScorePercent != -1f)
+            {
+                var bestScore = result.Select(r => (float)r.Score).DefaultIfEmpty(0).Max();
+                var threshHold = bestScore - (bestScore * topBestScorePercent / 100f);
+                var aiMemoryWithHighScore = result.Where(rr => rr.Score >= threshHold).ToList();
+                var am = new AIMemorys(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
+                return am;
+            }
+
+            // Mode 2, Return all score greater than the scoreToNotApplyRefining, Top K if there are too many
+            if (scoreToNotApplyRefining != -1)
             {
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).ToList();
                 var am = new AIMemorys();
                 am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
-                am.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this); });
+                am.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score:0.000} - {m.Title}", this); });
                 return am;
             }
 
+            // Mode 1, Default, return % of the best score based on the default established for open ai embedding model
             var am2 = ReFineResultWithDynamicScore(result);
-            am2.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score} - {m.Title}", this); });
+            am2.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score:0.000} - {m.Title}", this); });
             return am2;
         }
 
