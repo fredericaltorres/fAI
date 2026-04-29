@@ -384,5 +384,16 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
                 Assert.Equal("task", medataDictionary["type"].First());
             }
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ConvertPdfToMarkdown()
+        {
+            var client = new GenericAI();
+            var markDownText = client.Completions.ConvertPdfToMarkdown(@".\TestFiles\car policy.pdf");
+            Assert.Contains("9415857", markDownText);
+            Assert.Contains("ALICE TORRES", markDownText);
+            Assert.Contains("153 HIGHLAND ST APT 3", markDownText);
+        }
     }
 }

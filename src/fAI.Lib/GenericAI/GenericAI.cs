@@ -1,12 +1,16 @@
 ﻿using DynamicSugar;
 using fAI.Google;
 using fAI.Util.Strings;
+using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using static DynamicSugar.DS;
 using static fAI.GenericAI;
 using static fAI.GoogleAICompletions;
@@ -278,6 +282,123 @@ namespace fAI
                 OpenAI.Trace(new { model, duration = sw.ElapsedMilliseconds / 1000.0 }, this);
             }
         }
+
+        static string __ConvertPdfToMarkdown(string apiKey, string pdfFilePath, string model, string prompt)
+        {
+            const string ApiUrl = "https://api.anthropic.com/v1/messages";
+
+            // 1. Read and Base64-encode the PDF
+            byte[] pdfBytes = File.ReadAllBytes(pdfFilePath);
+            string base64Pdf = Convert.ToBase64String(pdfBytes);
+
+            // 2. Build the JSON request body manually using anonymous objects + Newtonsoft
+            var requestObject = new
+            {
+                model = model,
+                max_tokens = 8192,
+                messages = new[]
+                {
+                new
+                {
+                    role    = "user",
+                    content = new object[]
+                    {
+                        new
+                        {
+                            type   = "document",
+                            source = new
+                            {
+                                type       = "base64",
+                                media_type = "application/pdf",
+                                data       = base64Pdf
+                            }
+                        },
+                        new
+                        {
+                            type = "text",
+                            text = prompt
+                        }
+                    }
+                }
+            }
+            };
+
+            string jsonBody = JsonConvert.SerializeObject(requestObject);
+
+            // 3. Send request using HttpWebRequest (.NET 4.0 compatible)
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrl);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("x-api-key", apiKey);
+            request.Headers.Add("anthropic-version", "2023-06-01");
+
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonBody);
+            request.ContentLength = bodyBytes.Length;
+
+            using (Stream requestStream = request.GetRequestStream())
+            {
+                requestStream.Write(bodyBytes, 0, bodyBytes.Length);
+            }
+
+            // 4. Read the response
+            string responseJson;
+
+            try
+            {
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    responseJson = reader.ReadToEnd();
+                }
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    using (StreamReader reader = new StreamReader(ex.Response.GetResponseStream(), Encoding.UTF8))
+                    {
+                        string errorBody = reader.ReadToEnd();
+                        throw new Exception("API error: " + errorBody, ex);
+                    }
+                }
+                throw;
+            }
+
+            // 5. Parse and return the Markdown text using Newtonsoft.Json
+            JObject parsed = JObject.Parse(responseJson);
+            string result = (string)parsed["content"][0]["text"];
+
+            return result ?? string.Empty;
+        }
+
+        public string ConvertPdfToMarkdown(
+            string pdfFile,
+            string anthorpicApiKey = null,
+            string prompt = @"
+Extract all the text from this PDF and convert it to clean, well-structured Markdown.
+Follow these rules:
+- Use # for the document title, ## for sections, ### for subsections
+- Preserve tables using Markdown table syntax
+- Use **bold** and *italic* where appropriate
+- Use bullet points or numbered lists for list content
+- Preserve code blocks using ``` fences\n
+- Output ONLY the Markdown content, no preamble or explanation"
+           )
+        {
+            var model = Anthropic.GetModels().FirstOrDefault();
+            var sw = Stopwatch.StartNew();
+            if (anthorpicApiKey == null)
+                anthorpicApiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+
+            var markDownFile = __ConvertPdfToMarkdown(anthorpicApiKey, pdfFile, model, prompt);
+            sw.Stop();
+            return markDownFile;
+        }
+
+
+
+
+
 
         public class TextImprovementResult
         {
