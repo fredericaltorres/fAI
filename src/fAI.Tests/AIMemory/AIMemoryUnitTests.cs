@@ -77,8 +77,10 @@ namespace fAI.Tests
             Assert.Equal("69ed5b1cc937df0ad816c85b", hybridSearchResults.Results[1].MID);
             Assert.Equal("69ed5ac0c937df0ad816c84e", hybridSearchResults.Results[2].MID);
             Assert.Equal("69ed5b13c937df0ad816c85a", hybridSearchResults.Results[3].MID);
-
+            
+            var topResultInfo = hybridSearchResults.Results.GetTopPercentInfo(10);
             var topResult = hybridSearchResults.Results.GetTopPercent(10);
+
             Assert.Single(topResult);
             Assert.Equal("69efbb2dc937df0301b17cf0", topResult[0].MID);
 

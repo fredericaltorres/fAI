@@ -24,6 +24,16 @@ namespace fAI
         public AIMemorys() : base()
         {
         }
+
+        public string GetTopPercentInfo(int percent)
+        {
+            var maxScore = this.Max(m => m.Score);
+            var threshold = maxScore - (maxScore * percent / 100.0);
+            var count = new AIMemorys(this.Where(m => m.Score >= threshold).ToList()).Count;
+
+            return $"Top {percent}%, maxScore: {maxScore:0.000}, threshold: {threshold:0.000}, TotalCount: {this.Count}, NewCount: {count} ";
+        }
+
         public AIMemorys GetTopPercent(int percent)
         {
             var maxScore = this.Max(m => m.Score);
