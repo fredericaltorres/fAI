@@ -383,10 +383,17 @@ namespace fAI
             }
         }
 
-        private AIMemorys ReFineResultWithDynamicScore(AIMemorys docInfo)
+        public (float maxScore, float minimumScore) GetReFineResultWithDynamicScores(AIMemorys docInfo)
         {
             var maxScore = docInfo.ToArray().Select(rr => (float)rr.Score).DefaultIfEmpty(0).Max();
             var minimumScore = SimilaritySearchEngine.GetOpenAIEmbeddingDynamicScore(maxScore);
+            return (maxScore, minimumScore);
+        }
+
+        public AIMemorys ReFineResultWithDynamicScore(AIMemorys docInfo)
+        {
+            var (maxScore, minimumScore) = GetReFineResultWithDynamicScores(docInfo);
+
             var items = docInfo.Where(e => e.Score >= minimumScore).ToList();
             var r = new AIMemorys();
             r.AddRange(items);
@@ -499,7 +506,16 @@ namespace fAI
             return bm25Results.Count > 0;
         }
 
+        private void TraceAIMemorys(AIMemorys am, string text) 
+        {
+            var x = 0;
+            HttpBase.Trace(text, this);
+            am.ForEach((m) => { HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title}", this); });
+            HttpBase.Trace("", this);
+        }
+
         public AIMemorys SimilaritySearch(
+
             List<float> embeddingsQuery, float minimumScore = 0.2f, 
 
             // mode 0: default
@@ -529,6 +545,8 @@ namespace fAI
                 }
             }
 
+            var x = 0;
+
             // Mode 3, return the top X% best score
             if (topBestScorePercent != -1f)
             {
@@ -536,6 +554,8 @@ namespace fAI
                 var threshHold = bestScore - (bestScore * topBestScorePercent / 100f);
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= threshHold).ToList();
                 var am = new AIMemorys(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
+
+                TraceAIMemorys(am, $"topBestScorePercent: {topBestScorePercent}");
                 return am;
             }
 
@@ -545,13 +565,18 @@ namespace fAI
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).ToList();
                 var am = new AIMemorys();
                 am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
-                am.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score:0.000} - {m.Title}", this); });
+
+                TraceAIMemorys(am, $"scoreToNotApplyRefining: {scoreToNotApplyRefining}, scoreToNotApplyRefiningTopK: {scoreToNotApplyRefiningTopK}");
+
                 return am;
             }
 
             // Mode 1, Default, return % of the best score based on the default established for open ai embedding model
+            var (maxScore, minimumScore2) = GetReFineResultWithDynamicScores(result);
             var am2 = ReFineResultWithDynamicScore(result);
-            am2.ForEach(m => { HttpBase.Trace($"Search {m.MID} - {m.Score:0.000} - {m.Title}", this); });
+
+            TraceAIMemorys(am2, $"ReFineResultWithDynamicScore maxScore: {maxScore}, minimumScore: {minimumScore2}");
+
             return am2;
         }
 
