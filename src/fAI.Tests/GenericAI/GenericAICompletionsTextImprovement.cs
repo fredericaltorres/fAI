@@ -37,8 +37,9 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             var expectedWords = DS.List("alice", "insurance", "car");
             foreach (var model in GenericAI.GetModels())
             {
+                var model2 = "gpt-5.5";
                 var client = new GenericAI();
-                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model2);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
                 HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
             }

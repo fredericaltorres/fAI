@@ -419,7 +419,7 @@ Use the following rules to guide your improvements:
 - Do NOT use MARKDOWN formatting.
 - Insert a new line between paragraphs.
 - Do not add new section like 'Subject'.
- - If the following question is part of an email content, add at the end 'Thanks, sincerely Frederic Torres'.
+ - If the following question is part of an email content, add at the end 'Thanks, sincerely'.
  </rules>
  ===================================
             ",
