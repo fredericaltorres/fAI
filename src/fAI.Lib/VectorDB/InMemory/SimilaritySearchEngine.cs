@@ -15,13 +15,13 @@ namespace fAI.VectorDB
         {
             var minimumScore = 0f;
             if (bestScore > 0.7f)
-                minimumScore = bestScore * 0.4123f;
+                minimumScore = bestScore * 0.50f;
             else if (bestScore > 0.6f)
                 minimumScore = bestScore * 0.55f;
             else if (bestScore > 0.5f)
-                minimumScore = bestScore * 0.67f;
+                minimumScore = bestScore * 0.70f;
             else if (bestScore > 0.4f)
-                minimumScore = bestScore * 0.83f;
+                minimumScore = bestScore * 0.80f;
             else if (bestScore > 0.35f)
                 minimumScore = bestScore * 0.85f;
             else if (bestScore > 0.3f)
