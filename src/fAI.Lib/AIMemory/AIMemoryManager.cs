@@ -455,14 +455,16 @@ namespace fAI
             float minimumScore = 0.2f,
             float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
             int scoreToNotApplyRefiningTopK = 3, 
-            double reciprocalRankFusionK = 60)
+            double reciprocalRankFusionK = 60,
+            float bm25MinimumStringScore = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
+            )
         {
             var z = new HybridSearchResult() { Query = query };
             try
             {
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results);
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumStringScore: bm25MinimumStringScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
