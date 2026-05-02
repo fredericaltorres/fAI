@@ -590,12 +590,10 @@ namespace fAI
             // Mode 2, Return all score greater than the scoreToNotApplyRefining, Top K if there are too many
             if (scoreToNotApplyRefining != -1)
             {
-                var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).ToList();
+                var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).OrderByDescending(e => e.Score).ToList();
                 var am = new AIMemorys();
                 am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
-
                 TraceAIMemorys(am, $"scoreToNotApplyRefining: {scoreToNotApplyRefining}, scoreToNotApplyRefiningTopK: {scoreToNotApplyRefiningTopK}");
-
                 return am;
             }
 
