@@ -452,11 +452,12 @@ namespace fAI
         public HybridSearchResult HybridSearch(
             string query, 
             List<float> embeddingsQuery, 
-            float minimumScore = 0.2f,
-            float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            int scoreToNotApplyRefiningTopK = 3, 
-            double reciprocalRankFusionK = 60,
-            float bm25MinimumStringScore = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
+            float semanticMinimumScore = 0.2f,
+            float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
+            int semanticScoreToNotApplyRefiningTopK = 3, 
+            //double reciprocalRankFusionK = 60,
+            float bm25MinimumScore = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
+            float rrfMinimumScore = 2f  // Minimum RRF score to consider as a strong match
             )
         {
             var z = new HybridSearchResult() { Query = query };
@@ -464,16 +465,16 @@ namespace fAI
             {
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumStringScore: bm25MinimumStringScore);
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumStringScore: bm25MinimumScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
                     ranker.AddUpdateBm25Score(bm25Results);
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
-                        minimumScore: minimumScore,
-                        scoreToNotApplyRefining: scoreToNotApplyRefining,
-                        scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK,
+                        minimumScore: semanticMinimumScore,
+                        scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
+                        scoreToNotApplyRefiningTopK: semanticScoreToNotApplyRefiningTopK,
                         all: allAiMemories); // Similatiry search is executed on the all data set to also return record ignored by BM25 but has high semantic score
 
                     ranker.AddUpdateSemanticScore(sResults);
@@ -484,11 +485,13 @@ namespace fAI
                 else
                 {
                     z.Results = this.SimilaritySearch(embeddingsQuery,
-                       minimumScore: minimumScore,
-                       scoreToNotApplyRefining: scoreToNotApplyRefining,
-                       scoreToNotApplyRefiningTopK: scoreToNotApplyRefiningTopK);
+                       minimumScore: semanticMinimumScore,
+                       scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
+                       scoreToNotApplyRefiningTopK: semanticScoreToNotApplyRefiningTopK);
                     z.Type = HybridSearchResultType.SemanticOnly;
                 }
+                z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
+
             }
             catch (Exception ex)
             {
@@ -538,7 +541,7 @@ namespace fAI
         {
             var x = 0;
             HttpBase.Trace(text, this);
-            am.ForEach((m) => { HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title}", this); });
+            am.ForEach((m) => { HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this); });
             HttpBase.Trace("", this);
         }
 
@@ -583,7 +586,7 @@ namespace fAI
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= threshHold).ToList();
                 var am = new AIMemorys(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
 
-                TraceAIMemorys(am, $"topBestScorePercent: {topBestScorePercent}");
+                TraceAIMemorys(am, $"Semantic topBestScorePercent: {topBestScorePercent}");
                 return am;
             }
 
@@ -593,7 +596,7 @@ namespace fAI
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).OrderByDescending(e => e.Score).ToList();
                 var am = new AIMemorys();
                 am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
-                TraceAIMemorys(am, $"scoreToNotApplyRefining: {scoreToNotApplyRefining}, scoreToNotApplyRefiningTopK: {scoreToNotApplyRefiningTopK}");
+                TraceAIMemorys(am, $"Semantic scoreToNotApplyRefining: {scoreToNotApplyRefining}, scoreToNotApplyRefiningTopK: {scoreToNotApplyRefiningTopK}");
                 return am;
             }
 
@@ -601,7 +604,7 @@ namespace fAI
             var (maxScore, minimumScore2) = GetReFineResultWithDynamicScores(result);
             var am2 = ReFineResultWithDynamicScore(result);
 
-            TraceAIMemorys(am2, $"ReFineResultWithDynamicScore maxScore: {maxScore}, minimumScore: {minimumScore2}");
+            TraceAIMemorys(am2, $"Semantic ReFineResultWithDynamicScore maxScore: {maxScore}, minimumScore: {minimumScore2}");
 
             return am2;
         }

@@ -844,6 +844,10 @@
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ff94f88a-9cca-4a62-9bbc-6710e863e741..json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\Dr Henry Jekyll - Character Profile.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\JANE DOE, Back Issues.md" />
     <None Include="TestFiles\Skills\DataAnalysisAndInsights\SKILL.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
