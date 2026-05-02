@@ -438,7 +438,7 @@ namespace fAI
                     sb.AppendLine();
                 }
                 
-                sb.AppendLine($"AIMemory Results");
+                sb.AppendLine($"Final Hybrid Results");
                 foreach (var rr in Results)
                 {
                     sb.AppendLine(rr.ToString());

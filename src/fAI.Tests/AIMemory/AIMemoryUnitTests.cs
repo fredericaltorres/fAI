@@ -14,6 +14,8 @@ using System.Xml.Linq;
 using Xunit;
 using static fAI.AIMemoryManager;
 
+// copy "C:\Users\ftorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db" "C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db"
+
 namespace fAI.Tests
 {
     [Collection("Sequential")]
@@ -142,8 +144,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void CreateCrossReferenceTables_Sync()
         {
-            // copy "C:\Users\ftorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db" "C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db"
-            var aiManager = new AIMemoryManager(@"C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db");
+            var aiManager = new AIMemoryManager(TEST_DB);
             //var aiManager = new AIMemoryManager(@"C:\Users\ftorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
             var CRTManager = new AIMemoryCrossReferenceTableManager(aiManager);
             CRTManager.Sync();

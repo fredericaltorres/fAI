@@ -72,7 +72,7 @@ namespace fAI
         public AIMemoryCrossReferenceTable Build(AIMemoryManager aiManager)
         {
             foreach (var ai in aiManager.GetAll())
-                if (ai.AIMetaData.MetaData.ContainsKey(this.Name) && ai.AIMetaData.MetaData[this.Name].Count > 0)
+                if (ai.AIMetaData != null && ai.AIMetaData.MetaData.ContainsKey(this.Name) && ai.AIMetaData.MetaData[this.Name].Count > 0)
                     foreach (var v in ai.AIMetaData.MetaData[this.Name])
                         this.AddReference(v, ai.MID);
             return this;
