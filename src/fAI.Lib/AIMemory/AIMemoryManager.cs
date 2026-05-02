@@ -425,10 +425,10 @@ namespace fAI
             public RRF.RRFRanker RRFRanker { get; set; }
             public AIMemorys Results { get; set; }
 
-            public string GetInformation()
+            public string GetInformation(string query, float rrfMinimumScore = 2f)
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"HybridSearchResult Type:{Type}, Query:{Query}" );
+                sb.AppendLine($"HybridSearchResult Type:{Type}, rrfMinimumScore: {rrfMinimumScore}, Query:{query}" );
 
                 if (Type == HybridSearchResultType.Hybrid)
                 {
@@ -465,11 +465,13 @@ namespace fAI
             {
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumStringScore: bm25MinimumScore);
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreOrMode: bm25MinimumScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
                     ranker.AddUpdateBm25Score(bm25Results);
+
+                    
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: semanticMinimumScore,
@@ -512,28 +514,35 @@ namespace fAI
             return (float)Math.Sqrt(sumOfSquaredDiffs / values.Count);
         }
 
-        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
-            float minimumStringScore = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than 
+        private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
+            float minimumScoreOrMode = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than 
             )
         {
             var aiMemories = new AIMemorys(allAiMemories.ToList());
             var bm25 = new Bm25(aiMemories);
             var scores = bm25.GetScores(query, aiMemories);
-            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > 0).OrderByDescending(d => d.Score).ToList());
+            var bm25MiniScore = 0.5f;
+            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > bm25MiniScore).OrderByDescending(d => d.Score).ToList());
+            var minimumScoreOrModeStr = minimumScoreOrMode == -1 ? "Top 50%" : minimumScoreOrMode == -2 ? "Greater Than Std Deviation" : minimumScoreOrMode.ToString();
 
-            if (minimumStringScore == -1)
+            TraceAIMemorys(aiMemories, $"BM25(1): query: {query}");
+
+            if (minimumScoreOrMode == -1)
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: 50f /*default*/ ));
             }
-            else if (minimumStringScore == -2) // Return value greater than standard deviation 
+            else if (minimumScoreOrMode == -2) // Return value greater than standard deviation 
             {
                 var scores2 = aiMemories.Select(d => d.Score).ToList();
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: StandardDeviation(scores2)));
             }
             else
             {
-                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumStringScore));
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreOrMode));
             }
+
+            TraceAIMemorys(bm25Results, $"BM25(2): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
+
             return bm25Results.Count > 0;
         }
 
