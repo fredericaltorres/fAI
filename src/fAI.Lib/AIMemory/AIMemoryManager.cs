@@ -495,14 +495,40 @@ namespace fAI
             return z;
         }
 
-        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, double reciprocalRankFusionK = 60)
+
+        public static float StandardDeviation(List<float> values)
+        {
+            if (values == null || values.Count == 0)
+                throw new ArgumentException("List must not be null or empty.");
+
+            float mean = values.Average();
+            float sumOfSquaredDiffs = values.Sum(v => (v - mean) * (v - mean));
+
+            return (float)Math.Sqrt(sumOfSquaredDiffs / values.Count);
+        }
+
+        private static bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
+            float minimumStringScore = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than 
+            )
         {
             var aiMemories = new AIMemorys(allAiMemories.ToList());
             var bm25 = new Bm25(aiMemories);
             var scores = bm25.GetScores(query, aiMemories);
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > 0).OrderByDescending(d => d.Score).ToList());
-            bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories));
-            //var tmpR = bm25.GetStrongScore(bm25Results).ToList();
+
+            if (minimumStringScore == -1)
+            {
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: 50f /*default*/ ));
+            }
+            else if (minimumStringScore == -2) // Return value greater than standard deviation 
+            {
+                var scores2 = aiMemories.Select(d => d.Score).ToList();
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: StandardDeviation(scores2)));
+            }
+            else
+            {
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumStringScore));
+            }
             return bm25Results.Count > 0;
         }
 

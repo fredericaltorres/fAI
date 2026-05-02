@@ -193,10 +193,14 @@ namespace fAI
             return new AIMemorys(documents.Where(d => d.Score >= miniumScore).ToList());
         }
 
-        public IList<AIMemory> GetStrongScore(AIMemorys documents, float percent = 50f)
+        public IList<AIMemory> GetStrongScore(AIMemorys documents, float percent = 50f, float minimumScore = -1f)
         {
             var maxScore = MaxScore(documents);
             var threshold = maxScore - (maxScore * percent / 100f);
+
+            if(minimumScore != -1f)
+                threshold = minimumScore;
+
             var s = MinimumScore(documents, threshold).ToList(); // Get only the results that have a score of at least 3.0
             return s.OrderByDescending(d => d.Score).ToList(); // Order the results by score, highest first
         }
