@@ -63,7 +63,7 @@ namespace fAI
                 }
             }
 
-            public IEnumerable<object> Rank(float k = 60)
+            public IEnumerable<object> Rank(bool applyGapOutlierDetection = false, float k = 60)
             {
                 var entries = EntriesDictionary.Values.ToList();
 
@@ -88,6 +88,23 @@ namespace fAI
                 var entries2 = this.EntriesDictionary.Values.ToList();
                 foreach (var rrfo in entries2)
                     ReflectionHelper.SetProperty(rrfo.obj, "Score", rrfo.RRFScore);
+
+                entries2 = entries2.OrderByDescending(s => s.RRFScore).ToList();
+
+                if (applyGapOutlierDetection)
+                {
+                    var scores = entries2.Select(e => e.RRFScore);
+                    var gaps = scores.Zip(scores.Skip(1), (a, b) => a - b).ToList();
+                    // gaps = [0.1, 0.1, 1.5, 0.5]
+
+                    double meanGap = gaps.Average();               // 0.55
+                    double stdDev = AIMemoryManager.StandardDeviation(gaps);                 // ~0.6
+
+                    // Flag gap as significant if it exceeds mean + 1*stdDev
+                    double cutoffThreshold = meanGap + 1.0 * stdDev;
+                    int cutIndex = Array.FindIndex(gaps.ToArray(), g => g > cutoffThreshold);
+                    entries2 = entries2.Take(cutIndex + 1).ToList();
+                }
 
                 var entriesOrdered = entries2.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
                 return entriesOrdered;
@@ -471,8 +488,6 @@ namespace fAI
                     var ranker = new RRF.RRFRanker();
                     ranker.AddUpdateBm25Score(bm25Results);
 
-                    
-
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: semanticMinimumScore,
                         scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
@@ -514,6 +529,17 @@ namespace fAI
             return (float)Math.Sqrt(sumOfSquaredDiffs / values.Count);
         }
 
+        public static float StandardDeviation(List<double> values)
+        {
+            if (values == null || values.Count == 0)
+                throw new ArgumentException("List must not be null or empty.");
+
+            double mean = values.Average();
+            double sumOfSquaredDiffs = values.Sum(v => (v - mean) * (v - mean));
+
+            return (float)Math.Sqrt(sumOfSquaredDiffs / values.Count);
+        }
+
         private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
             float minimumScoreOrMode = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than 
             )
@@ -539,6 +565,12 @@ namespace fAI
             else
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreOrMode));
+                if(bm25Results.Count == 0) // minimumScoreOrMode is too high
+                {
+                    var retryTopPercent = 20f;
+                    Trace($"minimumScoreOrMode: {minimumScoreOrMode} is too low, retry with top {retryTopPercent}%");
+                    bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: retryTopPercent /*default*/ ));
+                }
             }
 
             TraceAIMemorys(bm25Results, $"BM25(2): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
@@ -552,6 +584,11 @@ namespace fAI
             HttpBase.Trace(text, this);
             am.ForEach((m) => { HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this); });
             HttpBase.Trace("", this);
+        }
+
+        private void Trace(string text)
+        {
+            HttpBase.Trace(text, this);
         }
 
         public AIMemorys SimilaritySearch(
