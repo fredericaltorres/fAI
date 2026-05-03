@@ -33,8 +33,13 @@ namespace fAI
             return this.data.Select(z => z.url).ToList();
         }
 
+        public List<string> _downloadImages = new List<string>();
+
         public List<string> DownloadImages(List<string> images = null)
         {
+            if(_downloadImages != null && _downloadImages.Count > 0)
+                return _downloadImages; // gpt5.5 mode
+
             if (images == null)
             {
                 images = new List<string>();

@@ -33,7 +33,7 @@ namespace fAI.Tests
         public void GenerateImage()
         {
             var i = new GenericAIImage();
-            DS.List("gpt-5.5", "dall-e-3" ).ForEach(model => 
+            DS.List("gpt-5.5","dall-e-3" ).ForEach(model => 
             {
                 var image = i.GenerateLocalFile(imagePrompt, model);
             });
