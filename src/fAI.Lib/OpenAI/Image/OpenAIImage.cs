@@ -41,6 +41,7 @@ namespace fAI
             high,
         }
 
+        // https://developers.openai.com/api/docs/guides/image-generation
         public ImageResponse GenerateGpt(string prompt, string model = "gpt-5.5", int imageCount = 1, ImageSize size = ImageSize._1024x1024, GenerateGptImageQuality quality = GenerateGptImageQuality.high)
         {
             OpenAI.Trace(new { prompt, model, size }, this);
