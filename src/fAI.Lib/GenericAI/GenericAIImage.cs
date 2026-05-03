@@ -34,7 +34,7 @@ namespace fAI
                 else
                     throw new Exception($"Image generation failed: {r.Exception}");
             }
-            else if (model == "gpt-5.5")
+            else if (model == "gpt-5.5" || model == "gpt-5.3" /* fast one*/)
             {
                 var client = new OpenAI(apiKey: base._key);
                 var r = client.Image.GenerateGpt(prompt, size: size, model: model);

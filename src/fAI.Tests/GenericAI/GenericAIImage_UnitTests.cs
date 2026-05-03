@@ -27,15 +27,15 @@ namespace fAI.Tests
             OpenAI.TraceOn = true;
         }
 
-        const string imagePrompt = "Generate an image of gray tabby cat hugging an otter with an orange scarf";
+        const string imagePrompt = "Generate an image of gay tabby cat hugging a woman with an orange scarf, in London 1875.";
         [Fact()]
         [TestBeforeAfter]
         public void GenerateImage()
         {
             var i = new GenericAIImage();
-            DS.List("gpt-5.5","dall-e-3" ).ForEach(model => 
+            DS.List("gpt-5.5", "dall-e-3" ).ForEach(model => 
             {
-                var image = i.GenerateLocalFile(imagePrompt, model);
+                var images = i.GenerateLocalFile(imagePrompt, model);
             });
         }
     }

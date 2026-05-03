@@ -28,12 +28,20 @@ namespace fAI
             _1024x1024,
             _1024x768,
             _1024x576,
-            _1792x1024,
-            _1024x1792,
+            _1792x1024, // Landscape
+            _1024x1792, // Portrait
             _1360x768,
         }
 
-        public ImageResponse GenerateGpt(string prompt, string model = "gpt-5.5", int imageCount = 1, ImageSize size = ImageSize._1024x1024)
+
+        public enum GenerateGptImageQuality
+        {
+            low,
+            medium,
+            high,
+        }
+
+        public ImageResponse GenerateGpt(string prompt, string model = "gpt-5.5", int imageCount = 1, ImageSize size = ImageSize._1024x1024, GenerateGptImageQuality quality = GenerateGptImageQuality.high)
         {
             OpenAI.Trace(new { prompt, model, size }, this);
             var r = new ImageResponse();
@@ -48,7 +56,11 @@ namespace fAI
                 input = prompt,
                 tools = new[]
                 {
-                    new { type = "image_generation",  action = "generate" }
+                    new { 
+                        type = "image_generation",  
+                        action = "generate",
+                        quality = quality.ToString(),
+                        size = size.ToString().Replace("_","") }
                 }
             };
 
