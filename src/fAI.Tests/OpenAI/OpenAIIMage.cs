@@ -29,7 +29,7 @@ they share in the story.
         {
            
             var client = new OpenAI();
-            var r = client.Image.Generate(prompt, size :  ImageSize._1792x1024);
+            var r = client.Image.GenerateDalle(prompt, size :  ImageSize._1792x1024);
             var pngFileNames = r.DownloadImages();
             Assert.True(pngFileNames.Count == 1);
             Assert.True(File.Exists(pngFileNames[0]));

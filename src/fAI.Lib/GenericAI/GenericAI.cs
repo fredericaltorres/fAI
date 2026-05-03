@@ -15,6 +15,7 @@ using static DynamicSugar.DS;
 using static fAI.GenericAI;
 using static fAI.GoogleAICompletions;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
+using static fAI.OpenAIImage;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
@@ -394,11 +395,6 @@ Follow these rules:
             sw.Stop();
             return markDownFile;
         }
-
-
-
-
-
 
         public class TextImprovementResult
         {

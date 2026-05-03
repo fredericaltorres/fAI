@@ -86,11 +86,11 @@ namespace fAIConsole
                 File.AppendAllText(masterPromptFile, $"## PROMPT[{verseIndex}::{imageIndex.ToString("000")}]{nl}{prompt}{nl}{nl}");
 
                 var client = new OpenAI();
-                var r = client.Image.Generate(prompt, size: ImageSize._1792x1024);
+                var r = client.Image.GenerateDalle(prompt, size: ImageSize._1792x1024);
                 var pngFileNames = r.DownloadImages(DS.List(destinationImage0));
                 var pngFileNamesAll = pngFileNames;
 
-                r = client.Image.Generate(prompt, size: ImageSize._1792x1024);
+                r = client.Image.GenerateDalle(prompt, size: ImageSize._1792x1024);
                 pngFileNames = r.DownloadImages(DS.List(destinationImage1));
                 pngFileNamesAll.AddRange(pngFileNames);
 

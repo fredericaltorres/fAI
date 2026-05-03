@@ -14,7 +14,7 @@ namespace fAI
             if(model == "dall-e-3")
             {
                 var client = new OpenAI(apiKey: base._key);
-                var r = client.Image.Generate(prompt, size: size);
+                var r = client.Image.GenerateDalle(prompt, size: size);
                 return r.GetUrls();
             }
             else
@@ -28,8 +28,17 @@ namespace fAI
             if (model == "dall-e-3")
             {
                 var client = new OpenAI(apiKey: base._key);
-                var r = client.Image.Generate(prompt, size: size);
+                var r = client.Image.GenerateDalle(prompt, size: size, model: model);
                 if(r.Success)
+                    return r.DownloadImages();
+                else
+                    throw new Exception($"Image generation failed: {r.Exception}");
+            }
+            else if (model == "gpt-5.5")
+            {
+                var client = new OpenAI(apiKey: base._key);
+                var r = client.Image.GenerateGpt(prompt, size: size, model: model);
+                if (r.Success)
                     return r.DownloadImages();
                 else
                     throw new Exception($"Image generation failed: {r.Exception}");

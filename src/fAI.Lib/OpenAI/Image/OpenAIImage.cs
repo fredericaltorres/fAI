@@ -1,6 +1,8 @@
 ﻿using NAudio.SoundFont;
 using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace fAI
 {
@@ -27,8 +29,62 @@ namespace fAI
             _1360x768,
         }
 
+        public ImageResponse GenerateGpt(string prompt, string model = "gpt-5.5", int imageCount = 1, ImageSize size = ImageSize._1024x1024)
+        {
+            OpenAI.Trace(new { prompt, model, size }, this);
+            var r = new ImageResponse();
+            var sw = Stopwatch.StartNew();
+
+            var body = new
+            {
+                model = model,
+                input = prompt,
+                tools = new[]
+                {
+                    new { type = "image_generation",  action = "generate" }
+                }
+            };
+
+            var response = InitWebClient().POST(__url, JsonConvert.SerializeObject(body));
+            sw.Stop();
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                using (var doc = JsonDocument.Parse(response.Text)) 
+                { 
+                    if (doc.RootElement.TryGetProperty("output", out var outputArray))
+                    {
+                        foreach (var item in outputArray.EnumerateArray())
+                        {
+                            if (item.TryGetProperty("content", out var contentArray))
+                            {
+                                foreach (var contentItem in contentArray.EnumerateArray())
+                                {
+                                    if (contentItem.TryGetProperty("type", out var typeProp) && typeProp.GetString() == "output_image")
+                                    {
+                                        var base64 = contentItem.GetProperty("image_base64").GetString();
+                                        var bytes = Convert.FromBase64String(base64);
+                                        System.IO.File.WriteAllBytes("cat_otter.png", bytes);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                r.Stopwatch = sw;
+                return r;
+            }
+            else
+            {
+                return new ImageResponse
+                {
+                    Exception = new ChatGPTException($"{response.Exception.Message}", response.Exception)
+                };
+            }
+        }
+
         // https://platform.openai.com/docs/api-reference/images/create
-        public ImageResponse Generate(string prompt, string model = "dall-e-3", int imageCount = 1, ImageSize size = ImageSize._1024x1024)
+        public ImageResponse GenerateDalle(string prompt, string model = "dall-e-3", int imageCount = 1, ImageSize size = ImageSize._1024x1024)
         {
             OpenAI.Trace(new { prompt, model, size }, this);
 
