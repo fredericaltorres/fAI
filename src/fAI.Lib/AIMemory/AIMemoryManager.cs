@@ -108,18 +108,14 @@ namespace fAI
 
                 TraceEntries(entries2, "Ranked:");
 
-                if (applyGapOutlierDetection)
+                if (applyGapOutlierDetection && entries2.Count > 1)
                 {
                     var scores = entries2.Select(e => e.RRFScore);
                     var gaps = scores.Zip(scores.Skip(1), (a, b) => a - b).ToList();
-                    // gaps = [0.1, 0.1, 1.5, 0.5]
-
-                    double meanGap = gaps.Average();               // 0.55
-                    double stdDev = AIMemoryManager.StandardDeviation(gaps);                 // ~0.6
-
-                    // Flag gap as significant if it exceeds mean + 1*stdDev
-                    double cutoffThreshold = meanGap + 1.0 * stdDev;
-                    int cutIndex = Array.FindIndex(gaps.ToArray(), g => g > cutoffThreshold);
+                    float meanGap = gaps.Average(); 
+                    float stdDev = AIMemoryManager.StandardDeviation(gaps);
+                    float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
+                    int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
                     if (cutIndex < 0)
                         cutIndex = 0;
                     entries2 = entries2.Take(cutIndex + 1).ToList();
@@ -494,7 +490,7 @@ namespace fAI
             float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
             int semanticScoreToNotApplyRefiningTopK = 3, 
             //double reciprocalRankFusionK = 60,
-            float bm25MinimumScore = 1, // CHANGE ==> BEFORE --> -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
+            float bm25MinimumScore = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float rrfMinimumScore = 2f,  // Minimum RRF score to consider as a strong match
             bool rffApplyGapOutlierDetection = true
             )
@@ -585,6 +581,24 @@ namespace fAI
             {
                 var scores2 = aiMemories.Select(d => d.Score).ToList();
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: StandardDeviation(scores2)));
+            }
+            else if (minimumScoreOrMode == -3) // ApplyGapOutlierDetection
+            {
+                //Gap Outlier Detection(Most Robust)
+                //Treat the gaps themselves as a distribution and find statistical outliers:
+
+                bm25Results = new AIMemorys(aiMemories);
+
+                var scores3 = bm25Results.Select(e => e.Score);
+                var gaps = scores3.Zip(scores3.Skip(1), (a, b) => a - b).ToList();
+                float meanGap = gaps.Average();
+                float stdDev = AIMemoryManager.StandardDeviation(gaps);
+                float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
+                int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
+                if (cutIndex < 0)
+                    cutIndex = 0;
+                bm25Results = new AIMemorys(bm25Results.ToList().Take(cutIndex + 1).ToList());
+                TraceAIMemorys(bm25Results, $"BM25(GapOutlierDetection): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
             }
             else
             {
