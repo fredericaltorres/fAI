@@ -4,37 +4,6 @@ using static fAI.HumeAISpeech;
 
 namespace fAI
 {
-    public enum GenericAIAudioProvider
-    {
-        HUME_AI,
-        OPEN_AI
-    }
-    public partial class GenericAIAudio : HttpBase
-    {
-        public GenericAIAudio(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
-        {
-        }
-
-        public string Create(GenericAIAudioProvider provider,
-            string input, string voiceName, string mp3FileName = null)
-        {
-            OpenAI.Trace(new { input, voiceName }, this);
-            switch (provider)
-            {
-                case GenericAIAudioProvider.HUME_AI:
-                    var humeClient = new HumeAI(apiKey: base._key);
-                    return humeClient.Audio.Speech.Create(input, voiceName, mp3FileName);
-                case GenericAIAudioProvider.OPEN_AI:
-                    var openAIClient = new OpenAI(apiKey: base._key);
-                    return openAIClient.Audio.Speech.Create(input, voiceName, mp3FileName);
-                default:
-                    throw new Exception($"Audio provider {provider} not supported.");
-            }
-            return input;
-        }
-
-        
-    }
 
     public partial class GenericAIImage : HttpBase
     {

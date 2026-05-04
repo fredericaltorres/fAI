@@ -45,14 +45,14 @@ namespace fAI.Tests
         {
             var client = new HumeAI();
             var voices = client.Audio.Speech.GetVoices(pageSize: 100);
-            var eVoices= voices.Where(v => v.tags.LANGUAGE.Contains("English"));
+            var eVoices = voices.Where(v => v.tags.LANGUAGE != null && v.tags.LANGUAGE.Contains("English")).OrderBy(vv =>vv.name);
             var sb = new System.Text.StringBuilder();
             foreach (var voice in eVoices)
             {
-                sb.AppendLine($@" HUME_VOICES[""{voice.id}""] = ""{voice.name}"" ");
+                sb.AppendLine($@" HUME_VOICES[""{voice.id}""] = ""{voice.name}""; ");
             }
             var code = sb.ToString();
-            Assert.Equal(101, voices.Count);
+            Assert.Equal(103, voices.Count);
         }
 
         [Fact()]
