@@ -1,45 +1,40 @@
 ﻿using NAudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 namespace fAI
 {
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    //  BM25 — Okapi BM25 relevance scoring
-    //  Target: .NET Standard 2.0
-    //
-    //  Usage:
-    //      var corpus = new List<string> { "the cat sat on the mat", "the dog sat on the log" };
-    //      var bm25   = new Bm25(corpus);
-    //      float[]   scores = bm25.GetScores("cat sat");
-    //      int[]      ranked = bm25.GetTopN("cat sat", n: 5);
-    // ─────────────────────────────────────────────────────────────────────────────
+    public class WordCounter
+    {
+        private Dictionary<string, int> _wordCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-    //public interface IBm25Document
-    //{
-    //    string BM25ID { get; set; }    
-    //    string Text { get; set; }
-    //    float Score { get; set; }
-    //    string Title { get; set; }
-    //    string LocalFile { get; set; }
+        public void AddWord(string word)
+        {
+            if (string.IsNullOrWhiteSpace(word))
+                throw new ArgumentException("Word cannot be null or empty.", nameof(word));
 
+            if (_wordCounts.ContainsKey(word))
+                _wordCounts[word]++;
+            else
+                _wordCounts[word] = 1;
+        }
 
-    //    float Bm25Score { get; set; }
-    //    float SemanticScore { get; set; }
-    //}
+        public int GetCount(string word) => _wordCounts.TryGetValue(word, out int count) ? count : 0;
 
-    //public class Bm25Document : IBm25Document
-    //{
-    //    public string BM25ID { get; set; }
-    //    public string Text { get; set; }
-    //    public float Score { get; set; }
-    //    public string Title { get; set; }
-    //    public string LocalFile { get; set; }
+        public IReadOnlyDictionary<string, int> GetAllWords() => _wordCounts;
 
-    //    public float Bm25Score { get; set; }
-    //    public float SemanticScore { get; set; }
-    //}
+        public string GetSummary()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Word Counts:");
+            sb.AppendLine(new string('-', 25));
+            foreach (var entry in _wordCounts)
+                sb.AppendLine($"  {entry.Key,-15} : {entry.Value}");
+            return sb.ToString();
+        }
+    }
 
     /// <summary>
     /// Okapi BM25 relevance scoring over a fixed document corpus.
@@ -59,17 +54,26 @@ namespace fAI
         private readonly Dictionary<string, int[]> _docFrequency;  // term → doc-freq list
         private readonly Dictionary<string, float> _idfCache;      // term → IDF score
 
+        public List<string> GetIndexReport()
+        {
+            var r = new List<string>();
+            foreach (var kv in _docFrequency)
+            {
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine($"Term: {kv.Key}");
+                sb.AppendLine($" IDF: {_idfCache[kv.Key]}");
+                sb.AppendLine($" DocFs: {string.Join(",", kv.Value)}");
+                r.Add(sb.ToString());
+            }
+            return r;
+        }
+
         /// <summary>
         /// Number of documents in the corpus.
         /// </summary>
         public int DocumentCount => _docCount;
 
         // ── Construction ─────────────────────────────────────────────────────────
-
-        //public const float SCORE_NO_MATCH = 0.0f;
-        //public const float SCORE_WEAK_MATCH = 3.0f;
-        //public const float SCORE_STRONG_MATCH = 8.0f;
-        //public const float SCORE_VERY_STRONG_MATCH = 15.0f;
 
         /// <summary>
         /// Builds BM25 index from a list of raw-text documents.
@@ -242,6 +246,8 @@ namespace fAI
                     freqs[d]++;
                 }
             }
+
+            
 
             return index;
         }
