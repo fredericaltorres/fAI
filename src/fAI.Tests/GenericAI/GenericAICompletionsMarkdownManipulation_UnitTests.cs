@@ -307,6 +307,22 @@ public static void Main()
             htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate03);
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_LoadWithFrontLoaded()
+        {
+            var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md");
+            var title = "The Ultimate Guide to Markdown Front Matter";
+            Assert.Equal(title, MarkDownDocument.Metadata.Title);
+            Assert.Equal(title, MarkDownDocument.Metadata.Name);
+            Assert.Equal("An in-depth look at how to use front matter in Markdown files to enhance documentation and project clarity.", MarkDownDocument.Metadata.Description);
+            Assert.Equal("Jane Doe", MarkDownDocument.Metadata.Author);
+            Assert.Equal(new DateTime(2023,10,27), MarkDownDocument.Metadata.Date);
+            Assert.Equal("true", MarkDownDocument.Metadata.ExtraFields["published"]);
+            Assert.Equal("markdown, guide, metadata", MarkDownDocument.Metadata.Tags.Format().Replace(@"""",""));
+            Assert.Contains("**Repository URL:** [GitHub repository URL]", MarkDownDocument.Body);
+        }
+
         const string github_theme = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\themes\github.theme";
         const string csharp_lang = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\langDefs\csharp.lang";
 

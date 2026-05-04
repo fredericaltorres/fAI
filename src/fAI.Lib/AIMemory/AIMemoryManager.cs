@@ -568,7 +568,7 @@ namespace fAI
             var bm25 = new Bm25(aiMemories);
             var scores = bm25.GetScores(query, aiMemories);
             Trace($"BM25 - INDEX REPORT");
-            bm25.GetIndexReport().ForEach(r => Trace(r));
+            //bm25.GetIndexReport().ForEach(r => Trace(r));
 
             var bm25MiniScore = 0.5f;
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > bm25MiniScore).OrderByDescending(d => d.Score).ToList());

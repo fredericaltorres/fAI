@@ -537,6 +537,11 @@ namespace fAI
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(htmlFile) { UseShellExecute = true });
         }
 
+        public static MarkdownDocument LoadMarkdownFile(string filePath)
+        {
+            return  MarkdownLoader.Load(filePath);
+        }
+
         public static string RemoveMarkDownTick(string text)
         {
             var marker1 = "```markdown";
