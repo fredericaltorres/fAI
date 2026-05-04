@@ -217,7 +217,7 @@ namespace fAI
         {
             OpenAI.Trace(new {}, this);
             var wc = InitWebClient();
-            var body = new { provider = provider.ToString(), page_size = 100 };
+            var body = new { provider = provider.ToString(), page_size = pageSize };
             var response = wc.GET(_getVoiceListUrl+$"?provider={provider}&page_size={pageSize}&page_number={pageNumber}");
             if (response.Success)
             {

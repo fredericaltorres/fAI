@@ -5,7 +5,7 @@ namespace fAI
 {
     public class HumeAI : HttpBase
     {
-        public HumeAI(int timeOut = -1, string openAiKey = null, string openAiOrg = null)
+        public HumeAI(int timeOut = -1, string apiKey = null, string openAiOrg = null)
         {
             base._key = Environment.GetEnvironmentVariable("HUME_API_KEY");
             HttpBase._timeout = 60 * 4;
@@ -13,8 +13,8 @@ namespace fAI
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
-            if (openAiKey != null)
-                base._key = openAiKey;
+            if (apiKey != null)
+                base._key = apiKey;
         }
 
         HumeAIAudio _audio = null;
