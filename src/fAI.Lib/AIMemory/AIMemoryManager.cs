@@ -5,6 +5,7 @@ using LiteDB;
 using Mistral.SDK.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,21 @@ namespace fAI
 
         public class RRFRanker
         {
+            private void TraceEntries(List<RRFObject> entries, string text)
+            {
+                var x = 0;
+                Trace(text);
+                entries.ForEach((k) => { 
+                    HttpBase.Trace($" [{x++}] - {k.Id} - RRFScore: {k.RRFScore:0.000} - {k.Title} - ({k.LocalFile})", this); 
+                });
+                Trace("");
+            }
+
+            private void Trace(string text)
+            {
+                HttpBase.Trace(text, this);
+            }
+
             public Dictionary<string, RRFObject> EntriesDictionary = new Dictionary<string, RRFObject>();
 
             public void AddUpdateBm25Score(AIMemorys aIMemories)
@@ -71,7 +87,6 @@ namespace fAI
                 for(var rank = 0; rank < entriesSortedForBm25.Count; rank++)
                 {
                     var id = entriesSortedForBm25[rank].Id;
-                    
                     EntriesDictionary[id].RRFScore += (entriesSortedForBm25[rank].Bm25Score * 1) / (k + rank + 1);
                 }
 
@@ -91,6 +106,8 @@ namespace fAI
 
                 entries2 = entries2.OrderByDescending(s => s.RRFScore).ToList();
 
+                TraceEntries(entries2, "Ranked:");
+
                 if (applyGapOutlierDetection)
                 {
                     var scores = entries2.Select(e => e.RRFScore);
@@ -103,7 +120,11 @@ namespace fAI
                     // Flag gap as significant if it exceeds mean + 1*stdDev
                     double cutoffThreshold = meanGap + 1.0 * stdDev;
                     int cutIndex = Array.FindIndex(gaps.ToArray(), g => g > cutoffThreshold);
+                    if (cutIndex < 0)
+                        cutIndex = 0;
                     entries2 = entries2.Take(cutIndex + 1).ToList();
+
+                    TraceEntries(entries2, "applyGapOutlierDetection: true");
                 }
 
                 var entriesOrdered = entries2.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
@@ -473,8 +494,9 @@ namespace fAI
             float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
             int semanticScoreToNotApplyRefiningTopK = 3, 
             //double reciprocalRankFusionK = 60,
-            float bm25MinimumScore = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
-            float rrfMinimumScore = 2f  // Minimum RRF score to consider as a strong match
+            float bm25MinimumScore = 1, // CHANGE ==> BEFORE --> -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than )
+            float rrfMinimumScore = 2f,  // Minimum RRF score to consider as a strong match
+            bool rffApplyGapOutlierDetection = true
             )
         {
             var z = new HybridSearchResult() { Query = query };
@@ -495,7 +517,9 @@ namespace fAI
                         all: allAiMemories); // Similatiry search is executed on the all data set to also return record ignored by BM25 but has high semantic score
 
                     ranker.AddUpdateSemanticScore(sResults);
-                    z.Results = new AIMemorys(ranker.Rank().Cast<AIMemory>().ToList());
+
+                    var RANK_K = 60f;
+                    z.Results = new AIMemorys(ranker.Rank(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
                     z.RRFRanker = ranker;
                     z.Type = HybridSearchResultType.Hybrid;
                 }
@@ -581,9 +605,9 @@ namespace fAI
         private void TraceAIMemorys(AIMemorys am, string text) 
         {
             var x = 0;
-            HttpBase.Trace(text, this);
+            Trace(text);
             am.ForEach((m) => { HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this); });
-            HttpBase.Trace("", this);
+            Trace("");
         }
 
         private void Trace(string text)
