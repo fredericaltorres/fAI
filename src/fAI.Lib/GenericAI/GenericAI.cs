@@ -636,7 +636,7 @@ You must respond strictly with a JSON object representing your classification.
 The JSON object must have a single key named ""classification"" holding the selected category as a string value. 
 Do not include markdown formatting (like ```json) in the output.
 
-If the phrase contains the words (""list"" or ""research"" or ""find"" or ""determine"") and is asking for information, 
+If the phrase contains the words (""list"" or ""research"" or ""find"" or ""determine""or ""tell"") and is asking for information, 
 classify it as a ""Question"" even if it is not in a traditional question format.
 
 Examples:
