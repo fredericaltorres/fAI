@@ -49,7 +49,7 @@ namespace fAI
                         //TMP_DIC["b89de4b1-3df6-4e4f-a054-9aed4351092d"] = "Campfire Narrator";
                         //TMP_DIC["97fe9008-8584-4d56-8453-bd8c7ead3663"] = "Caring Mother";
                         //TMP_DIC["33045fd9-8010-43f6-b6b0-da3fbf326c29"] = "Casual Podcast Host";
-                        TMP_DIC["4b305eef-58eb-455c-a154-be40c3129d0b"] = "Charismatic Politician Man";
+                        TMP_DIC["4b305eef-58eb-455c-a154-be40c3129d0b"] = "Charismatic Politician Man"; // OBAMA
                         //TMP_DIC["3f636d17-44c7-4872-93d1-0c8f51c916a3"] = "Charming Cowgirl";
                         //TMP_DIC["dd39f331-a857-4c20-908a-1f0c56b0a79b"] = "Cheerful Canadian";
                         //TMP_DIC["d8de3d55-9fcc-4aad-ac93-131141602717"] = "Cheerful Irishman";
