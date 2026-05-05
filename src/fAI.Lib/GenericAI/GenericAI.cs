@@ -20,6 +20,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
+ 
     public class GenericAI : HttpBase
     {
         public class Contents : List<ContentMessage>
@@ -620,6 +621,8 @@ Use the following rules to guide your summarization:
             }
         }
 
+
+
         public PhraseType DetermineTheTypeOfPhrase(
            string text,
            string model,
@@ -657,11 +660,25 @@ Output:
             "
            )
         {
+
+            var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
+            var cacheR = AIPromptCache.Instance.Get(cacheEntry);
+            if(cacheR != null)
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
+                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
+                return phraseType;
+            }
+
+
             systemPrompt = systemPrompt.Template(new { text }, "[", "]");
             var sw = Stopwatch.StartNew();
             var (json, _) = Create(text, systemPrompt, model);
             sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
+
+            AIPromptCache.Instance.Add(cacheEntry, o.PhraseType.ToString());
+
             return o.PhraseType;
         }
 
