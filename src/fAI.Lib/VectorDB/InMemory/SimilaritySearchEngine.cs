@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static fAI.GenericAICompletions;
 
 namespace fAI.VectorDB
 {
@@ -34,10 +35,19 @@ namespace fAI.VectorDB
 
         public static List<float> ToVector(string text, string apiKey = null)
         {
+            var cacheEntry = $"VectorSearch: {text}";
+            var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry) ;
+            if (cacheR != null && cacheR.Embedding != null && cacheR.Embedding.Count > 0)
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
+                return cacheR.Embedding;
+            }
+
             var client = new OpenAI(apiKey: apiKey);
             var r = client.Embeddings.Create(text);
             if (r.Success)
             {
+                AIPromptCache.Instance.Add(cacheEntry, r.Data[0].Embedding);
                 return r.Data[0].Embedding;
             }
             else

@@ -112,13 +112,16 @@ namespace fAI
                 {
                     var scores = entries2.Select(e => e.RRFScore);
                     var gaps = scores.Zip(scores.Skip(1), (a, b) => a - b).ToList();
-                    float meanGap = gaps.Average(); 
-                    float stdDev = AIMemoryManager.StandardDeviation(gaps);
-                    float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
-                    int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
-                    if (cutIndex < 0)
-                        cutIndex = 0;
-                    entries2 = entries2.Take(cutIndex + 1).ToList();
+                    if (gaps.Count > 0)
+                    {
+                        float meanGap = gaps.Average();
+                        float stdDev = AIMemoryManager.StandardDeviation(gaps);
+                        float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
+                        int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
+                        if (cutIndex < 0)
+                            cutIndex = 0;
+                        entries2 = entries2.Take(cutIndex + 1).ToList();
+                    }
 
                     TraceEntries(entries2, "applyGapOutlierDetection: true");
                 }
@@ -150,15 +153,7 @@ namespace fAI
 
         public static List<float> ToVector(string text, string openAiKey = null)
         {
-            OpenAI client = null;
-            client =  string.IsNullOrEmpty(openAiKey) ? new OpenAI() : new OpenAI(apiKey: openAiKey);
-            var r = client.Embeddings.Create(text);
-            if (r.Success)
-            {
-                return r.Data[0].Embedding;
-            }
-            else
-                return null;
+            return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
        
         public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
@@ -594,13 +589,16 @@ namespace fAI
 
                 var scores3 = bm25Results.Select(e => e.Score);
                 var gaps = scores3.Zip(scores3.Skip(1), (a, b) => a - b).ToList();
-                float meanGap = gaps.Average();
-                float stdDev = AIMemoryManager.StandardDeviation(gaps);
-                float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
-                int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
-                if (cutIndex < 0)
-                    cutIndex = 0;
-                bm25Results = new AIMemorys(bm25Results.ToList().Take(cutIndex + 1).ToList());
+                if (gaps.Count > 0)
+                {
+                    float meanGap = gaps.Average();
+                    float stdDev = AIMemoryManager.StandardDeviation(gaps);
+                    float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
+                    int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
+                    if (cutIndex < 0)
+                        cutIndex = 0;
+                    bm25Results = new AIMemorys(bm25Results.ToList().Take(cutIndex + 1).ToList());
+                }
                 TraceAIMemorys(bm25Results, $"BM25(GapOutlierDetection): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
             }
             else

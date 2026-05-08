@@ -662,7 +662,7 @@ Output:
         {
 
             var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
-            var cacheR = AIPromptCache.Instance.Get(cacheEntry);
+            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
             if(cacheR != null)
             {
                 HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);

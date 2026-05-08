@@ -118,6 +118,7 @@ namespace fAI
         [BsonIgnore]
         public string MID => (this.Id == null ? "undefined" : Id.ToString());
 
+        [JsonIgnore]
         [BsonIgnore]
         public string BM25ID { get => MID; set => throw new NotImplementedException(); }
 

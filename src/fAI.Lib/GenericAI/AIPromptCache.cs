@@ -11,11 +11,12 @@ namespace fAI
         public string Prompt { get; set; }
         public string Response { get; set; }
         public DateTime Timestamp { get; set; }
+        public List<float> Embedding { get; set; }
     }
 
     public class AIPromptCache
     {
-        private const string CacheFileName = @"C:\TEMP\AIPromptCache.json";
+        private const string CacheFileName = @"C:\TEMP\fAI.Cache.json";
         private const int CacheExpiryHours = 24;
 
         private List<AIPromptCacheEntry> _entries;
@@ -43,6 +44,24 @@ namespace fAI
             Purge();
         }
 
+        public void Add(string prompt, List<float> embedding)
+        {
+            if (string.IsNullOrWhiteSpace(prompt))
+                throw new ArgumentException("Prompt cannot be null or empty.", nameof(prompt));
+            
+            _entries.RemoveAll(e => e.Prompt == prompt); // Remove any existing entry for the same prompt
+
+            _entries.Add(new AIPromptCacheEntry
+            {
+                Prompt = prompt,
+                Embedding = embedding,
+                Timestamp = DateTime.UtcNow
+            });
+
+            SaveToDisk();
+        }
+
+
         /// <summary>
         /// Adds a new prompt/response pair to the cache and persists it to disk.
         /// If an identical prompt already exists, it will be replaced.
@@ -65,10 +84,30 @@ namespace fAI
             SaveToDisk();
         }
 
+        public AIPromptCacheEntry GetEntry(string prompt)
+        {
+            if (string.IsNullOrWhiteSpace(prompt))
+                throw new ArgumentException("Prompt cannot be null or empty.", nameof(prompt));
+
+            var entry = _entries.FirstOrDefault(e => e.Prompt == prompt);
+
+            if (entry is null)
+                return null;
+
+            if (IsExpired(entry))
+            {
+                _entries.Remove(entry);
+                SaveToDisk();
+                return null;
+            }
+
+            return entry;
+        }
+
         /// <summary>
         /// Returns the cached response for the given prompt, or null if not found / expired.
         /// </summary>
-        public string Get(string prompt)
+        public string GetPromptResponse(string prompt)
         {
             if (string.IsNullOrWhiteSpace(prompt))
                 throw new ArgumentException("Prompt cannot be null or empty.", nameof(prompt));
