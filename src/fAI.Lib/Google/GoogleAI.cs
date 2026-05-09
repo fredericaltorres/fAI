@@ -348,7 +348,7 @@ Improve the [language] for the following phrases, in more polished and business-
             var body = JsonConvert.SerializeObject(p);
 
             OpenAI.Trace(new { Url = url }, this);
-            OpenAI.Trace(new { Prompt = p }, this);
+            //OpenAI.Trace(new { Prompt = p }, this);
             OpenAI.Trace(new { Body = body }, this);
 
             var response = InitWebClient().POST(url, body);

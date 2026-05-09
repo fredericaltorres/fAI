@@ -52,7 +52,7 @@ namespace fAI
         public AnthropicErrorCompletionResponse Create(GPTPrompt p)
         {
             OpenAI.Trace(new { p.Url }, this);
-            OpenAI.Trace(new { Prompt = p }, this);
+            //OpenAI.Trace(new { Prompt = p }, this);
             OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
             var sw = Stopwatch.StartNew();

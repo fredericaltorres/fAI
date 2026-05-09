@@ -106,9 +106,9 @@ namespace fAI
         public AnthropicCompletionResponse Create(AnthropicPromptBase p, Dictionary<string, string> extraHeaders = null)
         {
             OpenAI.Trace(new { p.Url }, this);
-            OpenAI.Trace(new { Prompt = p }, this);
+            //OpenAI.Trace(new { Prompt = p }, this);
             var body = p.GetPostBody();
-            OpenAI.Trace(new { BodyLength = body.Length, Body = body }, this);
+            OpenAI.Trace(new { Body = body }, this);
 
             var sw = Stopwatch.StartNew();
             var wc = InitWebClient();
