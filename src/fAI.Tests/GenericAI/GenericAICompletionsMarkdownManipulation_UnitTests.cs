@@ -92,7 +92,7 @@ namespace fAI.Tests
                 {
                     var sw = Stopwatch.StartNew();
                     var client = new GenericAI();
-                    var (text, contents) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
+                    var (text, contents, usage) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
                     sw.Stop();
                     (htmlMarkDownFileName, markdownContent) = MarkdownManager.ConvertToHtmlFile(text, true);
                     HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000.0:0.0}, Response: {text}", this);

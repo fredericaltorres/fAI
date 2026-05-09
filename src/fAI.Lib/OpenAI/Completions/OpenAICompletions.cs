@@ -1,15 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using DynamicSugar;
+using fAI.OpenAI_Completions_Response;
+using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
 using static DynamicSugar.DS;
-using DynamicSugar;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
@@ -64,10 +65,17 @@ namespace fAI
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
 
-                var r = AnthropicErrorCompletionResponse.FromJson(response.Text);
-                r.GPTPrompt = p;
-                r.Stopwatch = sw;
-                return r;
+                var openAIFormatResponse = OpenAICompletionResponse.FromJson(response.Text);
+
+                var anthropicFormatResponse = AnthropicErrorCompletionResponse.FromJson(response.Text);
+                anthropicFormatResponse.Usage = new AnthropicUsage();
+                anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
+                anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
+
+
+                anthropicFormatResponse.GPTPrompt = p;
+                anthropicFormatResponse.Stopwatch = sw;
+                return anthropicFormatResponse;
             }
             else
             {

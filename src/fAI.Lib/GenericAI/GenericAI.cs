@@ -142,8 +142,35 @@ namespace fAI
             else throw new Exception($"Model {model} not supported for agentic loop.");
         }
 
-        public (string, GenericAI.Contents) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
+        public class GenericAIUsage 
         {
+            public int InputTokens { get; set; }
+            public int OutputTokens { get; set; }
+            public int Duration { get; set; }
+            public string Model { get; set; }
+            public string Prompt { get; set; }
+            public string SystemPrompt { get; set; }
+            public DateTime StartTime { get; set; }
+
+            public GenericAIUsage(string model, string prompt, string SystemPrompt)
+            {
+                this.StartTime = DateTime.UtcNow;
+                this.Model = model;
+                this.Prompt = prompt;
+                this.SystemPrompt = SystemPrompt;
+            }
+            public void SetTokenCount( int inputTokens, int outputTokens)
+            {
+                this.InputTokens = inputTokens;
+                this.OutputTokens = outputTokens;
+            }
+        }
+
+        public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
+
+        public (string, GenericAI.Contents, GenericAIUsage) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
+        {
+            var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;
             var sw = Stopwatch.StartNew();
             try
@@ -194,6 +221,7 @@ namespace fAI
                     }
 
                     var response = new Anthropic(key: base._key).Completions.Create(p, headerDictionary);
+                    usage.SetTokenCount(response.Usage.input_tokens, response.Usage.output_tokens);
 
                     // Update the contents discussion with the answer from the AI
                     var answerContent = response.Content.FirstOrDefault(c => c.IsText);
@@ -206,7 +234,7 @@ namespace fAI
                         }
                     });
 
-                    return (answerContent.Text, contents);
+                    return (answerContent.Text, contents, usage);
                 }
                 else if (GoogleAI.GetModels().Contains(model))
                 {
@@ -232,7 +260,7 @@ namespace fAI
                         }
                     });
 
-                    return (r.GetText(), contents);
+                    return (r.GetText(), contents, usage);
                 }
                 else if (OpenAI.GetModels().Contains(model))
                 {
@@ -259,6 +287,7 @@ namespace fAI
                     var response = openAIClient.Completions.Create(p);
                     if (response.Success)
                     {
+//```                            
                         // Update the contents discussion with the answer from the AI
                         var answerContent = response.Choices.First().message;
                         contents.Add(new GenericAI.ContentMessage
@@ -271,17 +300,19 @@ namespace fAI
                         });
 
                         var responseText = response.Text;
-                        return (responseText, contents);
+                        return (responseText, contents, usage);
                     }
-                    else return (null, contents);
+                    else return (null, contents, usage);
                 }
-                return (null, contents);
+                return (null, contents, usage);
             }
             finally
             {
                 sw.Stop();
+                usage.Duration = (int)sw.ElapsedMilliseconds;
+                this.LastUsage = usage;
                 model = orginalModel; // because of the possible modification of the model variable for Anthropic fast mode, we want to log the original model name.
-                OpenAI.Trace(new { model, duration = sw.ElapsedMilliseconds / 1000.0 }, this);
+                OpenAI.Trace(DS.Dictionary(usage), this);
             }
         }
 
@@ -425,7 +456,7 @@ Use the following rules to guide your improvements:
         {
             var sw = Stopwatch.StartNew();
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
-            var (newText, contents2) = Create(text, systemPrompt, model, contents);
+            var (newText, contents2, usage) = Create(text, systemPrompt, model, contents);
             contents = contents2;
             sw.Stop();
             return new TextImprovementResult
@@ -475,7 +506,7 @@ Answer the question to the best of your ability.
            )
         {
             var sw = Stopwatch.StartNew();
-            var (response, _) = Create(text, systemPrompt, model);
+            var (response, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             return new ConversationResult
             {
@@ -510,7 +541,7 @@ Use the following rules to guide your summarization:
                 systemPrompt = systemPrompt.Replace("<rules>", $"<rules>\r\n- Summarize the text in about {summarizeWordCount} words.\r\n");
 
             var sw  = Stopwatch.StartNew();
-            var (summary, _) = Create(text, systemPrompt, model);
+            var (summary, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             return new SummarizationResult
             {
@@ -544,7 +575,7 @@ Translate the following [language] paragraph into [destinationLanguage].
         {
             systemPrompt = systemPrompt.Template(new { language, destinationLanguage }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (translatedText, _) = Create(text, systemPrompt, model);
+            var (translatedText, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             return new TranslationResult
             {
@@ -579,7 +610,7 @@ Use the following rules to guide your summarization:
         {
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (title, _) = Create(text, systemPrompt, model);
+            var (title, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             return new GenerateTitleResult
             {
@@ -673,7 +704,7 @@ Output:
 
             systemPrompt = systemPrompt.Template(new { text }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (json, _) = Create(text, systemPrompt, model);
+            var (json, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
 
@@ -712,7 +743,7 @@ A: [question]
         {
             systemPrompt = systemPrompt.Template(new { question }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (answer, _) = Create(question, systemPrompt, model);
+            var (answer, _, usage) = Create(question, systemPrompt, model);
             sw.Stop();
             return StringUtil.SuperTrim(answer);
         }
@@ -738,7 +769,7 @@ Phrase to fix:
             systemPrompt = systemPrompt.Template(new { language, phrase }, "[", "]");
             prompt = prompt.Template(new { language, phrase }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (answer, _) = Create(prompt, systemPrompt, model);
+            var (answer, _, usage) = Create(prompt, systemPrompt, model);
             sw.Stop();
             return StringUtil.SuperTrim(answer);
         }
@@ -770,7 +801,7 @@ Use the following rules to guide your summarization:
         {
             systemPrompt = systemPrompt.Template(new { bulletPointCount, language }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (bulletPointsText, _) = Create(text, systemPrompt, model);
+            var (bulletPointsText, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
             return new GenerateBulletPointResult
             {
@@ -814,7 +845,7 @@ Use ONLY the provided article delimited by triple quotes to answer the question:
             systemPrompt = systemPrompt.Template(new { not_found, facts }, "[", "]");
             var userPrompt = questionPrompt.Template(new { question }, "[", "]");
             var sw = Stopwatch.StartNew();
-            var (jsonAnswer, _) = Create(userPrompt, systemPrompt, model);
+            var (jsonAnswer, _, usage) = Create(userPrompt, systemPrompt, model);
             var answer = base.GetJsonObject(jsonAnswer)["answer"].ToString();
             sw.Stop();
             return new AnswerQuestionBasedOnTextResult
@@ -843,7 +874,7 @@ Only extract what's explicitly there.
         {
             systemPrompt = systemPrompt.Template(new { tutu=1 }, "[", "]");
 
-            var (json, _) = Create(text, systemPrompt, model);
+            var (json, _, usage) = Create(text, systemPrompt, model);
 
             var result = new HttpBase().GetJsonObject(json).ToString();
             return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)) };
@@ -883,3 +914,4 @@ Only extract what's explicitly there.
         }
     }
 }
+
