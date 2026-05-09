@@ -144,6 +144,8 @@ namespace fAI
 
         public class GenericAIUsage 
         {
+            public int TTSTokens { get; set; }
+            public int STTTokens { get; set; }
             public int InputTokens { get; set; }
             public int OutputTokens { get; set; }
             public int Duration { get; set; }
@@ -163,6 +165,18 @@ namespace fAI
             {
                 this.InputTokens = inputTokens;
                 this.OutputTokens = outputTokens;
+            }
+            public override string ToString()
+            {
+                if(TTSTokens > 0)
+                {
+                    return $"[TTS.USAGE]Model: {Model}, TTS Tokens: {TTSTokens}";
+                }
+                else if (STTTokens > 0)
+                {
+                    return $"[STT.USAGE]Model: {Model}, STT Tokens: {STTTokens}";
+                }
+                else return  $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration/1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
             }
         }
 
@@ -249,6 +263,8 @@ namespace fAI
                     var url = googleAIClient.Completions.GetUrl(model);
                     var r = googleAIClient.Completions.Create(p, url, model);
 
+                    usage.SetTokenCount(r.usageMetadata.promptTokenCount, r.usageMetadata.candidatesTokenCount);
+
                     // Update the contents discussion with the answer from the AI
                     var answerContent = r.candidates[0].content;
                     contents.Add(new GenericAI.ContentMessage
@@ -299,6 +315,8 @@ namespace fAI
                             }
                         });
 
+                        usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
+
                         var responseText = response.Text;
                         return (responseText, contents, usage);
                     }
@@ -312,7 +330,7 @@ namespace fAI
                 usage.Duration = (int)sw.ElapsedMilliseconds;
                 this.LastUsage = usage;
                 model = orginalModel; // because of the possible modification of the model variable for Anthropic fast mode, we want to log the original model name.
-                OpenAI.Trace(DS.Dictionary(usage), this);
+                OpenAI.Trace(usage.ToString(), this);
             }
         }
 

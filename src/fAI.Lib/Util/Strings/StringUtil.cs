@@ -47,6 +47,22 @@ namespace fAI.Util.Strings
             return input;
         }
 
+        public static int QuickDeriveTokenCount(string input)
+        {
+            return (int)(CountWords(input) * 0.75f);
+        }
+
+        public static int CountWords(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return 0;
+
+            // Matches words separated by whitespace/punctuation
+            var matches = Regex.Matches(input, @"\b[\w']+\b");
+
+            return matches.Count;
+        }
+
         public static string SuperTrim(string input) => input?.Trim().Trim('"', '\'', '.', ';', ',').Trim();
 
         public static string SmartExtractJson(string text)

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using fAI.Util.Strings;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -72,10 +73,16 @@ namespace fAI
 
         const int OPEN_AI_MAX_TOKEN_FOR_SPEECH = 1900;
 
+        public fAI.GenericAICompletions.GenericAIUsage LastUsage { get; private set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
+
         public string Create(string input, string voice, string mp3FileName = null, 
             string model = "gpt-4o-mini-tts", string instructions = "Speak in a cheerful and positive tone.",
             int inputTokenCount = -1) // "tts-1"
         {
+            var inputToken = StringUtil.QuickDeriveTokenCount(input);
+            this.LastUsage = new GenericAICompletions.GenericAIUsage(model, input, null);
+            this.LastUsage.SetTokenCount(inputToken, 0);
+
             if (mp3FileName == null)
                 mp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
 
