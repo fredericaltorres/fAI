@@ -44,6 +44,12 @@ namespace fAI
             Purge();
         }
 
+        public void Clear()
+        {
+            _entries.Clear();
+            SaveToDisk();
+        }
+
         public void Add(string prompt, List<float> embedding)
         {
             if (string.IsNullOrWhiteSpace(prompt))
