@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -144,16 +145,31 @@ namespace fAI
 
         public class GenericAIUsage 
         {
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int TTSTokens { get; set; }
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int STTTokens { get; set; }
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int InputTokens { get; set; }
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int OutputTokens { get; set; }
-            public int TotalTokens => TTSTokens + STTTokens + InputTokens + OutputTokens;
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int Duration { get; set; }
+
+            [JsonIgnore]
+            public int TotalTokens => TTSTokens + STTTokens + InputTokens + OutputTokens;
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string Model { get; set; }
+
+            [JsonIgnore]
             public string Prompt { get; set; }
+            [JsonIgnore]
             public string SystemPrompt { get; set; }
+
             public DateTime StartTime { get; set; }
+
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public long AudioFileSize { get; set; }
 
             public GenericAIUsage(string model, string prompt, string SystemPrompt)
