@@ -148,6 +148,7 @@ namespace fAI
             public int STTTokens { get; set; }
             public int InputTokens { get; set; }
             public int OutputTokens { get; set; }
+            public int TotalTokens => TTSTokens + STTTokens + InputTokens + OutputTokens;
             public int Duration { get; set; }
             public string Model { get; set; }
             public string Prompt { get; set; }
@@ -162,6 +163,19 @@ namespace fAI
                 this.Prompt = prompt;
                 this.SystemPrompt = SystemPrompt;
             }
+
+            public void Add(GenericAIUsage u)
+            {
+                this.InputTokens += u.InputTokens;
+                this.OutputTokens += u.OutputTokens;
+                this.TTSTokens += u.TTSTokens;
+                this.STTTokens += u.STTTokens;
+                this.Duration += u.Duration;
+                this.AudioFileSize += u.AudioFileSize;
+                this.Prompt += u.Prompt;
+                this.SystemPrompt += u.SystemPrompt;
+            }
+
             public void SetTokenCount( int inputTokens, int outputTokens)
             {
                 this.InputTokens = inputTokens;
@@ -173,11 +187,15 @@ namespace fAI
                 {
                     return $"[TTS.USAGE]Model: {Model}, TTS Tokens: {TTSTokens}";
                 }
-                else if (STTTokens > 0)
+                if (STTTokens > 0)
                 {
                     return $"[STT.USAGE]Model: {Model}, STT Tokens: {STTTokens}, AudioFileSize: {AudioFileSize}";
                 }
-                else return  $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration/1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
+                if(InputTokens > 0)
+                {
+                    return $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
+                }
+                return $"[UNDEFINED.USAGE]Model: {Model}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
             }
         }
 
