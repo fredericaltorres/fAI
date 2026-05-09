@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace fAI
+namespace fAI.Whisper
 {
     public class WhisperWord
     {
@@ -16,6 +16,22 @@ namespace fAI
         [JsonProperty("end")]
         public double End { get; set; }
     }
+
+    public class InputTokenDetails
+    {
+        public int text_tokens { get; set; }
+        public int audio_tokens { get; set; }
+    }
+
+    public class Usage
+    {
+        public string type { get; set; }
+        public int total_tokens { get; set; }
+        public int input_tokens { get; set; }
+        public InputTokenDetails input_token_details { get; set; }
+        public int output_tokens { get; set; }
+    }
+
 
     public class WhipserSpeechToTextResponse
     {
@@ -33,6 +49,9 @@ namespace fAI
 
         [JsonProperty("words")]
         public List<WhisperWord> Words { get; set; }
+
+        [JsonProperty("usage")]
+        public Usage Usage { get; set; }
 
         public string Status { get; set; }
 

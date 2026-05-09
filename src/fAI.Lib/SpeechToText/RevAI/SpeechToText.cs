@@ -4,6 +4,7 @@ using DynamicSugar;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using fAI.Whisper;
 
 namespace fAI
 {

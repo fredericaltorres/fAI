@@ -76,7 +76,8 @@ namespace fAI
         public fAI.GenericAICompletions.GenericAIUsage LastUsage { get; private set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
 
         public string Create(string input, string voice, string mp3FileName = null, 
-            string model = "gpt-4o-mini-tts", string instructions = "Speak in a cheerful and positive tone.",
+            string model = "gpt-4o-mini-tts", 
+            string instructions = "Speak in a cheerful and positive tone.",
             int inputTokenCount = -1) // "tts-1"
         {
             var inputToken = StringUtil.QuickDeriveTokenCount(input);
@@ -86,7 +87,7 @@ namespace fAI
             if (mp3FileName == null)
                 mp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
 
-            if (inputTokenCount > OPEN_AI_MAX_TOKEN_FOR_SPEECH)
+            if (inputTokenCount > OPEN_AI_MAX_TOKEN_FOR_SPEECH) // <<<< THIS MAY NOT APPLY WITH THE NEW MODEL gpt-4o-mini-tts
             {
                 var (s1, s2) = SplitFromMiddleOnDot(input);
                 var f1 = Create(s1, voice, mp3FileName: null, model, instructions);

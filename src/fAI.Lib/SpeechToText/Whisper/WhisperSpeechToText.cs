@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http.Headers;
+using fAI.Whisper;
 
 namespace fAI
 {
@@ -33,10 +34,14 @@ namespace fAI
         // Special Whisper feature
         public bool WordTimestampGranularities { get; set;} = false;
 
-        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = null)
-        {
-            model = model == null ? "whisper-1" : model;
+        public GenericAICompletions.GenericAIUsage LastUsage { get; set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
 
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, 
+            string model = "gpt-4o-mini-transcribe" /*"whisper-1"*/)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
+            
             using (var tfh = new TestFileHelper())
             {
                 if (SpeechToTextEngine.IsUrl(fileNameOrUrl))
@@ -48,6 +53,8 @@ namespace fAI
 
                 if (!File.Exists(fileNameOrUrl))
                     throw new ArgumentException($"File name {fileNameOrUrl} not found");
+
+                this.LastUsage.AudioFileSize = new FileInfo(fileNameOrUrl).Length;
 
                 var options = new Dictionary<string, string> { ["model"] = model };
 
@@ -74,7 +81,12 @@ namespace fAI
                     }
                     else
                     {
+                        sw.Stop();
                         var typedResponse = WhipserSpeechToTextResponse.FromJSON(response.Text);
+                        LastUsage.SetTokenCount(typedResponse.Usage.input_tokens, 0);
+                        LastUsage.Duration = (int)sw.ElapsedMilliseconds;
+                        HttpBase.Trace(LastUsage.ToString(), this);
+
                         return new SpeechToTextResult()
                         {
                             Text = typedResponse.Text,

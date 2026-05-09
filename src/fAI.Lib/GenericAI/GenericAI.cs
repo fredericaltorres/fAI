@@ -153,6 +153,7 @@ namespace fAI
             public string Prompt { get; set; }
             public string SystemPrompt { get; set; }
             public DateTime StartTime { get; set; }
+            public long AudioFileSize { get; set; }
 
             public GenericAIUsage(string model, string prompt, string SystemPrompt)
             {
@@ -174,7 +175,7 @@ namespace fAI
                 }
                 else if (STTTokens > 0)
                 {
-                    return $"[STT.USAGE]Model: {Model}, STT Tokens: {STTTokens}";
+                    return $"[STT.USAGE]Model: {Model}, STT Tokens: {STTTokens}, AudioFileSize: {AudioFileSize}";
                 }
                 else return  $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration/1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
             }

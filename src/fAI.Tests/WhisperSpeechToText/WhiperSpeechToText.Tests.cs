@@ -44,7 +44,7 @@ namespace fAI.Tests
             Assert.Equal(ReplacePunctuation(expected), ReplacePunctuation(result.Text));
             Assert.Equal("en", result.Language);
 
-            result = s.ExtractText(mp3FileName, "en", false);
+            result = s.ExtractText(mp3FileName, "en", false, "whisper-1");
             Assert.True(result.Success);
             Assert.Equal(ReplacePunctuation(expected), ReplacePunctuation(result.Text));
             Assert.Equal("en", result.Language);
