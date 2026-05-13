@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DynamicSugarStandard" Version="1.0.87" />
+    <PackageReference Include="DynamicSugarStandard" Version="1.0.88" />
     <PackageReference Include="Supabase" Version="1.1.1" />
   </ItemGroup>
 
