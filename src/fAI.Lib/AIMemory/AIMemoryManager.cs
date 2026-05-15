@@ -156,8 +156,9 @@ namespace fAI
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
        
-        public bool AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
+        public (bool, GenericAICompletions.GenericAIUsage) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
+            var u = new GenericAICompletions.GenericAIUsage("","","");
             var r = true;
             try
             {
@@ -175,7 +176,8 @@ namespace fAI
                         existingAIMemory.Embeddings.Clear();
                     }
 
-                    ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey);
+                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey);
+                    u = uu;
                     Update(existingAIMemory);
                 }
                 else
@@ -187,7 +189,7 @@ namespace fAI
             {
                 r = false;
             }
-            return r;
+            return (r, u);
         }
 
         public IEnumerable<AIMemoryCrossReferenceTable> GetAllCrossReferenceTable()
@@ -277,20 +279,19 @@ namespace fAI
             return sb.ToString();
         }
 
-        public void Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
+        public GenericAICompletions.GenericAIUsage Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
         {
-            ComputeEmbeddingsAndMetaData(d, embeddingsApiKey:openAiKey, llmApiKey: llmApiKey);
+            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsApiKey:openAiKey, llmApiKey: llmApiKey);
 
             d.Init();
 
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                //var embeddings = d.Embeddings;
                 col.Insert(d.PrepareForSaving());
-                //d.Embeddings = embeddings; // Restore the original list after saving
-                //d.__embeddingsBuffer = null; // Clear the buffer after saving
             }
+
+            return u;
         }
 
         public bool __simulate_embedding_computation__ = false;
@@ -298,7 +299,7 @@ namespace fAI
 
         public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.5-flash";
 
-        public bool ComputeEmbeddingsAndMetaData(AIMemory d, 
+        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
             string embeddingsApiKey = null, 
             string llmApiKey = null,
             string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION
@@ -307,28 +308,28 @@ namespace fAI
             var r1 = ComputeEmbeddings(d, embeddingsApiKey);
             var r2 = ExtractMetaDataFromText(d, model, llmApiKey);
 
-            return r1 && r2;
+            return (r1 && r2.Item1, r2.Item2);
         }
 
-        public bool ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null)
+        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null)
         {
             try
             {
+                var client = new GenericAI(ApiKey: llmApiKey);
                 if (__simulate_metatdata_computation__)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() };
                 }
                 else
                 {
-                    var client = new GenericAI(ApiKey: llmApiKey);
                     var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
                     d.AIMetaData = medataDictionary;
                 }
-                return true;
+                return (true, client.Completions.LastUsage);
             }
             catch (Exception ex)
             {
-                return false;
+                return (false, null);
             }
         }
 

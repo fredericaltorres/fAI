@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using static DynamicSugar.DS;
 using static fAI.GenericAI;
 using static fAI.GoogleAICompletions;
@@ -217,7 +218,27 @@ namespace fAI
 
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
 
-        public (string, GenericAI.Contents, GenericAIUsage) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
+        public (string, GenericAI.Contents, GenericAIUsage) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null, int reTryCounter = 0)
+        {
+            try
+            {
+                return __Create(prompt, systemPrompt, model, contents);
+            }
+            catch (Exception e)
+            {
+                if(e.Message.Contains("The request timed out") && reTryCounter < 2)
+                {
+                    Thread.Sleep((reTryCounter+1)*1000);
+                    return Create(prompt, systemPrompt, model, contents, reTryCounter + 1);
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+        }
+
+        private (string, GenericAI.Contents, GenericAIUsage) __Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
         {
             var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;

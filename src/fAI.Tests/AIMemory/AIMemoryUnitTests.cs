@@ -279,7 +279,10 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            Assert.True(usage.InputTokens > 0);
+            Assert.True(usage.OutputTokens > 0);
+            Assert.True(usage.TotalTokens > 0);
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
 
@@ -304,7 +307,10 @@ namespace fAI.Tests
                 LocalFile = null,
             };
 
-            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var usage = aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            Assert.True(usage.InputTokens > 0);
+            Assert.True(usage.OutputTokens > 0);
+            Assert.True(usage.TotalTokens > 0);
 
             var __id__ = aiMemory.Id;
 
@@ -313,7 +319,13 @@ namespace fAI.Tests
             aiMemory.PublishedUrl += " - Updated";
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
-            aiManager.ComputeEmbeddingsAndMetaData(aiMemory);
+            var (succeeded, usageUpdate) = aiManager.ComputeEmbeddingsAndMetaData(aiMemory);
+            Assert.True(succeeded);
+            Assert.True(usageUpdate.OutputTokens > 0 );
+            Assert.True(usageUpdate.InputTokens > 0);
+            Assert.True(usageUpdate.TotalTokens > 0);
+
+
 
             aiManager.Update(aiMemory);
 
