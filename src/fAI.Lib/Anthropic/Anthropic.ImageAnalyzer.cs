@@ -61,7 +61,13 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 var analysis = AnalyzeImage(model, imageBytes, mediaType, prompt);
                 var genericAI = new GenericAI(ApiKey: _apiKey);
                 var titleResponse = genericAI.Completions.GenerateTitle(analysis, language: language, model: model);
-                return (analysis, titleResponse.Title.Replace("*",""));
+                var title = titleResponse.Title;
+                var marker = "# Title";
+                if (title.StartsWith(marker))
+                {
+                    title = title.Substring(marker.Length).Trim();
+                }
+                return (analysis, titleResponse.Title.Replace("*","").Replace("\n","").Replace("\r",""));
             }
             finally
             { 

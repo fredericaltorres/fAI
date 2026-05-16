@@ -190,7 +190,8 @@ namespace fAI
                 }
                 else
                 {
-                    Add(d, openAiKey);
+                    var uu = Add(d, openAiKey);
+                    u = uu;
                 }
             }
             catch (Exception ex)

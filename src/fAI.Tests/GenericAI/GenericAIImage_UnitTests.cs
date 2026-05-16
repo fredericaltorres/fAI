@@ -47,7 +47,6 @@ namespace fAI.Tests
             var i = new GenericAIImage();
             Anthropic.GetModels().ForEach(model =>
             {
-                model = "claude-haiku-4-5";
                 var (description, title) = i.AnalyzeImageFromFile(model, imageFileName);
             });
         }
