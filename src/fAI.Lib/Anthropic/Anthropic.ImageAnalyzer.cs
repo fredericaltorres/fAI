@@ -55,9 +55,8 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 if (!File.Exists(imagePath))
                     throw new FileNotFoundException($"Image file not found: {imagePath}");
 
-                byte[] imageBytes = File.ReadAllBytes(imagePath);
-                string mediaType = GetMediaType(imagePath);
-
+                var imageBytes = File.ReadAllBytes(imagePath);
+                var mediaType = GetMediaType(imagePath);
                 var analysis = AnalyzeImage(model, imageBytes, mediaType, prompt);
                 var genericAI = new GenericAI(ApiKey: _apiKey);
                 var titleResponse = genericAI.Completions.GenerateTitle(analysis, language: language, model: model);
