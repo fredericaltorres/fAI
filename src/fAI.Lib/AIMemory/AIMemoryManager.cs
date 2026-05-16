@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.OpenAIModel.ImageResponseGpt;
 using fAI.Util.Strings;
 using fAI.VectorDB;
 using LiteDB;
@@ -8,8 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Xml.Linq;
+using static DynamicSugar.Tokenizer;
 using static fAI.HumeAISpeech;
 using JsonIgnore2Attribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
@@ -309,7 +312,11 @@ namespace fAI
         public bool __simulate_embedding_computation__ = false;
         public bool __simulate_metadata_computation__ = false;
 
-        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.5-flash";
+        //Model Input Price(per 1M tokens) Output Price(per 1M tokens)
+        //Gemini 2.0 Flash	$0.10	$0.40
+        //Gemini 2.5 Flash	$0.30	$2.50
+        //Gemini 3 Flash Preview	$0.50	$3.00
+        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.0-flash";
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
             string embeddingsApiKey = null, 
