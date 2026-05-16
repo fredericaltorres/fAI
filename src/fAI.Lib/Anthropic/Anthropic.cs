@@ -42,7 +42,6 @@ namespace fAI
 
     public class Mistral : HttpBase
     {
-
         public Mistral(int timeOut = -1)
         {
             base._key = Environment.GetEnvironmentVariable("MISTRAL_API_KEY");

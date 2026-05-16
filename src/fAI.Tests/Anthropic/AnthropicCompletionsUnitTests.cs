@@ -1,4 +1,6 @@
-﻿using DynamicSugar;
+﻿using AnthropicImageAnalysis;
+using Deepgram.Models;
+using DynamicSugar;
 using Markdig;
 using System.Collections.Generic;
 using System.IO;
@@ -263,6 +265,18 @@ Discussion:
         }
 
         // C:\DVT\fAI\src\fAIConsole\VictorHugoPresentation\images
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_AnalyzeImage()
+        {
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+            Assert.True(File.Exists(imageFileName));
+
+            var analyzer = new ImageAnalyzer();
+            var analysis = analyzer.AnalyzeImageFromFile(imageFileName);
+        }
 
         [Fact()]
         [TestBeforeAfter]

@@ -38,5 +38,17 @@ namespace fAI.Tests
                 var images = i.GenerateLocalFile(imagePrompt, model);
             });
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Completion_AnalyzeImage()
+        {
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+            var i = new GenericAIImage();
+            Anthropic.GetModels().ForEach(model =>
+            {
+                var description = i.AnalyzeImageFromFile(model, imageFileName);
+            });
+        }
     }
 }
