@@ -57,17 +57,17 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             finally 
             { 
                 sw.Stop(); 
-                HttpBase.Trace($"[AnalyzeImage] duration: {sw.ElapsedMilliseconds:0.000} s, {imagePath}", this); 
+                HttpBase.Trace($"[AnalyzeImage] duration: {sw.ElapsedMilliseconds/1000.0:0.000} s, {imagePath}", this); 
             }
         }
 
-        public string AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt)
+        public string AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt, int maxTokens = 16 * 1024)
         {
             string base64Image = Convert.ToBase64String(imageBytes);
             var requestBody = new
             {
                 model = model,
-                max_tokens = 1024,
+                max_tokens = maxTokens,
                 messages = new[]
                 {
                     new
@@ -109,7 +109,9 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                     throw new HttpRequestException(
                         $"API request failed [{response.StatusCode}]: {responseBody}");
 
-                return ParseResponse(responseBody);
+                var r =  ParseResponse(responseBody);
+                HttpBase.Trace($"Response: {responseBody}", this);
+                return r;
             }
         }
 

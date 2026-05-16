@@ -68,7 +68,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             if (Anthropic.GetModels().Contains(model))
             {
                 var analyzer = new ImageAnalyzer();
-                var analysis = analyzer.AnalyzeImageFromFile(imagePath, prompt);
+                var analysis = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
                 return analysis;
             }
             else throw new Exception($"Model {model} not supported for image analysis.");

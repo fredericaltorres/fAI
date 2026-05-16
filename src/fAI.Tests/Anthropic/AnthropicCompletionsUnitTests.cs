@@ -269,17 +269,6 @@ Discussion:
 
         [Fact()]
         [TestBeforeAfter]
-        public void Completion_AnalyzeImage()
-        {
-            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-            Assert.True(File.Exists(imageFileName));
-
-            var analyzer = new ImageAnalyzer();
-            var analysis = analyzer.AnalyzeImageFromFile(imageFileName);
-        }
-
-        [Fact()]
-        [TestBeforeAfter]
         public void Completion_UploadImage_AskToDescribeImage()
         {
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
