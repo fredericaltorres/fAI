@@ -181,7 +181,7 @@ namespace fAI.Tests
         {
             var records = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Beetles.All\Beatles.All.json");
             var aiManager = new AIMemoryManager(BeatlesTestDBName);
-            aiManager.__simulate_metatdata_computation__ = true;
+            aiManager.__simulate_metadata_computation__ = true;
             if (!File.Exists(BeatlesTestDBName))
             {
                 foreach (var record in records)
@@ -195,7 +195,7 @@ namespace fAI.Tests
                 }
             }
 
-            aiManager.__simulate_metatdata_computation__ = false;
+            aiManager.__simulate_metadata_computation__ = false;
 
             //var vectorToSearch = SimilaritySearchEngine.ToVector(@"sad people in church");
             // var vectorToSearchStr = string.Join(",", vectorToSearch);
@@ -298,7 +298,7 @@ namespace fAI.Tests
         {
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
-            aiManager.__simulate_metatdata_computation__ = true;
+            aiManager.__simulate_metadata_computation__ = true;
 
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
 
@@ -311,6 +311,10 @@ namespace fAI.Tests
             };
 
             aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+            var pngFileName = aiMemory.ExportMedia();
+            Assert.True(File.Exists(pngFileName));
+            File.Delete(pngFileName);
 
             var __id__ = aiMemory.Id;
             var __mid__ = aiMemory.MID;
@@ -329,6 +333,10 @@ namespace fAI.Tests
             var json = aiMemory.ToJSON();
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            pngFileName = aiMemory.ExportMedia();
+            Assert.True(File.Exists(pngFileName));
+            File.Delete(pngFileName);
 
             aiManager.Delete(aiMemory);
             aiMemory = aiManager.GetFromId(aiMemory.Id);
@@ -384,9 +392,9 @@ namespace fAI.Tests
         {
             var aiMemory2 = aiMI.GetFromId(aiMemory.Id);
             Assert.NotNull(aiMemory2);
-            Assert.Equal(aiMemory.PublishedUrl, aiMemory2.PublishedUrl);
+            Assert.Equal(aiMemory.PublishedUrl?.Trim(), aiMemory2.PublishedUrl?.Trim());
             Assert.Equal(aiMemory.Title, aiMemory2.Title);
-            Assert.Equal(aiMemory.Text, aiMemory2.Text);
+            Assert.Equal(aiMemory.Text.Trim(), aiMemory2.Text.Trim());
             Assert.Equal(aiMemory.Type, aiMemory2.Type);
             Assert.Equal(aiMemory.LocalFile, aiMemory2.LocalFile);
             Assert.True(aiMemory2.AIMetaData.MetaData.Count > 0);

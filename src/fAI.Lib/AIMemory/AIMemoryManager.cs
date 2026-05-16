@@ -306,7 +306,7 @@ namespace fAI
         }
 
         public bool __simulate_embedding_computation__ = false;
-        public bool __simulate_metatdata_computation__ = false;
+        public bool __simulate_metadata_computation__ = false;
 
         public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.5-flash";
 
@@ -327,11 +327,12 @@ namespace fAI
             try
             {
                 var client = new GenericAI(ApiKey: llmApiKey);
-                if (__simulate_metatdata_computation__)
+                if (__simulate_metadata_computation__)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
                         ["a"] = new List<string> { "b" }
                     } };
+                    return (false, new GenericAICompletions.GenericAIUsage("", "", "") { InputTokens=1, OutputTokens=1 });
                 }
                 else
                 {

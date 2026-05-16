@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using DynamicSugar;
+using LiteDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -229,6 +230,21 @@ namespace fAI
 
                 Embeddings = new List<float>(floats);
             }
+        }
+
+        public string ExportMedia() 
+        {
+            if(this.Type != PublishedDocumentInfoType.ImageFile)
+                throw new InvalidOperationException("ExportMedia is only supported for AIMemory of type Image.");
+
+            if (string.IsNullOrEmpty(MediaBase64))
+                return null;
+
+            var mediaBytes = Convert.FromBase64String(MediaBase64);
+            var mediaFileName = Environment.TickCount.ToString() + "-" +  Path.GetFileName(this.LocalFile);
+            var mediaFilePath = Path.Combine(Path.GetTempPath(), mediaFileName);
+            File.WriteAllBytes(mediaFilePath, mediaBytes);
+            return mediaFilePath;
         }
     }
 }
