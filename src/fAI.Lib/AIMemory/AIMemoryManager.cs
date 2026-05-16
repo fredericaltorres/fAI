@@ -137,6 +137,7 @@ namespace fAI
         Undefined,
         UserAINote,
         MarkdownFile,
+        ImageFile,
     }
 
     public class AIMemoryManager
@@ -158,6 +159,12 @@ namespace fAI
        
         public (bool, GenericAICompletions.GenericAIUsage) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
+            var isMarkdownOrTextFile = MarkdownManager.IsMarkdownFile(localFile) || MarkdownManager.IsTextFile(localFile);
+            if (d.Type == PublishedDocumentInfoType.ImageFile) // Is image
+            {
+                d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
+            }
+
             var u = new GenericAICompletions.GenericAIUsage("","","");
             var r = true;
             try
@@ -170,6 +177,7 @@ namespace fAI
                     existingAIMemory.Text = d.Text;
                     existingAIMemory.Title = d.Title;
                     existingAIMemory.PublishedUrl = d.PublishedUrl;
+                    existingAIMemory.MediaBase64 = d.MediaBase64;
 
                     if (clearEmbeddings)
                     {
@@ -238,7 +246,6 @@ namespace fAI
                     col.Delete(crt.Id);
             }
         }
-
         public void DeleteCrossReferenceTable(ObjectId id)
         {
             using (var db = new LiteDatabase(this.FileName))
@@ -257,7 +264,6 @@ namespace fAI
         {
             return $"[{Path.GetFileName(p)}]({LocalizePath(p, markdownRootFolder)})";
         }
-
         public string GenerateReportCrossReferenceTable(AIMemoryCrossReferenceTable d, string markdownRootFolder)
         {
             var sb = new StringBuilder();
@@ -281,6 +287,11 @@ namespace fAI
 
         public GenericAICompletions.GenericAIUsage Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
         {
+            if(d.Type == PublishedDocumentInfoType.ImageFile)
+            {
+                d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
+            }
+
             var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsApiKey:openAiKey, llmApiKey: llmApiKey);
 
             d.Init();
@@ -532,7 +543,6 @@ namespace fAI
             }
             return z;
         }
-
 
         public static float StandardDeviation(List<float> values)
         {

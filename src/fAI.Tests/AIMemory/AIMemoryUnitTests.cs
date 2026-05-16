@@ -291,6 +291,46 @@ namespace fAI.Tests
             Assert.Null(aiMemory);
         }
 
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Add_Update_Markdown_Search_Delete_Image()
+        {
+            var aiManager = new AIMemoryManager(TestDBName);
+            aiManager.__simulate_embedding_computation__ = true;
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+
+            var aiMemory = new AIMemory()
+            {
+                Title = $"one big image",
+                Text = testIMageDescription,
+                Type = PublishedDocumentInfoType.ImageFile,
+                LocalFile = imageFileName,
+            };
+
+            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+
+            var __id__ = aiMemory.Id;
+            var __mid__ = aiMemory.MID;
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiMemory.PublishedUrl += " - Updated";
+            aiMemory.Title += " - Updated";
+            aiMemory.Text += " - Updated";
+
+            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            Assert.True(usage.InputTokens > 0);
+            Assert.True(usage.OutputTokens > 0);
+            Assert.True(usage.TotalTokens > 0);
+
+            VerifyAIMemoryInDB(aiManager, aiMemory);
+
+            aiManager.Delete(aiMemory);
+            aiMemory = aiManager.GetFromId(aiMemory.Id);
+            Assert.Null(aiMemory);
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Add_Update_Search_Delete()
@@ -355,6 +395,40 @@ namespace fAI.Tests
             for (int i = 0; i < expected.Length; i++)
                 Assert.True(Math.Abs(expected[i] - actual[i]) <= tolerance,$"Index {i}: expected {expected[i]} but got {actual[i]} (tolerance {tolerance})");
         }
+
+        const string testIMageDescription = @"
+# Image Analysis
+
+## 1. Overall Description
+The image is a dramatic, painterly depiction of a shipwreck or maritime disaster unfolding along a rocky, storm-battered coastline. A large wooden sailing vessel is listing heavily to one side amid crashing waves, while sailors, villagers, and rescuers struggle in the foamy surf. The style evokes 19th-century Romantic-era maritime paintings.
+
+## 2. Key Elements
+- **Central figure**: A bearded man in tattered shirt and dark trousers, standing knee-deep in the surf, gripping ropes — possibly a sailor or rescuer.
+- **The wrecked ship**: A large, weathered wooden vessel with masts, rigging, and a flag, tilted precariously.
+- **Rescuers**: An older man in a dark coat and beret pulling on a rope at the right.
+- **Women onshore**: Two or three women in period dresses (one in teal/blue, others in earth tones with headscarves) reacting with concern.
+- **Sailors in the water**: Several men in small boats and clinging to wreckage in the background.
+- **Coastal structures**: A stone tower or fort on the left horizon, with additional ships and figures.
+- **Foreground debris**: Driftwood, ropes, barrels, and rocks scattered on the shore.
+
+## 3. Colors & Composition
+- **Dominant palette**: Earthy and muted — browns, ochres, deep teals, weathered greens, and creamy whites from the sea foam.
+- **Sky**: Stormy with golden, cloudy light breaking through dark grey clouds, suggesting a sun obscured by tempest.
+- **Composition**: Diagonal lines dominate — the tilted ship cuts across the upper portion, while figures form a horizontal band of action in the lower half. The central man anchors the focal point with strong vertical posture.
+- **Lighting**: Dramatic chiaroscuro, with bright highlights on crashing waves and faces against darker shadowy hulls.
+
+## 4. Context & Setting
+- **Environment**: A treacherous rocky shoreline during a violent storm at sea.
+- **Time period**: Likely 18th or 19th century, based on clothing (long skirts, headscarves, period sailors' garb) and the wooden sailing ship.
+- **Scenario**: A shipwreck rescue effort, with townspeople and sailors attempting to save lives from the floundering vessel. The distant fort and other ships suggest this could be a harbor or coastal village familiar with maritime traffic.
+
+## 5. Mood & Atmosphere
+The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency and danger — the violence of nature contrasts with the determined human effort to survive and rescue. A sense of Romantic-era sublime pervades: humanity dwarfed and tested by nature's fury, yet defiantly fighting back. The somber lighting amplifies feelings of dread, sorrow, and courage.
+
+## 6. Notable Details
+- **The ship's flag** is still flying despite the
+
+";
     }
 }
 

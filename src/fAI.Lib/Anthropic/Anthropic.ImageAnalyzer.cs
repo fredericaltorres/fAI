@@ -15,10 +15,14 @@ namespace AnthropicImageAnalysis
         //private const string Model = "claude-opus-4-7";
         private const string AnthropicVersion = "2023-06-01";
 
+        private string _apiKey;
+
         public ImageAnalyzer(string apiKey = null)
         {
             if (apiKey == null)
                 apiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
+
+            _apiKey = apiKey;
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
@@ -30,7 +34,7 @@ namespace AnthropicImageAnalysis
         /// <summary>
         /// Analyzes an image from a file path and returns a detailed description.
         /// </summary>
-        public string AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title)AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
 Please analyze this image thoroughly and provide:
 1. **Overall Description** - A concise summary of what the image shows.
 2. **Key Elements** - List the main subjects, objects, or focal points.
@@ -41,7 +45,9 @@ Please analyze this image thoroughly and provide:
 Be specific and descriptive in your analysis.
 
 Use MARKDOWN syntax for formatting the response, with headings and bullet points where appropriate.
-")
+",
+            string language = "english"
+            )
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             try
@@ -52,12 +58,15 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 byte[] imageBytes = File.ReadAllBytes(imagePath);
                 string mediaType = GetMediaType(imagePath);
 
-                return AnalyzeImage(model, imageBytes, mediaType, prompt);
+                var analysis = AnalyzeImage(model, imageBytes, mediaType, prompt);
+                var genericAI = new GenericAI(ApiKey: _apiKey);
+                var titleResponse = genericAI.Completions.GenerateTitle(analysis, language: language, model: model);
+                return (analysis, titleResponse.Title.Replace("*",""));
             }
-            finally 
+            finally
             { 
                 sw.Stop(); 
-                HttpBase.Trace($"[AnalyzeImage] duration: {sw.ElapsedMilliseconds/1000.0:0.000} s, {imagePath}", this); 
+                HttpBase.Trace($"[AnalyzeImage] model: {model}, duration: {sw.ElapsedMilliseconds/1000.0:0.000} s, {imagePath}", this); 
             }
         }
 

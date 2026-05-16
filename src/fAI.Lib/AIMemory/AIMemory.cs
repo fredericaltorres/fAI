@@ -102,12 +102,12 @@ namespace fAI
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
+        public string MediaBase64 { get; set; }
+
         public AIMetaData AIMetaData { get; set; }
 
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
-        //[JsonIgnore]
-        //public byte[] __embeddingsBuffer { get; set; }
 
         [BsonIgnore]
         public int TextLength => this.Text?.Length ?? 0;

@@ -757,6 +757,14 @@ namespace fAI
             return extension == ".md" || extension == ".markdown";
         }
 
+        public static bool IsTextFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
+            string extension = Path.GetExtension(filePath).ToLower();
+            return extension == ".txt" || extension == ".text";
+        }
+
         public static string ExtractStyleBlock(string htmlStr)
         {
             if (string.IsNullOrWhiteSpace(htmlStr))
