@@ -95,13 +95,17 @@ namespace fAI
             public List<ContentMessagePart> Parts { get; set; }
         }
 
-        public static List<string> GetModels()
+        public static List<string> GetModels(System.Text.RegularExpressions.Regex filter = null)
         {
             var models = new List<string>();
             models.AddRange(Anthropic.GetModels());
             models.AddRange(GoogleAI.GetModels());
             models.AddRange(OpenAI.GetModels());
-            return models;
+
+            if (filter == null)
+                return models;
+            else
+                return models.Where(m => filter.IsMatch(m)).ToList();
         }
 
         public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)

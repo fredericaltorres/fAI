@@ -147,10 +147,7 @@ namespace fAI.Tests
             var functionCallers = GetFunctionCallersForUnitTests();
             var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as AnthropicTool;
             var googleAIClient = new GoogleAI();
-            var models = DS.List("gemini-3-flash-preview",
-                "gemini-2.0-flash",
-                "gemini-2.5-pro", 
-                "gemini-2.5-flash");
+            var models = GoogleAI.GetModels();
 
             models.ForEach(model =>
             {

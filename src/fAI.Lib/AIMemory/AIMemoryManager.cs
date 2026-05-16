@@ -312,11 +312,14 @@ namespace fAI
         public bool __simulate_embedding_computation__ = false;
         public bool __simulate_metadata_computation__ = false;
 
-        //Model Input Price(per 1M tokens) Output Price(per 1M tokens)
-        //Gemini 2.0 Flash	$0.10	$0.40
-        //Gemini 2.5 Flash	$0.30	$2.50
-        //Gemini 3 Flash Preview	$0.50	$3.00
-        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-2.0-flash";
+        //Model Input               Price(per 1M)    Output Price(per 1M)   Context Window
+        //Gemini 2.0 Flash	        $0.10	        $0.40	                1 Million     DEPRECATED JUNE 2026
+        //Gemini 2.5 Flash	        $0.30	        $2.50	                1 Million
+        //Gemini 3.1 Flash-Lite	    $0.25	        $1.50	                1 Million       
+        //Gemini 3 Flash Preview	$0.50	        $3.00	                1 Million
+        //Gemini 3 Flash	        $0.50	        $3.00	1 Million
+
+        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite-preview";// "gemini-3.1-flash-Lite"
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
             string embeddingsApiKey = null, 

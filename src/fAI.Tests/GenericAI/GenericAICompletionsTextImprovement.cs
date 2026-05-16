@@ -22,6 +22,9 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class GenericAiCompletions_UnitTests : OpenAIUnitTestsBase
     {
+        //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
+        Regex _quickFilter = new Regex("gemini-.*");
+
         public GenericAiCompletions_UnitTests()
         {
             OpenAI.TraceOn = true;
@@ -35,11 +38,8 @@ namespace fAI.Tests
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
-                //model2 = "gpt-5.4-mini";
-                //var model2 = "gpt-5.5";
-                //model2 = "gemini-2.0-flash";
                 var client = new GenericAI();
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
                 
@@ -59,9 +59,9 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", "claude-haiku-4-5", "gpt-5-mini");
+            //var models = DS.List("gemini-2.0-flash", "claude-sonnet-4-5", "claude-haiku-4-5", "gpt-5-mini");
 
-            foreach (var model in models)
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var sw = Stopwatch.StartNew();
                 var client = new GenericAI();
@@ -143,7 +143,7 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_InterfaceForOpenAIAndGoogle()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
@@ -155,7 +155,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateTitle_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
@@ -167,7 +167,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void Translate_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
                 var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
@@ -179,7 +179,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateBulletPoints_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
@@ -204,7 +204,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         [TestBeforeAfter]
         public void Conversation_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            foreach (var model in GenericAI.GetModels())
+            foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
                 var result = client.Completions.Conversation(text: CSharpJsonDotNetQuestion, model: model);
@@ -217,72 +217,81 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         [TestBeforeAfter]
         public void DetermineTheTypeOfPhrase()
         {
-            var model = "gemini-2.0-flash";
-            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
-            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
+            GenericAI.GetModels().ForEach(model => // _quickFilter
+            {
+                AIPromptCache.Instance.Clear();
+                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
 
-            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model));
-            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model));
-            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model));
 
-            Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model));
-            Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model));
+            });
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void RePhraseQuestionIntoAffirmation()
         {
-            var model = "gemini-2.0-flash";
-            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-            var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model);
-            Assert.Contains("Your highest priority is __SOMETHING__", answer);
-            var j = answer.ToJSON();
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
+            {
+                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model);
+                Assert.Contains("Your highest priority is __SOMETHING__", answer);
+                var j = answer.ToJSON();
 
-            answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do?", model: model);
-            Assert.Contains("Your next task to do is __SOMETHING__", answer);
+                answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do?", model: model);
+                Assert.Contains("Your next task to do is __SOMETHING__", answer);
 
-            answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do with the highest priority?", model: model);
-            Assert.Contains("Your next task to do with the highest priority is __SOMETHING__", answer);
+                answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do with the highest priority?", model: model);
+                Assert.Contains("Your next task to do with the highest priority is __SOMETHING__", answer);
 
-            answer = client.Completions.RePhraseQuestionIntoAffirmation("When is my next meeting?", model: model);
-            Assert.Contains("Your next meeting is at __SOMETHING__", answer);
+                answer = client.Completions.RePhraseQuestionIntoAffirmation("When is my next meeting?", model: model);
+                Assert.Contains("Your next meeting is at __SOMETHING__", answer);
 
-            answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model);
-            Assert.Contains("Your next meeting is with __SOMETHING__", answer);
+                answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model);
+                Assert.Contains("Your next meeting is with __SOMETHING__", answer);
+            });
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void FixPhrase()
         {
-            var model = "gemini-2.0-flash";
-            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-            var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model);
-            //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
-            fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model);
-            fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
+            {
+                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model);
+                //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
+                fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model);
+                fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
+            });
         }
 
         [Fact()]
         [TestBeforeAfter]
         public void ExtractMetaData_1()
         {
-            var model = "gemini-2.0-flash";
-            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
+            {
+                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
 
-            var notes1 = @"
+                var notes1 = @"
 on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project in Paris.
 The meeting was at 10 AM and it lasted for 1 hour.
 I need to prepare a presentation for the next meeting on July 20th, 2026
 ";
-            var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
-            Assert.Equal("John Smith", medataDictionary["people"].First());
-            Assert.Equal("Paris", medataDictionary["locations"].First());
-            Assert.Equal("2026-01-15", medataDictionary["dates_mentioned"].First());
-            Assert.Equal("Salesforce integration", medataDictionary["topics"].First());
-            Assert.Equal("task", medataDictionary["type"].First());
+                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
+                Assert.Equal("John Smith", medataDictionary["people"].First());
+                Assert.Equal("Paris", medataDictionary["locations"].First());
+                Assert.Equal("2026-01-15", medataDictionary["dates_mentioned"].First());
+                Assert.Equal("Salesforce integration", medataDictionary["topics"].First());
+                Assert.Equal("task", medataDictionary["type"].First());
+            });
         }
 
 
@@ -324,9 +333,7 @@ both of which are due before our next cross-functional review meeting,
 currently penciled in for May 7th, 2026 at 2:00 PM, 
 with a follow-up executive briefing tentatively set for the week of June 22nd, 2026.";
 
-            var models = DS.List("gemini-2.0-flash", "gpt-5.2", "claude-opus-4-6");
-
-            foreach (var model in models)
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
                 var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model).MetaData;
@@ -335,11 +342,8 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
                 Assert.Equal(2, medataDictionary["action_items"].Count);
                 Assert.Equal(3, medataDictionary["topics"].Count);
                 Assert.Equal("task", medataDictionary["type"].First());
-            }
+            });
         }
-
-
-
 
         [Fact()]
         [TestBeforeAfter]
@@ -379,19 +383,16 @@ both of which are due before our next cross-functional review meeting,
 currently penciled in for May 7th, 2026 at 2:00 PM, 
 with a follow-up executive briefing tentatively set for the week of June 22nd, 2026.";
 
-            var models = DS.List("claude-opus-4-6-fast", "claude-opus-4-6");
-
-            foreach (var model in models)
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
-                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-
+                var client = new GenericAI();
                 var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model).MetaData;
                 Assert.True(medataDictionary["people"].Count > 1);
                 Assert.True(medataDictionary["dates_mentioned"].Count > 1);
                 Assert.True(medataDictionary["action_items"].Count > 1);
                 Assert.True(medataDictionary["topics"].Count > 1);
                 Assert.Equal("task", medataDictionary["type"].First());
-            }
+            });
         }
 
         [Fact()]
