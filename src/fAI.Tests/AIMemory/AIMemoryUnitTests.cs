@@ -298,6 +298,8 @@ namespace fAI.Tests
         {
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
+            aiManager.__simulate_metatdata_computation__ = true;
+
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
 
             var aiMemory = new AIMemory()
@@ -323,6 +325,8 @@ namespace fAI.Tests
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
+
+            var json = aiMemory.ToJSON();
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
 

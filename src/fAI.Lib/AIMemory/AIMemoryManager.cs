@@ -329,7 +329,9 @@ namespace fAI
                 var client = new GenericAI(ApiKey: llmApiKey);
                 if (__simulate_metatdata_computation__)
                 {
-                    d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() };
+                    d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
+                        ["a"] = new List<string> { "b" }
+                    } };
                 }
                 else
                 {
