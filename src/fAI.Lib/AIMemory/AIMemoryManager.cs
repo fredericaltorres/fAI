@@ -647,8 +647,7 @@ namespace fAI
             var x = 0;
             Trace(text);
             am.ForEach((m) => {
-                if (m.Score >= 1)
-                    HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this);
+                HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this);
             });
             Trace("");
         }

@@ -247,8 +247,6 @@ namespace fAI
                 }
             }
 
-            
-
             return index;
         }
 
