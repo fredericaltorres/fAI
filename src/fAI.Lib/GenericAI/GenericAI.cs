@@ -321,6 +321,7 @@ namespace fAI
                     var googleContents = contents.GetGoogleContents();
                     var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
                     var url = googleAIClient.Completions.GetUrl(model);
+
                     var r = googleAIClient.Completions.Create(p, url, model);
 
                     usage.SetTokenCount(r.usageMetadata.promptTokenCount, r.usageMetadata.candidatesTokenCount);

@@ -238,7 +238,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         [TestBeforeAfter]
         public void RePhraseQuestionIntoAffirmation()
         {
-            GenericAI.GetModels().ForEach(model => //_quickFilter
+            GenericAI.GetModels(_quickFilter).ForEach(model => //
             {
                 try
                 {

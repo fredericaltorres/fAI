@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using static DynamicSugar.DS;
 using static fAI.GenericAI;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
@@ -55,6 +56,12 @@ namespace fAI
                 mc.AddHeader("Content-Type", "application/json")
                   .AddHeader("Accept", "application/json")
                     .AddHeader("x-goog-api-key", _key);
+
+            foreach (string h in mc.Headers)
+            {
+                OpenAI.Trace($"{h}:{mc.Headers[h]}", this);
+            }
+
             return mc;
         }
 
