@@ -3,12 +3,13 @@ using fAI.OpenAIModel.ImageResponseGpt;
 using fAI.Util.Strings;
 using fAI.VectorDB;
 using LiteDB;
-using Mistral.SDK.DTOs;
+//using Mistral.SDK.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Xml.Linq;
@@ -162,7 +163,7 @@ namespace fAI
        
         public (bool, GenericAICompletions.GenericAIUsage) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
-            var isMarkdownOrTextFile = MarkdownManager.IsMarkdownFile(localFile) || MarkdownManager.IsTextFile(localFile);
+            //var isMarkdownOrTextFile = MarkdownManager.IsMarkdownFile(localFile) || MarkdownManager.IsTextFile(localFile);
             if (d.Type == PublishedDocumentInfoType.ImageFile) // Is image
             {
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
@@ -187,7 +188,7 @@ namespace fAI
                         existingAIMemory.Embeddings.Clear();
                     }
 
-                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, openAiKey, llmApiKey: llmApiKey);
+                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey);
                     u = uu;
                     Update(existingAIMemory);
                 }
@@ -296,7 +297,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
             }
 
-            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsApiKey:openAiKey, llmApiKey: llmApiKey);
+            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey:openAiKey, llmApiKey: llmApiKey);
 
             d.Init();
 
@@ -322,12 +323,13 @@ namespace fAI
         public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite-preview";// "gemini-3.1-flash-Lite"
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
-            string embeddingsApiKey = null, 
+            string embeddingsOpenAIApiKey = null, 
             string llmApiKey = null,
             string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION
             )
         {
-            var r1 = ComputeEmbeddings(d, embeddingsApiKey);
+            Trace($"[{nameof(ComputeEmbeddingsAndMetaData)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
+            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey);
             var r2 = ExtractMetaDataFromText(d, model, llmApiKey);
 
             return (r1 && r2.Item1, r2.Item2);
@@ -652,9 +654,9 @@ namespace fAI
             Trace("");
         }
 
-        private void Trace(string text)
+        private void Trace(string text, [CallerMemberName] string methodName = "")
         {
-            HttpBase.Trace(text, this);
+            HttpBase.Trace(text, this, methodName: methodName);
         }
 
         public AIMemorys SimilaritySearch(

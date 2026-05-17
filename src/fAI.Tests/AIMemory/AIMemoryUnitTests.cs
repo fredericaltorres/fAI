@@ -279,7 +279,9 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, 
+                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+                llmApiKey: "BAD-KEY");
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
@@ -291,14 +293,13 @@ namespace fAI.Tests
             Assert.Null(aiMemory);
         }
 
-
-        [Fact()]
+        [Fact()] 
         [TestBeforeAfter]
         public void Add_Update_Markdown_Search_Delete_Image()
         {
             var aiManager = new AIMemoryManager(TestDBName);
-            aiManager.__simulate_embedding_computation__ = true;
-            aiManager.__simulate_metadata_computation__ = true;
+            //aiManager.__simulate_embedding_computation__ = true;
+            //aiManager.__simulate_metadata_computation__ = true;
 
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
 
@@ -310,7 +311,10 @@ namespace fAI.Tests
                 LocalFile = imageFileName,
             };
 
-            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            aiManager.Add(aiMemory, 
+                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"), 
+                llmApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+                );
 
             var pngFileName = aiMemory.ExportMedia();
             Assert.True(File.Exists(pngFileName));
@@ -325,7 +329,10 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, 
+                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+                llmApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"),
+                clearEmbeddings: true);
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
