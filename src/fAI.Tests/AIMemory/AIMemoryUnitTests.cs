@@ -302,7 +302,6 @@ namespace fAI.Tests
             //aiManager.__simulate_metadata_computation__ = true;
 
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-
             var aiMemory = new AIMemory()
             {
                 Title = $"one big image",
@@ -311,14 +310,11 @@ namespace fAI.Tests
                 LocalFile = imageFileName,
             };
 
-            aiManager.Add(aiMemory, 
-                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"), 
+            aiManager.Add(aiMemory,
+                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
                 llmApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
                 );
-
-            var pngFileName = aiMemory.ExportMedia();
-            Assert.True(File.Exists(pngFileName));
-            File.Delete(pngFileName);
+            AssertAIMemoryExportToMedia(aiMemory);
 
             var __id__ = aiMemory.Id;
             var __mid__ = aiMemory.MID;
@@ -329,7 +325,7 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile, 
+            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile,
                 openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
                 llmApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"),
                 clearEmbeddings: true);
@@ -341,13 +337,24 @@ namespace fAI.Tests
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
 
-            pngFileName = aiMemory.ExportMedia();
-            Assert.True(File.Exists(pngFileName));
-            File.Delete(pngFileName);
+            AssertAIMemoryExportToMedia(aiMemory);
 
             aiManager.Delete(aiMemory);
+            AssertAIMemoryIsDeleted(aiManager, aiMemory);
+        }
+
+        private static void AssertAIMemoryIsDeleted(AIMemoryManager aiManager, AIMemory aiMemory)
+        {
             aiMemory = aiManager.GetFromId(aiMemory.Id);
             Assert.Null(aiMemory);
+        }
+
+        private static string AssertAIMemoryExportToMedia(AIMemory aiMemory)
+        {
+            var pngFileName = aiMemory.ExportMedia();
+            Assert.True(File.Exists(pngFileName));
+            File.Delete(pngFileName);
+            return pngFileName;
         }
 
         [Fact()]

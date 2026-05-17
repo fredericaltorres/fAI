@@ -189,6 +189,10 @@ namespace fAI
                     }
 
                     var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey);
+
+                    d.Embeddings = existingAIMemory.Embeddings;
+                    d.AIMetaData = existingAIMemory.AIMetaData;
+
                     u = uu;
                     Update(existingAIMemory);
                 }
