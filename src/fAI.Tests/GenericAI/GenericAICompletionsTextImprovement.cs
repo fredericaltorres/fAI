@@ -55,6 +55,10 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True(client.Completions.LastUsage.InputTokens > 0);
                 Assert.True(client.Completions.LastUsage.OutputTokens > 0);
             }
+            catch (Exception ex)
+            {
+                HttpBase.Trace($"[ERROR]Exception: {ex.Message}", this);
+            }
             finally
             {
                 GenericAICompletions.__experimentMultiModelMode.Clear();

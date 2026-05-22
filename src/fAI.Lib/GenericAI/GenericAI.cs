@@ -240,6 +240,7 @@ namespace fAI
                     {
                         var m = experimentMultiModelMode[i];
                         HttpBase.Trace($"[EXPERIMENT_MULTI_MODEL_MODE] Running model {m} for the same prompt.", this);
+                        base._key = null; // to allow different API keys for different models in the experiment mode, the API key is reset before each call, so that the __Create method will pick up the right key for each model.
                         var (s, c, u) = __Create(prompt, systemPrompt, m, contents);
                         if(i == experimentMultiModelMode.Count -1)
                         {
