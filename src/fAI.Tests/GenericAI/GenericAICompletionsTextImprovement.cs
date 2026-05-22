@@ -23,12 +23,45 @@ namespace fAI.Tests
     public class GenericAiCompletions_UnitTests : OpenAIUnitTestsBase
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
-        Regex _quickFilter = new Regex("gemini-.*");
+        //Regex _quickFilter = new Regex("gemini-.*");
+        Regex _quickFilter = null;
 
         public GenericAiCompletions_UnitTests()
         {
             OpenAI.TraceOn = true;
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ExperimentMultiMode()
+        {
+            try
+            {
+                var text = @"
+hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
+";
+                var model = "gemini-3.1-flash-lite-preview";
+                var expectedWords = DS.List("alice", "insurance", "car");
+                var client = new GenericAI();
+
+                //GenericAICompletions.__experimentMultiModelMode = GoogleAI.GetModels();
+                GenericAICompletions.__experimentMultiModelMode = GenericAI.GetModels();
+
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+
+                Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
+
+                Assert.True(client.Completions.LastUsage.InputTokens > 0);
+                Assert.True(client.Completions.LastUsage.OutputTokens > 0);
+            }
+            finally
+            {
+                GenericAICompletions.__experimentMultiModelMode.Clear();
+            }
+        }
+
+
 
         [Fact()]
         [TestBeforeAfter]

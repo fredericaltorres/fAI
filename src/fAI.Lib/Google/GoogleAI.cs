@@ -58,10 +58,10 @@ namespace fAI
                   .AddHeader("Accept", "application/json")
                     .AddHeader("x-goog-api-key", _key);
 
-            foreach (string h in mc.Headers)
-            {
-                OpenAI.Trace($"{h}:{mc.Headers[h]}", this);
-            }
+            //foreach (string h in mc.Headers)
+            //{
+            //    OpenAI.Trace($"{h}:{mc.Headers[h]}", this);
+            //}
 
             return mc;
         }

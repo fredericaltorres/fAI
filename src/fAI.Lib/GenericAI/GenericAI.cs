@@ -222,10 +222,33 @@ namespace fAI
 
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
 
+        /// <summary>
+        /// This mode will not support multithreading
+        /// </summary>
+        public static List<string> __experimentMultiModelMode = new List<string>();
+
         public (string, GenericAI.Contents, GenericAIUsage) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null, int reTryCounter = 0)
         {
             try
             {
+                var experimentMultiModelMode = new List<string>();
+                if (__experimentMultiModelMode.Count > 0)
+                {
+                    experimentMultiModelMode = __experimentMultiModelMode.ToList();
+                    __experimentMultiModelMode.Clear();
+                    for(var i=0; i<experimentMultiModelMode.Count; i++)
+                    {
+                        var m = experimentMultiModelMode[i];
+                        HttpBase.Trace($"[EXPERIMENT_MULTI_MODEL_MODE] Running model {m} for the same prompt.", this);
+                        var (s, c, u) = __Create(prompt, systemPrompt, m, contents);
+                        if(i == experimentMultiModelMode.Count -1)
+                        {
+                            __experimentMultiModelMode = experimentMultiModelMode;
+                            return (s, c, u); // Return the last model evaluation result to be used in the application
+                        }
+                    }
+                }
+
                 return __Create(prompt, systemPrompt, model, contents);
             }
             catch (Exception e)
