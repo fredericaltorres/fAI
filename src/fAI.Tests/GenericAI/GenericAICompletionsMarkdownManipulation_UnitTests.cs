@@ -311,7 +311,7 @@ public static void Main()
         [TestBeforeAfter]
         public void Markdown_LoadWithFrontLoaded()
         {
-            var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md");
+            var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.2.md");
             var title = "The Ultimate Guide to Markdown Front Matter";
             Assert.Equal(title, MarkDownDocument.FrontMatter.Title);
             Assert.Equal(title, MarkDownDocument.FrontMatter.Name);
@@ -328,7 +328,9 @@ public static void Main()
         [TestBeforeAfter]
         public void Markdown_LoadWithFrontLoaded_And_Update()
         {
-            var markDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md");
+            var markdownFilename = @".\TestFiles\MarkdownWithFrontLoader.md";
+            var markDownDocument = MarkdownManager.LoadMarkdownFile(markdownFilename);
+            Assert.True(markDownDocument.HasFrontMatter);
             markDownDocument.FrontMatter.Title += " - Updated";
             markDownDocument.FrontMatter.Author += " - Updated";
             markDownDocument.FrontMatter.Description += " - Updated";
@@ -340,8 +342,7 @@ public static void Main()
 ## Tutu Section
 - Tutu chapeau pointu
 ";
-
-            var markDownDocument2 = MarkdownManager.UpdateMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md", markDownDocument.MarkdownBody, markDownDocument.FrontMatter);
+            var markDownDocument2 = MarkdownManager.UpdateMarkdownFile(markdownFilename, markDownDocument.MarkdownBody, markDownDocument.FrontMatter);
 
             var title = "The Ultimate Guide to Markdown Front Matter";
             Assert.Equal(markDownDocument.FrontMatter.Title, markDownDocument2.FrontMatter.Title);
@@ -352,6 +353,27 @@ public static void Main()
 
             Assert.Equal("true", markDownDocument.FrontMatter.ExtraFields["published"]);
             Assert.Equal("markdown, guide, metadata", markDownDocument.FrontMatter.Tags.Format().Replace(@"""", ""));
+            Assert.Contains("**Repository URL:** [GitHub repository URL]", markDownDocument.MarkdownBody);
+            Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_LoadWith_NO_FrontLoaded_And_Update()
+        {
+            var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
+            var markDownDocument = MarkdownManager.LoadMarkdownFile(markdownFilename);
+            Assert.Null(markDownDocument.FrontMatter);
+            Assert.False(markDownDocument.HasFrontMatter);
+            markDownDocument.MarkdownBody += @"
+
+## Tutu Section
+- Tutu chapeau pointu
+";
+
+            var markDownDocument2 = MarkdownManager.UpdateMarkdownFile(markdownFilename, markDownDocument.MarkdownBody, markDownDocument.FrontMatter);
+            Assert.Null(markDownDocument2.FrontMatter);
+
             Assert.Contains("**Repository URL:** [GitHub repository URL]", markDownDocument.MarkdownBody);
             Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
         }

@@ -9,7 +9,10 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class MarkdownDocument
 {
-    public FrontMatter FrontMatter { get; set; } = new FrontMatter();
+    public FrontMatter FrontMatter { get; set; }
+
+    public bool HasFrontMatter => FrontMatter != null;
+
     public string MarkdownBody { get; set; } = string.Empty;
     public string RawContent { get; set; } = string.Empty;
 
@@ -143,6 +146,7 @@ public static class MarkdownLoader
         {
             // No front matter found — the entire content is the body
             document.MarkdownBody = rawContent.Trim();
+            document.FrontMatter = null;
         }
 
         return document;
