@@ -518,7 +518,7 @@ namespace fAI
             int semanticScoreToNotApplyRefiningTopK = 3, 
             //double reciprocalRankFusionK = 60,
             float bm25MinimumScore = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
-            float rrfMinimumScore = 2f,  // Minimum RRF score to consider as a strong match
+            float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
             bool rffApplyGapOutlierDetection = true
             )
         {
@@ -596,8 +596,9 @@ namespace fAI
             Trace($"BM25 - INDEX REPORT");
             //bm25.GetIndexReport().ForEach(r => Trace(r));
 
-            var bm25MiniScore = 0.5f;
+            var bm25MiniScore = 0.0f;
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > bm25MiniScore).OrderByDescending(d => d.Score).ToList());
+
             var minimumScoreOrModeStr = minimumScoreOrMode == -1 ? "Top 50%" : minimumScoreOrMode == -2 ? "Greater Than Std Deviation" : minimumScoreOrMode.ToString();
 
             TraceAIMemorys(aiMemories, $"BM25(1): query: {query}");

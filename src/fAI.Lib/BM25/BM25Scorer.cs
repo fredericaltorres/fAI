@@ -104,12 +104,12 @@ namespace fAI
             // _docFrequency[term][docIndex] = frequency of term in that document
             _docFrequency = BuildIndex(tokenised);
 
-            WriteIndexToTempJsonFile();
-
             // pre-compute IDF for every known term
             _idfCache = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
             foreach (var kv in _docFrequency)
                 _idfCache[kv.Key] = ComputeIdf(kv.Value);
+
+            WriteIndexToTempJsonFile();
         }
 
         private void WriteIndexToTempJsonFile()
@@ -118,6 +118,9 @@ namespace fAI
             {
                 var _docFrequencyJson = JsonConvert.SerializeObject(_docFrequency, Formatting.Indented);
                 System.IO.File.WriteAllText(@"c:\TEMP\fAi.bm25.docFrequency.json", _docFrequencyJson);
+
+                var _idfCacheJson = JsonConvert.SerializeObject(_idfCache, Formatting.Indented);
+                System.IO.File.WriteAllText(@"c:\TEMP\fAi.bm25._idfCache.json", _idfCacheJson);
             }
             catch { }
         }
