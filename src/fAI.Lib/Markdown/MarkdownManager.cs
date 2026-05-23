@@ -542,6 +542,12 @@ namespace fAI
             return  MarkdownLoader.Load(filePath);
         }
 
+        public static MarkdownDocument UpdateMarkdownFile(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
+        {
+            var markdownDocument = MarkdownLoader.Update(filePath, newMarkdownBody, frontMatter);
+            return MarkdownLoader.Load(filePath);
+        }
+
         public static string RemoveMarkDownTick(string text)
         {
             var marker1 = "```markdown";

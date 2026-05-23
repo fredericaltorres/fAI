@@ -313,14 +313,47 @@ public static void Main()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md");
             var title = "The Ultimate Guide to Markdown Front Matter";
-            Assert.Equal(title, MarkDownDocument.Metadata.Title);
-            Assert.Equal(title, MarkDownDocument.Metadata.Name);
-            Assert.Equal("An in-depth look at how to use front matter in Markdown files to enhance documentation and project clarity.", MarkDownDocument.Metadata.Description);
-            Assert.Equal("Jane Doe", MarkDownDocument.Metadata.Author);
-            Assert.Equal(new DateTime(2023,10,27), MarkDownDocument.Metadata.Date);
-            Assert.Equal("true", MarkDownDocument.Metadata.ExtraFields["published"]);
-            Assert.Equal("markdown, guide, metadata", MarkDownDocument.Metadata.Tags.Format().Replace(@"""",""));
-            Assert.Contains("**Repository URL:** [GitHub repository URL]", MarkDownDocument.Body);
+            Assert.Equal(title, MarkDownDocument.FrontMatter.Title);
+            Assert.Equal(title, MarkDownDocument.FrontMatter.Name);
+            Assert.Equal("An in-depth look at how to use front matter in Markdown files to enhance documentation and project clarity.", MarkDownDocument.FrontMatter.Description);
+            Assert.Equal("Jane Doe", MarkDownDocument.FrontMatter.Author);
+            Assert.Equal(new DateTime(2023,10,27), MarkDownDocument.FrontMatter.Date);
+            Assert.Equal("true", MarkDownDocument.FrontMatter.ExtraFields["published"]);
+            Assert.Equal("markdown, guide, metadata", MarkDownDocument.FrontMatter.Tags.Format().Replace(@"""",""));
+            Assert.Contains("**Repository URL:** [GitHub repository URL]", MarkDownDocument.MarkdownBody);
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_LoadWithFrontLoaded_And_Update()
+        {
+            var markDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md");
+            markDownDocument.FrontMatter.Title += " - Updated";
+            markDownDocument.FrontMatter.Author += " - Updated";
+            markDownDocument.FrontMatter.Description += " - Updated";
+            markDownDocument.FrontMatter.Name += " - Updated";
+            markDownDocument.FrontMatter.SetDateToNow();
+
+            markDownDocument.MarkdownBody += @"
+
+## Tutu Section
+- Tutu chapeau pointu
+";
+
+            var markDownDocument2 = MarkdownManager.UpdateMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.md", markDownDocument.MarkdownBody, markDownDocument.FrontMatter);
+
+            var title = "The Ultimate Guide to Markdown Front Matter";
+            Assert.Equal(markDownDocument.FrontMatter.Title, markDownDocument2.FrontMatter.Title);
+            Assert.Equal(markDownDocument.FrontMatter.Author, markDownDocument2.FrontMatter.Author);
+            Assert.Equal(markDownDocument.FrontMatter.Name, markDownDocument2.FrontMatter.Name);
+            Assert.Equal(markDownDocument.FrontMatter.Description, markDownDocument2.FrontMatter.Description);
+            Assert.Equal(markDownDocument.FrontMatter.Date, markDownDocument2.FrontMatter.Date);
+
+            Assert.Equal("true", markDownDocument.FrontMatter.ExtraFields["published"]);
+            Assert.Equal("markdown, guide, metadata", markDownDocument.FrontMatter.Tags.Format().Replace(@"""", ""));
+            Assert.Contains("**Repository URL:** [GitHub repository URL]", markDownDocument.MarkdownBody);
+            Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
         }
 
         const string github_theme = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\themes\github.theme";

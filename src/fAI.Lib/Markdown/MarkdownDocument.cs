@@ -9,9 +9,27 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class MarkdownDocument
 {
-    public FrontMatter Metadata { get; set; } = new FrontMatter();
-    public string Body { get; set; } = string.Empty;
+    public FrontMatter FrontMatter { get; set; } = new FrontMatter();
+    public string MarkdownBody { get; set; } = string.Empty;
     public string RawContent { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Serializes the document (front matter + body) and writes it to disk.
+    /// </summary>
+    public void Update(string fileName)
+    {
+        var sb = new StringBuilder();
+        if (FrontMatter != null)
+            FrontMatter.FrontMatterToText(sb);
+        sb.Append(MarkdownBody);
+        string content = sb.ToString();
+
+        string directory = Path.GetDirectoryName(fileName);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        File.WriteAllText(fileName, content, Encoding.UTF8);
+    }
 }
 
 /// <summary>
@@ -24,9 +42,53 @@ public class FrontMatter
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime? Date { get; set; }
+
+    public void SetDateToNow()
+    {
+        this.Date = DateTime.Now.Date;
+    }   
+
+    public void SetDateToUtcNow()
+    {
+        this.Date = DateTime.UtcNow.Date;
+    }
+
+
     public string Author { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = new List<string>();
     public Dictionary<string, string> ExtraFields { get; set; } = new Dictionary<string, string>();
+
+    public void FrontMatterToText(StringBuilder sb)
+    {
+        sb.AppendLine("---");
+
+        if (!string.IsNullOrEmpty(this.Name))
+            sb.AppendLine($"name: {this.Name}");
+
+        if (!string.IsNullOrEmpty(this.Title))
+            sb.AppendLine($"title: {this.Title}");
+
+        if (!string.IsNullOrEmpty(this.Description))
+            sb.AppendLine($"description: {this.Description}");
+
+        if (!string.IsNullOrEmpty(this.Author))
+            sb.AppendLine($"author: {this.Author}");
+
+        if (this.Date.HasValue)
+            sb.AppendLine($"date: {this.Date.Value:yyyy-MM-dd}");
+
+        if (this.Tags?.Count > 0)
+        {
+            sb.AppendLine("tags:");
+            foreach (string tag in this.Tags)
+                sb.AppendLine($"  - {tag}");
+        }
+
+        foreach (var kvp in this.ExtraFields ?? new Dictionary<string, string>())
+            sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+
+        sb.AppendLine("---");
+    }
 }
 
 /// <summary>
@@ -39,6 +101,16 @@ public static class MarkdownLoader
         @"^\-{3}\s*\r?\n(?<yaml>.*?)\r?\n\-{3}\s*\r?\n(?<body>.*)",
         RegexOptions.Singleline | RegexOptions.Compiled
     );
+
+    public static MarkdownDocument Update(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
+    {
+        var document = Load(filePath);
+        document.MarkdownBody = newMarkdownBody;
+        if (frontMatter != null)
+            document.FrontMatter = frontMatter;
+        document.Update(filePath);
+        return document;
+    }
 
     /// <summary>
     /// Loads a Markdown file from disk and returns a parsed <see cref="MarkdownDocument"/>.
@@ -64,13 +136,13 @@ public static class MarkdownLoader
         if (match.Success)
         {
             string yaml = match.Groups["yaml"].Value.Trim();
-            document.Body = match.Groups["body"].Value.Trim();
-            document.Metadata = ParseFrontMatter(yaml);
+            document.MarkdownBody = match.Groups["body"].Value.Trim();
+            document.FrontMatter = ParseFrontMatter(yaml);
         }
         else
         {
             // No front matter found — the entire content is the body
-            document.Body = rawContent.Trim();
+            document.MarkdownBody = rawContent.Trim();
         }
 
         return document;

@@ -851,7 +851,7 @@
     </None>
     <None Include="TestFiles\JANE DOE, Back Issues.md" />
     <None Include="TestFiles\MarkdownWithFrontLoader.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestFiles\Skills\DataAnalysisAndInsights\SKILL.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
