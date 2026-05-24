@@ -515,11 +515,10 @@ namespace fAI
             List<float> embeddingsQuery, 
             float semanticMinimumScore = 0.2f,
             float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            //int semanticScoreToNotApplyRefiningTopK = 3, 
-            //double reciprocalRankFusionK = 60,
-            float bm25MinimumScore = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
+            float bm25MinimumScoreOrMode = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
-            bool rffApplyGapOutlierDetection = true
+            bool rffApplyGapOutlierDetection = true,
+            float bm25MinimunScore = 0.3f
             )
         {
             var z = new HybridSearchResult() { Query = query };
@@ -527,7 +526,7 @@ namespace fAI
             {
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreOrMode: bm25MinimumScore);
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreOrMode: bm25MinimumScoreOrMode, bm25MinimumScore: bm25MinimunScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
@@ -585,7 +584,8 @@ namespace fAI
         }
 
         private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
-            float minimumScoreOrMode = -1 // -1 top 50%, -2 Greater Than Std Deviation, Other > than 
+            float minimumScoreOrMode = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
+            float bm25MinimumScore = 0.3f
             )
         {
             var aiMemories = new AIMemorys(allAiMemories.ToList());
@@ -594,8 +594,10 @@ namespace fAI
             Trace($"BM25 - INDEX REPORT");
             //bm25.GetIndexReport().ForEach(r => Trace(r));
 
-            var bm25MiniScore = 0.0f;
-            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score > bm25MiniScore).OrderByDescending(d => d.Score).ToList());
+            var maxScore = aiMemories.Select(s => s.Score).Max();
+            bm25MinimumScore = Math.Min(bm25MinimumScore, maxScore);
+
+            aiMemories = new AIMemorys(aiMemories.Where(d => d.Score >= bm25MinimumScore).OrderByDescending(d => d.Score).ToList());
 
             var minimumScoreOrModeStr = minimumScoreOrMode == -1 ? "Top 50%" : minimumScoreOrMode == -2 ? "Greater Than Std Deviation" : minimumScoreOrMode.ToString();
 
