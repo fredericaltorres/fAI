@@ -135,6 +135,41 @@ namespace fAI.Tests
             Assert.Contains(@"font-family: Consolas,'Segoe UI', Arial, sans-serif;", File.ReadAllText(htmlFile));
         }
 
+
+        const string BASIC_MARKDOWN_WITH_CSHARP_CODE_1 = @"
+# C# Color Coding 
+
+Code sample with C# syntax highlighting:
+
+```csharp 
+public static string ExtractBodyBlock(string htmlStr)
+{
+    if (string.IsNullOrWhiteSpace(htmlStr))
+        return null;
+    string pattern = @""<body[\s\S]*?</body>"";
+    Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+    return match.Success ? match.Value : null;
+}
+```
+
+```javascript
+function greet(name) {
+    console.log(`Hello, ${name}!`);
+}
+```
+
+```typescript
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+```
+
+End of markdown.
+
+";
+
         const string BASIC_MARKDOWN_1 = @"
 # Markdown Showcase
 
@@ -300,6 +335,13 @@ public static void Main()
 
         [Fact()]
         [TestBeforeAfter]
+        public void Basic_Markdown_Generation_With_CSharpCode()
+        {
+            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_WITH_CSHARP_CODE_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Basic_Markdown_Generation_1()
         {
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
@@ -309,7 +351,7 @@ public static void Main()
 
         [Fact()]
         [TestBeforeAfter]
-        public void Markdown_LoadWithFrontLoaded()
+        public void Markdown_LoadWithFrontLoader()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.2.md");
             var title = "The Ultimate Guide to Markdown Front Matter";
@@ -326,7 +368,7 @@ public static void Main()
 
         [Fact()]
         [TestBeforeAfter]
-        public void Markdown_LoadWithFrontLoaded_And_Update()
+        public void Markdown_LoadWithFrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithFrontLoader.md";
             var markDownDocument = MarkdownManager.LoadMarkdownFile(markdownFilename);
@@ -359,7 +401,7 @@ public static void Main()
 
         [Fact()]
         [TestBeforeAfter]
-        public void Markdown_LoadWith_NO_FrontLoaded_And_Update()
+        public void Markdown_LoadWith_NO_FrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
             var markDownDocument = MarkdownManager.LoadMarkdownFile(markdownFilename);
@@ -376,6 +418,31 @@ public static void Main()
 
             Assert.Contains("**Repository URL:** [GitHub repository URL]", markDownDocument.MarkdownBody);
             Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void IsMarkdownContentHasFrontLoader_Yes_RemoveIt()
+        {
+            var mdFile = @".\TestFiles\MarkdownWithFrontLoader.2.md";
+            var hasFrontLoader = MarkdownManager.IsMarkdownContentHasFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
+            Assert.True(hasFrontLoader);
+            var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
+            Assert.StartsWith("## 📋 Project Information", markDownContent);
+            Assert.EndsWith("quality over quantity!", markDownContent);
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
+        {
+            var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.md";
+            var hasFrontLoader = MarkdownManager.IsMarkdownContentHasFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
+            Assert.False(hasFrontLoader);
+            var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
+            Assert.StartsWith("## 📋 Project Information", markDownContent);
+            Assert.EndsWith("quality over quantity!", markDownContent);
         }
 
         const string github_theme = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\themes\github.theme";

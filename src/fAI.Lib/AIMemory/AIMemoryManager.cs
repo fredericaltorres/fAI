@@ -536,7 +536,6 @@ namespace fAI
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: semanticMinimumScore,
                         scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
-                        scoreToNotApplyRefiningTopK: semanticScoreToNotApplyRefiningTopK,
                         all: allAiMemories); // Similatiry search is executed on the all data set to also return record ignored by BM25 but has high semantic score
 
                     ranker.AddUpdateSemanticScore(sResults);
@@ -550,8 +549,7 @@ namespace fAI
                 {
                     z.Results = this.SimilaritySearch(embeddingsQuery,
                        minimumScore: semanticMinimumScore,
-                       scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
-                       scoreToNotApplyRefiningTopK: semanticScoreToNotApplyRefiningTopK);
+                       scoreToNotApplyRefining: semanticScoreToNotApplyRefining);
                     z.Type = HybridSearchResultType.SemanticOnly;
                 }
                 z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
@@ -665,15 +663,11 @@ namespace fAI
         }
 
         public AIMemorys SimilaritySearch(
-
-            List<float> embeddingsQuery, float minimumScore = 0.2f, 
-
+            List<float> embeddingsQuery, 
+            float minimumScore = 0.2f,
             // mode 0: default
-
             // mode 1
             float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            int scoreToNotApplyRefiningTopK = 3,
-
             // mode 2
             float topBestScorePercent = -1f, // If the best score is higher than this threshold, we will consider it as a strong match and we will not apply refining to improve performance, we just return the items
             IEnumerable<AIMemory> all = null
@@ -710,12 +704,12 @@ namespace fAI
             }
 
             // Mode 2, Return all score greater than the scoreToNotApplyRefining, Top K if there are too many
-            if (scoreToNotApplyRefining != -1)
+            if (scoreToNotApplyRefining != -1f)
             {
                 var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).OrderByDescending(e => e.Score).ToList();
                 var am = new AIMemorys();
-                am.AddRange(aiMemoryWithHighScore.Take(scoreToNotApplyRefiningTopK).OrderByDescending(e => e.Score).ToList());
-                TraceAIMemorys(am, $"Semantic scoreToNotApplyRefining: {scoreToNotApplyRefining}, scoreToNotApplyRefiningTopK: {scoreToNotApplyRefiningTopK}");
+                am.AddRange(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
+                TraceAIMemorys(am, $"Semantic scoreToNotApplyRefining: {scoreToNotApplyRefining}");
                 return am;
             }
 

@@ -53,6 +53,7 @@ namespace fAI
 <!DOCTYPE html>
 <html lang=""en"">
 <head>
+<link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/nord.min.css"">
 <!-- HtmlTemplate03 -->
 <meta charset=""UTF-8"">
 <style>
@@ -214,6 +215,12 @@ namespace fAI
 </head>
 <body>
     [body]
+
+
+    <script src=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js""></script>
+    <script>hljs.highlightAll();</script>
+
+
 </body>
 </html>
 ";
@@ -222,6 +229,7 @@ namespace fAI
         <!DOCTYPE html>
 <html lang=""en"">
 <head>
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/nord.min.css"">
     <meta charset=""UTF-8"">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Fira+Code:wght@300;400&display=swap');
@@ -483,13 +491,38 @@ namespace fAI
 </head>
 <body>
     [body]
+
+    <script src=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js""></script>
+    <script>hljs.highlightAll();</script>
+
+
 </body>
 </html>
 ";
+
+        /*
+         
+<!-- Dark themes -->
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"">
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"">
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"">
+    ***<link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/nord.min.css"">
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/dracula.min.css"">
+
+    <!-- Light themes -->
+    ***<link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"">
+    ***<link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs.min.css"">         
+         
+         */
+
+
         public static string HtmlTemplate01 = @"
 <!DOCTYPE html>
 <html lang=""en"">
 <head>
+    
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/nord.min.css"">
+
     <meta charset=""UTF-8"">
     <style>
         body {
@@ -523,6 +556,10 @@ namespace fAI
 </head>
 <body>
     [body]
+
+    <script src=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js""></script>
+    <script>hljs.highlightAll();</script>
+
 </body>
 </html>
 ";
@@ -535,6 +572,26 @@ namespace fAI
         public static void OpenHtmlFileInBrowser(string htmlFile)
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(htmlFile) { UseShellExecute = true });
+        }
+
+        public static bool IsMarkdownContentHasFrontLoader(string markDownContent)
+        {
+            if (string.IsNullOrWhiteSpace(markDownContent))
+                return false;
+            var frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
+            return Regex.IsMatch(markDownContent, frontMatterPattern, RegexOptions.Singleline);
+        }
+
+        public static string RemoveMarkdownFrontLoader(string markDownContent)
+        {
+            if (string.IsNullOrWhiteSpace(markDownContent))
+                return markDownContent;
+
+            if(!MarkdownManager.IsMarkdownContentHasFrontLoader(markDownContent))
+                return markDownContent;
+
+            var frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
+            return Regex.Replace(markDownContent, frontMatterPattern, "", RegexOptions.Singleline);
         }
 
         public static MarkdownDocument LoadMarkdownFile(string filePath)
