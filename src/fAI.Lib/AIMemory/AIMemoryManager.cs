@@ -515,7 +515,7 @@ namespace fAI
             List<float> embeddingsQuery, 
             float semanticMinimumScore = 0.2f,
             float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            int semanticScoreToNotApplyRefiningTopK = 3, 
+            //int semanticScoreToNotApplyRefiningTopK = 3, 
             //double reciprocalRankFusionK = 60,
             float bm25MinimumScore = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
