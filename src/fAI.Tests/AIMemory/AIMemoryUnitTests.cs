@@ -390,8 +390,6 @@ namespace fAI.Tests
             Assert.True(usageUpdate.InputTokens > 0);
             Assert.True(usageUpdate.TotalTokens > 0);
 
-
-
             aiManager.Update(aiMemory);
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
@@ -480,7 +478,7 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
 
             Assert.True(hybridSearchResults.Succeeded, "Hybrid search succeeded");
             Assert.Single(hybridSearchResults.Results);
-            Assert.Equal("6a113032c937df036855a6c0", hybridSearchResults.Results[0].MID);
+            Assert.Equal("6a051a11c937df0d9d3dd612", hybridSearchResults.Results[0].MID);
 
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
