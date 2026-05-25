@@ -512,13 +512,15 @@ namespace fAI
 
         public HybridSearchResult HybridSearch(
             string query, 
-            List<float> embeddingsQuery, 
-            float semanticMinimumScore = 0.2f,
-            float semanticScoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            float bm25MinimumScoreOrMode = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
+            List<float> embeddingsQuery,
+
+            float bm25ScoreOrMode = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
+            float bm25MinimumScore = 0.3f,
+
+            float semanticMinimumScore = 0.25f,
+            
             float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
-            bool rffApplyGapOutlierDetection = true,
-            float bm25MinimunScore = 0.3f
+            bool  rffApplyGapOutlierDetection = true
             )
         {
             var z = new HybridSearchResult() { Query = query };
@@ -526,7 +528,7 @@ namespace fAI
             {
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreOrMode: bm25MinimumScoreOrMode, bm25MinimumScore: bm25MinimunScore);
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
@@ -534,7 +536,6 @@ namespace fAI
 
                     var sResults = this.SimilaritySearch(embeddingsQuery,
                         minimumScore: semanticMinimumScore,
-                        scoreToNotApplyRefining: semanticScoreToNotApplyRefining,
                         all: allAiMemories); // Similatiry search is executed on the all data set to also return record ignored by BM25 but has high semantic score
 
                     ranker.AddUpdateSemanticScore(sResults);
@@ -546,9 +547,7 @@ namespace fAI
                 }
                 else
                 {
-                    z.Results = this.SimilaritySearch(embeddingsQuery,
-                       minimumScore: semanticMinimumScore,
-                       scoreToNotApplyRefining: semanticScoreToNotApplyRefining);
+                    z.Results = this.SimilaritySearch(embeddingsQuery, minimumScore: semanticMinimumScore);
                     z.Type = HybridSearchResultType.SemanticOnly;
                 }
                 z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
@@ -584,7 +583,7 @@ namespace fAI
         }
 
         private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
-            float minimumScoreOrMode = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
+            float minimumScoreMode = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
             float bm25MinimumScore = 0.3f
             )
         {
@@ -592,27 +591,23 @@ namespace fAI
             var bm25 = new Bm25(aiMemories);
             var scores = bm25.GetScores(query, aiMemories);
             Trace($"BM25 - INDEX REPORT");
-            //bm25.GetIndexReport().ForEach(r => Trace(r));
 
             var maxScore = aiMemories.Select(s => s.Score).Max();
             bm25MinimumScore = Math.Min(bm25MinimumScore, maxScore);
-
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score >= bm25MinimumScore).OrderByDescending(d => d.Score).ToList());
-
-            var minimumScoreOrModeStr = minimumScoreOrMode == -1 ? "Top 50%" : minimumScoreOrMode == -2 ? "Greater Than Std Deviation" : minimumScoreOrMode.ToString();
-
+            var minimumScoreOrModeStr = minimumScoreMode == -1 ? "Top 50%" : minimumScoreMode == -2 ? "Greater Than Std Deviation" : minimumScoreMode.ToString();
             TraceAIMemorys(aiMemories, $"BM25(1): query: {query}");
 
-            if (minimumScoreOrMode == -1)
+            if (minimumScoreMode == -1)
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: 50f /*default*/ ));
             }
-            else if (minimumScoreOrMode == -2) // Return value greater than standard deviation 
+            else if (minimumScoreMode == -2) // Return value greater than standard deviation 
             {
                 var scores2 = aiMemories.Select(d => d.Score).ToList();
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: StandardDeviation(scores2)));
             }
-            else if (minimumScoreOrMode == -3) // ApplyGapOutlierDetection
+            else if (minimumScoreMode == -3) // ApplyGapOutlierDetection
             {
                 //Gap Outlier Detection(Most Robust)
                 //Treat the gaps themselves as a distribution and find statistical outliers:
@@ -635,11 +630,11 @@ namespace fAI
             }
             else
             {
-                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreOrMode));
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreMode));
                 if(bm25Results.Count == 0) // minimumScoreOrMode is too high
                 {
                     var retryTopPercent = 20f;
-                    Trace($"minimumScoreOrMode: {minimumScoreOrMode} is too low, retry with top {retryTopPercent}%");
+                    Trace($"minimumScoreOrMode: {minimumScoreMode} is too low, retry with top {retryTopPercent}%");
                     bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: retryTopPercent /*default*/ ));
                 }
             }
@@ -667,10 +662,6 @@ namespace fAI
         public AIMemorys SimilaritySearch(
             List<float> embeddingsQuery, 
             float minimumScore = 0.2f,
-            // mode 0: default
-            // mode 1
-            float scoreToNotApplyRefining = -1f,  // If we found at least 3 items with score higher than this threshold, we will not apply refining to improve performance, we just return the items
-            // mode 2
             float topBestScorePercent = -1f, // If the best score is higher than this threshold, we will consider it as a strong match and we will not apply refining to improve performance, we just return the items
             IEnumerable<AIMemory> all = null
             )
@@ -705,22 +696,10 @@ namespace fAI
                 return am;
             }
 
-            // Mode 2, Return all score greater than the scoreToNotApplyRefining, Top K if there are too many
-            if (scoreToNotApplyRefining != -1f)
-            {
-                var aiMemoryWithHighScore = result.Where(rr => rr.Score >= scoreToNotApplyRefining).OrderByDescending(e => e.Score).ToList();
-                var am = new AIMemorys();
-                am.AddRange(aiMemoryWithHighScore.OrderByDescending(e => e.Score).ToList());
-                TraceAIMemorys(am, $"Semantic scoreToNotApplyRefining: {scoreToNotApplyRefining}");
-                return am;
-            }
-
             // Mode 1, Default, return % of the best score based on the default established for open ai embedding model
             var (maxScore, minimumScore2) = GetReFineResultWithDynamicScores(result);
             var am2 = ReFineResultWithDynamicScore(result);
-
             TraceAIMemorys(am2, $"Semantic ReFineResultWithDynamicScore maxScore: {maxScore}, minimumScore: {minimumScore2}");
-
             return am2;
         }
 
