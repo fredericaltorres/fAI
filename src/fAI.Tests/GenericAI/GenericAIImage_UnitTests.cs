@@ -47,7 +47,12 @@ namespace fAI.Tests
             var i = new GenericAIImage();
             Anthropic.GetModels().ForEach(model =>
             {
-                var (description, title) = i.AnalyzeImageFromFile(model, imageFileName);
+                var (description, title, usage) = i.AnalyzeImageFromFile(model, imageFileName);
+                Assert.True(description.Length > 0);
+                Assert.True(title.Length > 0);    
+                Assert.NotNull(usage);
+                Assert.True(usage.InputTokens > 0);
+                Assert.True(usage.OutputTokens > 0);
             });
         }
     }

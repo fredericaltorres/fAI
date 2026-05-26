@@ -52,7 +52,7 @@ namespace fAI
             }
         }
 
-        public (string analysis, string title)AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
 Please analyze this image thoroughly and provide:
 1. **Overall Description** - A concise summary of what the image shows.
 2. **Key Elements** - List the main subjects, objects, or focal points.
@@ -68,8 +68,8 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             if (Anthropic.GetModels().Contains(model))
             {
                 var analyzer = new ImageAnalyzer();
-                var (analysis, title) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
-                return (analysis, title);
+                var (analysis, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
+                return (analysis, title, usage);
             }
             else throw new Exception($"Model {model} not supported for image analysis.");
         }

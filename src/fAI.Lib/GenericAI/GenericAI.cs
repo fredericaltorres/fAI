@@ -185,6 +185,12 @@ namespace fAI
                 this.SystemPrompt = SystemPrompt;
             }
 
+            public void SetDuration(Stopwatch sw)
+            {
+                sw.Stop();
+                this.Duration = (int)sw.ElapsedMilliseconds;
+            }
+
             public void Add(GenericAIUsage u)
             {
                 this.InputTokens += u.InputTokens;
@@ -694,6 +700,8 @@ Translate the following [language] paragraph into [destinationLanguage].
         {
             public string Title { get; set; }
             public double Duration { get; set; }
+
+            public GenericAICompletions.GenericAIUsage Usage { get; set; }
         }
 
         public GenerateTitleResult GenerateTitle(
@@ -718,7 +726,8 @@ Use the following rules to guide your summarization:
             return new GenerateTitleResult
             {
                 Title = title,
-                Duration = sw.ElapsedMilliseconds / 1000.0
+                Duration = sw.ElapsedMilliseconds / 1000.0,
+                Usage = usage
             };
         }
 

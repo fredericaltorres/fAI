@@ -34,7 +34,7 @@ namespace AnthropicImageAnalysis
         /// <summary>
         /// Analyzes an image from a file path and returns a detailed description.
         /// </summary>
-        public (string analysis, string title)AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
 Please analyze this image thoroughly and provide:
 1. **Overall Description** - A concise summary of what the image shows.
 2. **Key Elements** - List the main subjects, objects, or focal points.
@@ -49,6 +49,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             string language = "english"
             )
         {
+            var usage = new GenericAICompletions.GenericAIUsage(model, prompt, "");
             var sw = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -57,7 +58,10 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
 
                 var imageBytes = File.ReadAllBytes(imagePath);
                 var mediaType = GetMediaType(imagePath);
-                var analysis = AnalyzeImage(model, imageBytes, mediaType, prompt);
+                var (analysis, analyzeImageUsage) = AnalyzeImage(model, imageBytes, mediaType, prompt);
+                usage.Add(analyzeImageUsage);
+
+                // Use the same model for the title generation to keep usage consistent
                 var genericAI = new GenericAI(ApiKey: _apiKey);
                 var titleResponse = genericAI.Completions.GenerateTitle(analysis, language: language, model: model);
                 var title = titleResponse.Title;
@@ -66,17 +70,22 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 {
                     title = title.Substring(marker.Length).Trim();
                 }
-                return (analysis, titleResponse.Title.Replace("*","").Replace("\n","").Replace("\r",""));
+                usage.Add(titleResponse.Usage);
+
+                var finalTitle = titleResponse.Title.Replace("*", "").Replace("\n", "").Replace("\r", "");
+                return (analysis, finalTitle, usage);
             }
             finally
             { 
-                sw.Stop(); 
+                sw.Stop();
+                usage.SetDuration(sw);
                 HttpBase.Trace($"[AnalyzeImage] model: {model}, duration: {sw.ElapsedMilliseconds/1000.0:0.000} s, {imagePath}", this); 
             }
         }
 
-        public string AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt, int maxTokens = 16 * 1024)
+        public (string text, GenericAICompletions.GenericAIUsage usage) AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt, int maxTokens = 16 * 1024)
         {
+            var usage = new GenericAICompletions.GenericAIUsage(model, prompt, ""); 
             string base64Image = Convert.ToBase64String(imageBytes);
             var requestBody = new
             {
@@ -125,7 +134,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
 
                 var r =  ParseResponse(responseBody);
                 HttpBase.Trace($"Response: {responseBody}", this);
-                return r;
+                return (r, usage);
             }
         }
 
