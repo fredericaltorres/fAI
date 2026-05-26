@@ -109,7 +109,7 @@ namespace fAI
             foreach (var kv in _docFrequency)
                 _idfCache[kv.Key] = ComputeIdf(kv.Value);
 
-            WriteIndexToTempJsonFile();
+            /////////WriteIndexToTempJsonFile();
         }
 
         private void WriteIndexToTempJsonFile()
