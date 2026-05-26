@@ -40,7 +40,7 @@ namespace fAI.Tests
                 var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
 ";
-                var model = "gemini-3.1-flash-lite-preview";
+                var model = "gemini-3.1-flash-lite";
                 var expectedWords = DS.List("alice", "insurance", "car");
                 var client = new GenericAI();
 
@@ -102,7 +102,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             {
                 var sw = Stopwatch.StartNew();
                 var client = new GenericAI();
-                //////var model = "gemini-3.1-flash-lite-preview";
+                //////var model = "gemini-3.1-flash-lite";
 
                 // Conversation step 1
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);

@@ -161,9 +161,10 @@ namespace fAI
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
        
-        public (bool, GenericAICompletions.GenericAIUsage) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
+        public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
-            //var isMarkdownOrTextFile = MarkdownManager.IsMarkdownFile(localFile) || MarkdownManager.IsTextFile(localFile);
+            LiteDB.ObjectId id = new LiteDB.ObjectId();
+
             if (d.Type == PublishedDocumentInfoType.ImageFile) // Is image
             {
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
@@ -195,18 +196,20 @@ namespace fAI
 
                     u = uu;
                     Update(existingAIMemory);
+                    id = existingAIMemory.Id;
                 }
                 else
                 {
-                    var uu = Add(d, openAiKey);
+                    var (uu, newId) = Add(d, openAiKey);
                     u = uu;
+                    id = newId;
                 }
             }
             catch (Exception ex)
             {
                 r = false;
             }
-            return (r, u);
+            return (r, u, id);
         }
 
         public IEnumerable<AIMemoryCrossReferenceTable> GetAllCrossReferenceTable()
@@ -294,9 +297,10 @@ namespace fAI
             return sb.ToString();
         }
 
-        public GenericAICompletions.GenericAIUsage Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
+        public (GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
         {
-            if(d.Type == PublishedDocumentInfoType.ImageFile)
+            LiteDB.ObjectId id = new LiteDB.ObjectId();
+            if (d.Type == PublishedDocumentInfoType.ImageFile)
             {
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
             }
@@ -308,10 +312,11 @@ namespace fAI
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                col.Insert(d.PrepareForSaving());
+                var newId = col.Insert(d.PrepareForSaving());
+                id = newId;
             }
 
-            return u;
+            return (u, id);
         }
 
         public bool __simulate_embedding_computation__ = false;
@@ -324,7 +329,7 @@ namespace fAI
         //Gemini 3 Flash Preview	$0.50	        $3.00	                1 Million
         //Gemini 3 Flash	        $0.50	        $3.00	1 Million
 
-        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite-preview";// "gemini-3.1-flash-Lite"
+        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";// "gemini-3.1-flash-Lite"
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
             string embeddingsOpenAIApiKey = null, 

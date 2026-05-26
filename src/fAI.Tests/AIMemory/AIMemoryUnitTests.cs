@@ -270,6 +270,7 @@ namespace fAI.Tests
 
             var __id__ = aiMemory.Id;
             var __mid__ = aiMemory.MID;
+            Assert.Equal(__mid__.ToString(), __id__.ToString());
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
 
@@ -277,13 +278,16 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile,
+            var (succeeded, usage, id) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile,
                 openAiKey: null,//Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
                 llmApiKey: null//"BAD-KEY"
             );
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
+
+            var aiMemoryReloaded = aiManager.GetFromId(id);
+            Assert.Equal(aiMemory.Title, aiMemoryReloaded.Title);
 
             VerifyAIMemoryInDB(aiManager, aiMemory);
 
@@ -324,7 +328,7 @@ namespace fAI.Tests
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
 
-            var (succeeded, usage) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile,
+            var (succeeded, usage, id) = aiManager.AddUpdate(aiMemory, aiMemory.LocalFile,
                 openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
                 llmApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"),
                 clearEmbeddings: true);
@@ -372,10 +376,13 @@ namespace fAI.Tests
                 LocalFile = null,
             };
 
-            var usage = aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var (usage, newId) = aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
+
+            var aiMemoryReLoaded = aiManager.GetFromId(newId);
+            Assert.Equal(aiMemory.Title, aiMemoryReLoaded.Title);
 
             var __id__ = aiMemory.Id;
 
