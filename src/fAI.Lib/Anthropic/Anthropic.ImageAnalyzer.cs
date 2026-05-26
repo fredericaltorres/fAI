@@ -1,4 +1,5 @@
 ﻿using fAI;
+using fAI.AnthropicLib;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -132,25 +133,10 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                     throw new HttpRequestException(
                         $"API request failed [{response.StatusCode}]: {responseBody}");
 
-                var r =  ParseResponse(responseBody);
+                var r = AnthropicCompletionResponse.FromJson(responseBody);
+                usage.Add(r);
                 HttpBase.Trace($"Response: {responseBody}", this);
-                return (r, usage);
-            }
-        }
-
-        private static string ParseResponse(string responseJson)
-        {
-            using (var doc = JsonDocument.Parse(responseJson))
-            {
-                JsonElement root = doc.RootElement;
-                if (root.TryGetProperty("content", out JsonElement contentArray) && contentArray.GetArrayLength() > 0)
-                {
-                    JsonElement firstBlock = contentArray[0];
-                    if (firstBlock.TryGetProperty("text", out JsonElement textElement))
-                        return textElement.GetString() ?? "No description returned.";
-                }
-
-                return "Unable to parse the model response.";
+                return (r.Text, usage);
             }
         }
 

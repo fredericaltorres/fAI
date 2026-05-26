@@ -53,6 +53,7 @@ namespace fAI.Tests
                 Assert.NotNull(usage);
                 Assert.True(usage.InputTokens > 0);
                 Assert.True(usage.OutputTokens > 0);
+                Assert.True(usage.Duration > 0);
             });
         }
     }

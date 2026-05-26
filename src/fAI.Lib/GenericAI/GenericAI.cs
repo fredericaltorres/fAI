@@ -1,4 +1,5 @@
 ﻿using DynamicSugar;
+using fAI.AnthropicLib;
 using fAI.Google;
 using fAI.Util.Strings;
 using Mistral.SDK.DTOs;
@@ -176,6 +177,12 @@ namespace fAI
 
             [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public long AudioFileSize { get; set; }
+
+            public void Add(AnthropicCompletionResponse a)
+            {
+                this.InputTokens += a.Usage.input_tokens;
+                this.OutputTokens += a.Usage.output_tokens;
+            }
 
             public GenericAIUsage(string model, string prompt, string SystemPrompt)
             {
