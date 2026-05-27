@@ -518,12 +518,9 @@ namespace fAI
         public HybridSearchResult HybridSearch(
             string query, 
             List<float> embeddingsQuery,
-
             MinimumScoreModeEnum bm25ScoreOrMode = MinimumScoreModeEnum.GapOutlierDetection, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float bm25MinimumScore = 0.3f,
-
             float semanticMinimumScore = 0.25f,
-            
             float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
             bool  rffApplyGapOutlierDetection = true
             )
