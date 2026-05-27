@@ -22,7 +22,7 @@ namespace fAI
 //"gemini-3.1-flash-Lite", // Replace "gemini-2.0-flash",
 "gemini-3.5-flash", // Expensive, compared to gemini-3.1-flash-lite
 "gemini-3.1-flash-lite",
-"gemini-3-pro-preview",
+"gemini-3-pro",  // "gemini-3-pro",
 "gemini-3-flash-preview",
 "gemini-2.5-pro",
 "gemini-2.5-flash",
@@ -283,48 +283,51 @@ Improve the [language] for the following phrases, in more polished and business-
             List<AnthropicTool> tools = null,
             FunctionCallers functionCallers = null)
         {
-            var sw = Stopwatch.StartNew();
-            var r = new GeminiResponse();
-            var agenticLoopOn = true;
-            var agenticLoopCounter = 0;
-            var answer = "";
-            var url = this.GetUrl(model);
-            var prompt = this.GetPrompt(userPrompt, systemPrompt, model);
-
-            while (agenticLoopOn)
+            try
             {
-                OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
-                var gootleTools = tools.Select(t => (Google.GoogleTool)ToolFactory.CreateTool(LLMProvider.Google, t)).ToList();
 
-                // CALL STEP 1
-                var rr = this.Create(prompt, url, model, tools: gootleTools);
-                if (!rr.Success)
+                var sw = Stopwatch.StartNew();
+                var r = new GeminiResponse();
+                var agenticLoopOn = true;
+                var agenticLoopCounter = 0;
+                var answer = "";
+                var url = this.GetUrl(model);
+                var prompt = this.GetPrompt(userPrompt, systemPrompt, model);
+
+                while (agenticLoopOn)
                 {
-                    throw new ApplicationException($"Request failed  {DS.Dictionary(new { rr.FinishReason }).Format()} ");
-                }
-                else if (rr.Success && !rr.HasFunctionCall)
-                {
-                    answer = rr.GetText();
-                    agenticLoopOn = false;
-                    r = rr;
-                    break;
-                }
-                else if (rr.Success && rr.HasFunctionCall)
-                {
-                    var funcRequested = rr.candidates.First().content.GetFunctionCall();
-                    if (functionCallers.ContainsKey(funcRequested.name))
+                    OpenAI.Trace($"[AGENTIC_LOOP] {DS.Dictionary(new { agenticLoopCounter, model, sw.ElapsedMilliseconds }).Format()}", this);
+                    var gootleTools = tools.Select(t => (Google.GoogleTool)ToolFactory.CreateTool(LLMProvider.Google, t)).ToList();
+
+                    // CALL STEP 1
+                    var rr = this.Create(prompt, url, model, tools: gootleTools);
+                    if (!rr.Success)
                     {
-                        var fn = functionCallers[funcRequested.name];
-                        var param1Name = fn.Arguments.Keys.ToList()[0];
-                        var param1Value = funcRequested.args.Get(param1Name, "");
-                        var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
-
-                        // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
-                        prompt.contents.Add(rr.candidates.First().content);
-                        prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+                        throw new ApplicationException($"Request failed  {DS.Dictionary(new { rr.FinishReason }).Format()} ");
+                    }
+                    else if (rr.Success && !rr.HasFunctionCall)
+                    {
+                        answer = rr.GetText();
+                        agenticLoopOn = false;
+                        r = rr;
+                        break;
+                    }
+                    else if (rr.Success && rr.HasFunctionCall)
+                    {
+                        var funcRequested = rr.candidates.First().content.GetFunctionCall();
+                        if (functionCallers.ContainsKey(funcRequested.name))
                         {
-                            role = "function",
-                            parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>()
+                            var fn = functionCallers[funcRequested.name];
+                            var param1Name = fn.Arguments.Keys.ToList()[0];
+                            var param1Value = funcRequested.args.Get(param1Name, "");
+                            var funcData = fn.Call(param1Value); // CALL STEP 2 , Call the function with the arguments provided by LLM
+
+                            // CALL STEP 4 , Call LLN with function result and all conversation history to get final answer
+                            prompt.contents.Add(rr.candidates.First().content);
+                            prompt.contents.Add(new GoogleAICompletions.GoogleAICompletionsResponse.Content
+                            {
+                                role = "function",
+                                parts = new List<GoogleAICompletions.GoogleAICompletionsResponse.Part>()
                             {
                                 new GoogleAICompletions.GoogleAICompletionsResponse.Part()
                                 {
@@ -335,17 +338,22 @@ Improve the [language] for the following phrases, in more polished and business-
                                     }
                                 }
                             }
-                        });
+                            });
+                        }
                     }
-                }
 
-                agenticLoopCounter += 1;
-            } // agenticLoopOn
+                    agenticLoopCounter += 1;
+                } // agenticLoopOn
 
-            sw.Stop();
-            OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, sw.ElapsedMilliseconds }).Format()}", this);
+                sw.Stop();
+                OpenAI.Trace($"[AGENTIC_LOOP][DONE] {DS.Dictionary(new { model, sw.ElapsedMilliseconds }).Format()}", this);
 
-            return r;
+                return r;
+            }
+            catch (Exception ex)
+            {
+                throw OpenAI.Trace(new ChatGPTException($"Agentic loop failed. {ex.Message}, model:{model}, userPrompt:{userPrompt}, systemPrompt:{systemPrompt}, {ex}", ex));
+            }
         }
 
         public GeminiResponse Create(GoogleAICompletionsBody.GeminiPrompt p, string url, string model, List<fAI.Google.GoogleTool> tools = null)

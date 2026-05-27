@@ -78,6 +78,9 @@ namespace fAI.Google
 
         public static GoogleTool From(AnthropicTool tool)
         {
+            if(tool ==  null)
+                throw new ArgumentNullException(nameof(tool));
+
             var gt = new GoogleTool();
             gt.FunctionDeclarations.Add(new FunctionDeclaration {
                 Name = tool.Name,

@@ -145,7 +145,8 @@ namespace fAI.Tests
         public void Completion_With_Tools__Google()
         {
             var functionCallers = GetFunctionCallersForUnitTests();
-            var tool = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool()) as AnthropicTool;
+            var tool1 = ToolFactory.CreateTool(LLMProvider.Google, GetWeatherTool());
+            var tool = tool1 as AnthropicTool;
             var googleAIClient = new GoogleAI();
             var models = GoogleAI.GetModels();
 
