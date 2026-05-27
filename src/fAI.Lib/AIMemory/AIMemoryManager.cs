@@ -642,6 +642,10 @@ namespace fAI
                 }
                 TraceAIMemorys(bm25Results, $"BM25(GapOutlierDetection): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
             }
+            else if (minimumScoreMode == -4) // Return score greater or equal to 1
+            {
+                bm25Results = new AIMemorys(aiMemories.Where(e => e.Score >= 1).ToList());
+            }
             else
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreMode));
