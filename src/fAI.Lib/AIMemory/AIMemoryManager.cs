@@ -519,7 +519,7 @@ namespace fAI
             string query, 
             List<float> embeddingsQuery,
 
-            float bm25ScoreOrMode = -3, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
+            MinimumScoreModeEnum bm25ScoreOrMode = MinimumScoreModeEnum.GapOutlierDetection, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float bm25MinimumScore = 0.3f,
 
             float semanticMinimumScore = 0.25f,
@@ -587,8 +587,19 @@ namespace fAI
             return (float)Math.Sqrt(sumOfSquaredDiffs / values.Count);
         }
 
-        private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results, 
-            float minimumScoreMode = -1, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
+
+        public enum MinimumScoreModeEnum
+        {
+            Top50Oercent = -1,
+            GreaterThanStandardDeviation = -2,
+            GapOutlierDetection = -3,
+            GreaterOrEqualToOne = -4,
+            MinimumScorePassed = -5
+        }
+
+
+        private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results,
+            MinimumScoreModeEnum minimumScoreMode = MinimumScoreModeEnum.Top50Oercent, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
             float bm25MinimumScore = 0.3f
             )
         {
@@ -609,19 +620,19 @@ namespace fAI
             Trace($"maxScore: {maxScore}, bm25MinimumScore: {bm25MinimumScore}");
 
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score >= bm25MinimumScore).OrderByDescending(d => d.Score).ToList());
-            var minimumScoreOrModeStr = minimumScoreMode == -1 ? "Top 50%" : minimumScoreMode == -2 ? "Greater Than Std Deviation" : minimumScoreMode.ToString();
+            var minimumScoreOrModeStr = minimumScoreMode.ToString();
             TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(maxToTrace).ToList()), $"BM25(1): query: {query}");
 
-            if (minimumScoreMode == -1)
+            if (minimumScoreMode == MinimumScoreModeEnum.Top50Oercent)
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: 50f /*default*/ ));
             }
-            else if (minimumScoreMode == -2) // Return value greater than standard deviation 
+            else if (minimumScoreMode == MinimumScoreModeEnum.GreaterThanStandardDeviation) // Return value greater than standard deviation 
             {
                 var scores2 = aiMemories.Select(d => d.Score).ToList();
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: StandardDeviation(scores2)));
             }
-            else if (minimumScoreMode == -3) // ApplyGapOutlierDetection
+            else if (minimumScoreMode == MinimumScoreModeEnum.GapOutlierDetection) // ApplyGapOutlierDetection
             {
                 //Gap Outlier Detection(Most Robust)
                 //Treat the gaps themselves as a distribution and find statistical outliers:
@@ -642,13 +653,13 @@ namespace fAI
                 }
                 TraceAIMemorys(bm25Results, $"BM25(GapOutlierDetection): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
             }
-            else if (minimumScoreMode == -4) // Return score greater or equal to 1
+            else if (minimumScoreMode == MinimumScoreModeEnum.GreaterOrEqualToOne) // Return score greater or equal to 1
             {
                 bm25Results = new AIMemorys(aiMemories.Where(e => e.Score >= 1).ToList());
             }
-            else
+            else // if (minimumScoreMode == MinimumScoreModeEnum.MinimumScorePassed) // Return score greater or equal to 1
             {
-                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: minimumScoreMode));
+                bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: bm25MinimumScore));
                 if(bm25Results.Count == 0) // minimumScoreOrMode is too high
                 {
                     var retryTopPercent = 20f;
