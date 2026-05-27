@@ -868,6 +868,7 @@
     <None Include="TestFiles\car policy.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\WinSpeak.AIMemory.NO NEBULA.db" />
     <None Include="TestFiles\WinSpeak.AIMemory.test.2.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

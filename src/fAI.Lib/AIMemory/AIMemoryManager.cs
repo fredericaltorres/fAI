@@ -599,6 +599,13 @@ namespace fAI
 
             var maxScore = aiMemories.Select(s => s.Score).Max();
             bm25MinimumScore = Math.Min(bm25MinimumScore, maxScore);
+
+            TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(16).ToList()), $"BM25(0): query: {query}");
+
+            Trace($"maxScore: {maxScore}, bm25MinimumScore: {bm25MinimumScore}");
+            
+
+
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score >= bm25MinimumScore).OrderByDescending(d => d.Score).ToList());
             var minimumScoreOrModeStr = minimumScoreMode == -1 ? "Top 50%" : minimumScoreMode == -2 ? "Greater Than Std Deviation" : minimumScoreMode.ToString();
             TraceAIMemorys(aiMemories, $"BM25(1): query: {query}");
