@@ -661,7 +661,10 @@ namespace fAI
         private void TraceAIMemorys(AIMemorys am, string text) 
         {
             var x = 0;
-            Trace(text);
+
+            var scoreStandardDeviation = AIMemoryManager.StandardDeviation(am.Select(d => d.Score).ToList());
+            Trace($"{text}, Count: {am.Count}, StdDev: {scoreStandardDeviation:0.000}");
+
             am.ForEach((m) => {
                 HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this);
             });
