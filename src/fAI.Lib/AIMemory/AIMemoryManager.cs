@@ -321,6 +321,7 @@ namespace fAI
 
         public bool __simulate_embedding_computation__ = false;
         public bool __simulate_metadata_computation__ = false;
+        public static bool __metadata_computation_on__ = false;
 
         //Model Input               Price(per 1M)    Output Price(per 1M)   Context Window
         //Gemini 2.0 Flash	        $0.10	        $0.40	                1 Million     DEPRECATED JUNE 2026
@@ -349,7 +350,7 @@ namespace fAI
             try
             {
                 var client = new GenericAI(ApiKey: llmApiKey);
-                if (__simulate_metadata_computation__)
+                if (__simulate_metadata_computation__ || __metadata_computation_on__ == false)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
                         ["a"] = new List<string> { "b" }
