@@ -163,6 +163,7 @@ namespace fAI
        
         public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
         {
+            var sw = Stopwatch.StartNew();
             LiteDB.ObjectId id = new LiteDB.ObjectId();
 
             if (d.Type == PublishedDocumentInfoType.ImageFile) // Is image
@@ -185,9 +186,7 @@ namespace fAI
                     existingAIMemory.MediaBase64 = d.MediaBase64;
 
                     if (clearEmbeddings)
-                    {
                         existingAIMemory.Embeddings.Clear();
-                    }
 
                     var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey);
 
@@ -208,6 +207,11 @@ namespace fAI
             catch (Exception ex)
             {
                 r = false;
+            }
+            finally 
+            { 
+                sw.Stop();
+                Trace($"Duration: {sw.ElapsedMilliseconds}, File: {localFile}");
             }
             return (r, u, id);
         }
