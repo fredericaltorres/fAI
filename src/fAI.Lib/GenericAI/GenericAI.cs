@@ -227,9 +227,9 @@ namespace fAI
                 }
                 if(InputTokens > 0)
                 {
-                    return $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
+                    return $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLength: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
                 }
-                return $"[UNDEFINED.USAGE]Model: {Model}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLenght: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
+                return $"[UNDEFINED.USAGE]Model: {Model}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLength: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
             }
         }
 

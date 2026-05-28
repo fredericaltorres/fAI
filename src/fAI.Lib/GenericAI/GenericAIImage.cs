@@ -73,5 +73,25 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             }
             else throw new Exception($"Model {model} not supported for image analysis.");
         }
+
+        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) OcrImageFromFile(string model, string imagePath, string prompt = @"
+Perform OCR on this image. Extract all visible text and format the output as valid Markdown.
+Use appropriate Markdown elements to reflect the document structure: headings (#, ##, ###)
+for titles and section headers, bullet or numbered lists where lists appear, **bold** or
+*italic* for emphasized text, `code` or code blocks for any code or monospace content,
+tables for tabular data, and blockquotes for quoted content. Preserve the logical hierarchy
+and reading order of the original. Output only the Markdown — no preamble, no explanation,
+no code fences wrapping the entire output.
+")
+        {
+            if (Anthropic.GetModels().Contains(model))
+            {
+                var analyzer = new ImageAnalyzer();
+                var (extractedMarkdown, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
+                return (extractedMarkdown, title, usage);
+            }
+            else throw new Exception($"Model {model} not supported for image analysis.");
+        }
+
     }
 }
