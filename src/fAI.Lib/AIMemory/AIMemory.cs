@@ -103,6 +103,7 @@ namespace fAI
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
+        [JsonIgnore]
         public string MediaBase64 { get; set; }
 
         public AIMetaData AIMetaData { get; set; }
