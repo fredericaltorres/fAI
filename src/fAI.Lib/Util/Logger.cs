@@ -50,7 +50,7 @@ namespace fAI
                 if (className.StartsWith("<"))
                     className = "";
 
-                var m = $"{DateTime.Now}|[{className}{methodName}()]{message}".Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
+                var m = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}][fAI][{className}{methodName}()]{message}".Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
 
                 if (TraceToConsole)
                     Console.WriteLine(m);
