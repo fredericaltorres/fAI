@@ -365,6 +365,33 @@ public static void Main()
             Assert.Contains("**Repository URL:** [GitHub repository URL]", MarkDownDocument.MarkdownBody);
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void Markdown_LoadWithoutBase64Image()
+        {
+            var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\Aristocratic_Desperation_A_Portrait_of_Gambling_Addiction_in_Imperial_Russia_20260529-21.md");
+            var md = MarkDownDocument.RawContentWithoutBase64ImageData;
+
+            var expected = @"# Aristocratic Desperation: A Portrait of Gambling Addiction in Imperial Russia
+
+IMAGE 1
+
+
+IMAGE 2
+
+
+IMAGE 3
+
+
+IMAGE 4
+
+
+## Overall Description";
+
+
+            Assert.Contains(expected, md);
+
+        }
 
         [Fact()]
         [TestBeforeAfter]

@@ -849,6 +849,9 @@
     <None Include="Microsoft.Cognitive.Services\data\Paul-Graham-Essays\vectors\Paul-Graham-Essays.ff94f88a-9cca-4a62-9bbc-6710e863e741..json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\Aristocratic_Desperation_A_Portrait_of_Gambling_Addiction_in_Imperial_Russia_20260529-21.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\Dr Henry Jekyll - Character Profile.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

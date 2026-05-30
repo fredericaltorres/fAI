@@ -16,6 +16,39 @@ public class MarkdownDocument
     public string MarkdownBody { get; set; } = string.Empty;
     public string RawContent { get; set; } = string.Empty;
 
+    public static string RemoveImgTags(string markdown)
+    {
+        // 3. HTML <img> tag with double or single quotes
+        markdown = Regex.Replace(
+            markdown,
+            @"<img[^>]*\ssrc\s*=\s*([""'])data:image/[^;]+;base64,[^""']+\1[^>]*\/?>",
+            string.Empty,
+            RegexOptions.IgnoreCase
+        );
+        return markdown;
+    }
+
+    public static string RemoveBase64Images(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return markdown;
+
+        // Matches ![alt text](data:image/...;base64,...)
+        return Regex.Replace(
+            markdown,
+            @"!\[[^\]]*\]\(data:image[^)]+\)",
+            string.Empty,
+            RegexOptions.IgnoreCase
+        );
+    }
+
+    public string RawContentWithoutBase64ImageData
+    {
+        get {
+            return RemoveImgTags(RemoveBase64Images(this.RawContent));
+        }
+    }
+
     /// <summary>
     /// Serializes the document (front matter + body) and writes it to disk.
     /// </summary>
