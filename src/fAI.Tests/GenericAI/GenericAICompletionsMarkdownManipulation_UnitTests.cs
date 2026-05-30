@@ -457,6 +457,10 @@ IMAGE 4
             var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
             Assert.StartsWith("## 📋 Project Information", markDownContent);
             Assert.EndsWith("quality over quantity!", markDownContent);
+
+            var markDownContent2 = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContentWithoutBase64ImageData).Trim();
+            Assert.StartsWith("## 📋 Project Information", markDownContent2);
+            Assert.EndsWith("quality over quantity!", markDownContent2);
         }
 
 
@@ -470,6 +474,10 @@ IMAGE 4
             var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
             Assert.StartsWith("## 📋 Project Information", markDownContent);
             Assert.EndsWith("quality over quantity!", markDownContent);
+
+            var markDownContent2 = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContentWithoutBase64ImageData).Trim();
+            Assert.StartsWith("## 📋 Project Information", markDownContent2);
+            Assert.EndsWith("quality over quantity!", markDownContent2);
         }
 
         const string github_theme = @"C:\DVT\fAI\src\fAI.Tests\bin\Debug\highlight\themes\github.theme";
