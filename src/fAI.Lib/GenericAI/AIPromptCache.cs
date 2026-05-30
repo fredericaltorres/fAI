@@ -10,6 +10,7 @@ namespace fAI
     {
         public string Prompt { get; set; }
         public string Response { get; set; }
+        public string Title { get; set; }
         public DateTime Timestamp { get; set; }
         public List<float> Embedding { get; set; }
     }
@@ -72,19 +73,20 @@ namespace fAI
         /// Adds a new prompt/response pair to the cache and persists it to disk.
         /// If an identical prompt already exists, it will be replaced.
         /// </summary>
-        public void Add(string prompt, string response)
+        public void Add(string promptOrKey, string response, string title = null)
         {
-            if (string.IsNullOrWhiteSpace(prompt))
-                throw new ArgumentException("Prompt cannot be null or empty.", nameof(prompt));
+            if (string.IsNullOrWhiteSpace(promptOrKey))
+                throw new ArgumentException("Prompt cannot be null or empty.", nameof(promptOrKey));
 
             // Remove any existing entry for the same prompt
-            _entries.RemoveAll(e => e.Prompt == prompt);
+            _entries.RemoveAll(e => e.Prompt == promptOrKey);
 
             _entries.Add(new AIPromptCacheEntry
             {
-                Prompt = prompt,
+                Prompt = promptOrKey,
                 Response = response,
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.UtcNow,
+                Title = title
             });
 
             SaveToDisk();

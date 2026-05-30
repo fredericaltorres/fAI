@@ -339,14 +339,27 @@ namespace fAI
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
             string embeddingsOpenAIApiKey = null, 
             string llmApiKey = null,
-            string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION
+            string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION,
+            AIMetaData aiMetaData = null
             )
         {
             Trace($"[{nameof(ComputeEmbeddingsAndMetaData)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
-            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey);
-            var r2 = ExtractMetaDataFromText(d, model, llmApiKey);
+            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
 
-            return (r1 && r2.Item1, r2.Item2);
+            var extractUsage = new GenericAICompletions.GenericAIUsage("", "", "");
+            var r2 = false;
+
+            if (aiMetaData == null)
+            {
+                (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey);
+            }
+            else
+            {
+                d.AIMetaData = aiMetaData;
+                r2 = true;
+            }
+
+            return (r1 && r2, extractUsage);
         }
 
         public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null)

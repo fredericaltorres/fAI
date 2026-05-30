@@ -26,6 +26,7 @@ namespace fAI.Tests
         public GenericAIImage_UnitTests()
         {
             OpenAI.TraceOn = true;
+            AIPromptCache.Instance.Clear();
         }
 
         const string imagePrompt = "Generate an image of gay tabby cat hugging a woman with an orange scarf, in London 1875.";
@@ -55,6 +56,14 @@ namespace fAI.Tests
                 Assert.True(usage.InputTokens > 0);
                 Assert.True(usage.OutputTokens > 0);
                 Assert.True(usage.Duration > 0);
+
+                (description, title, usage) = i.AnalyzeImageFromFile(model, imageFileName);
+                Assert.True(description.Length > 0);
+                Assert.True(title.Length > 0);
+                Assert.NotNull(usage);
+                Assert.Equal(0, usage.InputTokens);
+                Assert.Equal(0, usage.OutputTokens);
+                Assert.True(usage.Duration >= 0);
             });
         }
 
@@ -74,6 +83,14 @@ namespace fAI.Tests
                 Assert.True(usage.InputTokens > 0);
                 Assert.True(usage.OutputTokens > 0);
                 Assert.True(usage.Duration > 0);
+
+                (markdownExtracted, title, usage) = i.OcrImageFromFile(model, imageFileName);
+                Assert.True(markdownExtracted.Length > 0);
+                Assert.True(title.Length > 0);
+                Assert.NotNull(usage);
+                Assert.Equal(0, usage.InputTokens);
+                Assert.Equal(0, usage.OutputTokens);
+                Assert.True(usage.Duration >= 0);
             });
         }
     }

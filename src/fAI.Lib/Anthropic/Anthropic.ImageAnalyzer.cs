@@ -50,6 +50,15 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             string language = "english"
             )
         {
+
+            var cacheEntry = $"AnalyzeImage: {imagePath.ToLowerInvariant()}, {new FileInfo(imagePath).LastWriteTimeUtc}, {model}";
+            var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry);
+            if (cacheR != null)
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
+                return (cacheR.Response, cacheR.Title, new GenericAICompletions.GenericAIUsage(model, cacheEntry, string.Empty));
+            }
+
             var usage = new GenericAICompletions.GenericAIUsage(model, prompt, "");
             var sw = System.Diagnostics.Stopwatch.StartNew();
             try
@@ -74,6 +83,9 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 usage.Add(titleResponse.Usage);
 
                 var finalTitle = titleResponse.Title.Replace("*", "").Replace("\n", "").Replace("\r", "");
+
+                AIPromptCache.Instance.Add(cacheEntry, analysis, finalTitle);
+
                 return (analysis, finalTitle, usage);
             }
             finally
