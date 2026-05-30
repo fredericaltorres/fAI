@@ -161,7 +161,12 @@ namespace fAI
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
        
-        public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(AIMemory d, string localFile, string openAiKey = null, string llmApiKey = null, bool clearEmbeddings = false)
+        public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(
+            AIMemory d, string localFile, 
+            string openAiKey = null, string llmApiKey = null, 
+            bool clearEmbeddings = false,
+            AIMetaData aiMetaData = null // if not passed the aiMetadata is re-computed
+            )
         {
             var sw = Stopwatch.StartNew();
             LiteDB.ObjectId id = new LiteDB.ObjectId();
@@ -188,7 +193,10 @@ namespace fAI
                     if (clearEmbeddings)
                         existingAIMemory.Embeddings.Clear();
 
-                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey);
+                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, 
+                                            embeddingsOpenAIApiKey: openAiKey, 
+                                            llmApiKey: llmApiKey, 
+                                            aiMetaData: aiMetaData /* if defined then no recomputed*/ );
 
                     d.Embeddings = existingAIMemory.Embeddings;
                     d.AIMetaData = existingAIMemory.AIMetaData;
