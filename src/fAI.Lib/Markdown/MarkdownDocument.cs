@@ -94,21 +94,44 @@ public class FrontMatter
     public List<string> Tags { get; set; } = new List<string>();
     public Dictionary<string, string> ExtraFields { get; set; } = new Dictionary<string, string>();
 
+    public static bool IsFileNameWithDoubleQuote(string filename)
+    {
+        if (string.IsNullOrEmpty(filename))
+            return false;
+
+        return filename.Length >= 4 &&
+               filename[0] == '"' &&
+               char.IsLetter(filename[1]) &&
+               filename[2] == ':' &&
+               filename[3] == '\\';
+    }
+
+    public static string PrepareYamlString(string input)
+    {
+        if(string.IsNullOrEmpty(input))
+            return string.Empty;
+
+        if(IsFileNameWithDoubleQuote(input)) // Replace double quotes with escaped double quotes
+            return input.Replace("\"", "\\\"");
+        else 
+            return input;
+    }
+
     public void FrontMatterToText(StringBuilder sb)
     {
         sb.AppendLine("---");
 
         if (!string.IsNullOrEmpty(this.Name))
-            sb.AppendLine($"name: {this.Name}");
+            sb.AppendLine($"name: {PrepareYamlString(this.Name)}");
 
         if (!string.IsNullOrEmpty(this.Title))
-            sb.AppendLine($"title: {this.Title}");
+            sb.AppendLine($"title: {PrepareYamlString(this.Title)}");
 
         if (!string.IsNullOrEmpty(this.Description))
-            sb.AppendLine($"description: {this.Description}");
+            sb.AppendLine($"description: {PrepareYamlString(this.Description)}");
 
         if (!string.IsNullOrEmpty(this.Author))
-            sb.AppendLine($"author: {this.Author}");
+            sb.AppendLine($"author: {PrepareYamlString(this.Author)}");
 
         if (this.Date.HasValue)
             sb.AppendLine($"date: {this.Date.Value:yyyy-MM-dd}");
@@ -117,11 +140,11 @@ public class FrontMatter
         {
             sb.AppendLine("tags:");
             foreach (string tag in this.Tags)
-                sb.AppendLine($"  - {tag}");
+                sb.AppendLine($"  - {PrepareYamlString(tag)}");
         }
 
         foreach (var kvp in this.ExtraFields ?? new Dictionary<string, string>())
-            sb.AppendLine($"{kvp.Key}: {kvp.Value}");
+            sb.AppendLine($"{kvp.Key}: {PrepareYamlString(kvp.Value)}");
 
         sb.AppendLine("---");
     }
