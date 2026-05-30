@@ -1,11 +1,44 @@
 ﻿using DynamicSugar;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace fAI
 {
+    public class MeasureTime : IDisposable
+    {
+        public string _methodName { get; }
+        Stopwatch _stopwatch;
+        private readonly string _parameter1;
+        private readonly string _parameter2;
+
+        public static bool _traceOn = true;
+
+        public MeasureTime(string parameter1 = null, string parameter2 = null, [CallerMemberName] string methodName = null)
+        {
+            this._parameter1 = parameter1;
+            this._parameter2 = parameter2;
+            _methodName = methodName;
+            if (_traceOn)
+            {
+                HttpBase.Trace($"[{_methodName}.Start] {_parameter1}, {_parameter2}", this, _methodName);
+            }
+            _stopwatch = Stopwatch.StartNew();
+        }
+
+        public void Dispose()
+        {
+            _stopwatch.Stop();
+            var parameterStr = string.IsNullOrEmpty(_parameter1) ? "" : $" Parameter: {_parameter1}, ";
+            if (_traceOn)
+            {
+                HttpBase.Trace($"[{_methodName}.End] {parameterStr}Duration : {_stopwatch.ElapsedMilliseconds / 1000.0:0.0} s", this, _methodName);
+            }
+        }
+    }
+
     public class Logger
     {
         public static bool TraceOn { get; set; } = true;

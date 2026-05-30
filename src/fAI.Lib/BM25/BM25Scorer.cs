@@ -84,32 +84,48 @@ namespace fAI
         /// <param name="b">Length-normalisation parameter (default 0.75).</param>
         public Bm25(AIMemorys documents, float k1 = 1.5f, float b = 0.75f)
         {
-            if (documents == null) throw new ArgumentNullException(nameof(documents));
-            if (documents.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(documents));
+            using (var mt = new MeasureTime("Bm25 constructor"))
+            {
+                if (documents == null) throw new ArgumentNullException(nameof(documents));
+                if (documents.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(documents));
 
-            _k1 = k1;
-            _b = b;
-            _docCount = documents.Count;
+                _k1 = k1;
+                _b = b;
+                _docCount = documents.Count;
 
-            // tokenise every document once
-            var tokenised = documents.Select(d => d.Text)
-                .Select(Tokenize)
-                .ToArray();
+                // tokenise every document once
+                string[][] tokenised = null;
+                using (var mt2 = new MeasureTime("Bm25 tokenised"))
+                {
+                    tokenised = documents.Select(d => d.Text).Select(Tokenize).ToArray();
+                }
 
-            // document lengths
-            _docLengths = tokenised.Select(t => t.Length).ToArray();
-            _avgDocLength = (float)_docLengths.Average();
+                // document lengths
+                _docLengths = tokenised.Select(t => t.Length).ToArray();
+                _avgDocLength = (float)_docLengths.Average();
 
-            // build inverted term-frequency index
-            // _docFrequency[term][docIndex] = frequency of term in that document
-            _docFrequency = BuildIndex(tokenised);
+                // build inverted term-frequency index
+                // _docFrequency[term][docIndex] = frequency of term in that document
 
-            // pre-compute IDF for every known term
-            _idfCache = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-            foreach (var kv in _docFrequency)
-                _idfCache[kv.Key] = ComputeIdf(kv.Value);
+                using (var mt3 = new MeasureTime("Bm25 BuildIndex"))
+                {
+                    _docFrequency = BuildIndex(tokenised);
+                }
 
-            /////////WriteIndexToTempJsonFile();
+                HttpBase.Trace($"_docFrequency.Count: {_docFrequency.Count}", this);
+
+                using (var mt4 = new MeasureTime("Bm25 ComputeIdf"))
+                {
+                    // pre-compute IDF for every known term
+                    _idfCache = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var kv in _docFrequency)
+                        _idfCache[kv.Key] = ComputeIdf(kv.Value);
+                }
+
+                HttpBase.Trace($"_idfCache.Count: {_idfCache.Count}", this);
+
+                /////////WriteIndexToTempJsonFile();
+            }
         }
 
         private void WriteIndexToTempJsonFile()
