@@ -112,7 +112,7 @@ public class FrontMatter
             return string.Empty;
 
         if(IsFileNameWithDoubleQuote(input)) // Replace double quotes with escaped double quotes
-            return input.Replace("\"", "\\\"");
+            return input.Replace(@"\", @"\\");
         else 
             return input;
     }

@@ -196,10 +196,9 @@ namespace fAI
                     var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, 
                                             embeddingsOpenAIApiKey: openAiKey, 
                                             llmApiKey: llmApiKey, 
-                                            aiMetaData: aiMetaData /* if defined then no recomputed*/ );
+                                            aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
 
                     d.Embeddings = existingAIMemory.Embeddings;
-                    d.AIMetaData = existingAIMemory.AIMetaData;
 
                     u = uu;
                     Update(existingAIMemory);
@@ -207,7 +206,7 @@ namespace fAI
                 }
                 else
                 {
-                    var (uu, newId) = Add(d, openAiKey);
+                    var (uu, newId) = Add(d, openAiKey, aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
                     u = uu;
                     id = newId;
                 }
@@ -309,7 +308,7 @@ namespace fAI
             return sb.ToString();
         }
 
-        public (GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null)
+        public (GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
             LiteDB.ObjectId id = new LiteDB.ObjectId();
             if (d.Type == PublishedDocumentInfoType.ImageFile)
@@ -318,12 +317,13 @@ namespace fAI
             }
 
             var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey:openAiKey, llmApiKey: llmApiKey);
-
+            d.AIMetaData.Merge(aiMetaDataToMerge);
             d.Init();
 
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
+                
                 var newId = col.Insert(d.PrepareForSaving());
                 id = newId;
             }
@@ -348,7 +348,7 @@ namespace fAI
             string embeddingsOpenAIApiKey = null, 
             string llmApiKey = null,
             string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION,
-            AIMetaData aiMetaData = null
+            AIMetaData aiMetaDataToMerge = null
             )
         {
             Trace($"[{nameof(ComputeEmbeddingsAndMetaData)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
@@ -357,20 +357,12 @@ namespace fAI
             var extractUsage = new GenericAICompletions.GenericAIUsage("", "", "");
             var r2 = false;
 
-            if (aiMetaData == null)
-            {
-                (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey);
-            }
-            else
-            {
-                d.AIMetaData = aiMetaData;
-                r2 = true;
-            }
-
+            (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey, aiMetaDataToMerge);
+            
             return (r1 && r2, extractUsage);
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null)
+        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
             try
             {
@@ -387,6 +379,9 @@ namespace fAI
                     var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
                     d.AIMetaData = medataDictionary;
                 }
+
+                d.AIMetaData.Merge(aiMetaDataToMerge);
+
                 return (true, client.Completions.LastUsage);
             }
             catch (Exception ex)

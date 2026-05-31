@@ -16,6 +16,20 @@ namespace fAI
     public class AIMetaData
     {
         public Dictionary<string, List<string>> MetaData { get; set; }
+
+        public void Merge (AIMetaData m)
+        {
+            if (m == null)
+                return;
+
+            foreach (var mm in m.MetaData)
+            {
+                if(this.MetaData.ContainsKey(mm.Key))
+                    this.MetaData.Remove(mm.Key);
+
+                this.MetaData[mm.Key] = mm.Value;
+            }
+        }
     }
 
     public class AIMemoryCrossReferenceTableManager
