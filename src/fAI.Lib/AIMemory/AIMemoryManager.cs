@@ -316,8 +316,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
             }
 
-            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey:openAiKey, llmApiKey: llmApiKey);
-            d.AIMetaData.Merge(aiMetaDataToMerge);
+            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey:openAiKey, llmApiKey: llmApiKey, aiMetaDataToMerge: aiMetaDataToMerge);
             d.Init();
 
             using (var db = new LiteDatabase(this.FileName))
@@ -366,23 +365,21 @@ namespace fAI
         {
             try
             {
-                var client = new GenericAI(ApiKey: llmApiKey);
                 if (__simulate_metadata_computation__ || __metadata_computation_on__ == false)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
                         ["a"] = new List<string> { "b" }
                     } };
-                    return (false, new GenericAICompletions.GenericAIUsage("", "", "") { InputTokens=1, OutputTokens=1 });
+                    d.AIMetaData.Merge(aiMetaDataToMerge);
+                    return (false, new GenericAICompletions.GenericAIUsage(model, $"__simulate_metadata_computation__: {__simulate_metadata_computation__}, __metadata_computation_on__: {__metadata_computation_on__}", "") { });
                 }
                 else
                 {
-                    var medataDictionary = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
-                    d.AIMetaData = medataDictionary;
+                    var client = new GenericAI(ApiKey: llmApiKey);
+                    d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
+                    d.AIMetaData.Merge(aiMetaDataToMerge);
+                    return (true, client.Completions.LastUsage);
                 }
-
-                d.AIMetaData.Merge(aiMetaDataToMerge);
-
-                return (true, client.Completions.LastUsage);
             }
             catch (Exception ex)
             {
