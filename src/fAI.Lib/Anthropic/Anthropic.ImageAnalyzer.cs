@@ -20,6 +20,8 @@ namespace AnthropicImageAnalysis
 
         public ImageAnalyzer(string apiKey = null)
         {
+            HttpBase.Trace($"ImageAnalyzer() with API key: {apiKey}", this);
+
             if (apiKey == null)
                 apiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
 
@@ -28,8 +30,7 @@ namespace AnthropicImageAnalysis
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
             _httpClient.DefaultRequestHeaders.Add("anthropic-version", AnthropicVersion);
-            _httpClient.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         /// <summary>

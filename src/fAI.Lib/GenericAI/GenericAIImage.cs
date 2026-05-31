@@ -67,7 +67,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
         {
             if (Anthropic.GetModels().Contains(model))
             {
-                var analyzer = new ImageAnalyzer();
+                var analyzer = new ImageAnalyzer(base._key);
                 var (analysis, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
                 return (analysis, title, usage);
             }
@@ -86,7 +86,7 @@ no code fences wrapping the entire output.
         {
             if (Anthropic.GetModels().Contains(model))
             {
-                var analyzer = new ImageAnalyzer();
+                var analyzer = new ImageAnalyzer(base._key);
                 var (extractedMarkdown, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
                 return (extractedMarkdown, title, usage);
             }

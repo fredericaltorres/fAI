@@ -46,7 +46,7 @@ namespace fAI.Tests
         public void Completion_AnalyzeImage()
         {
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-            var i = new GenericAIImage();
+            var i = new GenericAIImage(apiKey: Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY"));
             Anthropic.GetModels().Take(1).ToList().ForEach(model =>
             {
                 var (description, title, usage) = i.AnalyzeImageFromFile(model, imageFileName);

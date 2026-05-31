@@ -720,6 +720,7 @@ Create a short ""Title"" for the following [language] paragraph.
 Use the following rules to guide your summarization:
 <rules>
 - Do NOT use MARKDOWN formatting.
+- Do NOT use MARKDOWN section headers.
 - Use formal language suitable for business communication.
  </rules>
  ===================================
