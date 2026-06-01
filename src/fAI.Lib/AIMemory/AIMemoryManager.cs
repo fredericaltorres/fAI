@@ -691,8 +691,7 @@ namespace fAI
         private void TraceAIMemorys(AIMemorys am, string text) 
         {
             var x = 0;
-
-            var scoreStandardDeviation = AIMemoryManager.StandardDeviation(am.Select(d => d.Score).ToList());
+            var scoreStandardDeviation = am.Count > 0 ? AIMemoryManager.StandardDeviation(am.Select(d => d.Score).ToList()) : 0;
             Trace($"{text}, Count: {am.Count}, StdDev: {scoreStandardDeviation:0.000}");
 
             am.ForEach((m) => {
