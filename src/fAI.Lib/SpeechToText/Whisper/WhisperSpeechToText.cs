@@ -36,8 +36,7 @@ namespace fAI
 
         public GenericAICompletions.GenericAIUsage LastUsage { get; set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
 
-        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, 
-            string model = "gpt-4o-mini-transcribe" /*"whisper-1"*/)
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = "gpt-4o-mini-transcribe" /*"whisper-1"*/)
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
@@ -73,25 +72,17 @@ namespace fAI
                 {
                     if (extractCaptions)
                     {
-                        return new SpeechToTextResult()
-                        {
-                            Language = languageIsoCode,
-                            Captions = response.Text
-                        };
+                        return new SpeechToTextResult() { Language = languageIsoCode, Captions = response.Text };
                     }
                     else
                     {
                         sw.Stop();
                         var typedResponse = WhipserSpeechToTextResponse.FromJSON(response.Text);
-                        LastUsage.SetTokenCount(typedResponse.Usage.input_tokens, 0);
+                        LastUsage.SetTokenCount(typedResponse.Usage.input_tokens, typedResponse.Usage.output_tokens);
                         LastUsage.Duration = (int)sw.ElapsedMilliseconds;
                         HttpBase.Trace(LastUsage.ToString(), this);
 
-                        return new SpeechToTextResult()
-                        {
-                            Text = typedResponse.Text,
-                            Language = languageIsoCode,
-                        };
+                        return new SpeechToTextResult() { Text = typedResponse.Text, Language = languageIsoCode };
                     }
                 }
                 else return new SpeechToTextResult { Exception = response.Exception, Language = languageIsoCode };
