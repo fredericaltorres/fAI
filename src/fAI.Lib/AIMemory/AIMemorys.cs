@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace fAI
@@ -39,6 +40,17 @@ namespace fAI
             var maxScore = this.Max(m => m.Score);
             var threshold = maxScore - (maxScore * percent / 100.0);
             return new AIMemorys(this.Where(m => m.Score >= threshold).ToList());
+        }
+
+        internal AIMemorys LoadFromFiles(List<string> localFiles)
+        {
+            foreach (var file in localFiles)
+            {
+                var aiMemory = AIMemory.LoadFromFile(file);
+                if (aiMemory != null)
+                    this.Add(aiMemory);
+            }
+            return this;
         }
     }
 }

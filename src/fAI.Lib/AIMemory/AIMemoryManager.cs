@@ -149,6 +149,11 @@ namespace fAI
         public bool InMemoryOnly { get; set; } = false;
         public string FileName { get; set; }
 
+        public AIMemoryManager(List<string> files)
+        {
+            this._files = files;
+        }
+
         public AIMemoryManager(string fileName = null, bool inMemoryOnly = false)
         {
             if (fileName != null)
@@ -490,6 +495,8 @@ namespace fAI
         }
 
         const string outputFileName = @"c:\Brainshark\logs\bm25.log";
+        private readonly List<string> _files;
+
         void TraceBm25Score(string r) => File.AppendAllText(outputFileName, r + Environment.NewLine);
 
         public enum HybridSearchResultType
@@ -531,6 +538,39 @@ namespace fAI
                 sb.AppendLine("");
                 return sb.ToString();
             }
+        }
+
+        public HybridSearchResult FileSearch(
+          string query,
+          MinimumScoreModeEnum bm25ScoreOrMode = MinimumScoreModeEnum.GapOutlierDetection, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
+          float bm25MinimumScore = 0.3f,
+          float semanticMinimumScore = 0.25f,
+          float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
+          bool rffApplyGapOutlierDetection = true
+          )
+        {
+            var z = new HybridSearchResult() { Query = query };
+            try
+            {
+                AIMemorys all = new AIMemorys().LoadFromFiles(this._files);
+                var allAiMemories = all.ToList();
+                AIMemorys bm25Results = null;
+                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
+                var ranker = new RRF.RRFRanker();
+                ranker.AddUpdateBm25Score(bm25Results);
+
+                var RANK_K = 60f;
+                z.Results = new AIMemorys(ranker.Rank(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
+                z.RRFRanker = ranker;
+                z.Type = HybridSearchResultType.Hybrid;
+                z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
+
+            }
+            catch (Exception ex)
+            {
+                z.Exception = ex;
+            }
+            return z;
         }
 
         public HybridSearchResult HybridSearch(

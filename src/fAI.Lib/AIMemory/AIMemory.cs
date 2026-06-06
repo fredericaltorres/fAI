@@ -261,5 +261,31 @@ namespace fAI
             File.WriteAllBytes(mediaFilePath, mediaBytes);
             return mediaFilePath;
         }
+
+        internal static AIMemory LoadFromFile(string file)
+        {
+            var text = "";
+            var title = Path.GetFileNameWithoutExtension(file);
+            if(MarkdownManager.IsMarkdownFile(file))
+            {
+                var md = MarkdownManager.LoadMarkdownFile(file);
+                text = md.RawContentWithoutBase64ImageData;
+                title = MarkdownManager.ExtractTitle(md.MarkdownBody);
+            }
+            if (MarkdownManager.IsTextFile(file))
+            {
+                text = File.ReadAllText(file);
+            }
+            var fileInfo = new FileInfo(file);
+            var aiMemory = new AIMemory()
+            {
+                LocalFile = file,
+                Text = text,
+                CreateDate = fileInfo.CreationTime, 
+                ModifiedDate = fileInfo.LastWriteTime,
+                Title = title
+            };
+            return aiMemory.PrepareAfterLoading();
+        }
     }
 }

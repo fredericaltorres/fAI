@@ -566,6 +566,41 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
 
+        const string localFilesString = @"
+C:\DVT\fAI\src\fAI.Tests\TestFiles\Aristocratic_Desperation_A_Portrait_of_Gambling_Addiction_in_Imperial_Russia_20260529-21.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\Dr Henry Jekyll - Character Profile.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\JANE DOE, Back Issues.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\MarkdownWithFrontLoader.2.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\MarkdownWithFrontLoader.3.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\MarkdownWithFrontLoader.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\MarkdownWithNoFrontLoader.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\DataAnalysisAndInsights\SKILL.md
+C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
+";
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void WinSpeak_LocalFileSearch_BM25Result()
+        {
+            var localFiles = localFilesString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var aiManager = new AIMemoryManager(localFiles);
+            var query = @"jane back pain";
+            
+            var hybridSearchResults = aiManager.FileSearch(query,
+                                        bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, // 50%
+                                        bm25MinimumScore: 0.3f,
+                                        semanticMinimumScore: 0.3f,
+                                        rrfMinimumScore: 0.3f);
+
+            Trace(hybridSearchResults.GetInformation(query));
+
+            Assert.True(hybridSearchResults.Succeeded, "Hybrid search succeeded");
+            Assert.Single(hybridSearchResults.Results);
+            Assert.Equal("6a05185bc937df0d9d3dd5b5", hybridSearchResults.Results[0].MID);
+
+            hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+        }
+
     }
 
 
