@@ -83,7 +83,47 @@ namespace fAI
                 }
             }
 
-            public IEnumerable<object> Rank(bool applyGapOutlierDetection = false, float k = 60)
+            public IEnumerable<object> RankBM25Only(bool applyGapOutlierDetection = false, float k = 60)
+            {
+                var entries = EntriesDictionary.Values.ToList();
+
+                var entriesSortedForBm25 = entries.OrderByDescending(e => e.Bm25Score).ToList();
+                for (var rank = 0; rank < entriesSortedForBm25.Count; rank++)
+                {
+                    var id = entriesSortedForBm25[rank].Id;
+                    EntriesDictionary[id].RRFScore += (entriesSortedForBm25[rank].Bm25Score * 1);
+                }
+
+                var entries2 = this.EntriesDictionary.Values.ToList();
+                foreach (var rrfo in entries2)
+                    ReflectionHelper.SetProperty(rrfo.obj, "Score", rrfo.RRFScore);
+
+                entries2 = entries2.OrderByDescending(s => s.RRFScore).ToList();
+
+                TraceEntries(entries2, "RankBM25Only:");
+
+                if (applyGapOutlierDetection && entries2.Count > 2)
+                {
+                    var scores = entries2.Select(e => e.RRFScore);
+                    var gaps = scores.Zip(scores.Skip(1), (a, b) => a - b).ToList();
+                    if (gaps.Count > 0)
+                    {
+                        float meanGap = gaps.Average();
+                        float stdDev = AIMemoryManager.StandardDeviation(gaps);
+                        float cutoffThreshold = meanGap + 1.0f * stdDev; // Flag gap as significant if it exceeds mean + 1*stdDev
+                        int cutIndex = Array.FindIndex(gaps.ToArray(), g => g >= cutoffThreshold);
+                        if (cutIndex < 0)
+                            cutIndex = 0;
+                        entries2 = entries2.Take(cutIndex + 1).ToList();
+                    }
+
+                    TraceEntries(entries2, "applyGapOutlierDetection: true");
+                }
+
+                var entriesOrdered = entries2.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
+                return entriesOrdered;
+            }
+            public IEnumerable<object> RankHybrid(bool applyGapOutlierDetection = false, float k = 60)
             {
                 var entries = EntriesDictionary.Values.ToList();
 
@@ -110,9 +150,9 @@ namespace fAI
 
                 entries2 = entries2.OrderByDescending(s => s.RRFScore).ToList();
 
-                TraceEntries(entries2, "Ranked:");
+                TraceEntries(entries2, "RankHybrid:");
 
-                if (applyGapOutlierDetection && entries2.Count > 1)
+                if (applyGapOutlierDetection && entries2.Count > 2)
                 {
                     var scores = entries2.Select(e => e.RRFScore);
                     var gaps = scores.Zip(scores.Skip(1), (a, b) => a - b).ToList();
@@ -149,9 +189,40 @@ namespace fAI
         public bool InMemoryOnly { get; set; } = false;
         public string FileName { get; set; }
 
-        public AIMemoryManager(List<string> files)
+        public static List<string> GetAllFilesSafe(string folderPath)
+        {
+            var files = new List<string>();
+
+            if (!Directory.Exists(folderPath))
+                throw new DirectoryNotFoundException($"Directory not found: {folderPath}");
+
+            foreach (var file in Directory.EnumerateFiles(folderPath))
+                files.Add(file);
+
+            foreach (var subDir in Directory.EnumerateDirectories(folderPath))
+            {
+                try { files.AddRange(GetAllFilesSafe(subDir)); }
+                catch (UnauthorizedAccessException) { /* skip restricted folders */ }
+            }
+
+            return files;
+        }
+
+        private AIMemorys _filesLoadedAsAIMemoryes;
+
+        public AIMemoryManager(List<string> files, string path = null)
         {
             this._files = files;
+            if(this._files == null)
+                this._files = new List<string>();
+
+            if (path != null)
+            {
+                var files2 = GetAllFilesSafe(path);
+                this._files.AddRange(files2);
+            }
+
+            _filesLoadedAsAIMemoryes = new AIMemorys().LoadFromFiles(this._files);
         }
 
         public AIMemoryManager(string fileName = null, bool inMemoryOnly = false)
@@ -552,18 +623,17 @@ namespace fAI
             var z = new HybridSearchResult() { Query = query };
             try
             {
-                AIMemorys all = new AIMemorys().LoadFromFiles(this._files);
-                var allAiMemories = all.ToList();
+                
+                var allAiMemories = _filesLoadedAsAIMemoryes.ToList();
                 AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
+                
                 var ranker = new RRF.RRFRanker();
                 ranker.AddUpdateBm25Score(bm25Results);
-
                 var RANK_K = 60f;
-                z.Results = new AIMemorys(ranker.Rank(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
+                z.Results = new AIMemorys(ranker.RankBM25Only(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
                 z.RRFRanker = ranker;
-                z.Type = HybridSearchResultType.Hybrid;
-                z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
+                z.Type = HybridSearchResultType.BM25Only;
 
             }
             catch (Exception ex)
@@ -601,7 +671,7 @@ namespace fAI
                     ranker.AddUpdateSemanticScore(sResults);
 
                     var RANK_K = 60f;
-                    z.Results = new AIMemorys(ranker.Rank(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
+                    z.Results = new AIMemorys(ranker.RankHybrid(rffApplyGapOutlierDetection, RANK_K).Cast<AIMemory>().ToList());
                     z.RRFRanker = ranker;
                     z.Type = HybridSearchResultType.Hybrid;
                 }

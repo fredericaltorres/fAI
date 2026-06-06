@@ -283,7 +283,8 @@ namespace fAI
                 Text = text,
                 CreateDate = fileInfo.CreationTime, 
                 ModifiedDate = fileInfo.LastWriteTime,
-                Title = title
+                Title = title,
+                Id = ObjectId.NewObjectId(),
             };
             return aiMemory.PrepareAfterLoading();
         }

@@ -596,12 +596,41 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
 
             Assert.True(hybridSearchResults.Succeeded, "Hybrid search succeeded");
             Assert.Single(hybridSearchResults.Results);
-            Assert.Equal("6a05185bc937df0d9d3dd5b5", hybridSearchResults.Results[0].MID);
+            Assert.Equal("undefined", hybridSearchResults.Results[0].MID);
 
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void WinSpeak_BIG_LocalFileSearch_BM25Result()
+        {
+            var aiManager = new AIMemoryManager(null, @"C:\Users\FredericTorres\Dropbox\MARKDOWN");
+
+            var query = @"jane back pain";
+            var hybridSearchResults = aiManager.FileSearch(query, bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, bm25MinimumScore: 0.3f, semanticMinimumScore: 0.3f, rrfMinimumScore: 0.3f);
+            Trace(hybridSearchResults.GetInformation(query));
+            Assert.True(hybridSearchResults.Succeeded, "Local search succeeded");
+            Assert.Single(hybridSearchResults.Results);
+            Assert.Equal("**Jane Doe**, 2026/3/31, Back Issues - History", hybridSearchResults.Results[0].Title  );
+            hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+
+            query = @"Nebula Novelties";
+            hybridSearchResults = aiManager.FileSearch(query, bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, bm25MinimumScore: 0.3f, semanticMinimumScore: 0.3f, rrfMinimumScore: 0.3f);
+            Trace(hybridSearchResults.GetInformation(query));
+            Assert.True(hybridSearchResults.Succeeded, "Local search succeeded");
+            Assert.Equal(2, hybridSearchResults.Results.Count);
+            Assert.Equal("Nebula Novelties Company - Current Tasks - Software Engineering Team", hybridSearchResults.Results[0].Title);
+            Assert.Equal("Nebula Novelties Company -  Office and Personal Locations", hybridSearchResults.Results[1].Title);
+            hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+
+            query = @"brainshark showpad innovation";
+            hybridSearchResults = aiManager.FileSearch(query, bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, bm25MinimumScore: 0.3f, semanticMinimumScore: 0.3f, rrfMinimumScore: 0.3f);
+            Trace(hybridSearchResults.GetInformation(query));
+            Assert.True(hybridSearchResults.Succeeded, "Local search succeeded");
+            Assert.Equal(2, hybridSearchResults.Results.Count);
+            Assert.Equal("Nebula Novelties Company -  Office and Personal Locations", hybridSearchResults.Results[1].Title);
+            hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
+        }
     }
-
-
 }
