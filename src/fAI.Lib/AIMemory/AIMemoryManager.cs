@@ -267,7 +267,11 @@ namespace fAI
                     existingAIMemory.MediaBase64 = d.MediaBase64;
 
                     if (clearEmbeddings)
+                    {
+                        if(existingAIMemory.Embeddings == null)
+                            existingAIMemory.Embeddings = new List<float>();
                         existingAIMemory.Embeddings.Clear();
+                    }
 
                     var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, 
                                             embeddingsOpenAIApiKey: openAiKey, 
