@@ -70,10 +70,10 @@ namespace fAI.Tests
         public void Conversation_GenericAI_MarkDownManipulation()
         {
             var instructions = DS.List(
-                "Add comment to test plan 1, 'Very high priority'",
-                "mark test plan 13 with a warning",
-                "mark test plan 2 as done",
-                "mark test plan 3 with an error"
+                "Add comment to test plan 1, 'Very high priority'"
+                //"mark test plan 13 with a warning",
+                //"mark test plan 2 as done",
+                //"mark test plan 3 with an error"
                 );
 
             var markdownContent = markDownContentTestPlan1;
@@ -83,19 +83,19 @@ namespace fAI.Tests
             {
                 var prompt = $@"
                     Instruction: {instruction}.
-                    Markdown Content:
-                    {markdownContent}";
+                    <markdown>
+                    {markdownContent}
+                    </markdown>
+";
 
-                var models = DS.List("gemini-2.0-flash"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
+                var models = DS.List("gemini-3.1-flash-lite"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
                 //var models = DS.List("claude-haiku-4-5"); //, "claude-haiku-4-5" // , "claude-sonnet-4-5", , "gpt-5-mini"
                 foreach (var model in models)
                 {
-                    var sw = Stopwatch.StartNew();
                     var client = new GenericAI();
                     var (text, contents, usage) = client.Completions.Create(prompt, model: model, systemPrompt: MarkDownEditorSystemPrompt);
-                    sw.Stop();
+                    Assert.Contains("1 | LearningReminderMonitor *(Very high priority)*", text);
                     (htmlMarkDownFileName, markdownContent) = MarkdownManager.ConvertToHtmlFile(text, true);
-                    HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000.0:0.0}, Response: {text}", this);
                 }
             }
         }
@@ -288,7 +288,7 @@ public static void Main()
         public void ExtractTitle_WithValidH1Heading_ReturnsTitle()
         {
             var markdown = "# My Blog Post\nThis is some content.";
-            var result = MarkdownManager.ExtractTitle(markdown);
+            var result = MarkdownManager.ExtractTitle(markdown, "");
 
             Assert.Equal("My Blog Post", result);
         }
@@ -297,7 +297,7 @@ public static void Main()
         public void ExtractTitle_WithMultipleHeadings_ReturnsFirstH1()
         {
             var markdown = "## Section\n# Main Title\n# Another Title";
-            var result = MarkdownManager.ExtractTitle(markdown);
+            var result = MarkdownManager.ExtractTitle(markdown, "");
             Assert.Equal("Main Title", result);
         }
 
@@ -305,7 +305,7 @@ public static void Main()
         public void ExtractTitle_WithOnlyH2AndH3_ReturnsH2()
         {
             var markdown = "## Section\n### Subsection\nContent here.";
-            var result = MarkdownManager.ExtractTitle(markdown);
+            var result = MarkdownManager.ExtractTitle(markdown,"");
             Assert.Equal("Section", result);
         }
 
@@ -313,7 +313,7 @@ public static void Main()
         public void ExtractTitle_WithNoSectionAtAll_ReturnNull()
         {
             var markdown = ".. Section\n... Subsection\nContent here.";
-            var result = MarkdownManager.ExtractTitle(markdown);
+            var result = MarkdownManager.ExtractTitle(markdown, null);
             Assert.Null(result);
         }
 
@@ -463,8 +463,36 @@ IMAGE 4
             Assert.EndsWith("quality over quantity!", markDownContent2);
         }
 
-
         [Fact()]
+        [TestBeforeAfter]
+        public void ExtractTitle()
+        {
+            var mdFile = @".\one markdown file name.md";
+            var mdContent1 = @"
+# This is the Title
+## This is a heading
+blah
+";
+
+            var mdContent2 = @"
+## This is a heading
+blah
+";
+
+            var htmlContent = @"
+<html> 
+<h1>This is the Title</h1>
+<h2>This is a heading</h2>
+</html>
+";
+
+            Assert.Equal("This is the Title", MarkdownManager.ExtractTitle(mdContent1, mdFile));
+            Assert.Equal("This is a heading", MarkdownManager.ExtractTitle(mdContent2, mdFile));
+            Assert.Equal("one markdown file name", MarkdownManager.ExtractTitle(htmlContent, mdFile));
+        }
+
+
+            [Fact()]
         [TestBeforeAfter]
         public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
         {

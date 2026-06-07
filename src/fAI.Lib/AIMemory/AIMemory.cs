@@ -270,7 +270,7 @@ namespace fAI
             {
                 var md = MarkdownManager.LoadMarkdownFile(file);
                 text = md.RawContentWithoutBase64ImageData;
-                title = MarkdownManager.ExtractTitle(md.MarkdownBody);
+                title = MarkdownManager.ExtractTitle(md.MarkdownBody, file);
             }
             if (MarkdownManager.IsTextFile(file))
             {

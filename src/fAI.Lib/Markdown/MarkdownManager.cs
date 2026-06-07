@@ -728,7 +728,7 @@ namespace fAI
             return html;
         }
 
-        public static string ExtractTitle(string markdown)
+        public static string ExtractTitle(string markdown, string fileName)
         {
             if (string.IsNullOrWhiteSpace(markdown))
                 return null;
@@ -749,7 +749,12 @@ namespace fAI
                 }
             }
 
-            return ExtractFirstHeading(markdown);
+            var r = ExtractFirstHeading(markdown);
+            if(r == null && fileName!= null)
+            {
+                r = Path.GetFileNameWithoutExtension(fileName);
+            }
+            return r;
         }
 
         public static string ExtractFirstHeading(string markdown)
