@@ -445,7 +445,7 @@ namespace fAI
         {
             try
             {
-                if (__simulate_metadata_computation__ || __metadata_computation_on__ == false)
+                if (__simulate_metadata_computation__ || __metadata_computation_on__)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
                         ["a"] = new List<string> { "b" }
