@@ -22,7 +22,7 @@ namespace fAI
 //"gemini-3.1-flash-Lite", // Replace "gemini-2.0-flash",
 "gemini-3.5-flash", // Expensive, compared to gemini-3.1-flash-lite
 "gemini-3.1-flash-lite",
-"gemini-3-pro",  // "gemini-3-pro",
+//"gemini-3-pro",  // "gemini-3-pro",
 "gemini-3-flash-preview",
 "gemini-2.5-pro",
 "gemini-2.5-flash",

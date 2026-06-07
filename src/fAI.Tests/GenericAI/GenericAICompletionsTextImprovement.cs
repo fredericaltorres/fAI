@@ -257,7 +257,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         [TestBeforeAfter]
         public void DetermineTheTypeOfPhrase()
         {
-            GenericAI.GetModels().ForEach(model => // _quickFilter
+            GenericAI.GetModels(_quickFilter).ForEach(model => // _quickFilter
             {
                 AIPromptCache.Instance.Clear();
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
