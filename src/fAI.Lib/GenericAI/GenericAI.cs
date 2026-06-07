@@ -976,7 +976,42 @@ Use ONLY the provided article delimited by triple quotes to answer the question:
             };
         }
 
-     
+        public class KeywordsResponse
+        {
+            public List<string> keywords { get; set; }
+        }
+
+        public List<string> ExtractKeywordFromNotes(
+           string text,
+           string model,
+           string systemPrompt = @"
+You are an expert NLP assistant specializing in information extraction. 
+Your task is to extract the most relevant keywords and key phrases from the provided text.
+
+Rules:
+1. Extract between 5 and 10 keywords/phrases.
+2. Prioritize nouns, technical terms, and named entities.
+3. Avoid generic words like ""text,"" ""information,"" or ""content.""
+4. Output the result as a valid JSON object with the key ""keywords"".
+            "
+           )
+        {
+            systemPrompt = systemPrompt.Template(new { tutu = 1 }, "[", "]");
+            var userText = @"
+Text to analyze:
+""""""
+[text]
+""""""
+
+Extracted Keywords:
+".Template(new { text = text.Trim() }, "[", "]");
+
+            var (json, _, usage) = Create(userText, systemPrompt, model);
+            json = StringUtil.SmartExtractJson(json);
+            var r = JsonConvert.DeserializeObject<KeywordsResponse>(json);
+            return r.keywords;
+        }
+
         public AIMetaData ExtractMetaDataFromNotes(
            string text,
            string model,
@@ -997,7 +1032,16 @@ Only extract what's explicitly there.
             var (json, _, usage) = Create(text, systemPrompt, model);
 
             var result = new HttpBase().GetJsonObject(json).ToString();
-            return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)) };
+            var keywords = this.ExtractKeywordFromNotes(text, model);
+
+            return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)), Keywords = keywords };
+        }
+
+        public static List<string> JArrayToDictionary(JArray jArray)
+        {
+            return jArray
+                .Select(token => token.ToString())
+                .ToList();
         }
 
         public static Dictionary<string, List<string>> JObjectToDictionary(JObject jObject)

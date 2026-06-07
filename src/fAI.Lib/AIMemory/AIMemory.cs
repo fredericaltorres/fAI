@@ -16,6 +16,7 @@ namespace fAI
     public class AIMetaData
     {
         public Dictionary<string, List<string>> MetaData { get; set; }
+        public List<string> Keywords { get; set; }
 
         public void Merge (AIMetaData m)
         {

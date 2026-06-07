@@ -412,7 +412,7 @@ namespace fAI
 
         public bool __simulate_embedding_computation__ = false;
         public bool __simulate_metadata_computation__ = false;
-        public static bool __metadata_computation_on__ = false;
+        public static bool __metadata_computation_on__ = true;
 
         //Model Input               Price(per 1M)    Output Price(per 1M)   Context Window
         //Gemini 2.0 Flash	        $0.10	        $0.40	                1 Million     DEPRECATED JUNE 2026

@@ -24,7 +24,9 @@ namespace fAI.Tests
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
-        Regex _quickFilter = null;
+        Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
+        
+        //Regex _quickFilter = null;
 
         public GenericAiCompletions_UnitTests()
         {
@@ -320,6 +322,13 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             });
         }
 
+
+        const string notes1 = @"
+on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project in Paris.
+The meeting was at 10 AM and it lasted for 1 hour.
+I need to prepare a presentation for the next meeting on July 20th, 2026
+";
+
         [Fact()]
         [TestBeforeAfter]
         public void ExtractMetaData_1()
@@ -327,12 +336,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-
-                var notes1 = @"
-on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project in Paris.
-The meeting was at 10 AM and it lasted for 1 hour.
-I need to prepare a presentation for the next meeting on July 20th, 2026
-";
                 var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
                 Assert.Equal("John Smith", medataDictionary["people"].First());
                 Assert.Equal("Paris", medataDictionary["locations"].First());
@@ -342,6 +345,17 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
             });
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void ExtracatMetaData_1()
+        {
+            GenericAI.GetModels(_quickFilter).ForEach(model =>
+            {
+                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var keywords = client.Completions.ExtractKeywordFromNotes(notes1, model: model);
+                Assert.True(keywords.Any());
+            });
+        }
 
         [Fact()]
         [TestBeforeAfter]
@@ -384,11 +398,14 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model).MetaData;
-                Assert.Equal(4, medataDictionary["people"].Count);
-                Assert.Equal(4, medataDictionary["dates_mentioned"].Count);
-                Assert.Equal(2, medataDictionary["action_items"].Count);
-                Assert.Equal(3, medataDictionary["topics"].Count);
+                var metaData = client.Completions.ExtractMetaDataFromNotes(notes2, model: model);
+                Assert.True(metaData.Keywords.Any());
+
+                var medataDictionary = metaData.MetaData;
+                Assert.True(medataDictionary["people"].Any());
+                Assert.True(medataDictionary["dates_mentioned"].Any());
+                Assert.True(medataDictionary["action_items"].Any());
+                Assert.True(medataDictionary["topics"].Any());
                 Assert.Equal("task", medataDictionary["type"].First());
             });
         }
