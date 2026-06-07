@@ -445,11 +445,11 @@ namespace fAI
         {
             try
             {
-                if (__simulate_metadata_computation__ || __metadata_computation_on__)
+                if (__simulate_metadata_computation__ || !__metadata_computation_on__)
                 {
                     d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
                         ["a"] = new List<string> { "b" }
-                    } };
+                    } , Keywords = null };
                     d.AIMetaData.Merge(aiMetaDataToMerge);
                     return (false, new GenericAICompletions.GenericAIUsage(model, $"__simulate_metadata_computation__: {__simulate_metadata_computation__}, __metadata_computation_on__: {__metadata_computation_on__}", "") { });
                 }
