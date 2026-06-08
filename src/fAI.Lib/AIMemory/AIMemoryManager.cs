@@ -930,21 +930,63 @@ namespace fAI
             }
         }
 
-        public List<string> GetMetaDataUniqueValues(AIMetaDataProperties metaDataProperty)
+        public string GetMetaDataUsageSummaryReport(Dictionary<string, List<LiteDB.ObjectId>> usage)
+        {
+            var sb = new StringBuilder();
+            foreach (var usageEntry in usage)
+            {
+                sb.AppendLine($"## {usageEntry.Key}");
+                foreach (var id in usageEntry.Value)
+                {
+                    var aiM = this.GetFromId(id);
+                    sb.Append($"- {aiM.Title} - {aiM.ModifiedDate} - <{aiM.MID}>");
+
+                    if(File.Exists(aiM.LocalFile))
+                        sb.Append($" - [{Path.GetFileName(aiM.LocalFile)}]({aiM.LocalFile})");
+
+                    sb.AppendLine();
+                }
+            }
+            return sb.ToString();
+        }
+
+        public Dictionary<string, List<LiteDB.ObjectId>> GetMetaDataUsageSummary(AIMetaDataPropertiesEnum metaDataProperty)
+        {
+            var all = this.GetAll();
+            var r = new Dictionary<string, List<LiteDB.ObjectId>>();
+            var peopleNames = GetMetaDataUniqueValues(metaDataProperty);
+            foreach (var people in peopleNames)
+            {
+                foreach (var a in all)
+                {
+                    if (a.AIMetaData != null && a.AIMetaData.MetaData != null && a.AIMetaData.MetaData.ContainsKey(metaDataProperty.ToString()))
+                    {
+                        List<string> values = a.AIMetaData.MetaData[metaDataProperty.ToString()];
+                        var found = values.Exists(f => f.Equals(people, StringComparison.OrdinalIgnoreCase));
+                        if (found)
+                        {
+                            if (!r.ContainsKey(people))
+                                r[people] = new List<ObjectId>();
+                            r[people].Add(a.Id);
+                        }
+                    }
+                }
+            }
+            return r;
+        }
+
+        public List<string> GetMetaDataUniqueValues(AIMetaDataPropertiesEnum metaDataProperty)
         {
             var r = new List<string>();
             var all = this.GetAll();
             foreach (var a in all)
             {
-                if (a.AIMetaData != null && a.AIMetaData.MetaData != null)
+                if (a.AIMetaData != null && a.AIMetaData.MetaData != null && a.AIMetaData.MetaData.ContainsKey(metaDataProperty.ToString()))
                 {
-                    if (a.AIMetaData.MetaData.ContainsKey(metaDataProperty.ToString()))
-                    {
-                        List<string> values = a.AIMetaData.MetaData[metaDataProperty.ToString()];
-                        foreach (var pValue in values)
-                            if (!r.Contains(pValue.ToLowerInvariant()))
-                                r.Add(pValue.ToLowerInvariant());
-                    }
+                    var values = a.AIMetaData.MetaData[metaDataProperty.ToString()];
+                    foreach (var pValue in values)
+                        if (!r.Contains(pValue.ToLowerInvariant()))
+                            r.Add(pValue.ToLowerInvariant());
                 }
             }
             r.Sort();

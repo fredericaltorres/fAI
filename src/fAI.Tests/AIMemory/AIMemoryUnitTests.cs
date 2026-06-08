@@ -1,4 +1,5 @@
 ﻿using Azure.Search.Documents.Indexes.Models;
+using Deepgram.Models;
 using DynamicSugar;
 using fAI;
 using fAI.Util.Strings;
@@ -635,15 +636,35 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
 
         [Fact()]
         [TestBeforeAfter]
-        public void Extract_Metadata_People()
+        public void GetMetaDataUniqueValues()
         {
             var aiManager = new AIMemoryManager(@"C:\Users\FredericTorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
 
-            var people = aiManager.GetMetaDataUniqueValues( AIMetaData.AIMetaDataProperties.people);
-            var dates_mentioned = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.dates_mentioned);
-            var topics = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.topics);
-            var locations = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.locations);
-            var types = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.type);
+            var people = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataPropertiesEnum.people);
+            var dates_mentioned = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataPropertiesEnum.dates_mentioned);
+            var topics = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataPropertiesEnum.topics);
+            var locations = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataPropertiesEnum.locations);
+            var types = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataPropertiesEnum.type);
+
+            //GetMetaDataUsageSummary
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GetMetaDataUsageSummary()
+        {
+            var aiManager = new AIMemoryManager(@"C:\Users\FredericTorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
+            var markdownReport = new StringBuilder();
+
+            foreach (var p in AIMetaData.AIMetaDataPropertiess)
+            {
+                markdownReport.AppendLine($"# {p}");
+                var pUsageSummary = aiManager.GetMetaDataUsageSummary(p);
+                Assert.True(pUsageSummary.Any());
+                var tmpMarkdownReport = aiManager.GetMetaDataUsageSummaryReport(pUsageSummary);
+                markdownReport.AppendLine(tmpMarkdownReport).AppendLine();
+            }
+            var s = markdownReport.ToString();
         }
     }
 }

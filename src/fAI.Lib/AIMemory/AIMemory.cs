@@ -15,10 +15,12 @@ namespace fAI
 {
     public class AIMetaData
     {
-        public enum AIMetaDataProperties
+        public enum AIMetaDataPropertiesEnum
         {
             people, action_items, dates_mentioned, locations, topics, type
         }
+
+        public static List<AIMetaDataPropertiesEnum> AIMetaDataPropertiess => Enum.GetValues(typeof(AIMetaDataPropertiesEnum)).Cast<AIMetaDataPropertiesEnum>().ToList();
 
         public Dictionary<string, List<string>> MetaData { get; set; }
         public List<string> Keywords { get; set; }
