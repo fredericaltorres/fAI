@@ -15,6 +15,11 @@ namespace fAI
 {
     public class AIMetaData
     {
+        public enum AIMetaDataProperties
+        {
+            people, action_items, dates_mentioned, locations, topics, type
+        }
+
         public Dictionary<string, List<string>> MetaData { get; set; }
         public List<string> Keywords { get; set; }
 

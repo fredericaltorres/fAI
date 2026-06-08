@@ -14,6 +14,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Xml.Linq;
 using static DynamicSugar.Tokenizer;
+using static fAI.AIMetaData;
 using static fAI.HumeAISpeech;
 using JsonIgnore2Attribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
@@ -927,6 +928,27 @@ namespace fAI
                 var storage = db.GetStorage<string>();
                 storage.Delete(id);
             }
+        }
+
+        public List<string> GetMetaDataUniqueValues(AIMetaDataProperties metaDataProperty)
+        {
+            var r = new List<string>();
+            var all = this.GetAll();
+            foreach (var a in all)
+            {
+                if (a.AIMetaData != null && a.AIMetaData.MetaData != null)
+                {
+                    if (a.AIMetaData.MetaData.ContainsKey(metaDataProperty.ToString()))
+                    {
+                        List<string> values = a.AIMetaData.MetaData[metaDataProperty.ToString()];
+                        foreach (var pValue in values)
+                            if (!r.Contains(pValue.ToLowerInvariant()))
+                                r.Add(pValue.ToLowerInvariant());
+                    }
+                }
+            }
+            r.Sort();
+            return r;
         }
     }
 }

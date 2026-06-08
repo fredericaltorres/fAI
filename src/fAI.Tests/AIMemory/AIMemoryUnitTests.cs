@@ -632,5 +632,18 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
             Assert.Equal("Nebula Novelties Company -  Office and Personal Locations", hybridSearchResults.Results[1].Title);
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Extract_Metadata_People()
+        {
+            var aiManager = new AIMemoryManager(@"C:\Users\FredericTorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
+
+            var people = aiManager.GetMetaDataUniqueValues( AIMetaData.AIMetaDataProperties.people);
+            var dates_mentioned = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.dates_mentioned);
+            var topics = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.topics);
+            var locations = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.locations);
+            var types = aiManager.GetMetaDataUniqueValues(AIMetaData.AIMetaDataProperties.type);
+        }
     }
 }
