@@ -935,7 +935,7 @@ namespace fAI
             var sb = new StringBuilder();
             foreach (var usageEntry in usage)
             {
-                sb.AppendLine($"## {usageEntry.Key}");
+                sb.AppendLine($"### {usageEntry.Key}");
                 foreach (var id in usageEntry.Value)
                 {
                     var aiM = this.GetFromId(id);

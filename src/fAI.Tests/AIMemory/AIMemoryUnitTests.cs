@@ -4,6 +4,7 @@ using DynamicSugar;
 using fAI;
 using fAI.Util.Strings;
 using fAI.VectorDB;
+using Markdig.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -654,17 +655,22 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
         public void GetMetaDataUsageSummary()
         {
             var aiManager = new AIMemoryManager(@"C:\Users\FredericTorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
-            var markdownReport = new StringBuilder();
+            var markdownBody = new StringBuilder();
+            var title = $"# WinSpeak AI Memory DB - {Path.GetFileName(aiManager.FileName)}";
+            markdownBody.AppendLine(title);
 
             foreach (var p in AIMetaData.AIMetaDataPropertiess)
             {
-                markdownReport.AppendLine($"# {p}");
-                var pUsageSummary = aiManager.GetMetaDataUsageSummary(p);
-                Assert.True(pUsageSummary.Any());
-                var tmpMarkdownReport = aiManager.GetMetaDataUsageSummaryReport(pUsageSummary);
-                markdownReport.AppendLine(tmpMarkdownReport).AppendLine();
+                markdownBody.AppendLine($"## {p}");
+                markdownBody.AppendLine($"---");
+                markdownBody.AppendLine(aiManager.GetMetaDataUsageSummaryReport(aiManager.GetMetaDataUsageSummary(p))).AppendLine();
             }
-            var s = markdownReport.ToString();
+            var s = markdownBody.ToString();
+            var mdDoc = new MarkdownDocument();
+            mdDoc.MarkdownBody = markdownBody.ToString();
+            mdDoc.FrontMatter = new FrontMatter() { Title = title, Author = Environment.UserName, };
+            mdDoc.FrontMatter.SetDateToUtcNow();
+            mdDoc.Update(@"C:\Users\FredericTorres\Dropbox\MARKDOWN\WINSPEAK\WinSpeak.AIMemory.db.markdown.md");
         }
     }
 }
