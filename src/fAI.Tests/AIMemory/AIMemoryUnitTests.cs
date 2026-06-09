@@ -655,22 +655,8 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
         public void GetMetaDataUsageSummary()
         {
             var aiManager = new AIMemoryManager(@"C:\Users\FredericTorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db");
-            var markdownBody = new StringBuilder();
-            var title = $"# WinSpeak AI Memory DB - {Path.GetFileName(aiManager.FileName)}";
-            markdownBody.AppendLine(title);
-
-            foreach (var p in AIMetaData.AIMetaDataPropertiess)
-            {
-                markdownBody.AppendLine($"## {p}");
-                markdownBody.AppendLine($"---");
-                markdownBody.AppendLine(aiManager.GetMetaDataUsageSummaryReport(aiManager.GetMetaDataUsageSummary(p))).AppendLine();
-            }
-            var s = markdownBody.ToString();
-            var mdDoc = new MarkdownDocument();
-            mdDoc.MarkdownBody = markdownBody.ToString();
-            mdDoc.FrontMatter = new FrontMatter() { Title = title, Author = Environment.UserName, };
-            mdDoc.FrontMatter.SetDateToUtcNow();
-            mdDoc.Update(@"C:\Users\FredericTorres\Dropbox\MARKDOWN\WINSPEAK\WinSpeak.AIMemory.db.markdown.md");
+            var dic = aiManager.GenerateReportPerMetadataCategories(@"C:\Users\FredericTorres\Dropbox\MARKDOWN\WINSPEAK");
+            Assert.Equal(6, dic.Count);
         }
     }
 }

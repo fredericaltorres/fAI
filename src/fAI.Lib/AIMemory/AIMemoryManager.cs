@@ -214,7 +214,7 @@ namespace fAI
         public AIMemoryManager(List<string> files, string path = null)
         {
             this._files = files;
-            if(this._files == null)
+            if (this._files == null)
                 this._files = new List<string>();
 
             if (path != null)
@@ -237,10 +237,10 @@ namespace fAI
         {
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
-       
+
         public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(
-            AIMemory d, string localFile, 
-            string openAiKey = null, string llmApiKey = null, 
+            AIMemory d, string localFile,
+            string openAiKey = null, string llmApiKey = null,
             bool clearEmbeddings = false,
             AIMetaData aiMetaData = null // if not passed the aiMetadata is re-computed
             )
@@ -253,7 +253,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
             }
 
-            var u = new GenericAICompletions.GenericAIUsage("","","");
+            var u = new GenericAICompletions.GenericAIUsage("", "", "");
             var r = true;
             try
             {
@@ -269,14 +269,14 @@ namespace fAI
 
                     if (clearEmbeddings)
                     {
-                        if(existingAIMemory.Embeddings == null)
+                        if (existingAIMemory.Embeddings == null)
                             existingAIMemory.Embeddings = new List<float>();
                         existingAIMemory.Embeddings.Clear();
                     }
 
-                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory, 
-                                            embeddingsOpenAIApiKey: openAiKey, 
-                                            llmApiKey: llmApiKey, 
+                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory,
+                                            embeddingsOpenAIApiKey: openAiKey,
+                                            llmApiKey: llmApiKey,
                                             aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
 
                     d.Embeddings = existingAIMemory.Embeddings;
@@ -296,8 +296,8 @@ namespace fAI
             {
                 r = false;
             }
-            finally 
-            { 
+            finally
+            {
                 sw.Stop();
                 Trace($"Duration: {sw.ElapsedMilliseconds}, File: {localFile}");
             }
@@ -317,7 +317,7 @@ namespace fAI
         public void AddCrossReferenceTable(AIMemoryCrossReferenceTable d)
         {
             var e = GetCrossReferenceTable(d.Name);
-            if(e != null)
+            if (e != null)
                 DeleteCrossReferenceTable(d.Id);
 
             using (var db = new LiteDatabase(this.FileName))
@@ -379,7 +379,7 @@ namespace fAI
             foreach (var entry in d.Entries)
             {
                 sb.AppendLine($"## {d.Name}:  {StringUtil.CapitalizeWords(entry.Key)}");
-                foreach(var v in entry.Value) 
+                foreach (var v in entry.Value)
                 {
                     var aiMemory = GetFromId(new ObjectId(v));
                     if (aiMemory != null)
@@ -397,13 +397,13 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
             }
 
-            var (r,u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey:openAiKey, llmApiKey: llmApiKey, aiMetaDataToMerge: aiMetaDataToMerge);
+            var (r, u) = ComputeEmbeddingsAndMetaData(d, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey, aiMetaDataToMerge: aiMetaDataToMerge);
             d.Init();
 
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                
+
                 var newId = col.Insert(d.PrepareForSaving());
                 id = newId;
             }
@@ -424,8 +424,8 @@ namespace fAI
 
         public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";// "gemini-3.1-flash-Lite"
 
-        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d, 
-            string embeddingsOpenAIApiKey = null, 
+        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaData(AIMemory d,
+            string embeddingsOpenAIApiKey = null,
             string llmApiKey = null,
             string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION,
             AIMetaData aiMetaDataToMerge = null
@@ -438,7 +438,7 @@ namespace fAI
             var r2 = false;
 
             (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey, aiMetaDataToMerge);
-            
+
             return (r1 && r2, extractUsage);
         }
 
@@ -448,9 +448,14 @@ namespace fAI
             {
                 if (__simulate_metadata_computation__ || !__metadata_computation_on__)
                 {
-                    d.AIMetaData = new AIMetaData { MetaData = new Dictionary<string, List<string>>() {
-                        ["a"] = new List<string> { "b" }
-                    } , Keywords = null };
+                    d.AIMetaData = new AIMetaData
+                    {
+                        MetaData = new Dictionary<string, List<string>>()
+                        {
+                            ["a"] = new List<string> { "b" }
+                        },
+                        Keywords = null
+                    };
                     d.AIMetaData.Merge(aiMetaDataToMerge);
                     return (false, new GenericAICompletions.GenericAIUsage(model, $"__simulate_metadata_computation__: {__simulate_metadata_computation__}, __metadata_computation_on__: {__metadata_computation_on__}", "") { });
                 }
@@ -595,7 +600,7 @@ namespace fAI
             public string GetInformation(string query, float rrfMinimumScore = 2f)
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"HybridSearchResult Type:{Type}, rrfMinimumScore: {rrfMinimumScore}, Query:{query}" );
+                sb.AppendLine($"HybridSearchResult Type:{Type}, rrfMinimumScore: {rrfMinimumScore}, Query:{query}");
 
                 if (Type == HybridSearchResultType.Hybrid)
                 {
@@ -604,13 +609,13 @@ namespace fAI
                         sb.AppendLine(r.Value.ToString());
                     sb.AppendLine();
                 }
-                
+
                 sb.AppendLine($"Final Hybrid Results");
                 foreach (var rr in Results)
                 {
                     sb.AppendLine(rr.ToString());
                 }
-          
+
                 sb.AppendLine("");
                 return sb.ToString();
             }
@@ -628,11 +633,11 @@ namespace fAI
             var z = new HybridSearchResult() { Query = query };
             try
             {
-                
+
                 var allAiMemories = _filesLoadedAsAIMemoryes.ToList();
                 AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
-                
+
                 var ranker = new RRF.RRFRanker();
                 ranker.AddUpdateBm25Score(bm25Results);
                 var RANK_K = 60f;
@@ -649,13 +654,13 @@ namespace fAI
         }
 
         public HybridSearchResult HybridSearch(
-            string query, 
+            string query,
             List<float> embeddingsQuery,
             MinimumScoreModeEnum bm25ScoreOrMode = MinimumScoreModeEnum.GapOutlierDetection, // -1 top 50%, -2 Greater Than Std Deviation, -3 ApplyGapOutlierDetection, Other > than )
             float bm25MinimumScore = 0.3f,
             float semanticMinimumScore = 0.25f,
             float rrfMinimumScore = 1f,  // Minimum RRF score to consider as a strong match
-            bool  rffApplyGapOutlierDetection = true
+            bool rffApplyGapOutlierDetection = true
             )
         {
             var z = new HybridSearchResult() { Query = query };
@@ -790,7 +795,7 @@ namespace fAI
             else // if (minimumScoreMode == MinimumScoreModeEnum.MinimumScorePassed) // Return score greater or equal to 1
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: bm25MinimumScore));
-                if(bm25Results.Count == 0) // minimumScoreOrMode is too high
+                if (bm25Results.Count == 0) // minimumScoreOrMode is too high
                 {
                     var retryTopPercent = 20f;
                     Trace($"minimumScoreOrMode: {minimumScoreMode} is too low, retry with top {retryTopPercent}%");
@@ -803,13 +808,14 @@ namespace fAI
             return bm25Results.Count > 0;
         }
 
-        private void TraceAIMemorys(AIMemorys am, string text) 
+        private void TraceAIMemorys(AIMemorys am, string text)
         {
             var x = 0;
             var scoreStandardDeviation = am.Count > 0 ? AIMemoryManager.StandardDeviation(am.Select(d => d.Score).ToList()) : 0;
             Trace($"{text}, Count: {am.Count}, StdDev: {scoreStandardDeviation:0.000}");
 
-            am.ForEach((m) => {
+            am.ForEach((m) =>
+            {
                 if (m.Score > 0)
                     HttpBase.Trace($" [{x++}] {m.MID} - {m.Score:0.000} - {m.Title} - ({m.LocalFile})", this);
             });
@@ -822,14 +828,14 @@ namespace fAI
         }
 
         public AIMemorys SimilaritySearch(
-            List<float> embeddingsQuery, 
+            List<float> embeddingsQuery,
             float minimumScore = 0.2f,
             float topBestScorePercent = -1f, // If the best score is higher than this threshold, we will consider it as a strong match and we will not apply refining to improve performance, we just return the items
             IEnumerable<AIMemory> all = null
             )
         {
             var result = new AIMemorys();
-            if(all == null)
+            if (all == null)
                 all = this.GetAll();
             foreach (var e in all)
             {
@@ -881,7 +887,7 @@ namespace fAI
         public string ToJsonFile()
         {
             var json = ToJSON();
-            var jsonFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName( this.FileName) + ".json");
+            var jsonFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(this.FileName) + ".json");
             File.WriteAllText(jsonFileName, json);
             return jsonFileName;
         }
@@ -941,7 +947,7 @@ namespace fAI
                     var aiM = this.GetFromId(id);
                     sb.Append($"- {aiM.Title} - {aiM.ModifiedDate} - <{aiM.MID}>");
 
-                    if(File.Exists(aiM.LocalFile))
+                    if (File.Exists(aiM.LocalFile))
                         sb.Append($" - [{Path.GetFileName(aiM.LocalFile)}]({aiM.LocalFile})");
 
                     sb.AppendLine();
@@ -992,6 +998,35 @@ namespace fAI
             r.Sort();
             return r;
         }
+
+        public Dictionary<AIMetaDataPropertiesEnum, string> GenerateReportPerMetadataCategories(string destFolder)
+        {
+            var r = new Dictionary<AIMetaDataPropertiesEnum, string>();
+
+            foreach (var p in AIMetaData.AIMetaDataPropertiess)
+            {
+                var markdownBody = new StringBuilder();
+                var title = $"# WinSpeak AI Memory DB / {p} - {Path.GetFileName(this.FileName)}";
+                markdownBody.AppendLine(title);
+
+                markdownBody.AppendLine($"## {p}");
+                markdownBody.AppendLine($"---");
+                markdownBody.AppendLine(this.GetMetaDataUsageSummaryReport(this.GetMetaDataUsageSummary(p))).AppendLine();
+
+                var s = markdownBody.ToString();
+                var mdDoc = new MarkdownDocument();
+                mdDoc.MarkdownBody = markdownBody.ToString();
+                mdDoc.FrontMatter = new FrontMatter() { Title = title, Author = Environment.UserName, };
+                mdDoc.FrontMatter.SetDateToUtcNow();
+                var mdOutput =  Path.Combine(destFolder, $@"WinSpeak.AIMemory.db.markdown.{p}.md");
+                new TestFileHelper().DeleteFile(mdOutput);
+                mdDoc.Update(mdOutput);
+                r.Add(p, mdOutput);
+            }
+
+            return r;
+        }
     }
 }
+
 
