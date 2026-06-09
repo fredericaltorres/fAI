@@ -42,6 +42,14 @@ public class MarkdownDocument
         );
     }
 
+    public string MarkdownBodyWithoutBase64ImageData
+    {
+        get
+        {
+            return RemoveImgTags(RemoveBase64Images(this.MarkdownBody));
+        }
+    }
+
     public string RawContentWithoutBase64ImageData
     {
         get {
