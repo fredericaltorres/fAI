@@ -599,6 +599,8 @@ namespace fAI
             return  MarkdownLoader.Load(filePath);
         }
 
+   
+
         public static MarkdownDocument UpdateMarkdownFile(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
         {
             var markdownDocument = MarkdownLoader.Update(filePath, newMarkdownBody, frontMatter);
@@ -860,6 +862,184 @@ namespace fAI
             Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
 
             return match.Success ? match.Value : null;
+        }
+
+        public static List<string> CodeExtensions { get; set; } = new List<string>() {
+      "html",  "css", "scss", "sass", "less",
+      "js", "jsx", "ts", "tsx",
+      "json","xml", "svg",
+      "cs", "fs", "vb", "csproj", "sln", "razor", "cshtml", "vbhtml", "props", "targets",
+      "java", "kt", "kts", "groovy", "scala", "clj", "cljs",
+      "py", "pyw", "pyi",
+      "rb", "rake", "gemspec",
+      "php", "phtml",
+      "c", "h", "cpp", "cc", "cxx", "hpp", "hxx", "rs", "go", "swift", "m", "mm",
+      "sh", "bash", "zsh", "fish", "ps1", "psm1", "psd1", "bat", "cmd",
+      "lua", "pl", "pm", "r", "rmd",
+      "yaml", "yml", "toml", "ini", "cfg", "conf", "env", "properties",
+
+      "sql", "ddl", "dml", "pgsql", "mysql",
+      "dockerfile", "makefile", "cmake", "gradle",
+  };
+
+        public static bool IsCodeExtensions(string filename)
+        {
+            if (string.IsNullOrWhiteSpace(filename))
+                return false;
+
+            var extension = Path.GetExtension(filename);
+
+            if (string.IsNullOrEmpty(extension))
+            {
+                // Handle files with no extension (e.g., "Dockerfile", "Makefile")
+                var nameOnly = Path.GetFileName(filename).ToLowerInvariant();
+                return CodeExtensions.Contains(nameOnly);
+            }
+
+            var ext = extension.TrimStart('.').ToLowerInvariant();
+            return CodeExtensions
+                .Select(e => e.ToLowerInvariant())
+                .Contains(ext);
+        }
+
+        public static string GetBlockOfCode(string codeFileName)
+        {
+            var md = $@"
+```{GetMarkdownLanguage(codeFileName)}
+{File.ReadAllText(codeFileName)}
+```
+";
+            return md;
+        }
+
+        private static readonly Dictionary<string, string> ExtensionToLanguage = new Dictionary<string, string>
+        {
+            // Web
+            { ".html",  "html"       },
+            { ".htm",   "html"       },
+            { ".css",   "css"        },
+            { ".scss",  "scss"       },
+            { ".sass",  "sass"       },
+            { ".less",  "less"       },
+
+            // JavaScript / TypeScript
+            { ".js",    "javascript" },
+            { ".mjs",   "javascript" },
+            { ".cjs",   "javascript" },
+            { ".jsx",   "jsx"        },
+            { ".ts",    "typescript" },
+            { ".tsx",   "tsx"        },
+
+            // C-family
+            { ".c",     "c"          },
+            { ".h",     "c"          },
+            { ".cpp",   "cpp"        },
+            { ".cc",    "cpp"        },
+            { ".cxx",   "cpp"        },
+            { ".hpp",   "cpp"        },
+            { ".cs",    "csharp"     },
+
+            // JVM
+            { ".java",  "java"       },
+            { ".kt",    "kotlin"     },
+            { ".kts",   "kotlin"     },
+            { ".scala", "scala"      },
+            { ".groovy","groovy"     },
+
+            // Scripting
+            { ".py",    "python"     },
+            { ".rb",    "ruby"       },
+            { ".php",   "php"        },
+            { ".pl",    "perl"       },
+            { ".lua",   "lua"        },
+            { ".r",     "r"          },
+
+            // Shell
+            { ".sh",    "bash"       },
+            { ".bash",  "bash"       },
+            { ".zsh",   "bash"       },
+            { ".fish",  "fish"       },
+            { ".ps1",   "powershell" },
+            { ".psm1",  "powershell" },
+            { ".bat", "batch" },
+            { ".cmd", "batch" }, // Windows equivalent
+
+            // Systems / Low-level
+            { ".rs",    "rust"       },
+            { ".go",    "go"         },
+            { ".swift", "swift"      },
+            { ".m",     "objectivec" },
+            { ".zig",   "zig"        },
+
+            // Functional
+            { ".hs",    "haskell"    },
+            { ".lhs",   "haskell"    },
+            { ".ex",    "elixir"     },
+            { ".exs",   "elixir"     },
+            { ".erl",   "erlang"     },
+            { ".hrl",   "erlang"     },
+            { ".fs",    "fsharp"     },
+            { ".fsx",   "fsharp"     },
+            { ".ml",    "ocaml"      },
+            { ".mli",   "ocaml"      },
+            { ".clj",   "clojure"    },
+            { ".cljs",  "clojure"    },
+
+            // Data / Config
+            { ".json",  "json"       },
+            { ".jsonc", "json"       },
+            { ".xml",   "xml"        },
+            { ".yaml",  "yaml"       },
+            { ".yml",   "yaml"       },
+            { ".toml",  "toml"       },
+            { ".ini",   "ini"        },
+            { ".env",   "dotenv"     },
+
+            // Query / Database
+            { ".sql",   "sql"        },
+            { ".graphql","graphql"   },
+            { ".gql",   "graphql"    },
+
+            // Infrastructure / Markup
+            { ".tf",    "hcl"        },
+            { ".hcl",   "hcl"        },
+            { ".md",    "markdown"   },
+            { ".mdx",   "mdx"        },
+            { ".tex",   "latex"      },
+            { ".dockerfile","dockerfile" },
+
+            // Other
+            { ".dart",  "dart"       },
+            { ".vim",   "vim"        },
+            { ".proto", "protobuf"   },
+            { ".wasm",  "wasm"       },
+        };
+
+            /// <summary>
+        /// Returns the markdown code-fence language identifier for a given file name.
+        /// Example: "Program.cs" → "csharp"
+        /// </summary>
+        /// <param name="fileName">The file name (or full path) to inspect.</param>
+        /// <returns>
+        /// The markdown language string, or <c>"plaintext"</c> if the extension is
+        /// unknown or the file has no extension.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="fileName"/> is null or whitespace.
+        /// </exception>
+        public static string GetMarkdownLanguage(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("File name must not be null or empty.", nameof(fileName));
+
+            string extension = Path.GetExtension(fileName);
+
+            if (string.IsNullOrEmpty(extension))
+                return "plaintext";
+
+            return ExtensionToLanguage.TryGetValue(extension, out string language)
+                ? language
+                : "plaintext";
         }
 
         //public static void ConvertCodeToHtmlFile(string code, string syntaxFile, string themeFile, string htmlFile)

@@ -526,46 +526,54 @@ public static string ExtractBodyBlock(string htmlStr)
     return match.Success ? match.Value : null;
 }
 ";
-
-
-
-/*
-        [Fact()]
-        [TestBeforeAfter]
-        public void RenderCSharp_1()
+        [Fact]
+        public void GetBlockOfCode()
         {
-            var (html, style, body)  = MarkdownManager.ConvertCodeToHtml(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme);
-            var tfh = new TestFileHelper();
-            var tempHtmlFile = tfh.GetTempFileName(".html");
-            MarkdownManager.ConvertCodeToHtmlFile(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme, tempHtmlFile);
-            Assert.True(File.Exists(tempHtmlFile), "HTML file was not created.");
+            var result = MarkdownManager.GetBlockOfCode(@".\TestFiles\fred-stuff.ps1");
+            Assert.Contains("```powershell", result);
+            Assert.Contains("# Setup Script - Download tools and prepare directory structure", result);
+            Assert.Contains(@"           -ForegroundColor Cyan
+```", result);
         }
 
-        [Fact()]
-        [TestBeforeAfter]
-        public void Markdown_Generation_With_CSharpCode()
+
+        /*
+                [Fact()]
+                [TestBeforeAfter]
+                public void RenderCSharp_1()
+                {
+                    var (html, style, body)  = MarkdownManager.ConvertCodeToHtml(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme);
+                    var tfh = new TestFileHelper();
+                    var tempHtmlFile = tfh.GetTempFileName(".html");
+                    MarkdownManager.ConvertCodeToHtmlFile(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme, tempHtmlFile);
+                    Assert.True(File.Exists(tempHtmlFile), "HTML file was not created.");
+                }
+
+                [Fact()]
+                [TestBeforeAfter]
+                public void Markdown_Generation_With_CSharpCode()
+                {
+                    var text = @"
+        # Some markdown with some c#
+
+        ## Overview
+        About this code.
+
+        ## Sample code
+
+        ```csharp
+        public static string ExtractBodyBlock(string htmlStr)
         {
-            var text = @"
-# Some markdown with some c#
-
-## Overview
-About this code.
-
-## Sample code
-
-```csharp
-public static string ExtractBodyBlock(string htmlStr)
-{
-    string pattern = @""<body[\s\S]*?</body>"";
-    Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
-    return match.Success ? match.Value : null;
-}
-
-```
-";
-            // var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+            string pattern = @""<body[\s\S]*?</body>"";
+            Match match = Regex.Match(htmlStr, pattern, RegexOptions.IgnoreCase);
+            return match.Success ? match.Value : null;
         }
-*/
+
+        ```
+        ";
+                    // var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(text, true);
+                }
+        */
         public void Dispose()
         {
              MarkdownManager.Clean();

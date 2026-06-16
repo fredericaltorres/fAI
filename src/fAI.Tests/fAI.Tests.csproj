@@ -855,6 +855,9 @@
     <None Include="TestFiles\Dr Henry Jekyll - Character Profile.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\fred-stuff.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\JANE DOE, Back Issues.md" />
     <None Include="TestFiles\MarkdownWithFrontLoader.3.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
