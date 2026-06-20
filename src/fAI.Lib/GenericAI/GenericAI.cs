@@ -376,6 +376,37 @@ namespace fAI
 
                     return (r.GetText(), contents, usage);
                 }
+
+
+                else if (OpenRouter.GetModels().Contains(model))
+                {
+                    if (string.IsNullOrEmpty(base._key))
+                        base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
+
+                    var openRouterClient = new OpenRouter(apiKey: base._key);
+
+                    // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
+                    var googleContents = contents.GetGoogleContents();
+                    var p = openRouterClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
+                    var url = "https://openrouter.ai/api/v1/chat/completions";
+                    var r = openRouterClient.Completions.Create(p, url, model);
+
+                    usage.SetTokenCount(r.usageMetadata.promptTokenCount, r.usageMetadata.candidatesTokenCount);
+
+                    // Update the contents discussion with the answer from the AI
+                    var answerContent = r.candidates[0].content;
+                    contents.Add(new GenericAI.ContentMessage
+                    {
+                        Role = answerContent.role,
+                        Parts = new List<GenericAI.ContentMessagePart>
+                        {
+                            new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
+                        }
+                    });
+
+                    return (r.GetText(), contents, usage);
+                }
+
                 else if (OpenAI.GetModels().Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))

@@ -13,9 +13,9 @@ using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 
 namespace fAI
 {
+
     public class GoogleAI : HttpBase
     {
-
         public static List<string> GetModels()
         {
             return DS.List(

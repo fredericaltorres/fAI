@@ -193,6 +193,18 @@ glycemic control and overall well-being.
 
         [Fact()]
         [TestBeforeAfter]
+        public void GenerateTitle_GenericAI_DeepSeekV4Pro()
+        {
+            foreach (var model in OpenRouter.GetModels())
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
+                HttpBase.Trace($"[GENERATE-TITLE] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void GenerateTitle_GenericAI_InterfaceForOpenAIAndGoogle()
         {
             foreach (var model in GenericAI.GetModels(_quickFilter))
