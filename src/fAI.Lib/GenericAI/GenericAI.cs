@@ -99,6 +99,7 @@ namespace fAI
         public static List<string> GetModels(System.Text.RegularExpressions.Regex filter = null)
         {
             var models = new List<string>();
+            models.AddRange(OpenRouter.GetModels());
             models.AddRange(Anthropic.GetModels());
             models.AddRange(GoogleAI.GetModels());
             models.AddRange(OpenAI.GetModels());
@@ -377,34 +378,49 @@ namespace fAI
                     return (r.GetText(), contents, usage);
                 }
 
-
                 else if (OpenRouter.GetModels().Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
+                    var openRouter = contents.GetOpenAIContents(systemPrompt);
                     var openRouterClient = new OpenRouter(apiKey: base._key);
-
-                    // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
-                    var googleContents = contents.GetGoogleContents();
-                    var p = openRouterClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
-                    var url = "https://openrouter.ai/api/v1/chat/completions";
-                    var r = openRouterClient.Completions.Create(p, url, model);
-
-                    usage.SetTokenCount(r.usageMetadata.promptTokenCount, r.usageMetadata.candidatesTokenCount);
-
-                    // Update the contents discussion with the answer from the AI
-                    var answerContent = r.candidates[0].content;
-                    contents.Add(new GenericAI.ContentMessage
+                    var p = new Prompt_GPT_4
                     {
-                        Role = answerContent.role,
-                        Parts = new List<GenericAI.ContentMessagePart>
+                        Messages = new List<GPTMessage>()
                         {
-                            new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
-                        }
-                    });
+                            new GPTMessage { Role = MessageRole.system, Content = systemPrompt },
+                            new GPTMessage { Role = MessageRole.user, Content = prompt },
+                        },
+                        Model = model
+                    };
 
-                    return (r.GetText(), contents, usage);
+                    if (openRouter.Count > 1)
+                    {
+                        p.Messages = openRouter;
+                    }
+
+                    var response = openRouterClient.Completions.Create(p);
+                    if (response.Success)
+                    {
+                        //```                            
+                        // Update the contents discussion with the answer from the AI
+                        var answerContent = response.Choices.First().message;
+                        contents.Add(new GenericAI.ContentMessage
+                        {
+                            Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
+                            Parts = new List<GenericAI.ContentMessagePart>
+                            {
+                                new GenericAI.ContentMessagePart { Text = answerContent.Content }
+                            }
+                        });
+
+                        usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
+
+                        var responseText = response.Text;
+                        return (responseText, contents, usage);
+                    }
+                    else return (null, contents, usage);
                 }
 
                 else if (OpenAI.GetModels().Contains(model))

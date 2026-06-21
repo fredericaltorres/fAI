@@ -25,8 +25,8 @@ namespace fAI
 //"gemini-3-pro",  // "gemini-3-pro",
 "gemini-3-flash-preview",
 "gemini-2.5-pro",
-"gemini-2.5-flash",
-"gemini-2.0-flash" // << Deprecated June 2026
+"gemini-2.5-flash"
+//"gemini-2.0-flash" // << Deprecated June 2026
 
             );
         }

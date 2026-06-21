@@ -24,9 +24,9 @@ namespace fAI.Tests
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
-        Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
+        //Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
         
-        //Regex _quickFilter = null;
+        Regex _quickFilter = null;
 
         public GenericAiCompletions_UnitTests()
         {
@@ -66,8 +66,6 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 GenericAICompletions.__experimentMultiModelMode.Clear();
             }
         }
-
-
 
         [Fact()]
         [TestBeforeAfter]
@@ -193,9 +191,29 @@ glycemic control and overall well-being.
 
         [Fact()]
         [TestBeforeAfter]
-        public void GenerateTitle_GenericAI_DeepSeekV4Pro()
+        public void Summarize_GenericAI_OpenRouterModels()
         {
-            foreach (var model in OpenRouter.GetModels())
+            var expectedWords = DS.List("alice", "insurance", "car");
+
+            var models = OpenRouter.GetModels();
+            models.AddRange(DS.List("gemini-3.1-flash-lite", "gemini-2.5-flash")); 
+            
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateTitle_GenericAI_OpenRouterModels()
+        {
+            var models = OpenRouter.GetModels();
+            models.AddRange(DS.List("gemini-3.1-flash-lite", "gemini-2.5-flash"));
+
+            foreach (var model in models)
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
@@ -205,7 +223,7 @@ glycemic control and overall well-being.
 
         [Fact()]
         [TestBeforeAfter]
-        public void GenerateTitle_GenericAI_InterfaceForOpenAIAndGoogle()
+        public void GenerateTitle_GenericAI_InterfaceFor_OpenAI_Google_Anthrophic_OpenRouterDeepSeek()
         {
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {

@@ -14,22 +14,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
-    //public class FAICompletions : HttpBase, IOpenAICompletion
-    //{
-    //    public FAICompletions()
-    //    {
-    //    }
-
-    //    public AnthropicErrorCompletionResponse Create(GPTPrompt p)
-    //    {
-    //        return new OpenAI().Completions.Create(p);
-    //    }
-
-    //    public AnthropicErrorCompletionResponse Create(AnthropicPromptBase p)
-    //    {
-    //        return new Anthropic().Completions.Create(p);
-    //    }
-    //}
 
     public partial class OpenAICompletions  : HttpBase, IOpenAICompletion
     {
@@ -138,7 +122,6 @@ namespace fAI
         {
             return strings.All(x => IsNumeric(x));
         }
-
     }
 }
 
