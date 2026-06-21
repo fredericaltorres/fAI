@@ -34,11 +34,11 @@ namespace fAI
                 //"minimax/minimax-m3",  TOO SLOW
                 //"minimax/minimax-m2.5",
                 //"minimax/minimax-m2.1",
-                "minimax/minimax-m2",
+                //"minimax/minimax-m2",
 
                 //"nvidia/nemotron-3-super-120b-a12b:free",
                 //"nvidia/nemotron-3-ultra-550b-a55b:free",
-                "nvidia/nemotron-3.5-content-safety:free",
+                //"nvidia/nemotron-3.5-content-safety:free", // LIMITED No bullet point or Translate
                 //"nvidia/nemotron-nano-9b-v2:free",
 
                 //"moonshotai/kimi-k2.7-code", TOO SLOW  
@@ -50,7 +50,7 @@ namespace fAI
                 //"qwen/qwen3.6-flash",
                 //"qwen/qwen3.6-plus",
                 //"qwen/qwen3-next-80b-a3b-thinking",
-                "qwen/qwen3-next-80b-a3b-instruct:free",
+                // "qwen/qwen3-next-80b-a3b-instruct:free", LIMITED
 
                 "deepseek/deepseek-v4-flash", 
                 "deepseek/deepseek-v4-pro",
@@ -58,8 +58,8 @@ namespace fAI
                 "deepseek/deepseek-v3.1-terminus",
                 //"deepseek/deepseek-chat-v3.1",
 
-                "google/gemma-4-26b-a4b-it:free", 
-                "google/gemma-4-31b-it:free",
+                //"google/gemma-4-26b-a4b-it:free", 
+                //"google/gemma-4-31b-it:free",
                 "amazon/nova-2-lite-v1"
                 );
         }

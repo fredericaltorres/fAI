@@ -211,7 +211,7 @@ glycemic control and overall well-being.
         public void GenerateTitle_GenericAI_OpenRouterModels()
         {
             var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite", "gemini-2.5-flash"));
+            models.AddRange(DS.List("gemini-3.1-flash-lite"));
 
             foreach (var model in models)
             {
@@ -230,6 +230,37 @@ glycemic control and overall well-being.
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
                 HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model}, Text: {result.Title}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Translate_GenericAI_OpenRouterModels()
+        {
+            var models = OpenRouter.GetModels();
+            models.AddRange(DS.List("gemini-3.1-flash-lite"));
+
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
+                HttpBase.Trace($"[TRANSLATE] Duration: {result.Duration:00.00}, Model: {model}, destLanguage: {result.TranslatedText}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateBulletPoints_GenericAI_OpenRouterModels()
+        {
+            var models = OpenRouter.GetModels();
+            models.AddRange(DS.List("gemini-3.1-flash-lite"));
+
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
+                Assert.NotNull(result.Text);
+                HttpBase.Trace($"[GENERATE-BULLETPOINT] Duration: {result.Duration:00.00}, Model: {model}, Text: {result.Text}", this);
             }
         }
 
