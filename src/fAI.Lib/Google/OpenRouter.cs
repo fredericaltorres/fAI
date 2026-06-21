@@ -24,10 +24,12 @@ namespace fAI
         public static List<string> GetModels()
         {
             return DS.List(
-                //"mistralai/mistral-medium-3-5",
-                "mistralai/mistral-small-2603",
-                "mistralai/ministral-14b-2512",
-                "mistralai/ministral-8b-2512",
+                "mistralai/mistral-small-2603", // Mistral: Mistral Small 4
+                "mistralai/ministral-14b-2512",  // Mistral: Ministral 3 14B 2512
+                //"mistralai/ministral-8b-2512",
+                "mistralai/mistral-medium-3-5",
+                "mistralai/mistral-large-2512", // Mistral: Mistral Large 3 2512
+
                 //"mistralai/mistral-large-2512",
                 //"mistralai/mistral-medium-3.1",
 
