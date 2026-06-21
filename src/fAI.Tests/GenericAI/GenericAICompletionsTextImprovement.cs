@@ -185,7 +185,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
-                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+                HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
             }
         }
 
@@ -196,13 +196,13 @@ glycemic control and overall well-being.
             var expectedWords = DS.List("alice", "insurance", "car");
 
             var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite", "gemini-2.5-flash")); 
+            models.AddRange(DS.List("gemini-3.1-flash-lite")); 
             
             foreach (var model in models)
             {
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
-                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+                HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, text: {result.Text}", this);
             }
         }
 
@@ -217,7 +217,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:00.00}, Model: {model}, Text: {result.Title}", this);
             }
         }
 
@@ -229,7 +229,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Title}", this);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model}, Text: {result.Title}", this);
             }
         }
 
