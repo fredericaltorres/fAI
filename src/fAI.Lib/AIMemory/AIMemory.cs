@@ -133,6 +133,8 @@ namespace fAI
         [JsonIgnore]
         public List<float> Embeddings { get; set; }
 
+        public int TokenCount { get; set; }
+
         [BsonIgnore]
         public int TextLength => this.Text?.Length ?? 0;
 

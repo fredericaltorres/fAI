@@ -9,9 +9,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>Creation</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <AssemblyVersion>1.0.216.0</AssemblyVersion>
-    <FileVersion>1.0.216.0</FileVersion>
-    <VersionPrefix>1.0.216.0</VersionPrefix>
+    <AssemblyVersion>1.0.217.0</AssemblyVersion>
+    <FileVersion>1.0.217.0</FileVersion>
+    <VersionPrefix>1.0.217.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +35,7 @@
     <PackageReference Include="Mistral.SDK" Version="2.0.1" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SharpToken" Version="2.0.6" />
   </ItemGroup>
 
   <ItemGroup>

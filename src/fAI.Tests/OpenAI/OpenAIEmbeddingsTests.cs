@@ -15,10 +15,20 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAIEmbeddingsTests
     {
+        
+        [Fact()]
+        public void Embeddings_CountToken()
+        {
+            var client = new OpenAI();
+            var text = Revolver.Values.SelectMany(v => v.Split(' ')).Take(100).Aggregate((a, b) => a + Environment.NewLine + b);
+            var r = client.Embeddings.CountToken(text);
+            Assert.True(r > 0);
+        }
+
         [Fact()]
         public void Embeddings_Create()
         {
-            var input = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+            const string input = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
             var client = new OpenAI();
             var r = client.Embeddings.Create(input);
             Assert.Equal("list", r.Object);

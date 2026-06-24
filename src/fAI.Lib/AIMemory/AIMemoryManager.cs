@@ -1,4 +1,5 @@
-﻿using DynamicSugar;
+﻿using Deepgram.Models;
+using DynamicSugar;
 using fAI.OpenAIModel.ImageResponseGpt;
 using fAI.Util.Strings;
 using fAI.VectorDB;
@@ -16,6 +17,7 @@ using System.Xml.Linq;
 using static DynamicSugar.Tokenizer;
 using static fAI.AIMetaData;
 using static fAI.HumeAISpeech;
+using static System.Net.Mime.MediaTypeNames;
 using JsonIgnore2Attribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 namespace fAI
@@ -484,11 +486,16 @@ namespace fAI
                     {
                         d.Embeddings.Add((float)(c * 0.113416));
                     }
+                    d.TokenCount = 1;
                 }
                 else
                 {
                     if (d.Embeddings == null || d.Embeddings.Count == 0)
-                        d.Embeddings = ToVector($"{d.Title}. {d.Text}", openAiKey);
+                    {
+                        var t = $"{d.Title}. {d.Text}";
+                        d.Embeddings = ToVector(t, openAiKey);
+                        d.TokenCount = new OpenAI().Embeddings.CountToken(t);
+                    }
                 }
                 return true;
             }

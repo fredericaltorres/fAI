@@ -1,6 +1,8 @@
 ﻿using DynamicSugar;
 using Mistral.SDK.DTOs;
+using SharpToken;
 using Newtonsoft.Json;
+using SharpToken;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,7 +41,12 @@ namespace fAI
         text-embedding-3-large	0.15 – 0.50
 */
 
-
+        public int CountToken(string text)
+        {
+            var encoding = GptEncoding.GetEncoding("cl100k_base");
+            var tokens = encoding.Encode(text);
+            return tokens.Count;
+        }
 
         public const int EmbeddingAda002Dimension = 1536;
 
