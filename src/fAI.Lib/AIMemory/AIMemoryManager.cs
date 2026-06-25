@@ -235,15 +235,20 @@ namespace fAI
             this.InMemoryOnly = inMemoryOnly;
         }
 
-        public static List<List<float>> ToVector(List<string> texts, string openAiKey = null)
+        public static (List<List<float>>, List<EmbeddingUsage>) ToVector(List<string> texts, string openAiKey = null)
         {
             var r = new List<List<float>>();
-            foreach(var t in texts)
-                r.Add(SimilaritySearchEngine.ToVector(t, openAiKey));
-            return r;
+            var rr = new List<EmbeddingUsage>();
+            foreach (var t in texts)
+            {
+                var (embedding, usage) = SimilaritySearchEngine.ToVector(t, openAiKey);
+                r.Add(embedding);
+                rr.Add(usage);
+            }
+            return (r, rr);
         }
 
-        public static List<float> ToVector(string text, string openAiKey = null)
+        public static (List<float>, EmbeddingUsage) ToVector(string text, string openAiKey = null)
         {
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
@@ -284,14 +289,14 @@ namespace fAI
                         existingAIMemory.Embeddings.Clear();
                     }
 
-                    var (rr, uu) = ComputeEmbeddingsAndMetaData(existingAIMemory,
+                    var (rr, usageEmbeddingsAndMetaData) = ComputeEmbeddingsAndMetaData(existingAIMemory,
                                             embeddingsOpenAIApiKey: openAiKey,
                                             llmApiKey: llmApiKey,
                                             aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
 
                     d.Embeddings = existingAIMemory.Embeddings;
 
-                    usage = uu;
+                    usage = usageEmbeddingsAndMetaData;
                     Update(existingAIMemory);
                     id = existingAIMemory.Id;
                 }
@@ -443,11 +448,19 @@ namespace fAI
         {
             Trace($"[{nameof(ComputeEmbeddingsAndMetaData)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
 
-            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
+            if(d.Embeddings != null)
+            {
+                d.Embeddings.Clear(); // Force re-computation of embeddings
+            }
+
+            var (r1, usage) = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
             var extractUsage = new GenericAICompletions.GenericAIUsage("", "", "");
             var r2 = false;
+            
 
             (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey, aiMetaDataToMerge);
+
+            extractUsage.Add(usage);
 
             return (r1 && r2, extractUsage);
         }
@@ -483,8 +496,9 @@ namespace fAI
             }
         }
 
-        public bool ComputeEmbeddings(AIMemory d, string openAiKey = null)
+        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddings(AIMemory d, string openAiKey = null)
         {
+            var usage = new GenericAICompletions.GenericAIUsage("", "", "");
             try
             {
                 if (__simulate_embedding_computation__)
@@ -504,15 +518,18 @@ namespace fAI
                         var t = $"{d.Title}. {d.Text}";
                         var chunks = new OpenAI().Embeddings.ChunkText(t);
                         d.Embeddings = new List<List<float>>();
-                        d.Embeddings.AddRange(ToVector(chunks, openAiKey));
+                        var (v, eUsages) = ToVector(chunks, openAiKey);
+                        d.Embeddings.AddRange(v);
                         d.TokenCount = new OpenAI().Embeddings.CountToken(t);
+                        d.EmbeddingsChunkCount = chunks.Count;
+                        eUsages.ForEach((e) => usage.Add(e.InputTokens));
                     }
                 }
-                return true;
+                return (true, usage);
             }
             catch (Exception ex)
             {
-                return false;
+                return (false, usage);
             }
         }
 

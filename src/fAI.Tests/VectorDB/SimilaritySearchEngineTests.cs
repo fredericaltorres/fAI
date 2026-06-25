@@ -44,7 +44,8 @@ namespace fAI.Tests
             var criteria = "Timothy Leary";
             var topK = 1;
             var minimumScore = 0.77f;
-            var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), inMemoryEmbeddingRecords, topK, minimumScore);
+            var (v,u) = SimilaritySearchEngine.ToVector(criteria);
+            var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, inMemoryEmbeddingRecords, topK, minimumScore);
             Assert.Equal("Beatles - Revolver - Tomorrow Never Knows", inMemoryResponse[0].Id);
         }
     }

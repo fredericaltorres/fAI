@@ -34,14 +34,14 @@ namespace fAI.VectorDB
             return minimumScore;
         }
 
-        public static List<float> ToVector(string text, string apiKey = null)
+        public static (List<float> Embedding, EmbeddingUsage Usage) ToVector(string text, string apiKey = null)
         {
             var cacheEntry = $"VectorSearch: {text}";
             var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry) ;
             if (cacheR != null && cacheR.Embedding != null && cacheR.Embedding.Count > 0)
             {
                 HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
-                return cacheR.Embedding;
+                return (cacheR.Embedding, new EmbeddingUsage());
             }
 
             var client = new OpenAI(apiKey: apiKey);
@@ -49,10 +49,12 @@ namespace fAI.VectorDB
             if (r.Success)
             {
                 AIPromptCache.Instance.Add(cacheEntry, r.Data[0].Embedding);
-                return r.Data[0].Embedding;
+                return (r.Data[0].Embedding, r.Usage);
             }
             else
-                return null;
+            {
+                return (null, new EmbeddingUsage());
+            }
         }
 
         public static List<EmbeddingCommonRecord> SimilaritySearch(

@@ -257,7 +257,7 @@ namespace fAI.Tests
         {
             var aiManager = new AIMemoryManager(TestDBName);
             aiManager.__simulate_embedding_computation__ = true;
-            aiManager.__simulate_metadata_computation__ = true;
+            aiManager.__simulate_metadata_computation__ = !true;
 
             var aiMemory = new AIMemory()
             {
@@ -367,7 +367,7 @@ namespace fAI.Tests
         public void Add_Update_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
-            aiManager.__simulate_embedding_computation__ = true;
+            //aiManager.__simulate_embedding_computation__ = true;
 
             var aiMemory = new AIMemory()
             {
@@ -382,6 +382,7 @@ namespace fAI.Tests
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
+            Assert.True(usage.Duration > 0);
 
             var aiMemoryReLoaded = aiManager.GetFromId(newId);
             Assert.Equal(aiMemory.Title, aiMemoryReLoaded.Title);
@@ -398,6 +399,7 @@ namespace fAI.Tests
             Assert.True(usageUpdate.OutputTokens > 0);
             Assert.True(usageUpdate.InputTokens > 0);
             Assert.True(usageUpdate.TotalTokens > 0);
+            Assert.True(usage.Duration > 0);
 
             aiManager.Update(aiMemory);
 
@@ -418,7 +420,7 @@ namespace fAI.Tests
             Assert.Equal(aiMemory.Type, aiMemory2.Type);
             Assert.Equal(aiMemory.LocalFile, aiMemory2.LocalFile);
             Assert.True(aiMemory2.AIMetaData.MetaData.Count > 0);
-            AssertFloatArrayEqual(aiMemory.Embeddings[0].ToArray(), aiMemory2.Embeddings[0] .ToArray(), 0);
+            AssertFloatArrayEqual(aiMemory.Embeddings[0].ToArray(), aiMemory2.Embeddings[0].ToArray(), 0);
         }
 
         public static void AssertFloatArrayEqual(float[] expected, float[] actual, float tolerance = 1e-5f)

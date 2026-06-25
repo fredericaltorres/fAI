@@ -179,6 +179,11 @@ namespace fAI
             [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public long AudioFileSize { get; set; }
 
+            public void Add(int token)
+            {
+                this.InputTokens += token;
+            }
+
             public void Add(AnthropicCompletionResponse a)
             {
                 this.InputTokens += a.Usage.input_tokens;

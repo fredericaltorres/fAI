@@ -34,13 +34,15 @@ namespace fAI
     }
 
   
-    public class Usage2
+    public class EmbeddingUsage
     {
         [JsonProperty(PropertyName = "prompt_tokens")]
         public int PromptTokens { get; set; }
 
         [JsonProperty(PropertyName = "total_tokens")]
         public int TotalTokens { get; set; }
+
+        public int InputTokens => TotalTokens;
     }
 
     public class BaseHttpResponse
@@ -137,7 +139,7 @@ namespace fAI
         public string Model { get; set; }
 
         [JsonProperty(PropertyName = "usage")]
-        public Usage2 Usage { get; set; }
+        public EmbeddingUsage Usage { get; set; }
 
         public static EmbeddingResponse FromJson(string text)
         {
