@@ -8,6 +8,7 @@ using Xunit;
 using static fAI.OpenAICompletions;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Text;
 
 namespace fAI.Tests
 {
@@ -15,7 +16,22 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class OpenAIEmbeddingsTests
     {
-        
+        [Fact()]
+        public void Embeddings_ChunkText()
+        {
+            var client = new OpenAI();
+            var sb = new StringBuilder();
+            foreach(var e in Revolver)
+            {
+                sb.AppendLine($"## {e.Key}");
+                sb.AppendLine($"{e.Value}.");
+            }
+            
+            var text = sb.ToString();
+            var r = client.Embeddings.ChunkText(text);
+            Assert.Equal(5, r.Count);
+        }
+
         [Fact()]
         public void Embeddings_CountToken()
         {

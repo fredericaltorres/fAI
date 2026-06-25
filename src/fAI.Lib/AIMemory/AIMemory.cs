@@ -131,9 +131,10 @@ namespace fAI
         public AIMetaData AIMetaData { get; set; }
 
         [JsonIgnore]
-        public List<float> Embeddings { get; set; }
+        public List<List<float>> Embeddings { get; set; }
 
         public int TokenCount { get; set; }
+        public int EmbeddingsChunkCount { get; set; }
 
         [BsonIgnore]
         public int TextLength => this.Text?.Length ?? 0;
@@ -172,7 +173,7 @@ namespace fAI
                 CreateDate = this.CreateDate,
                 ModifiedDate = this.ModifiedDate,
                 AIMetaData = this.AIMetaData, // Note: This is a shallow copy. Consider deep copying if necessary.
-                Embeddings = this.Embeddings != null ? new List<float>(this.Embeddings) : null
+                Embeddings = this.Embeddings != null ? this.Embeddings.Clone() : null 
             };
         }
 
@@ -234,7 +235,8 @@ namespace fAI
         {
             if (compressedData == null || compressedData.Length == 0)
             {
-                Embeddings = new List<float>();
+                Embeddings = new List<List<float>>();
+                Embeddings.Add(new List<float>());
                 return;
             }
 
@@ -253,7 +255,8 @@ namespace fAI
                 float[] floats = new float[rawBytes.Length / sizeof(float)];
                 Buffer.BlockCopy(rawBytes, 0, floats, 0, rawBytes.Length);
 
-                Embeddings = new List<float>(floats);
+                Embeddings = new List<List<float>>();
+                Embeddings.Add(new List<float>(floats));
             }
         }
 

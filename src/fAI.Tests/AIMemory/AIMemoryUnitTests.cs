@@ -189,7 +189,7 @@ namespace fAI.Tests
                     {
                         Text = record.Text,
                         Title = record.Id,
-                        Embeddings = record.Embedding,
+                        Embeddings = new List<List<float>> { record.Embedding },  
                     });
                 }
             }
@@ -418,7 +418,7 @@ namespace fAI.Tests
             Assert.Equal(aiMemory.Type, aiMemory2.Type);
             Assert.Equal(aiMemory.LocalFile, aiMemory2.LocalFile);
             Assert.True(aiMemory2.AIMetaData.MetaData.Count > 0);
-            AssertFloatArrayEqual(aiMemory.Embeddings.ToArray(), aiMemory2.Embeddings.ToArray(), 0);
+            AssertFloatArrayEqual(aiMemory.Embeddings[0].ToArray(), aiMemory2.Embeddings[0] .ToArray(), 0);
         }
 
         public static void AssertFloatArrayEqual(float[] expected, float[] actual, float tolerance = 1e-5f)

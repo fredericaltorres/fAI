@@ -1,6 +1,7 @@
 ﻿using Deepgram.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -89,6 +90,19 @@ namespace fAI.VectorDB
                 .Take(topK)
                 .Select(x => x)
                 .ToList();
+        }
+
+        internal static double CosineSimilarityMultiVectors(List<List<float>> vectors, List<float> v2)
+        {
+            var scores = new List<double>();
+            if(Debugger.IsAttached && vectors.Count > 1)
+                Debugger.Break();
+
+            foreach(var v in vectors)
+            {
+                scores.Add(CosineSimilarity(v, v2));
+            }
+            return scores.Max();
         }
 
         internal static double CosineSimilarity(List<float> v1, List<float> v2)

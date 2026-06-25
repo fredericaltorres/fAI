@@ -34,12 +34,38 @@ namespace fAI
         public const string Embedding3SmallModel = "text-embedding-3-small";
         public const string Embedding3LargeModel = "text-embedding-3-large";
         public const string EmbeddingDefaultModel = Embedding3SmallModel;
-/*
-        Model Typical Similar       Range
-        text-embedding-ada-002	0.70 – 0.90
-        text-embedding-3-small	0.40 – 0.70
-        text-embedding-3-large	0.15 – 0.50
-*/
+        /*
+                Model Typical Similar       Range
+                text-embedding-ada-002	0.70 – 0.90
+                text-embedding-3-small	0.40 – 0.70
+                text-embedding-3-large	0.15 – 0.50
+        */
+
+        public List<string> ChunkText(string text, int maxToken = 800)
+        {
+            var tokenCount = CountToken(text);
+            var chunks = new List<string>();
+            if (tokenCount <= maxToken)
+            {
+                chunks.Add(text);
+                return chunks;
+            }
+
+            var phrases = text.Split('.').ToList().TrimEnd().TrimStart();
+            var currentText = new StringBuilder();
+            foreach (var s in phrases)
+            {
+                currentText.Append(s).Append(".\n");
+                if (CountToken(currentText.ToString()) > maxToken)
+                {
+                    chunks.Add(currentText.ToString());
+                    currentText.Clear();
+                }
+            }
+            if (currentText.Length > 0)
+                chunks.Add(currentText.ToString());
+            return chunks;
+        }
 
         public int CountToken(string text)
         {

@@ -235,6 +235,14 @@ namespace fAI
             this.InMemoryOnly = inMemoryOnly;
         }
 
+        public static List<List<float>> ToVector(List<string> texts, string openAiKey = null)
+        {
+            var r = new List<List<float>>();
+            foreach(var t in texts)
+                r.Add(SimilaritySearchEngine.ToVector(t, openAiKey));
+            return r;
+        }
+
         public static List<float> ToVector(string text, string openAiKey = null)
         {
             return SimilaritySearchEngine.ToVector(text, openAiKey);
@@ -255,7 +263,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
             }
 
-            var u = new GenericAICompletions.GenericAIUsage("", "", "");
+            var usage = new GenericAICompletions.GenericAIUsage("", "", "");
             var r = true;
             try
             {
@@ -272,7 +280,7 @@ namespace fAI
                     if (clearEmbeddings)
                     {
                         if (existingAIMemory.Embeddings == null)
-                            existingAIMemory.Embeddings = new List<float>();
+                            existingAIMemory.Embeddings = new List<List<float>>();
                         existingAIMemory.Embeddings.Clear();
                     }
 
@@ -283,14 +291,14 @@ namespace fAI
 
                     d.Embeddings = existingAIMemory.Embeddings;
 
-                    u = uu;
+                    usage = uu;
                     Update(existingAIMemory);
                     id = existingAIMemory.Id;
                 }
                 else
                 {
                     var (uu, newId) = Add(d, openAiKey, aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
-                    u = uu;
+                    usage = uu;
                     id = newId;
                 }
             }
@@ -303,7 +311,7 @@ namespace fAI
                 sw.Stop();
                 Trace($"Duration: {sw.ElapsedMilliseconds}, File: {localFile}");
             }
-            return (r, u, id);
+            return (r, usage, id);
         }
 
         public IEnumerable<AIMemoryCrossReferenceTable> GetAllCrossReferenceTable()
@@ -434,8 +442,8 @@ namespace fAI
             )
         {
             Trace($"[{nameof(ComputeEmbeddingsAndMetaData)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
-            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
 
+            var r1 = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
             var extractUsage = new GenericAICompletions.GenericAIUsage("", "", "");
             var r2 = false;
 
@@ -481,10 +489,11 @@ namespace fAI
             {
                 if (__simulate_embedding_computation__)
                 {
-                    d.Embeddings = new List<float>();
+                    d.Embeddings = new List<List<float>>();
+                    d.Embeddings.Add(new List<float>());
                     for (var c = 0; c < 1536; c++)
                     {
-                        d.Embeddings.Add((float)(c * 0.113416));
+                        d.Embeddings[0].Add((float)(c * 0.113416));
                     }
                     d.TokenCount = 1;
                 }
@@ -493,7 +502,9 @@ namespace fAI
                     if (d.Embeddings == null || d.Embeddings.Count == 0)
                     {
                         var t = $"{d.Title}. {d.Text}";
-                        d.Embeddings = ToVector(t, openAiKey);
+                        var chunks = new OpenAI().Embeddings.ChunkText(t);
+                        d.Embeddings = new List<List<float>>();
+                        d.Embeddings.AddRange(ToVector(chunks, openAiKey));
                         d.TokenCount = new OpenAI().Embeddings.CountToken(t);
                     }
                 }
@@ -848,7 +859,7 @@ namespace fAI
             {
                 if (e.Embeddings != null && e.Embeddings.Count > 0)
                 {
-                    var score = SimilaritySearchEngine.CosineSimilarity(e.Embeddings, embeddingsQuery);
+                    var score = SimilaritySearchEngine.CosineSimilarityMultiVectors(e.Embeddings, embeddingsQuery);
                     if (score >= minimumScore)
                     {
                         e.Score = (float)score;
