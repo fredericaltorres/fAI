@@ -37,8 +37,9 @@ namespace fAI.Tests
         {
             var client = new OpenAI();
             var text = Revolver.Values.SelectMany(v => v.Split(' ')).Take(100).Aggregate((a, b) => a + Environment.NewLine + b);
-            var r = client.Embeddings.CountToken(text);
-            Assert.True(r > 0);
+            Assert.True(client.Embeddings.CountToken(text) > 0);
+            Assert.True(client.Embeddings.CountWords(text) > 0);
+            var stufy = client.Embeddings.TextStudy(text);
         }
 
         [Fact()]

@@ -66,10 +66,31 @@ namespace fAI
                 chunks.Add(currentText.ToString());
             return chunks;
         }
-
-        public int CountToken(string text)
+        public string TextStudy(string text)
         {
-            var encoding = GptEncoding.GetEncoding("cl100k_base");
+            var tokenCount = CountToken(text);
+            var wordCount = CountWords(text);
+            var textLenth = text.Length;
+            return $"Text: {textLenth} characters, {wordCount} words, {tokenCount} tokens";
+        }
+
+        public int CountWords(string sentence)
+        {
+            if (string.IsNullOrWhiteSpace(sentence))
+                return 0;
+
+            char[] delimiters = {
+                ' ', '\t', '\r', '\n', '.', ',', '!', '?', ';', ':', '-', '_',
+                '(', ')', '|', '"', '\'', '+', '/', '*', '[', ']', '{', '}',
+                '<', '>', '=', '@', '#', '$', '%', '^', '&', '`'
+            };
+
+            return sentence.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
+        }
+
+        public int CountToken(string text, string gptEncoding = "cl100k_base")
+        {
+            var encoding = GptEncoding.GetEncoding(gptEncoding);
             var tokens = encoding.Encode(text);
             return tokens.Count;
         }
