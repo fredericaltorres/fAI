@@ -97,8 +97,6 @@ namespace fAI.VectorDB
         internal static double CosineSimilarityMultiVectors(List<List<float>> vectors, List<float> v2)
         {
             var scores = new List<double>();
-            if(Debugger.IsAttached && vectors.Count > 1)
-                Debugger.Break();
 
             foreach(var v in vectors)
             {

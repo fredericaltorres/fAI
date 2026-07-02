@@ -1,6 +1,7 @@
 ﻿using DynamicSugar;
 using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 
 namespace fAI
 {
@@ -28,6 +29,7 @@ namespace fAI
                 "mistralai/ministral-14b-2512",  // Mistral: Ministral 3 14B 2512
                 //"mistralai/ministral-8b-2512",
                 "mistralai/mistral-medium-3-5",
+                "mistralai/mistral-medium-3",  // $0.40 / $2per 1M. Context 131K
                 "mistralai/mistral-large-2512", // Mistral: Mistral Large 3 2512
 
                 //"mistralai/mistral-large-2512",
@@ -42,6 +44,8 @@ namespace fAI
                 //"nvidia/nemotron-3-ultra-550b-a55b:free",
                 //"nvidia/nemotron-3.5-content-safety:free", // LIMITED No bullet point or Translate
                 //"nvidia/nemotron-nano-9b-v2:free",
+
+                "moonshotai/kimi-k2.6",//    $0.55 / $3.20per 1M, Context 262K
 
                 //"moonshotai/kimi-k2.7-code", TOO SLOW  
                 //"moonshotai/kimi-k2.5",
