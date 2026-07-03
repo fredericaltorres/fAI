@@ -71,7 +71,7 @@ namespace fAI
             var tokenCount = CountToken(text);
             var wordCount = CountWords(text);
             var textLenth = text.Length;
-            return $"Text: {textLenth} characters, {wordCount} words, {tokenCount} tokens";
+            return $"{textLenth} characters, {wordCount} words, {tokenCount} tokens";
         }
 
         public int CountWords(string sentence)

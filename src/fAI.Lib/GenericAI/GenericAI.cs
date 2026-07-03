@@ -704,6 +704,9 @@ Use the following rules to guide your summarization:
            int summarizeWordCount = -1
            )
         {
+            if(summarizeWordCount<10)
+                summarizeWordCount = 10;
+
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
             if(summarizeWordCount > 0)
                 systemPrompt = systemPrompt.Replace("<rules>", $"<rules>\r\n- Summarize the text in about {summarizeWordCount} words.\r\n");

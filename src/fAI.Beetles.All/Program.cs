@@ -63,7 +63,8 @@ namespace fAI.Beetles.All
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(SimilaritySearchEngine.ToVector(criteria), embeddingRecords, topK, minimumScore);
+                    var (v,u) = SimilaritySearchEngine.ToVector(criteria);
+                    var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.80f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();

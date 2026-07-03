@@ -386,6 +386,7 @@ namespace fAI.Tests
 
             var aiMemoryReLoaded = aiManager.GetFromId(newId);
             Assert.Equal(aiMemory.Title, aiMemoryReLoaded.Title);
+            Assert.True(aiMemory.Summary.Length > 10);
 
             var __id__ = aiMemory.Id;
 
@@ -394,7 +395,7 @@ namespace fAI.Tests
             aiMemory.PublishedUrl += " - Updated";
             aiMemory.Title += " - Updated";
             aiMemory.Text += " - Updated";
-            var (succeeded, usageUpdate) = aiManager.ComputeEmbeddingsAndMetaData(aiMemory);
+            var (succeeded, usageUpdate) = aiManager.ComputeEmbeddingsAndMetaDataAndSummary(aiMemory);
             Assert.True(succeeded);
             Assert.True(usageUpdate.OutputTokens > 0);
             Assert.True(usageUpdate.InputTokens > 0);

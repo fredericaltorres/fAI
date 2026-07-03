@@ -121,6 +121,7 @@ namespace fAI
         public string PublishedUrl { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
+        
         public string LocalFile { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiedDate { get; set; }
@@ -140,6 +141,9 @@ namespace fAI
         public int TextLength => this.Text?.Length ?? 0;
 
         [BsonIgnore]
+        public int WordCount => new OpenAI().Embeddings.CountToken(this.Text);
+
+        [BsonIgnore]
         public float Score { get; set; }
         
         [BsonIgnore]
@@ -148,6 +152,8 @@ namespace fAI
         [JsonIgnore]
         [BsonIgnore]
         public string BM25ID { get => MID; set => throw new NotImplementedException(); }
+
+        public string Summary { get; internal set; }
 
         public void Init()
         {
