@@ -29,6 +29,7 @@ namespace fAI.Tests
 
         public AIMemoryUnitTests()
         {
+            AIPromptCache.Instance.Clear();
             DeleteFile(TestDBName);
             DeleteFile(BeatlesTestDBName);
         }

@@ -4,6 +4,8 @@ using fAI.OpenAIModel.ImageResponseGpt;
 using fAI.Util.Strings;
 using fAI.VectorDB;
 using LiteDB;
+using Newtonsoft.Json;
+
 //using Mistral.SDK.DTOs;
 using System;
 using System.Collections.Generic;
@@ -495,7 +497,7 @@ namespace fAI
         {
             var cacheEntry = $"Summarize: {aiMemory.Text}";
             var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry);
-            if (cacheR != null && cacheR.Embedding != null && cacheR.Embedding.Count > 0)
+            if (cacheR != null && !string.IsNullOrEmpty(cacheR.Response))
             {
                 HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
                 return cacheR.Response;
@@ -508,6 +510,16 @@ namespace fAI
 
         public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
+            var cacheEntry = $"ExtractMetadata: {d.Text}";
+            var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry);
+            if (cacheR != null && !string.IsNullOrEmpty(cacheR.Response))
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
+                d.AIMetaData = JsonConvert.DeserializeObject<AIMetaData>(cacheR.Response);
+                d.AIMetaData.Merge(aiMetaDataToMerge);
+                return (true, new GenericAICompletions.GenericAIUsage(model, $"ExtractMetadata: CACHED", ""));
+            }
+
             try
             {
                 if (__simulate_metadata_computation__ || !__metadata_computation_on__)
@@ -528,6 +540,9 @@ namespace fAI
                     var client = new GenericAI(ApiKey: llmApiKey);
                     d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
                     d.AIMetaData.Merge(aiMetaDataToMerge);
+
+                    AIPromptCache.Instance.Add(cacheEntry, JsonConvert.SerializeObject(d.AIMetaData));
+
                     return (true, client.Completions.LastUsage);
                 }
             }
