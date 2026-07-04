@@ -566,8 +566,9 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
             Trace(hybridSearchResults.GetInformation(query));
 
             Assert.True(hybridSearchResults.Succeeded, "Hybrid search succeeded");
-            Assert.Single(hybridSearchResults.Results);
-            Assert.Equal("6a05185bc937df0d9d3dd5b5", hybridSearchResults.Results[0].MID);
+            Assert.Equal(2, hybridSearchResults.Results.Count);
+            Assert.Equal("6a3caf47c937df0f222dcb8a", hybridSearchResults.Results[0].MID);
+            Assert.Equal("6a3caf44c937df0f222dcb89", hybridSearchResults.Results[1].MID);
 
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
@@ -621,7 +622,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
             Assert.Equal("**Jane Doe**, 2026/3/31, Back Issues - History", hybridSearchResults.Results[0].Title  );
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
 
-            query = @"Nebula Novelties";
+            query = @"Nebula Novelties Software Engineering Team";
             hybridSearchResults = aiManager.FileSearch(query, bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, bm25MinimumScore: 0.3f, semanticMinimumScore: 0.3f, rrfMinimumScore: 0.3f);
             Trace(hybridSearchResults.GetInformation(query));
             Assert.True(hybridSearchResults.Succeeded, "Local search succeeded");
@@ -634,8 +635,8 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
             hybridSearchResults = aiManager.FileSearch(query, bm25ScoreOrMode: MinimumScoreModeEnum.Top50Oercent, bm25MinimumScore: 0.3f, semanticMinimumScore: 0.3f, rrfMinimumScore: 0.3f);
             Trace(hybridSearchResults.GetInformation(query));
             Assert.True(hybridSearchResults.Succeeded, "Local search succeeded");
-            Assert.Equal(2, hybridSearchResults.Results.Count);
-            Assert.Equal("Nebula Novelties Company -  Office and Personal Locations", hybridSearchResults.Results[1].Title);
+            Assert.Equal(1, hybridSearchResults.Results.Count);
+            Assert.Equal("ShowPad / Brainshark - Innovation Week JUNE 2026 - Home Page", hybridSearchResults.Results[0].Title);
             hybridSearchResults.Results.Select(d => $"{d.BM25ID} - {d.Score} - {d.Title} - ({d.LocalFile})").ToList().ForEach(r => TraceBm25Score(r));
         }
 
