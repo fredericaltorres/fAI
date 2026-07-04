@@ -181,7 +181,11 @@ namespace fAI.Tests
         {
             var records = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Beetles.All\Beatles.All.json");
             var aiManager = new AIMemoryManager(BeatlesTestDBName);
-            aiManager.__simulate_metadata_computation__ = true;
+
+            AIMemoryManager.__embedding_computation_on__ = false;
+            AIMemoryManager.__summary_on__ = false;
+            AIMemoryManager.__metadata_computation_on__ = false;
+
             if (!File.Exists(BeatlesTestDBName))
             {
                 foreach (var record in records)
@@ -195,7 +199,6 @@ namespace fAI.Tests
                 }
             }
 
-            aiManager.__simulate_metadata_computation__ = false;
 
             //var vectorToSearch = SimilaritySearchEngine.ToVector(@"sad people in church");
             // var vectorToSearchStr = string.Join(",", vectorToSearch);
@@ -211,7 +214,10 @@ namespace fAI.Tests
         public void ToJson()
         {
             var aiManager = new AIMemoryManager(TestDBName);
-            aiManager.__simulate_embedding_computation__ = true;
+
+            AIMemoryManager.__embedding_computation_on__ = false;
+            AIMemoryManager.__summary_on__ = false;
+            AIMemoryManager.__metadata_computation_on__ = false;
 
             for (var i = 0; i < 4; i++)
             {
@@ -257,8 +263,8 @@ namespace fAI.Tests
         public void Add_Update_Markdown_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
-            aiManager.__simulate_embedding_computation__ = true;
-            aiManager.__simulate_metadata_computation__ = !true;
+            AIMemoryManager.__embedding_computation_on__ = true;
+            AIMemoryManager.__metadata_computation_on__ = !true;
 
             var aiMemory = new AIMemory()
             {

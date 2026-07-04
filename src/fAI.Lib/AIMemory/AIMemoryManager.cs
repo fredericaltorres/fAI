@@ -428,8 +428,7 @@ namespace fAI
             return (u, id);
         }
 
-        public bool __simulate_embedding_computation__ = false;
-        public bool __simulate_metadata_computation__ = false;
+        public static bool __embedding_computation_on__ = true;
         public static bool __metadata_computation_on__ = true;
         public static bool __summary_on__ = true;
 
@@ -440,16 +439,21 @@ namespace fAI
         //Gemini 3 Flash Preview	$0.50	        $3.00	                1 Million
         //Gemini 3 Flash	        $0.50	        $3.00	1 Million
 
-        public const string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";// "gemini-3.1-flash-Lite"
+        //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";
+        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3-5";
+        
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaDataAndSummary(AIMemory d,
             string embeddingsOpenAIApiKey = null,
             string llmApiKey = null,
-            string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION,
+            string model = null,
             AIMetaData aiMetaDataToMerge = null,
             string language = ""
             )
         {
+            if (string.IsNullOrEmpty(model))
+                model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION;
+
             Trace($"[{nameof(ComputeEmbeddingsAndMetaDataAndSummary)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
 
             if(d.Embeddings != null)
@@ -470,8 +474,12 @@ namespace fAI
             return (r1 && r2 && r3, extractUsage);
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) SummarizeInXPercentOfWords(AIMemory aiMemory, int percent, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null, string language = "", AIMetaData aiMetaDataToMerge = null)
+        public (bool, GenericAICompletions.GenericAIUsage) SummarizeInXPercentOfWords(AIMemory aiMemory, int percent, 
+            string model = null, string llmApiKey = null, string language = "", AIMetaData aiMetaDataToMerge = null)
         {
+            if (string.IsNullOrEmpty(model))
+                model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION;
+
             try
             {
                 if (!__summary_on__)
@@ -508,8 +516,12 @@ namespace fAI
             return r.Text;
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, string model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
+        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, 
+            string model = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
+            if (string.IsNullOrEmpty(model))
+                model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION;
+
             var cacheEntry = $"ExtractMetadata: {d.Text}";
             var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry);
             if (cacheR != null && !string.IsNullOrEmpty(cacheR.Response))
@@ -522,7 +534,17 @@ namespace fAI
 
             try
             {
-                if (__simulate_metadata_computation__ || !__metadata_computation_on__)
+                if (__metadata_computation_on__)
+                {
+                    var client = new GenericAI(ApiKey: llmApiKey);
+                    d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
+                    d.AIMetaData.Merge(aiMetaDataToMerge);
+
+                    AIPromptCache.Instance.Add(cacheEntry, JsonConvert.SerializeObject(d.AIMetaData));
+
+                    return (true, client.Completions.LastUsage);
+                }
+                else
                 {
                     d.AIMetaData = new AIMetaData
                     {
@@ -533,17 +555,7 @@ namespace fAI
                         Keywords = null
                     };
                     d.AIMetaData.Merge(aiMetaDataToMerge);
-                    return (false, new GenericAICompletions.GenericAIUsage(model, $"__simulate_metadata_computation__: {__simulate_metadata_computation__}, __metadata_computation_on__: {__metadata_computation_on__}", "") { });
-                }
-                else
-                {
-                    var client = new GenericAI(ApiKey: llmApiKey);
-                    d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
-                    d.AIMetaData.Merge(aiMetaDataToMerge);
-
-                    AIPromptCache.Instance.Add(cacheEntry, JsonConvert.SerializeObject(d.AIMetaData));
-
-                    return (true, client.Completions.LastUsage);
+                    return (false, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
                 }
             }
             catch (Exception ex)
@@ -557,7 +569,7 @@ namespace fAI
             var usage = new GenericAICompletions.GenericAIUsage("", "", "");
             try
             {
-                if (__simulate_embedding_computation__)
+                if (!__embedding_computation_on__)
                 {
                     d.Embeddings = new List<List<float>>();
                     d.Embeddings.Add(new List<float>());
