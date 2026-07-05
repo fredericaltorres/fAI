@@ -512,8 +512,8 @@ namespace fAI
             }
             
             var r = client.Completions.Summarize(aiMemory.Text, language, model, summarizeWordCount: summaryWordCount);
-            AIPromptCache.Instance.Add(cacheEntry, r.Text);
-            return r.Text;
+            AIPromptCache.Instance.Add(cacheEntry, r.Summary);
+            return r.Summary;
         }
 
         public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, 

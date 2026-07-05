@@ -394,6 +394,8 @@ namespace fAI.Tests
             var aiMemoryReLoaded = aiManager.GetFromId(newId);
             Assert.Equal(aiMemory.Title, aiMemoryReLoaded.Title);
             Assert.True(aiMemory.Summary.Length > 10);
+            Assert.True(OpenAIEmbeddings.CountWordS(aiMemory.Summary) > 1);
+            Assert.True(OpenAIEmbeddings.CountWordS(aiMemory.Summary) < 10);
 
             var __id__ = aiMemory.Id;
 

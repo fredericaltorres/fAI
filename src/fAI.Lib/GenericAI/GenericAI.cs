@@ -647,13 +647,7 @@ Use the following rules to guide your improvements:
 
             public static int CountWords(string text)
             {
-                if (string.IsNullOrWhiteSpace(text))
-                    return 0;
-
-                // Split by whitespace characters and remove empty entries
-                string[] words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-                return words.Length;
+                return OpenAIEmbeddings.CountWordS(text);
             }
         }
 

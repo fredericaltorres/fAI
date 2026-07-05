@@ -74,6 +74,11 @@ namespace fAI
             return $"{textLenth} characters, {wordCount} words, {tokenCount} tokens";
         }
 
+        public static int CountWordS(string sentence)
+        {
+            return new OpenAIEmbeddings().CountWords(sentence);
+        }
+
         public int CountWords(string sentence)
         {
             if (string.IsNullOrWhiteSpace(sentence))
