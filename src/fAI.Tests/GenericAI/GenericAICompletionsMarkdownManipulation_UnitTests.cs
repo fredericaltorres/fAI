@@ -355,6 +355,8 @@ public static void Main()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.2.md");
             var title = "The Ultimate Guide to Markdown Front Matter";
+            Assert.True(MarkdownManager.HasMarkdownContentFrontLoader(MarkDownDocument.RawContent));
+            Assert.True(MarkdownManager.HasMarkdownContentFrontLoader(MarkDownDocument.RawContentWithoutBase64ImageData));
             Assert.Equal(title, MarkDownDocument.FrontMatter.Title);
             Assert.Equal(title, MarkDownDocument.FrontMatter.Name);
             Assert.Equal("An in-depth look at how to use front matter in Markdown files to enhance documentation and project clarity.", MarkDownDocument.FrontMatter.Description);
@@ -363,6 +365,19 @@ public static void Main()
             Assert.Equal("true", MarkDownDocument.FrontMatter.ExtraFields["published"]);
             Assert.Equal("markdown, guide, metadata", MarkDownDocument.FrontMatter.Tags.Format().Replace(@"""",""));
             Assert.Contains("**Repository URL:** [GitHub repository URL]", MarkDownDocument.MarkdownBody);
+            Assert.Equal(@"name: The Ultimate Guide to Markdown Front Matter
+title: ""The Ultimate Guide to Markdown Front Matter""
+description: ""An in-depth look at how to use front matter in Markdown files to enhance documentation and project clarity.""
+date: 2023-10-27
+author: Jane Doe
+tags:
+  - markdown
+  - guide
+  - metadata
+categories:
+  - Technical Writing
+  - Dev Docs
+published: true", MarkDownDocument.FrontMatterYaml);
         }
 
         [Fact()]
@@ -452,7 +467,7 @@ IMAGE 4
         public void IsMarkdownContentHasFrontLoader_Yes_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithFrontLoader.2.md";
-            var hasFrontLoader = MarkdownManager.IsMarkdownContentHasFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
+            var hasFrontLoader = MarkdownManager.HasMarkdownContentFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
             Assert.True(hasFrontLoader);
             var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
             Assert.StartsWith("## 📋 Project Information", markDownContent);
@@ -497,7 +512,7 @@ blah
         public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.md";
-            var hasFrontLoader = MarkdownManager.IsMarkdownContentHasFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
+            var hasFrontLoader = MarkdownManager.HasMarkdownContentFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
             Assert.False(hasFrontLoader);
             var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
             Assert.StartsWith("## 📋 Project Information", markDownContent);

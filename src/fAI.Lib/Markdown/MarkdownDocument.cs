@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 public class MarkdownDocument
 {
     public FrontMatter FrontMatter { get; set; }
+    public string FrontMatterYaml { get; set; }
 
     public bool HasFrontMatter => FrontMatter != null;
 
@@ -202,9 +203,9 @@ public static class MarkdownLoader
 
         if (match.Success)
         {
-            string yaml = match.Groups["yaml"].Value.Trim();
+            document.FrontMatterYaml = match.Groups["yaml"].Value.Trim();
             document.MarkdownBody = match.Groups["body"].Value.Trim();
-            document.FrontMatter = ParseFrontMatter(yaml);
+            document.FrontMatter = ParseFrontMatter(document.FrontMatterYaml);
         }
         else
         {

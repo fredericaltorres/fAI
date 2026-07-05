@@ -440,8 +440,8 @@ namespace fAI
         //Gemini 3 Flash	        $0.50	        $3.00	1 Million
 
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";
-        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3-5";
-        
+        //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3-5";
+        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3.1";
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaDataAndSummary(AIMemory d,
             string embeddingsOpenAIApiKey = null,
@@ -471,7 +471,52 @@ namespace fAI
             var (r3, summaryUsage) = SummarizeInXPercentOfWords(d, 10/*%*/, model, llmApiKey, language, aiMetaDataToMerge);
             extractUsage.Add(summaryUsage);
 
-            return (r1 && r2 && r3, extractUsage);
+            var (r4, titleUsage) = GenerateTitleIfNeeded(d, model, llmApiKey, language);
+            extractUsage.Add(titleUsage);
+
+            return (r1 && r2 && r3 && r4, extractUsage);
+        }
+
+        public (bool, GenericAICompletions.GenericAIUsage) GenerateTitleIfNeeded(AIMemory aiMemory, string model = null, string llmApiKey = null, string language = "")
+        {
+            if (string.IsNullOrEmpty(model))
+                model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION;
+
+            if(!string.IsNullOrEmpty(aiMemory.Title))
+                return (true, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+
+            try
+            {
+                if (!__summary_on__)
+                {
+                    return (false, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                }
+                else
+                {
+                    var client = new GenericAI(ApiKey: llmApiKey);
+                    aiMemory.Title = GenerateTitle(aiMemory, model, language, client);
+                    return (true, client.Completions.LastUsage);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, null);
+            }
+        }
+
+        private static string GenerateTitle(AIMemory aiMemory, string model, string language, GenericAI client)
+        {
+            var cacheEntry = $"GenerateTitle: {aiMemory.Text}";
+            var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry);
+            if (cacheR != null && !string.IsNullOrEmpty(cacheR.Response))
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
+                return cacheR.Response;
+            }
+
+            var r = client.Completions.GenerateTitle(aiMemory.Text, language, model);
+            AIPromptCache.Instance.Add(cacheEntry, r.Title);
+            return r.Title;
         }
 
         public (bool, GenericAICompletions.GenericAIUsage) SummarizeInXPercentOfWords(AIMemory aiMemory, int percent, 
@@ -490,8 +535,7 @@ namespace fAI
                 {
                     var client = new GenericAI(ApiKey: llmApiKey);
                     var summaryWordCount = aiMemory.WordCount * percent / 100;
-                    var summary = Summarize(aiMemory, model, language, client, summaryWordCount);
-                    aiMemory.Summary = summary;
+                    aiMemory.Summary = Summarize(aiMemory, model, language, client, summaryWordCount);
                     return (true, client.Completions.LastUsage);
                 }
             }
@@ -537,7 +581,15 @@ namespace fAI
                 if (__metadata_computation_on__)
                 {
                     var client = new GenericAI(ApiKey: llmApiKey);
-                    d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(d.Text, model: model);
+                    var metaDataSources = d.Text;
+                    // Front loader should be part of the text
+                    //if (d.IsMarkDownFile())
+                    //{
+                    //    var md = MarkdownManager.LoadMarkdownFile(d.LocalFile);
+                    //    if (MarkdownManager.HasMarkdownContentFrontLoader(md.RawContent))
+                    //        metaDataSources = $"{md.FrontMatterYaml}\r\n{metaDataSources}";
+                    //}
+                    d.AIMetaData = client.Completions.ExtractMetaDataFromNotes(metaDataSources, model: model);
                     d.AIMetaData.Merge(aiMetaDataToMerge);
 
                     AIPromptCache.Instance.Add(cacheEntry, JsonConvert.SerializeObject(d.AIMetaData));

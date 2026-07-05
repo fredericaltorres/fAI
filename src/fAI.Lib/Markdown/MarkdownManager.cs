@@ -574,7 +574,7 @@ namespace fAI
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(htmlFile) { UseShellExecute = true });
         }
 
-        public static bool IsMarkdownContentHasFrontLoader(string markDownContent)
+        public static bool HasMarkdownContentFrontLoader(string markDownContent)
         {
             if (string.IsNullOrWhiteSpace(markDownContent))
                 return false;
@@ -587,7 +587,7 @@ namespace fAI
             if (string.IsNullOrWhiteSpace(markDownContent))
                 return markDownContent;
 
-            if(!MarkdownManager.IsMarkdownContentHasFrontLoader(markDownContent))
+            if(!MarkdownManager.HasMarkdownContentFrontLoader(markDownContent))
                 return markDownContent;
 
             var frontMatterPattern = @"^---\s*\n(.*?)\n---\s*\n";
@@ -596,10 +596,8 @@ namespace fAI
 
         public static MarkdownDocument LoadMarkdownFile(string filePath)
         {
-            return  MarkdownLoader.Load(filePath);
+            return MarkdownLoader.Load(filePath);
         }
-
-   
 
         public static MarkdownDocument UpdateMarkdownFile(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
         {
