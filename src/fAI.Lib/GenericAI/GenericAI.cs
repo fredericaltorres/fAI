@@ -1081,9 +1081,9 @@ Only extract what's explicitly there.
             var (json, _, usage) = Create(text, systemPrompt, model);
 
             var result = new HttpBase().GetJsonObject(json).ToString();
-            var keywords = this.ExtractKeywordFromNotes(text, model);
+            ////////NO KEYWORD FOR NOW ///////var keywords = this.ExtractKeywordFromNotes(text, model);
 
-            return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)), Keywords = keywords };
+            return new AIMetaData { MetaData = JObjectToDictionary (JObject.Parse(result)), Keywords = new List<string>() };
         }
 
         public static List<string> JArrayToDictionary(JArray jArray)
