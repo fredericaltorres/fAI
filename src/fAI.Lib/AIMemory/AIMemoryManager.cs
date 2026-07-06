@@ -432,16 +432,16 @@ namespace fAI
         public static bool __metadata_computation_on__ = true;
         public static bool __summary_on__ = true;
 
-        //Model Input               Price(per 1M)    Output Price(per 1M)   Context Window
-        //Gemini 2.0 Flash	        $0.10	        $0.40	                1 Million     DEPRECATED JUNE 2026
-        //Gemini 2.5 Flash	        $0.30	        $2.50	                1 Million
-        //Gemini 3.1 Flash-Lite	    $0.25	        $1.50	                1 Million       
-        //Gemini 3 Flash Preview	$0.50	        $3.00	                1 Million
-        //Gemini 3 Flash	        $0.50	        $3.00	1 Million
+        //Model Input                   Price(per 1M)    Output Price(per 1M)                 Context Window
+        //Gemini 2.0 Flash	            $0.10	        $0.40	                1 Million     DEPRECATED JUNE 2026
+        //Gemini 2.5 Flash	            $0.30	        $2.50	                1 Million
+        //Gemini 3.1 Flash-Lite	        $0.25	        $1.50	                1 Million
+        //deepseek/deepseek-v4-flash    $0.09           $0.18                   1 Million,  Context 1M, Released Apr 23, 2026
 
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3-5";
-        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3.1";
+        //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3.1";
+        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "deepseek/deepseek-v4-flash";
 
         public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaDataAndSummary(AIMemory d,
             string embeddingsOpenAIApiKey = null,
