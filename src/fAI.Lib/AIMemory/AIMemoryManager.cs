@@ -296,10 +296,17 @@ namespace fAI
                                             llmApiKey: llmApiKey,
                                             aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
 
-                    d.Embeddings = existingAIMemory.Embeddings;
-
                     usage = usageEmbeddingsAndMetaData;
-                    Update(existingAIMemory);
+
+                    if (rr)
+                    {
+                        d.Embeddings = existingAIMemory.Embeddings;
+                        Update(existingAIMemory);
+                    }
+                    else
+                    {
+                        r = false;
+                    }
                     id = existingAIMemory.Id;
                 }
                 else
