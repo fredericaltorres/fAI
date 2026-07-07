@@ -76,7 +76,7 @@ namespace fAI
         public fAI.GenericAICompletions.GenericAIUsage LastUsage { get; private set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
 
         public string Create(string input, string voice, string mp3FileName = null, 
-            string model = "gpt-4o-mini-tts", 
+            string model = "gpt-4o-mini-tts", //  tts-1, tts-1-hd, gpt-4o-mini-tts,
             string instructions = "Speak in a cheerful and positive tone.",
             int inputTokenCount = -1) // "tts-1"
         {

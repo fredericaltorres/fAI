@@ -206,6 +206,9 @@ namespace fAI
 
             public void Add(GenericAIUsage u)
             {
+                if (u == null)
+                    return;
+
                 this.InputTokens += u.InputTokens;
                 this.OutputTokens += u.OutputTokens;
                 this.TTSTokens += u.TTSTokens;

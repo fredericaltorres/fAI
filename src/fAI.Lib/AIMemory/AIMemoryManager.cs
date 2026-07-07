@@ -468,15 +468,15 @@ namespace fAI
             var r2 = false;
 
             (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey, aiMetaDataToMerge);
-            extractUsage.Add(usage);
+            usage.Add(extractUsage);
 
             var (r3, summaryUsage) = SummarizeInXPercentOfWords(d, 10/*%*/, model, llmApiKey, language, aiMetaDataToMerge);
-            extractUsage.Add(summaryUsage);
+            usage.Add(summaryUsage);
 
             var (r4, titleUsage) = GenerateTitleIfNeeded(d, model, llmApiKey, language);
-            extractUsage.Add(titleUsage);
+            usage.Add(titleUsage);
 
-            return (r1 && r2 && r3 && r4, extractUsage);
+            return (r1 && r2 && r3 && r4, usage);
         }
 
         public (bool, GenericAICompletions.GenericAIUsage) GenerateTitleIfNeeded(AIMemory aiMemory, string model = null, string llmApiKey = null, string language = "")
