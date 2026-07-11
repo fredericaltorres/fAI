@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 
 namespace fAI
 {
@@ -28,6 +29,12 @@ namespace fAI
 
                 "google/gemini-3.1-flash-lite",     // $0.25 / $1.50 per 1M, Context 1M, Released May 7, 2026
                 "google/gemini-3.5-flash",          // $1.50 / $9per 1M, Context 1M Released May 19, 2026 Knowledge Cutoff Jan 2025
+
+                "openai/gpt-5.5",                   // $5 / $30per 1M, Context 1M, Released Apr 24, 2026, Knowledge Cutoff Dec 2025
+                "openai/gpt-5-mini",                // $0.25 / $2per 1M, Context, 400K, Released, Aug 7, 2025, Knowledge Cutoff May 2024
+                "openai/gpt-5.6-luna",              // $1 / $6per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
+                "openai/gpt-5.6-terra",             // $2.50 / $15per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
+                "openai/gpt-5.6-sol",               // $5 / $30 per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
 
                 "anthropic/claude-opus-4.7",        // $5 / $25 per 1M, Context 1M, Released Apr 16, 2026
                 "anthropic/claude-opus-4.7-fast",   // $30 / $150per 1M, Context 1M, Released May 12, 2026
