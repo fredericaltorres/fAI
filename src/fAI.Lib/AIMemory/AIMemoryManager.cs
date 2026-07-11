@@ -446,7 +446,8 @@ namespace fAI
         //deepseek/deepseek-v4-flash    $0.09           $0.18                   1 Million,  Context 1M, Released Apr 23, 2026
         //deepseek/deepseek-v4-pro      $0.435          $0.87                   1M,         Context 1M, Released Apr 23, 2026
 
-        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";
+        public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "google/gemini-3.1-flash-lite"; // via open router
+        //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "gemini-3.1-flash-lite";
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3-5";
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "mistralai/mistral-medium-3.1";
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "deepseek/deepseek-v4-flash";
