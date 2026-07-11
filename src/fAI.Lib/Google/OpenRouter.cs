@@ -25,13 +25,23 @@ namespace fAI
         public static List<string> GetModels()
         {
             return DS.List(
-                "mistralai/mistral-small-2603", // Mistral: Mistral Small 4
-                "mistralai/ministral-14b-2512",  // Mistral: Ministral 3 14B 2512
-                //"mistralai/ministral-8b-2512",
-                "mistralai/mistral-medium-3-5",
-                "mistralai/mistral-medium-3",  // $0.40 / $2per 1M. Context 131K
+
+                "google/gemini-3.1-flash-lite", // $0.25 / $1.50 per 1M, Context 1M, Released May 7, 2026
+                "google/gemini-3.5-flash",      // $1.50 / $9per 1M, Context 1M Released May 19, 2026 Knowledge Cutoff Jan 2025
+
+                "anthropic/claude-opus-4.7", // $5 / $25 per 1M, Context 1M, Released Apr 16, 2026
+                "anthropic/claude-opus-4.7-fast", // $30 / $150per 1M, Context 1M, Released May 12, 2026
+                "anthropic/claude-opus-4.6", // $5 / $25 per 1M, Context 1M, Released Feb 4, 2026
+
+                "anthropic/claude-sonnet-4.5", // $3 / $15per 1M, Context 1M, Released Sep 29, 2025, Knowledge Cutoff Jan 2025
+                "anthropic/claude-sonnet-4.6", // $3 / $15per 1M, Context 1M, Released Feb 17, 2026
+                "anthropic/claude-haiku-4.5", // $1 / $5per 1M, Context 200K, Released Oct 15, 2025
+
+                "mistralai/mistral-small-2603", // Mistral: Mistral Small 4, $0.15 / $0.60 per 1M, Context , 262K Released Mar 16, 2026
+                "mistralai/mistral-medium-3.1", // $0.40 / $2 per 1M, Context 131K, Released Aug 13, 2025, Knowledge Cutoff Jun 2025
+                "mistralai/mistral-medium-3-5", // $1.50 / $7.50per 1M, Context 262K, Released Apr 30, 2026
+                "mistralai/mistral-medium-3",  // $0.40 / $ 2per 1M. Context 131K
                 "mistralai/mistral-large-2512", // Mistral: Mistral Large 3 2512
-                "mistralai/mistral-medium-3.1", // $0.40 / $2per 1M, Context 131K, Released Aug 13, 2025, Knowledge Cutoff Jun 2025
 
                 "x-ai/grok-4.20", // $1.25 / $2.50per 1M, Context 2M
                 "x-ai/grok-4.3", // $1.25 / $2.50per 1M, Context 1M
