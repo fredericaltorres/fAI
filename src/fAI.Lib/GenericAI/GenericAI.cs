@@ -825,6 +825,14 @@ Use the following rules to guide your summarization:
         }
 
 
+        const string LIST_OF_VERB_WHICH_INDICATE_QUESTION = @"
+what,where,when,who,which,how,why,can,could,should,would,is,are,do,does,did,will,may,might,must,shall,
+list,research,find,determine,tell,analyze,analyse,summarize,locate,identify,search,retrieve,discover,uncover,pinpoint,
+track-down,investigate,explore,examine,study,review,inspect,probe,audit,evaluate,assess,compare,calculate,
+measure,interpret,classify,categorize,rank,prioritize,diagnose,verify,validate,outline,describe,
+explain,report,recap,highlight,illustrate,clarify,compile,organize,structure,tabulate,chart,map-out,
+enumerate,itemize,decide,conclude,recommend,suggest,predict,forecast,estimate";
+
 
         public PhraseType DetermineTheTypeOfPhrase(
            string text,
@@ -842,7 +850,7 @@ You must respond strictly with a JSON object representing your classification.
 The JSON object must have a single key named ""classification"" holding the selected category as a string value. 
 Do not include markdown formatting (like ```json) in the output.
 
-If the phrase contains the words (""list"" or ""research"" or ""find"" or ""determine""or ""tell"") and is asking for information, 
+If the phrase contains the words ([listOfVerbWhichIndicateQuestion]) and is asking for information, 
 classify it as a ""Question"" even if it is not in a traditional question format.
 
 Examples:
@@ -860,10 +868,13 @@ Output: {""classification"": ""Statement""}
 
 Phrase: ""[question]""
 Output:
-            "
+            ",
+           string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION
+
            )
         {
 
+            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "");
             var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
             var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
             if(cacheR != null)
@@ -873,8 +884,19 @@ Output:
                 return phraseType;
             }
 
+            var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
+            //listOfVerbWhichIndicateQuestionAsList.Sort();
+            text = text.Trim();
 
-            systemPrompt = systemPrompt.Template(new { text }, "[", "]");
+            // Non AI optimization
+            var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v+" ", StringComparison.OrdinalIgnoreCase) == 0);
+            if (startWithVerbWhichIndicateQuestion|| text.EndsWith("?"))
+            {
+                AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
+                return PhraseType.Question;
+            }
+
+            systemPrompt = systemPrompt.Template(new { text, listOfVerbWhichIndicateQuestion }, "[", "]");
             var sw = Stopwatch.StartNew();
             var (json, _, usage) = Create(text, systemPrompt, model);
             sw.Stop();
