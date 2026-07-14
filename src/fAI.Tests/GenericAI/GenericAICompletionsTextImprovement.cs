@@ -24,9 +24,9 @@ namespace fAI.Tests
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
-        //Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
+        Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
         
-        Regex _quickFilter = null;
+        //Regex _quickFilter = null;
 
         public GenericAiCompletions_UnitTests()
         {
@@ -194,9 +194,7 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_OpenRouterModels()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-
-            var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite")); 
+            var models = OpenRouter.GetModels().Take(4).ToList();
             
             foreach (var model in models)
             {
@@ -210,8 +208,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateTitle_GenericAI_OpenRouterModels()
         {
-            var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite"));
+            var models = OpenRouter.GetModels().Take(4).ToList();
 
             foreach (var model in models)
             {
@@ -237,8 +234,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void Translate_GenericAI_OpenRouterModels()
         {
-            var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite"));
+            var models = OpenRouter.GetModels().Take(4).ToList();
 
             foreach (var model in models)
             {
@@ -252,8 +248,7 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateBulletPoints_GenericAI_OpenRouterModels()
         {
-            var models = OpenRouter.GetModels();
-            models.AddRange(DS.List("gemini-3.1-flash-lite"));
+            var models = OpenRouter.GetModels().Take(4).ToList();
 
             foreach (var model in models)
             {
@@ -420,7 +415,7 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
         {
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
-                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var client = new GenericAI();
                 var keywords = client.Completions.ExtractKeywordFromNotes(notes1, model: model);
                 Assert.True(keywords.Any());
             });

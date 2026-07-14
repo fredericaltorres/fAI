@@ -5,6 +5,7 @@ using fAI.Util.Strings;
 using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SharpToken;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -586,10 +587,10 @@ Follow these rules:
 - Use **bold** and *italic* where appropriate
 - Use bullet points or numbered lists for list content
 - Preserve code blocks using ``` fences\n
-- Output ONLY the Markdown content, no preamble or explanation"
+- Output ONLY the Markdown content, no preamble or explanation",
+            string model = "claude-haiku-4-5"   
            )
         {
-            var model = Anthropic.GetModels().FirstOrDefault();
             var sw = Stopwatch.StartNew();
             if (anthorpicApiKey == null)
                 anthorpicApiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
