@@ -399,7 +399,7 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
         {
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
-                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var client = new GenericAI();
                 var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
                 Assert.Equal("John Smith", medataDictionary["people"].First());
                 Assert.Equal("Paris", medataDictionary["locations"].First());
