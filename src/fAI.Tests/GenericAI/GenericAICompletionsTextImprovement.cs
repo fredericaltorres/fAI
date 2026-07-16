@@ -534,5 +534,30 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
             Assert.Contains("ALICE TORRES", markDownText);
             Assert.Contains("153 HIGHLAND ST APT 3", markDownText);
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void TextImprovement_GenericAI_WithSkill()
+        {
+            var text = @"
+diagnose the following patient as a spine orthopedic surgeon:
+Jane Doe, a 55-year-old female, presents with extremely painful lower back pain and in the left legs.
+MRI scan shows fracture at L4.
+Find root cause.
+";
+
+            DS.List("openai/gpt-5.6-terra", "gemini-3.1-flash-lite").ForEach(model =>
+            {
+                var client = new GenericAI();
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model,
+                                                                systemPrompt: "diagnose the following patient as a spine orthopedic surgeon:",
+                                                                skillName: "spine-orthopedic-surgeon",
+                                                                skillRootFolder: @"C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills");
+
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
+                Assert.True(client.Completions.LastUsage.InputTokens > 0);
+                Assert.True(client.Completions.LastUsage.OutputTokens > 0);
+            });
+        }
     }
 }

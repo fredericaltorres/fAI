@@ -20,6 +20,7 @@ using static fAI.GenericAI;
 using static fAI.GoogleAICompletions;
 using static fAI.GoogleAICompletions.GoogleAICompletionsResponse;
 using static fAI.OpenAIImage;
+using static fAI.SkillManager;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
@@ -245,12 +246,21 @@ namespace fAI
 
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
 
+        public SkillFile LoadSkill(string skillName, string skillRootFolder)
+        {
+            var skills = new SkillManager(skillRootFolder);
+            var i = skills.GetSkillInfo(skillName);
+            return i.LoadSkill();
+        }
+
         /// <summary>
         /// This mode will not support multithreading
         /// </summary>
         public static List<string> __experimentMultiModelMode = new List<string>();
 
-        public (string, GenericAI.Contents, GenericAIUsage) Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null, int reTryCounter = 0)
+        public (string, GenericAI.Contents, GenericAIUsage) Create(
+            string prompt, string systemPrompt, string model, 
+            GenericAI.Contents contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null)
         {
             try
             {
@@ -273,7 +283,7 @@ namespace fAI
                     }
                 }
 
-                return __Create(prompt, systemPrompt, model, contents);
+                return __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
             }
             catch (Exception e)
             {
@@ -289,13 +299,23 @@ namespace fAI
             }
         }
 
-        private (string, GenericAI.Contents, GenericAIUsage) __Create(string prompt, string systemPrompt, string model, GenericAI.Contents contents = null)
+        private (string, GenericAI.Contents, GenericAIUsage) __Create(
+            string prompt, string systemPrompt, string model, 
+            GenericAI.Contents contents = null,  string skillName = null, string skillRootFolder = null)
         {
             var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;
             var sw = Stopwatch.StartNew();
             try
             {
+                if(skillName != null && skillRootFolder != null)
+                {
+                    var nl = Environment.NewLine;
+                    var skill = LoadSkill(skillName, skillRootFolder);
+                    if (skill != null)
+                        systemPrompt = $"{nl}{nl}<skill>{nl}{nl}{skill.MarkdownBody}{nl}{nl}</skill>{nl}{nl}" + systemPrompt;
+                }
+
                 contents = contents == null ? new GenericAI.Contents() : contents;
 
                 contents.Add(new GenericAI.ContentMessage
@@ -623,12 +643,12 @@ Use the following rules to guide your improvements:
  </rules>
  ===================================
             ",
-           GenericAI.Contents contents = null
+           GenericAI.Contents contents = null, string skillName = null, string skillRootFolder = null
            )
         {
             var sw = Stopwatch.StartNew();
             systemPrompt = systemPrompt.Template(new { language }, "[", "]");
-            var (newText, contents2, usage) = Create(text, systemPrompt, model, contents);
+            var (newText, contents2, usage) = Create(text, systemPrompt, model, contents, skillName: skillName, skillRootFolder: skillRootFolder);
             contents = contents2;
             sw.Stop();
             return new TextImprovementResult
