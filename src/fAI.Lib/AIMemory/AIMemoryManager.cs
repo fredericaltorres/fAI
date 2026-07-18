@@ -466,7 +466,7 @@ namespace fAI
 
             Trace($"[{nameof(ComputeEmbeddingsAndMetaDataAndSummary)}]embeddingsOpenAIApiKey: {embeddingsOpenAIApiKey}, llmApiKey: {llmApiKey}, model: {model}");
 
-            if(d.Embeddings != null)
+            if(d.Embeddings != null && __embedding_computation_on__)
             {
                 d.Embeddings.Clear(); // Force re-computation of embeddings
             }
@@ -631,17 +631,7 @@ namespace fAI
             var usage = new GenericAICompletions.GenericAIUsage("", "", "");
             try
             {
-                if (!__embedding_computation_on__)
-                {
-                    d.Embeddings = new List<List<float>>();
-                    d.Embeddings.Add(new List<float>());
-                    for (var c = 0; c < 1536; c++)
-                    {
-                        d.Embeddings[0].Add((float)(c * 0.113416));
-                    }
-                    d.TokenCount = 1;
-                }
-                else
+                if (__embedding_computation_on__)
                 {
                     if (d.Embeddings == null || d.Embeddings.Count == 0)
                     {
@@ -653,6 +643,20 @@ namespace fAI
                         d.TokenCount = new OpenAI().Embeddings.CountToken(t);
                         d.EmbeddingsChunkCount = chunks.Count;
                         eUsages.ForEach((e) => usage.Add(e.InputTokens));
+                    }
+                    
+                }
+                else
+                {
+                    if (d.Embeddings == null || d.Embeddings.Count == 0)
+                    {
+                        d.Embeddings = new List<List<float>>();
+                        d.Embeddings.Add(new List<float>());
+                        for (var c = 0; c < 1536; c++)
+                        {
+                            d.Embeddings[0].Add((float)(c * 0.113416));
+                        }
+                        d.TokenCount = 1;
                     }
                 }
                 return (true, usage);

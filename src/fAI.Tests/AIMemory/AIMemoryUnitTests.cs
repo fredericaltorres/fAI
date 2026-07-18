@@ -208,7 +208,7 @@ namespace fAI.Tests
             File.WriteAllText(fileReportMd, sbReport.ToString());
         }
 
-        //[Fact()]
+        [Fact()]
         //// [TestBeforeAfter]
         public void BeatlesSimilaritySearch()
         {
