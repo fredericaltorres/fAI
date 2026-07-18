@@ -62,6 +62,16 @@ namespace fAI.Util.Strings
 
             return matches.Count;
         }
+        public static string ReplaceLfWithCrlf(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // First normalize any existing CRLF down to LF, then convert all LF to CRLF.
+            // This avoids accidentally turning existing \r\n into \r\r\n.
+            string normalized = input.Replace("\r\n", "\n");
+            return normalized.Replace("\n", "\r\n");
+        }
 
         public static string SuperTrim(string input) => input?.Trim().Trim('"', '\'', '.', ';', ',').Trim();
 

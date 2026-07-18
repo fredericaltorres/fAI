@@ -50,6 +50,7 @@ namespace fAI
                 "mistralai/mistral-medium-3",       // $0.40 / $ 2per 1M. Context 131K
                 "mistralai/mistral-large-2512",     // Mistral: Mistral Large 3 2512
 
+                "x-ai/grok-4.5",                    // $2 / $6per 1M, Context 500K, Released Jul 8, 2026
                 "x-ai/grok-4.20",                   // $1.25 / $2.50per 1M, Context 2M
                 "x-ai/grok-4.3",                    // $1.25 / $2.50per 1M, Context 1M
 

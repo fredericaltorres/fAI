@@ -25,6 +25,7 @@
 // IN THE SOFTWARE.
 // ---------------------------------------------------------------------------
 using DynamicSugar;
+using fAI.Util.Strings;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -601,7 +602,7 @@ namespace fAI
 
         public static MarkdownDocument UpdateMarkdownFile(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
         {
-            var markdownDocument = MarkdownLoader.Update(filePath, newMarkdownBody, frontMatter);
+            var markdownDocument = MarkdownLoader.Update(filePath, StringUtil.ReplaceLfWithCrlf(newMarkdownBody), frontMatter);
             return MarkdownLoader.Load(filePath);
         }
 
