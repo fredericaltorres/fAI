@@ -832,6 +832,11 @@ namespace fAI
             try
             {
                 var allAiMemories = this.GetAll();
+                if (query.Contains("`"))
+                {
+                    allAiMemories = new AIMemorys(allAiMemories.ToList()).FilterForRequiredKeyWords(query).ToList();
+                }
+
                 AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
                 if (isBm25HasStrongResult)
@@ -856,7 +861,7 @@ namespace fAI
                     z.Type = HybridSearchResultType.SemanticOnly;
                 }
                 z.Results = new AIMemorys(z.Results.Where(r => r.Score >= rrfMinimumScore).ToList());
-
+                z.Results.TraceEntries($"{nameof(HybridSearch)} Final(rrfMinimumScore:{rrfMinimumScore}):");
             }
             catch (Exception ex)
             {
@@ -904,7 +909,7 @@ namespace fAI
             )
         {
             var aiMemories = new AIMemorys(allAiMemories.ToList());
-            var bm25 = new Bm25(aiMemories);
+            var bm25 = new Bm25(aiMemories, query);
             var scores = bm25.GetScores(query, aiMemories);
             Trace($"BM25 - INDEX REPORT");
 

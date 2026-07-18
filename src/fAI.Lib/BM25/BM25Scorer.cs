@@ -1,4 +1,5 @@
-﻿using NAudio.Utils;
+﻿using fAI.Util.Strings;
+using NAudio.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -82,22 +83,24 @@ namespace fAI
         /// <param name="documents">Corpus documents (plain text).</param>
         /// <param name="k1">Term-frequency saturation parameter (default 1.5).</param>
         /// <param name="b">Length-normalisation parameter (default 0.75).</param>
-        public Bm25(AIMemorys documents, float k1 = 1.5f, float b = 0.75f)
+        public Bm25(AIMemorys oDocuments, string query, float k1 = 1.5f, float b = 0.75f)
         {
             using (var mt = new MeasureTime("Bm25 constructor"))
             {
-                if (documents == null) throw new ArgumentNullException(nameof(documents));
-                if (documents.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(documents));
+                AIMemorys tmpDocuments = oDocuments;
+
+                if (tmpDocuments == null) throw new ArgumentNullException(nameof(tmpDocuments));
+                if (tmpDocuments.Count == 0) throw new ArgumentException("Corpus must not be empty.", nameof(tmpDocuments));
 
                 _k1 = k1;
                 _b = b;
-                _docCount = documents.Count;
+                _docCount = tmpDocuments.Count;
 
                 // tokenise every document once
                 string[][] tokenised = null;
                 using (var mt2 = new MeasureTime("Bm25 tokenised"))
                 {
-                    tokenised = documents.Select(d => d.Text).Select(Tokenize).ToArray();
+                    tokenised = tmpDocuments.Select(d => d.Text).Select(Tokenize).ToArray();
                 }
 
                 // document lengths

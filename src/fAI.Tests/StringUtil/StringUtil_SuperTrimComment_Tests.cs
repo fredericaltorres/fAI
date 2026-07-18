@@ -172,5 +172,22 @@ namespace fAI.Tests
 
             Assert.Equal("Hello World", normalized);
         }
+
+        [Fact]
+        public void ExtractBacktick()
+        {
+            // Demonstrates the optional whitespace-cleanup step
+            var words = StringUtil.ExtractBacktick("hello `Karin health issue.");
+            Assert.Single(words);
+            Assert.Equal(new List<string> { "Karin" }, words);
+
+            var words2 = StringUtil.ExtractBacktick("hello `Karin health `issue.");
+            Assert.Equal(2, words2.Count);
+            Assert.Equal(new List<string> { "Karin", "issue" }, words2);
+
+            var words3 = StringUtil.ExtractBacktick("hello `Karin-health `issue.");
+            Assert.Equal(2, words3.Count);
+            Assert.Equal(new List<string> { "Karin", "issue" }, words3);
+        }
     }
 }

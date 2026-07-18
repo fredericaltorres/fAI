@@ -1,4 +1,6 @@
-﻿using System;
+﻿using fAI.RRF;
+using fAI.Util.Strings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +24,14 @@ namespace fAI
                 this.AddRange(aiMemories);
             }
         }
+
+        public AIMemorys FilterForRequiredKeyWords(string query)
+        {
+            var requiredKeywords = StringUtil.ExtractBacktick(query);
+            var filtered = this.Where(m => StringUtil.ContainsAllKeywords(requiredKeywords, m.Text)).ToList();
+            return new AIMemorys(filtered);
+        }
+
         public AIMemorys() : base()
         {
         }
@@ -51,6 +61,16 @@ namespace fAI
                     this.Add(aiMemory);
             }
             return this;
+        }
+
+        public void TraceEntries( string text)
+        {
+            var x = 0;
+            HttpBase.Trace(text, this);
+            this.ForEach((k) => {
+                HttpBase.Trace($" [{x++}] - {k.Id} - Score: {k.Score:0.000} - {k.Title} - ({k.LocalFile})", this);
+            });
+            HttpBase.Trace("", this);
         }
     }
 }

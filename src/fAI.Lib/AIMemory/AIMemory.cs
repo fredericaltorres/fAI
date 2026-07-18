@@ -163,7 +163,7 @@ namespace fAI
 
         public override string ToString()
         {
-            return $"{MID}, Score: {Score:0.000}, Title: {Title}, ModifiedDate: {ModifiedDate}, LocalFile: ({LocalFile})";
+            return $"mid: {MID}, Score: {Score:0.000}, Title: {Title}, ModifiedDate: {ModifiedDate}, LocalFile: ({LocalFile}), Text: {Text}";
         }
 
         public AIMemory Clone()

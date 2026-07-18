@@ -13,6 +13,25 @@ namespace fAI.Util.Strings
             return l1.Intersect(l2).ToList();
         }
 
+        public static bool ContainsAllKeywords(List<string> keywords, string text)
+        {
+            if (keywords == null || text == null)
+                return false;
+
+            string lowerText = text.ToLowerInvariant();
+            return keywords.All(keyword => lowerText.Contains(keyword.ToLowerInvariant()));
+        }
+
+        public static List<string> ExtractBacktick(string input)
+        {
+            var matches = Regex.Matches(input, @"`(\w+)");
+            return matches
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .Select(s => s.Trim())
+                .ToList();
+        }
+
         public static string CapitalizeWords(string input)
         {
             if (string.IsNullOrEmpty(input))
