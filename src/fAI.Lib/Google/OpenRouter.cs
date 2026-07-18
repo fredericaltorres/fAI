@@ -71,6 +71,7 @@ namespace fAI
                 //"nvidia/nemotron-nano-9b-v2:free",
 
                 "moonshotai/kimi-k2.6",//    $0.55 / $3.20per 1M, Context 262K
+                "moonshotai/kimi-k3",  // $3 / $15per 1M, Context 1M, Released Jul 16, 2026
 
                 //"moonshotai/kimi-k2.7-code", TOO SLOW  
                 //"moonshotai/kimi-k2.5",
