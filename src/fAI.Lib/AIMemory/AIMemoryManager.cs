@@ -617,7 +617,7 @@ namespace fAI
                         Keywords = null
                     };
                     d.AIMetaData.Merge(aiMetaDataToMerge);
-                    return (false, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                    return (true, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
                 }
             }
             catch (Exception ex)

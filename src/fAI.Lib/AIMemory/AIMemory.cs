@@ -130,8 +130,8 @@ namespace fAI
         public string MediaBase64 { get; set; }
 
         public AIMetaData AIMetaData { get; set; }
-
-        [JsonIgnore]
+         
+        [JsonIgnore] // Ignore for exporting to JSON text
         public List<List<float>> Embeddings { get; set; }
 
         public int TokenCount { get; set; }
