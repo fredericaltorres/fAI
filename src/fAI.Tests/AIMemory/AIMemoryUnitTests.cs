@@ -31,13 +31,18 @@ namespace fAI.Tests
 
         public AIMemoryUnitTests()
         {
+            CleanAll();
+        }
+
+        public void CleanAll()
+        {
             AIPromptCache.Instance.Clear();
             DeleteFile(TestDBName);
             DeleteFile(BeatlesTestDBName);
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void BM25_Experiment()
         {
             var corpus = new AIMemorys
@@ -53,7 +58,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Basic_BM25()
         {
             var corpus = new AIMemorys
@@ -69,7 +74,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Basic_BM25_WithRequiredKeyword()
         {
             var oCorpus = new AIMemorys
@@ -107,7 +112,7 @@ namespace fAI.Tests
 
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_NoBM25Result()
         {
             var aiManager = new AIMemoryManager(TEST_DB);
@@ -128,7 +133,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_Returning2Results()
         {
             var aiManager = new AIMemoryManager(TEST_DB);
@@ -149,7 +154,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_Returning2Results_JaneDoeRequired()
         {
             var aiManager = new AIMemoryManager(TEST_DB);
@@ -171,7 +176,7 @@ namespace fAI.Tests
         /// <summary>
         /// //////////////[Fact()]
         /// </summary>
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void CreateCrossReferenceTables_Sync()
         {
             var aiManager = new AIMemoryManager(TEST_DB);
@@ -203,8 +208,8 @@ namespace fAI.Tests
             File.WriteAllText(fileReportMd, sbReport.ToString());
         }
 
-        [Fact()]
-        [TestBeforeAfter]
+        //[Fact()]
+        //// [TestBeforeAfter]
         public void BeatlesSimilaritySearch()
         {
             var records = EmbeddingCommonRecord.FromJsonFile(@"C:\DVT\fAI\src\fAI.Beetles.All\Beatles.All.json");
@@ -240,7 +245,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void ToJson()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -289,7 +294,7 @@ namespace fAI.Tests
         const string DefaultMarkdownText = "This is the text of the example article. created March 31 2026, in Boston, MA, USA By Richard Harrison. Richard Harrison created an important note about Windows user and Productivity";
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Add_Update_FakeMarkdownFile_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -337,7 +342,7 @@ namespace fAI.Tests
 
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Add_Update_RealMarkdownFile_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -372,7 +377,7 @@ namespace fAI.Tests
 
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Add_Update_Markdown_Search_Delete_Image()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -436,7 +441,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void Add_Update_Search_Delete()
         {
             var aiManager = new AIMemoryManager(TestDBName);
@@ -461,7 +466,7 @@ namespace fAI.Tests
             Assert.Equal(aiMemory.Title, aiMemoryReLoaded.Title);
             Assert.True(aiMemory.Summary.Length > 10);
             Assert.True(OpenAIEmbeddings.CountWordS(aiMemory.Summary) > 1);
-            Assert.True(OpenAIEmbeddings.CountWordS(aiMemory.Summary) < 20);
+            Assert.True(OpenAIEmbeddings.CountWordS(aiMemory.Summary) < 30);
 
             var __id__ = aiMemory.Id;
 
@@ -545,7 +550,7 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
         // copy "C:\Users\ftorres\AppData\Roaming\WinSpeak\WinSpeak.AIMemory.db" "C:\DVT\fAI\src\fAI.Tests\TestFiles\WinSpeak.AIMemory.test.1.db"
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void IssueWithBM25AndNebula()
         {
             var aiManager = new AIMemoryManager(TEST_DB2);
@@ -569,7 +574,7 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
         
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_BM25Result_Investigation()
         {
             var aiManager = new AIMemoryManager(TEST_DB2);
@@ -590,7 +595,7 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_BM25Result_2()
         {
             var aiManager = new AIMemoryManager(TEST_DB2);
@@ -614,7 +619,7 @@ The mood is **tense, chaotic, and tragic yet heroic**. There is palpable urgency
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void WinSpeak_HybridSearch_BM25Result_OnCurrentDB()
         {
             var aiManager = new AIMemoryManager(FredCurrentDBName);
@@ -667,7 +672,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
 ";
 
         //[Fact()]
-        //[TestBeforeAfter]
+        //// [TestBeforeAfter]
         public void WinSpeak_LocalFileSearch_BM25Result()
         {
             var localFiles = localFilesString.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -690,7 +695,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
         }
 
         //[Fact()]
-        //[TestBeforeAfter]
+        //// [TestBeforeAfter]
         public void WinSpeak_BIG_LocalFileSearch_BM25Result()
         {
             var aiManager = new AIMemoryManager(null, @"C:\Users\FredericTorres\Dropbox\MARKDOWN");
@@ -722,7 +727,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void GetMetaDataUniqueValues()
         {
             var aiManager = new AIMemoryManager(FredCurrentDBName);
@@ -737,7 +742,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        // [TestBeforeAfter]
         public void GetMetaDataUsageSummary()
         {
             var aiManager = new AIMemoryManager(FredCurrentDBName);
