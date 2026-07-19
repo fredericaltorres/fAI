@@ -24,13 +24,12 @@ namespace fAI
                 this.AddRange(aiMemories);
             }
         }
-
-        public AIMemorys FilterForRequiredKeyWords(string query)
+        public AIMemorys FilterForRequiredKeyWords(string query, string dataSourceInfo)
         {
             var requiredKeywords = StringUtil.ExtractBacktick(query);
             if (requiredKeywords.Count > 0)
             {
-                HttpBase.Trace($"Filtering for required keywords: {String.Join(", ", requiredKeywords)}", this);
+                HttpBase.Trace($"Filtering {dataSourceInfo} for required keywords: {String.Join(", ", requiredKeywords)}", this);
                 var filtered = this.Where(m => StringUtil.ContainsAllKeywords(requiredKeywords, m.Text)).ToList();
                 return new AIMemorys(filtered);
             }

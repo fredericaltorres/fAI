@@ -132,6 +132,8 @@ namespace fAI
             {
                 var entries = EntriesDictionary.Values.ToList();
 
+                TraceEntries(entries, $"RankHybrid(applyGapOutlierDetection: {applyGapOutlierDetection}, k: {k}");
+
                 var entriesSortedForBm25 = entries.OrderByDescending(e => e.Bm25Score).ToList();    
                 for(var rank = 0; rank < entriesSortedForBm25.Count; rank++)
                 {
@@ -155,7 +157,7 @@ namespace fAI
 
                 entries2 = entries2.OrderByDescending(s => s.RRFScore).ToList();
 
-                TraceEntries(entries2, "RankHybrid:");
+                TraceEntries(entries2, "RankHybrid(0):");
 
                 if (applyGapOutlierDetection && entries2.Count > 2)
                 {
@@ -172,10 +174,13 @@ namespace fAI
                         entries2 = entries2.Take(cutIndex + 1).ToList();
                     }
 
-                    TraceEntries(entries2, "applyGapOutlierDetection: true");
+                    TraceEntries(entries2, "RankHybrid(1): applyGapOutlierDetection: true");
                 }
 
                 var entriesOrdered = entries2.OrderByDescending(e => e.RRFScore).Select(ee => ee.obj);
+
+                TraceEntries(entries2, "RankHybrid(2): Ordered By RRFScore");
+
                 return entriesOrdered;
             }
         }
@@ -841,7 +846,7 @@ namespace fAI
 
                 if (query.Contains("`"))
                 {
-                    bm25Results = bm25Results.FilterForRequiredKeyWords(query);
+                    bm25Results = bm25Results.FilterForRequiredKeyWords(query, "bm25");
                 }
 
                 if (isBm25HasStrongResult)
@@ -855,7 +860,7 @@ namespace fAI
 
                     if (query.Contains("`"))
                     {
-                        sResults = sResults.FilterForRequiredKeyWords(query);
+                        sResults = sResults.FilterForRequiredKeyWords(query, "semantic");
                     }
                     
                     ranker.AddUpdateSemanticScore(sResults);
@@ -905,7 +910,7 @@ namespace fAI
 
         public enum MinimumScoreModeEnum
         {
-            Top50Oercent = -1,
+            Top50Percent = -1,
             GreaterThanStandardDeviation = -2,
             GapOutlierDetection = -3,
             GreaterOrEqualToOne = -4,
@@ -914,7 +919,7 @@ namespace fAI
 
 
         private bool ExecuteBm25Search(string query, IEnumerable<AIMemory> allAiMemories, out AIMemorys bm25Results,
-            MinimumScoreModeEnum minimumScoreMode = MinimumScoreModeEnum.Top50Oercent, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
+            MinimumScoreModeEnum minimumScoreMode = MinimumScoreModeEnum.Top50Percent, // -1 top 50%, -2 Greater Than Std Deviation, Other > than ,
             float bm25MinimumScore = 0.3f
             )
         {
@@ -930,15 +935,17 @@ namespace fAI
 
             // Order and trace the raw result
             aiMemories = new AIMemorys(aiMemories.OrderByDescending(d => d.Score).ToList());
-            TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(maxToTrace).ToList()), $"BM25(0): query: {query}");
+            TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(maxToTrace).ToList()), $"BM25(0):");
 
             Trace($"maxScore: {maxScore}, bm25MinimumScore: {bm25MinimumScore}");
 
             aiMemories = new AIMemorys(aiMemories.Where(d => d.Score >= bm25MinimumScore).OrderByDescending(d => d.Score).ToList());
             var minimumScoreOrModeStr = minimumScoreMode.ToString();
-            TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(maxToTrace).ToList()), $"BM25(1): query: {query}");
+            TraceAIMemorys(new AIMemorys(aiMemories.ToList().Take(maxToTrace).ToList()), $"BM25(1):");
 
-            if (minimumScoreMode == MinimumScoreModeEnum.Top50Oercent)
+            Trace($"Apply minimumScoreMode: {minimumScoreMode}");
+
+            if (minimumScoreMode == MinimumScoreModeEnum.Top50Percent)
             {
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: 50f /*default*/ ));
             }
@@ -974,6 +981,7 @@ namespace fAI
             }
             else // if (minimumScoreMode == MinimumScoreModeEnum.MinimumScorePassed) // Return score greater or equal to 1
             {
+                Trace($"Apply minimumScoreMode: ELSE section");
                 bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, minimumScore: bm25MinimumScore));
                 if (bm25Results.Count == 0) // minimumScoreOrMode is too high
                 {
@@ -982,9 +990,7 @@ namespace fAI
                     bm25Results = new AIMemorys(bm25.GetStrongScore(aiMemories, percent: retryTopPercent /*default*/ ));
                 }
             }
-
-            TraceAIMemorys(bm25Results, $"BM25(2): query:{query}, minimumScoreOrMode:{minimumScoreOrModeStr}");
-
+            TraceAIMemorys(bm25Results, $"BM25(2):");
             return bm25Results.Count > 0;
         }
 
@@ -1208,5 +1214,6 @@ namespace fAI
         }
     }
 }
+
 
 
