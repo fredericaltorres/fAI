@@ -836,13 +836,14 @@ namespace fAI
             try
             {
                 var allAiMemories = this.GetAll();
+                AIMemorys bm25Results = null;
+                var isBm25HasStrongResult = ExecuteBm25Search(query.Replace("`",""), allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
+
                 if (query.Contains("`"))
                 {
-                    allAiMemories = new AIMemorys(allAiMemories.ToList()).FilterForRequiredKeyWords(query).ToList();
+                    bm25Results = bm25Results.FilterForRequiredKeyWords(query);
                 }
 
-                AIMemorys bm25Results = null;
-                var isBm25HasStrongResult = ExecuteBm25Search(query, allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
                 if (isBm25HasStrongResult)
                 {
                     var ranker = new RRF.RRFRanker();
@@ -852,6 +853,11 @@ namespace fAI
                         minimumScore: semanticMinimumScore,
                         all: allAiMemories); // Similatiry search is executed on the all data set to also return record ignored by BM25 but has high semantic score
 
+                    if (query.Contains("`"))
+                    {
+                        sResults = sResults.FilterForRequiredKeyWords(query);
+                    }
+                    
                     ranker.AddUpdateSemanticScore(sResults);
 
                     var RANK_K = 60f;
