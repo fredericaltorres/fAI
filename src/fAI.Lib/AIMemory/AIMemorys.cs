@@ -28,8 +28,13 @@ namespace fAI
         public AIMemorys FilterForRequiredKeyWords(string query)
         {
             var requiredKeywords = StringUtil.ExtractBacktick(query);
-            var filtered = this.Where(m => StringUtil.ContainsAllKeywords(requiredKeywords, m.Text)).ToList();
-            return new AIMemorys(filtered);
+            if (requiredKeywords.Count > 0)
+            {
+                HttpBase.Trace($"Filtering for required keywords: {String.Join(", ", requiredKeywords)}", this);
+                var filtered = this.Where(m => StringUtil.ContainsAllKeywords(requiredKeywords, m.Text)).ToList();
+                return new AIMemorys(filtered);
+            }
+            return this;
         }
 
         public AIMemorys() : base()
