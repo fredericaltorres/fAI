@@ -11,6 +11,9 @@ public partial class SkillManager
         {
             public SkillFrontmatter Frontmatter { get; set; }
             public string MarkdownBody { get; set; }
+            public string FileName { get; set; }
+            public string Name { get; set; }
+
 
             public static SkillFile LoadSkillMd(string filePath)
             {
@@ -29,6 +32,8 @@ public partial class SkillManager
                 {
                     Frontmatter = frontmatter,
                     MarkdownBody = markdownBody,
+                    FileName = filePath,
+                    Name =  Path.GetFileName(Path.GetDirectoryName(filePath))
                 };
             }
         }

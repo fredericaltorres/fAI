@@ -144,8 +144,6 @@ namespace fAI
             return File.Exists(path);
         }
 
-   
-
         public SkillFileInfo GetSkillInfo(string skillName)
         {
             var path = ResolveSkillPath(skillName);

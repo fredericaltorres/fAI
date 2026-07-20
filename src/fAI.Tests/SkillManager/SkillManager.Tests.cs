@@ -331,6 +331,10 @@ namespace fAI.Tests
             Assert.True(info.SizeBytes > 0);
             Assert.True(info.LastModified > DateTime.MinValue);
             Assert.Contains("SKILL.md", info.FilePath);
+
+            var skillFile = info.LoadSkill(); // Ensure it can load the skill without exceptions
+            Assert.Equal("DataAnalysisAndInsights", skillFile.Name);
+            Assert.Contains("SKILL.md", skillFile.FileName);
         }
 
         [Fact()]
