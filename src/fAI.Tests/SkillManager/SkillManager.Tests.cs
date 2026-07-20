@@ -69,9 +69,10 @@ namespace fAI.Tests
             var skills = skillManager.ListSkills();
 
             Assert.NotNull(skills);
-            Assert.Equal(2, skills.Count);
+            Assert.Equal(3, skills.Count);
             Assert.Contains("DataAnalysisAndInsights", skills);
             Assert.Contains("WordDocumentGeneration", skills);
+            Assert.Contains("spine-orthopedic-surgeon", skills);
         }
 
         [Fact()]
@@ -144,6 +145,26 @@ namespace fAI.Tests
         #endregion
 
         #region ReadSkill Tests
+
+        [Fact()]
+        public void QueryHasSkills()
+        {
+            Assert.True(SkillManager.QueryHasSkills("/DataAnalysisAndInsights Analyze this data"));
+            Assert.False(SkillManager.QueryHasSkills("DataAnalysisAndInsights Analyze this data"));
+        }
+
+        [Fact()]
+        public void RemoveSkillNameFromText()
+        {
+            Assert.Equal("Analyze this data", SkillManager.RemoveSkillNameFromText("/DataAnalysisAndInsights Analyze this data"));
+        }
+
+        [Fact()]
+        public void ExtractSkillNameFromText()
+        {
+            Assert.Equal("DataAnalysisAndInsights", SkillManager.ExtractSkillNameFromText("/DataAnalysisAndInsights Analyze this data"));
+        }
+
 
         [Fact()]
         public void ReadSkill_WithValidSkill_ReturnsContent()
@@ -264,11 +285,13 @@ namespace fAI.Tests
             var allSkills = skillManager.ReadAllSkills();
 
             Assert.NotNull(allSkills);
-            Assert.Equal(2, allSkills.Count);
+            Assert.Equal(3, allSkills.Count);
             Assert.True(allSkills.ContainsKey("DataAnalysisAndInsights"));
             Assert.True(allSkills.ContainsKey("WordDocumentGeneration"));
+            Assert.True(allSkills.ContainsKey("spine-orthopedic-surgeon"));
             Assert.Contains("Data Analysis And Insights", allSkills["DataAnalysisAndInsights"].LoadSkill().MarkdownBody);
             Assert.Contains("Word Document Generation", allSkills["WordDocumentGeneration"].LoadSkill().MarkdownBody);
+            Assert.Contains("Spine Orthopedic Surgeon", allSkills["spine-orthopedic-surgeon"].LoadSkill().MarkdownBody);
 
             foreach(var skill in allSkills)
             {
@@ -337,9 +360,10 @@ namespace fAI.Tests
             var infos = skillManager.GetAllSkillInfos();
 
             Assert.NotNull(infos);
-            Assert.Equal(2, infos.Count);
+            Assert.Equal(3, infos.Count);
             Assert.Contains(infos, i => i.Name == "DataAnalysisAndInsights");
             Assert.Contains(infos, i => i.Name == "WordDocumentGeneration");
+            Assert.Contains(infos, i => i.Name == "spine-orthopedic-surgeon");
             Assert.All(infos, i => Assert.True(i.SizeBytes > 0));
         }
 

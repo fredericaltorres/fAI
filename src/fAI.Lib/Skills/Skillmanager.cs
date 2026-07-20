@@ -60,6 +60,42 @@ namespace fAI
                 throw new DirectoryNotFoundException($"skills directory not found: {_rootPath}");
         }
 
+
+
+        public static bool QueryHasSkills(string text)
+        {
+            return text.Trim().StartsWith("/");
+        }
+
+        public static string RemoveSkillNameFromText(string text)
+        {
+            if (QueryHasSkills(text))
+            {
+                var spaceIndex = text.IndexOf(' ');
+                return text.Substring(spaceIndex + 1).Trim();
+            }
+            return text;
+        }
+
+        public static string ExtractSkillNameFromText(string text)
+        {
+            if (QueryHasSkills(text))
+            {
+                var spaceIndex = text.IndexOf(' ');
+                return text.Substring(1, spaceIndex).Trim();
+            }
+            return text;
+        }
+
+
+
+
+
+
+
+
+
+
         public SkillFileInfo ReadSkill(string skillName)
         {
             var path = ResolveSkillPath(skillName);
