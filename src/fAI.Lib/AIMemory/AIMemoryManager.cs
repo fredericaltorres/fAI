@@ -840,6 +840,7 @@ namespace fAI
             var z = new HybridSearchResult() { Query = query };
             try
             {
+                Trace($"{DS.Dictionary(new { query, bm25ScoreOrMode, bm25MinimumScore, semanticMinimumScore, rrfMinimumScore, rffApplyGapOutlierDetection }).Format()}");
                 var allAiMemories = this.GetAll();
                 AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query.Replace(StringUtil.REQUIRED_KEYWORD_PREFIX , ""), allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
@@ -847,6 +848,7 @@ namespace fAI
                 if (query.Contains(StringUtil.REQUIRED_KEYWORD_PREFIX))
                 {
                     bm25Results = bm25Results.FilterForRequiredKeyWords(query, "bm25");
+                    TraceAIMemorys(bm25Results, $"BM25(RequiredKeyword):");
                 }
 
                 if (isBm25HasStrongResult)
@@ -861,6 +863,7 @@ namespace fAI
                     if (query.Contains(StringUtil.REQUIRED_KEYWORD_PREFIX))
                     {
                         sResults = sResults.FilterForRequiredKeyWords(query, "semantic");
+                        TraceAIMemorys(sResults, $"Semantic(RequiredKeyword):");
                     }
                     
                     ranker.AddUpdateSemanticScore(sResults);
