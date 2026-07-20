@@ -22,9 +22,11 @@ namespace fAI.Util.Strings
             return keywords.All(keyword => lowerText.Contains(keyword.ToLowerInvariant()));
         }
 
+        public const string REQUIRED_KEYWORD_PREFIX = "~";
+
         public static List<string> ExtractBacktick(string input)
         {
-            var matches = Regex.Matches(input, @"`(\w+)");
+            var matches = Regex.Matches(input, $@"{REQUIRED_KEYWORD_PREFIX}(\w+)");
             return matches
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
