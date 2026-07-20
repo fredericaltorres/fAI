@@ -174,20 +174,44 @@ namespace fAI.Tests
         }
 
         [Fact]
-        public void ExtractBacktick()
+        public void ExtractBackTilda()
         {
             // Demonstrates the optional whitespace-cleanup step
-            var words = StringUtil.ExtractBacktick("hello `Karin health issue.");
+            var words = StringUtil.ExtractBackTilda("hello ~Karin health issue.");
             Assert.Single(words);
             Assert.Equal(new List<string> { "Karin" }, words);
 
-            var words2 = StringUtil.ExtractBacktick("hello `Karin health `issue.");
+            var words2 = StringUtil.ExtractBackTilda("hello ~Karin health ~issue.");
             Assert.Equal(2, words2.Count);
             Assert.Equal(new List<string> { "Karin", "issue" }, words2);
 
-            var words3 = StringUtil.ExtractBacktick("hello `Karin-health `issue.");
+            var words3 = StringUtil.ExtractBackTilda("hello ~Karin-health ~issue.");
             Assert.Equal(2, words3.Count);
             Assert.Equal(new List<string> { "Karin", "issue" }, words3);
+        }
+
+        [Fact]
+        public void ExtractAndRemoveQueryRequiredKeywords()
+        {
+            // Demonstrates the optional whitespace-cleanup step
+            var (keyword, cleaned) = StringUtil.ExtractAndRemoveQueryRequiredKeywords( @"Analyse as a Orthopedic Spine Surgeons, Karin health issue. and find the root cause based on your medical knowledge. ~Karin is a dialysis patient. ((~January ~February ~Rickert ~Pier))");
+            Assert.Equal("~January ~February ~Rickert ~Pier", keyword);
+            Assert.Equal("Analyse as a Orthopedic Spine Surgeons, Karin health issue. and find the root cause based on your medical knowledge. ~Karin is a dialysis patient.", cleaned);
+
+            (keyword, cleaned) = StringUtil.ExtractAndRemoveQueryRequiredKeywords(@"Analyse as a Orthopedic Spine Surgeons, Karin health issue. and find the root cause based on your medical knowledge. ~Karin is a dialysis patient. (())");
+            Assert.Equal("", keyword);
+            Assert.Equal("Analyse as a Orthopedic Spine Surgeons, Karin health issue. and find the root cause based on your medical knowledge. ~Karin is a dialysis patient.", cleaned);
+
+            (keyword, cleaned) = StringUtil.ExtractAndRemoveQueryRequiredKeywords(@"bla bla");
+            Assert.Null(keyword);
+            Assert.Equal("bla bla", cleaned);
+        }
+
+        [Fact]
+        public void ExtractAndRemoveQueryRequiredKeywords_RunTimeError()
+        {
+            var exception = Assert.Throws<ArgumentException>(() => StringUtil.ExtractAndRemoveQueryRequiredKeywords(@"Analyse as a Orthopedic Spine Surgeons, Karin health issue. and find the root cause based on your medical knowledge. ~Karin is a dialysis patient. ( (~January ~February ~Rickert ~Pier))"));
+            Assert.Equal("Input string must contain a matching '((' for the trailing '))'.", exception.Message);
         }
     }
 }

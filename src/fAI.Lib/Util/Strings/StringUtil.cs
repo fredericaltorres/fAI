@@ -24,7 +24,7 @@ namespace fAI.Util.Strings
 
         public const string REQUIRED_KEYWORD_PREFIX = "~";
 
-        public static List<string> ExtractBacktick(string input)
+        public static List<string> ExtractBackTilda(string input)
         {
             var matches = Regex.Matches(input, $@"{REQUIRED_KEYWORD_PREFIX}(\w+)");
             return matches
@@ -32,6 +32,37 @@ namespace fAI.Util.Strings
                 .Select(m => m.Groups[1].Value)
                 .Select(s => s.Trim())
                 .ToList();
+        }
+
+        public static (string Keyword, string Cleaned) ExtractAndRemoveQueryRequiredKeywords(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return (null, input);
+
+            string trimmed = input.TrimEnd();
+
+            // Must end with "))"
+            if (!trimmed.EndsWith("))", StringComparison.Ordinal))
+                return (null, input);
+
+            // Find the matching "((" for the trailing "))"
+            int openIndex = trimmed.LastIndexOf("((", StringComparison.Ordinal);
+            if (openIndex < 0)
+                throw new ArgumentException("Input string must contain a matching '((' for the trailing '))'.");
+
+            int closeIndex = trimmed.Length - 2; // position of "))"
+            if (closeIndex <= openIndex + 1)
+                return (null, input); // malformed / nothing in between
+
+            // Extract keyword between "((" and "))"
+            string keyword = trimmed.Substring(openIndex + 2, closeIndex - (openIndex + 2)).Trim();
+
+            // Remove the "((...))" segment (including the markers) from the original string
+            string before = trimmed.Substring(0, openIndex);
+            string after = trimmed.Substring(closeIndex + 2);
+            string cleaned = (before + after).Trim();
+
+            return (keyword.Trim(), cleaned.Trim());
         }
 
         public static string CapitalizeWords(string input)

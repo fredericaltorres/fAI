@@ -132,7 +132,7 @@ namespace fAI
             {
                 var entries = EntriesDictionary.Values.ToList();
 
-                TraceEntries(entries, $"RankHybrid(applyGapOutlierDetection: {applyGapOutlierDetection}, k: {k}");
+                TraceEntries(entries, $"RankHybrid(applyGapOutlierDetection: {applyGapOutlierDetection}, k: {k}) Starting...");
 
                 var entriesSortedForBm25 = entries.OrderByDescending(e => e.Bm25Score).ToList();    
                 for(var rank = 0; rank < entriesSortedForBm25.Count; rank++)

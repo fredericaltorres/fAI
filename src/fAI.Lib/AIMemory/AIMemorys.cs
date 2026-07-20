@@ -26,7 +26,7 @@ namespace fAI
         }
         public AIMemorys FilterForRequiredKeyWords(string query, string dataSourceInfo)
         {
-            var requiredKeywords = StringUtil.ExtractBacktick(query);
+            var requiredKeywords = StringUtil.ExtractBackTilda(query);
             if (requiredKeywords.Count > 0)
             {
                 HttpBase.Trace($"Filtering {dataSourceInfo} for required keywords: {String.Join(", ", requiredKeywords)}", this);
