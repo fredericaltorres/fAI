@@ -56,7 +56,7 @@ namespace fAI
 
                 "deepseek/deepseek-v4-flash",       // $0.084 / $0.168 per 1M, Context, 1M Released Apr 23, 2026
                 "deepseek/deepseek-v4-pro",         // $0.435 / $0.87per 1M, Context 1M, Released Apr 23, 2026
-
+                "thinkingmachines/inkling",         // $1 / $4.05per 1M Context 1M, Released Jul 17, 2026
                 //"mistralai/mistral-large-2512",
                 //"mistralai/mistral-medium-3.1",
 
