@@ -868,6 +868,9 @@
     <None Include="TestFiles\MarkdownWithFrontLoader.2.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestFiles\MarkdownWithNoFrontLoader.2.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\MarkdownWithNoFrontLoader.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

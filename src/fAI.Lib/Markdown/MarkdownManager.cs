@@ -36,6 +36,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -729,7 +730,18 @@ namespace fAI
             return html;
         }
 
-        public static string ExtractTitle(string markdown, string fileName)
+        public static string ReplaceTitle(string markdown, string newTitle)
+        {
+            var title = ExtractTitle(markdown, null, returnFullSection: true);
+
+            if(!newTitle.Trim().StartsWith("#"))
+                newTitle = "# " + newTitle.Trim();
+
+            markdown = markdown.Replace(title, newTitle);
+            return markdown;
+        }
+
+        public static string ExtractTitle(string markdown, string fileName, bool returnFullSection = false)
         {
             if (string.IsNullOrWhiteSpace(markdown))
                 return null;
@@ -745,8 +757,12 @@ namespace fAI
                 {
                     var headingLevel = match.Groups[1].Value.Length;
                     var headingText = match.Groups[2].Value.Trim();
-                    if (headingLevel == 1) // If it's an H1 heading, return it as the title
+                    if (headingLevel == 1)
+                    {// If it's an H1 heading, return it as the title
+                        if (returnFullSection)
+                            return match.Value; // Return the full heading line (e.g., "# Title")
                         return headingText;
+                    }
                 }
             }
 

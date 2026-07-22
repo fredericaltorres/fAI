@@ -66,7 +66,7 @@ namespace fAI.Tests
             ";
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Conversation_GenericAI_MarkDownManipulation()
         {
             var instructions = DS.List(
@@ -101,7 +101,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_Generation_2()
         {
             var text = markDownContentTestPlan1;
@@ -112,7 +112,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_Generation_1()
         {
             var text = @"
@@ -270,7 +270,7 @@ public static void Main()
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Basic_Markdown_GetImages()
         {
             var images = MarkdownManager.GetImages(BASIC_MARKDOWN_WITH_IMAGE);
@@ -278,7 +278,7 @@ public static void Main()
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Basic_Markdown_ToText()
         {
             var textMarkDown = MarkdownManager.ConvertToText(BASIC_MARKDOWN_1);
@@ -292,6 +292,23 @@ public static void Main()
 
             Assert.Equal("My Blog Post", result);
         }
+
+        [Fact]
+        public void ReplaceTitle()
+        {
+            var markdown = @"
+# the title
+
+## Overview
+hello world
+
+## Conclusion
+bye
+";
+            var result = MarkdownManager.ReplaceTitle(markdown, "New Title");
+            Assert.StartsWith("# New Title", result.Trim());
+        }
+
 
         [Fact]
         public void ExtractTitle_WithMultipleHeadings_ReturnsFirstH1()
@@ -334,14 +351,14 @@ public static void Main()
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Basic_Markdown_Generation_With_CSharpCode()
         {
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_WITH_CSHARP_CODE_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Basic_Markdown_Generation_1()
         {
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
@@ -350,7 +367,7 @@ public static void Main()
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_LoadWithFrontLoader()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.2.md");
@@ -381,7 +398,7 @@ published: true", MarkDownDocument.FrontMatterYaml);
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_LoadWithoutBase64Image()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\Aristocratic_Desperation_A_Portrait_of_Gambling_Addiction_in_Imperial_Russia_20260529-21.md");
@@ -409,7 +426,7 @@ IMAGE 4
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_LoadWithFrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithFrontLoader.md";
@@ -442,7 +459,7 @@ IMAGE 4
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void Markdown_LoadWith_NO_FrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
@@ -463,7 +480,7 @@ IMAGE 4
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void IsMarkdownContentHasFrontLoader_Yes_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithFrontLoader.2.md";
@@ -479,7 +496,7 @@ IMAGE 4
         }
 
         [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void ExtractTitle()
         {
             var mdFile = @".\one markdown file name.md";
@@ -508,10 +525,10 @@ blah
 
 
             [Fact()]
-        [TestBeforeAfter]
+        //[TestBeforeAfter]
         public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
         {
-            var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.md";
+            var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.2.md";
             var hasFrontLoader = MarkdownManager.HasMarkdownContentFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent);
             Assert.False(hasFrontLoader);
             var markDownContent = MarkdownManager.RemoveMarkdownFrontLoader(MarkdownManager.LoadMarkdownFile(mdFile).RawContent).Trim();
@@ -554,7 +571,7 @@ public static string ExtractBodyBlock(string htmlStr)
 
         /*
                 [Fact()]
-                [TestBeforeAfter]
+                //[TestBeforeAfter]
                 public void RenderCSharp_1()
                 {
                     var (html, style, body)  = MarkdownManager.ConvertCodeToHtml(CSCHARP_CODE_SAMPLE_1, csharp_lang, github_theme);
@@ -565,7 +582,7 @@ public static string ExtractBodyBlock(string htmlStr)
                 }
 
                 [Fact()]
-                [TestBeforeAfter]
+                //[TestBeforeAfter]
                 public void Markdown_Generation_With_CSharpCode()
                 {
                     var text = @"
