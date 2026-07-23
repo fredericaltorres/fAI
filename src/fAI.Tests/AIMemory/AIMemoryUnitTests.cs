@@ -512,7 +512,8 @@ namespace fAI.Tests
             Assert.NotNull(aiMemoryReLoaded);
 
             aiMemory.Enabled = true;
-            aiManager.Update(aiMemory);
+            //aiManager.Update(aiMemory);
+            aiManager.AddUpdate(aiMemory, aiMemory.LocalFile);
 
             aiMemoryReLoaded = aiManager.GetFromId(newId, enabled: true); // return nothing since the record is disabled
             Assert.NotNull(aiMemoryReLoaded);

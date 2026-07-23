@@ -288,6 +288,7 @@ namespace fAI
                     existingAIMemory.Title = d.Title;
                     existingAIMemory.PublishedUrl = d.PublishedUrl;
                     existingAIMemory.MediaBase64 = d.MediaBase64;
+                    existingAIMemory.Enabled = d.Enabled;
 
                     if (clearEmbeddings)
                     {
