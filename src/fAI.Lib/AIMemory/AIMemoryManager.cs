@@ -703,28 +703,22 @@ namespace fAI
             }
         }
 
-        public AIMemory GetFromId(LiteDB.ObjectId id)
+        public AIMemory GetFromId(LiteDB.ObjectId id, bool? enabled = null)
         {
-            using (var db = new LiteDatabase(this.FileName))
-            {
-                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var results = col.Query().Where(x => x.Id == id).ToList();
-                if (results.Count > 0)
-                    return results[0].PrepareAfterLoading();
-                else
-                    return null;
-            }
+            var col = GetAll(enabled: enabled).ToList();
+            var results = col.Where(x => x.Id == id).ToList();
+            if (results.Count > 0)
+                return results[0].PrepareAfterLoading();
+            else
+                return null;
         }
 
-        public List<AIMemory> GetFromIds(List<ObjectId> ids)
+        public List<AIMemory> GetFromIds(List<ObjectId> ids, bool? enabled = null)
         {
             var r = new List<AIMemory>();
-            using (var db = new LiteDatabase(this.FileName))
-            {
-                var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var results = col.Query().Where(x => ids.Contains(x.Id)).Select(e => e.PrepareAfterLoading()).ToList();
-                return results;
-            }
+            var col = GetAll(enabled: enabled).ToList();
+            var results = col.Where(x => ids.Contains(x.Id) && (enabled == null || x.Enabled == enabled)).Select(e => e.PrepareAfterLoading()).ToList();
+            return results;
         }
 
         public (float maxScore, float minimumScore) GetReFineResultWithDynamicScores(AIMemorys docInfo)
@@ -841,7 +835,7 @@ namespace fAI
             try
             {
                 Trace($"{DS.Dictionary(new { query, bm25ScoreOrMode, bm25MinimumScore, semanticMinimumScore, rrfMinimumScore, rffApplyGapOutlierDetection }).Format()}");
-                var allAiMemories = this.GetAll();
+                var allAiMemories = this.GetAll(enabled: true);
                 AIMemorys bm25Results = null;
                 var isBm25HasStrongResult = ExecuteBm25Search(query.Replace(StringUtil.REQUIRED_KEYWORD_PREFIX , ""), allAiMemories, out bm25Results, minimumScoreMode: bm25ScoreOrMode, bm25MinimumScore: bm25MinimumScore);
 
@@ -1025,7 +1019,7 @@ namespace fAI
         {
             var result = new AIMemorys();
             if (all == null)
-                all = this.GetAll();
+                all = this.GetAll(enabled: true);
             foreach (var e in all)
             {
                 if (e.Embeddings != null && e.Embeddings.Count > 0)
@@ -1060,13 +1054,24 @@ namespace fAI
             return am2;
         }
 
-        public IEnumerable<AIMemory> GetAll()
+        public IEnumerable<AIMemory> GetAll(bool? enabled = null)
         {
             using (var db = new LiteDatabase(this.FileName))
             {
                 var col = db.GetCollection<AIMemory>(nameof(AIMemory));
-                var l = col.Query().ToEnumerable();
-                return l.ToList();
+                var l = col.Query().ToEnumerable().ToList(); // By default return all
+
+                if(enabled.HasValue && enabled.Value)
+                {
+                    l = l.Where(e => e.Enabled == true).ToList();
+                }
+
+                if (enabled.HasValue && !enabled.Value)
+                {
+                    l = l.Where(e => e.Enabled == false).ToList();
+                }
+
+                return l;
                 //foreach (var m in l)
                 //    m.PrepareAfterLoading();
                 //return l;

@@ -154,6 +154,7 @@ namespace fAI
         public string BM25ID { get => MID; set => throw new NotImplementedException(); }
 
         public string Summary { get; internal set; }
+        public bool Enabled { get; set; } = true;
 
         public void Init()
         {
