@@ -36,6 +36,7 @@ namespace fAI
                 "openai/gpt-5.6-terra",             // $2.50 / $15per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
                 "openai/gpt-5.6-sol",               // $5 / $30 per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
 
+                "anthropic/claude-fable-5",         // $10 / $50per 1M, Context 1M, Released Jun 9, 2026
                 "anthropic/claude-opus-5",          // $5 / $25per 1M, Context, 1M, Released Jul 24, 2026
                 "anthropic/claude-opus-4.7",        // $5 / $25 per 1M, Context 1M, Released Apr 16, 2026
                 "anthropic/claude-opus-4.7-fast",   // $30 / $150per 1M, Context 1M, Released May 12, 2026
