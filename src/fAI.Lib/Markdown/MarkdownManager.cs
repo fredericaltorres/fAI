@@ -601,9 +601,88 @@ namespace fAI
             return MarkdownLoader.Load(filePath);
         }
 
+        // Matches a markdown table row: a line that starts (after optional
+        // leading whitespace) with '|' and contains at least one more '|'.
+        private static readonly Regex TableRowRegex =
+            new Regex(@"^\s*\|.*\|\s*$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Scans the given markdown text for tables (consecutive lines that
+        /// look like markdown table rows, including the header separator
+        /// row) and ensures there is a blank line immediately after the
+        /// last row of every table. If a blank line already follows the
+        /// table, the text is left unchanged for that table.
+        /// </summary>
+        /// <param name="markdown">The input markdown content.</param>
+        /// <returns>Markdown content with a newline appended after every table.</returns>
+         static string AddNewLineAfterTables(string markdown)
+        {
+            if (string.IsNullOrEmpty(markdown))
+                return markdown;
+
+            // Split while keeping track of the line ending style used by the caller.
+            string newline = markdown.Contains("\r\n") ? "\r\n" : "\n";
+            string[] lines = markdown.Replace("\r\n", "\n").Split('\n');
+
+            var result = new List<string>();
+            int i = 0;
+
+            while (i < lines.Length)
+            {
+                string line = lines[i];
+                result.Add(line);
+
+                bool isTableRow = TableRowRegex.IsMatch(line);
+
+                if (isTableRow)
+                {
+                    // Consume the rest of the contiguous table block.
+                    int j = i + 1;
+                    while (j < lines.Length && TableRowRegex.IsMatch(lines[j]))
+                    {
+                        result.Add(lines[j]);
+                        j++;
+                    }
+
+                    // 'j' now points at the first line after the table
+                    // (or at lines.Length if the table was the last content).
+                    bool nextLineIsBlank = j < lines.Length && string.IsNullOrWhiteSpace(lines[j]);
+
+                    if (!nextLineIsBlank)
+                    {
+                        // Insert a blank line right after the table.
+                        result.Add(string.Empty);
+                    }
+
+                    i = j;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            return string.Join(newline, result);
+        }
+
+        public static void FixMarkdownFile(string mdFileName, string newMdFileName)
+        {
+            var md = LoadMarkdownFile(mdFileName);
+            var nl = Environment.NewLine;
+            md.MarkdownBody = StringUtil.ReplaceLfWithCrlf(md.MarkdownBody);
+            md.MarkdownBody = md.MarkdownBody.Replace($"{nl}---{nl}", $"{nl}{nl}---{nl}{nl}");
+            md.MarkdownBody = AddNewLineAfterTables(md.MarkdownBody);
+            
+            if(md.FrontMatter != null)
+                md.FrontMatter.ExtraFields.Add("MarkdownManager.Fixed", "true");
+
+            md.Update(newMdFileName);
+        }
+
         public static MarkdownDocument UpdateMarkdownFile(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
         {
-            var markdownDocument = MarkdownLoader.Update(filePath, StringUtil.ReplaceLfWithCrlf(newMarkdownBody), frontMatter);
+            var markdownDocument = MarkdownLoader.Update(filePath, newMarkdownBody, frontMatter);
+            FixMarkdownFile(filePath, filePath);
             return MarkdownLoader.Load(filePath);
         }
 

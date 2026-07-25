@@ -66,7 +66,6 @@ namespace fAI.Tests
             ";
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Conversation_GenericAI_MarkDownManipulation()
         {
             var instructions = DS.List(
@@ -101,7 +100,6 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Markdown_Generation_2()
         {
             var text = markDownContentTestPlan1;
@@ -112,7 +110,7 @@ namespace fAI.Tests
         }
 
         [Fact()]
-        //[TestBeforeAfter]
+        
         public void Markdown_Generation_1()
         {
             var text = @"
@@ -270,7 +268,7 @@ public static void Main()
         }
 
         [Fact()]
-        //[TestBeforeAfter]
+        
         public void Basic_Markdown_GetImages()
         {
             var images = MarkdownManager.GetImages(BASIC_MARKDOWN_WITH_IMAGE);
@@ -278,7 +276,6 @@ public static void Main()
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Basic_Markdown_ToText()
         {
             var textMarkDown = MarkdownManager.ConvertToText(BASIC_MARKDOWN_1);
@@ -351,14 +348,24 @@ bye
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Basic_Markdown_Generation_With_CSharpCode()
         {
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_WITH_CSHARP_CODE_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
         }
 
+
         [Fact()]
-        //[TestBeforeAfter]
+        public void Basic_Markdown_Generation_WithTable_Issue()
+        {
+            var markdownFileName = @".\TestFiles\MarkdownWithTableIssueRendering.md";
+            var markdownFixedFileName = @".\TestFiles\MarkdownWithTableIssueRendering.md";
+            MarkdownManager.FixMarkdownFile(markdownFileName, markdownFixedFileName); 
+
+            var markdownContent = MarkdownManager.LoadMarkdownFile(markdownFixedFileName).MarkdownBody;
+            var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(markdownContent, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
+        }
+
+        [Fact()]
         public void Basic_Markdown_Generation_1()
         {
             var htmlMarkDown = MarkdownManager.ConvertToHtmlFile(BASIC_MARKDOWN_1, openInBrowser: true, htmlTemplate: MarkdownManager.HtmlTemplate01);
@@ -367,7 +374,6 @@ bye
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Markdown_LoadWithFrontLoader()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\MarkdownWithFrontLoader.2.md");
@@ -398,7 +404,6 @@ published: true", MarkDownDocument.FrontMatterYaml);
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Markdown_LoadWithoutBase64Image()
         {
             var MarkDownDocument = MarkdownManager.LoadMarkdownFile(@".\TestFiles\Aristocratic_Desperation_A_Portrait_of_Gambling_Addiction_in_Imperial_Russia_20260529-21.md");
@@ -426,7 +431,6 @@ IMAGE 4
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Markdown_LoadWithFrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithFrontLoader.md";
@@ -459,7 +463,6 @@ IMAGE 4
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void Markdown_LoadWith_NO_FrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
@@ -480,7 +483,7 @@ IMAGE 4
         }
 
         [Fact()]
-        //[TestBeforeAfter]
+        
         public void IsMarkdownContentHasFrontLoader_Yes_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithFrontLoader.2.md";
@@ -496,7 +499,6 @@ IMAGE 4
         }
 
         [Fact()]
-        //[TestBeforeAfter]
         public void ExtractTitle()
         {
             var mdFile = @".\one markdown file name.md";
@@ -525,7 +527,6 @@ blah
 
 
             [Fact()]
-        //[TestBeforeAfter]
         public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.2.md";
