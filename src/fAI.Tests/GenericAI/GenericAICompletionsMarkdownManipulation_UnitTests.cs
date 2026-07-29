@@ -587,7 +587,9 @@ tags: [markdown, yaml]
 
 
             var fm = MarkdownLoader.ParseFrontMatter(markdownContent);
-
+            Assert.Equal("primary-care-physician", fm.Name);
+            Assert.Equal("Clinical reasoning and medical knowledge of a board-certified primary care physician (MD, Harvard Medical School). Use whenever the user asks about health, symptoms, medications, lab results, preventive care, screening, chronic disease, mental health, nutrition, exercise, sleep, substance use, pediatric or geriatric care, women's or men's health, sexual health, travel medicine, vaccinations, drug interactions, imaging interpretation, differential diagnosis, or triage. Also trigger for \"act as a doctor,\" \"think like a physician,\" or any clinical perspective request. Trigger broadly — even casual health questions (\"is this mole normal?\", \"my back hurts,\" \"should I get a flu shot?\") should invoke this skill. Does NOT replace a real physician; always reminds users to seek in-person care.", fm.Description);
+            Assert.Equal(2, fm.Tags.Count);
         }
 
 

@@ -225,12 +225,13 @@ public static class MarkdownLoader
     {
         var frontMatter = new FrontMatter();
         string[] lines = yaml.Split('\n');
-
         string currentListKey = null;
+        int i = 0;
 
-        foreach (string rawLine in lines)
+        while (i < lines.Length)
         {
-            string line = rawLine.TrimEnd();
+            string line = lines[i].TrimEnd();
+            i++;
 
             // List item under the current key
             if (line.StartsWith("  - ") || line.StartsWith("- "))
@@ -248,6 +249,13 @@ public static class MarkdownLoader
 
             string key = line.Substring(0, colonIndex).Trim().ToLowerInvariant();
             string value = line.Substring(colonIndex + 1).Trim().Trim('"', '\'');
+
+            // YAML block scalar: value starts with '>' — read all following indented lines
+            if (value.StartsWith(">"))
+            {
+                List<string> blockLines = ParseGreaterThanEqualYamlLine(lines, ref i, value);
+                value = string.Join(" ", blockLines);
+            }
 
             switch (key)
             {
@@ -278,5 +286,29 @@ public static class MarkdownLoader
         }
 
         return frontMatter;
+    }
+
+    private static List<string> ParseGreaterThanEqualYamlLine(string[] lines, ref int i, string value)
+    {
+        var blockLines = new List<string>();
+        string inline = value.Substring(1).Trim();
+        if (!string.IsNullOrEmpty(inline))
+            blockLines.Add(inline);
+
+        while (i < lines.Length)
+        {
+            string next = lines[i].TrimEnd();
+            if (next.Length > 0 && (next[0] == ' ' || next[0] == '\t'))
+            {
+                blockLines.Add(next.Trim());
+                i++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return blockLines;
     }
 }
