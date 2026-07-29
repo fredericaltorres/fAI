@@ -221,7 +221,7 @@ public static class MarkdownLoader
     // Minimal YAML parser for simple key: value pairs and list items (- value).
     // For complex YAML, swap this out for a library like YamlDotNet.
     // -------------------------------------------------------------------------
-    private static FrontMatter ParseFrontMatter(string yaml)
+    public static FrontMatter ParseFrontMatter(string yaml)
     {
         var frontMatter = new FrontMatter();
         string[] lines = yaml.Split('\n');
