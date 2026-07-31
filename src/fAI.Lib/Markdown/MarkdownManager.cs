@@ -670,7 +670,12 @@ namespace fAI
             var md = LoadMarkdownFile(mdFileName);
             var nl = Environment.NewLine;
             md.MarkdownBody = StringUtil.ReplaceLfWithCrlf(md.MarkdownBody);
-            md.MarkdownBody = md.MarkdownBody.Replace($"{nl}---{nl}", $"{nl}{nl}---{nl}{nl}");
+
+            if (!md.MarkdownBody.Contains($"{nl}{nl}---{nl}{nl}"))
+            {
+                md.MarkdownBody = md.MarkdownBody.Replace($"{nl}---{nl}", $"{nl}{nl}---{nl}{nl}");
+            }
+
             md.MarkdownBody = AddNewLineAfterTables(md.MarkdownBody);
             
             if(md.FrontMatter != null)

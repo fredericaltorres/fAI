@@ -172,12 +172,21 @@ public static class MarkdownLoader
 
     public static MarkdownDocument Update(string filePath, string newMarkdownBody, FrontMatter frontMatter = null)
     {
-        var document = Load(filePath);
-        document.MarkdownBody = newMarkdownBody;
-        if (frontMatter != null)
-            document.FrontMatter = frontMatter;
-        document.Update(filePath);
-        return document;
+        if (File.Exists(filePath))
+        {
+            var document = Load(filePath);
+            document.MarkdownBody = newMarkdownBody;
+            if (frontMatter != null)
+                document.FrontMatter = frontMatter;
+            document.Update(filePath);
+            return document;
+        }
+        else
+        {
+            var d = new MarkdownDocument { MarkdownBody= newMarkdownBody, FrontMatter = frontMatter };
+            d.Update(filePath);
+            return d;
+        }
     }
 
     /// <summary>

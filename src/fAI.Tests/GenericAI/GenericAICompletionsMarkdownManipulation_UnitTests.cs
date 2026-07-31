@@ -462,7 +462,32 @@ IMAGE 4
             Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
         }
 
+
         [Fact()]
+        public void Markdown_Create()
+        {
+            var markdownFilename = Path.Combine(Path.GetTempPath(), $"NewMarkdown-{Guid.NewGuid()}.md");
+
+            var createdMarkDown = MarkdownManager.UpdateMarkdownFile(markdownFilename, markDownContentTestPlan1, new FrontMatter {
+                Name = "NewMarkdown",
+                Title = "New Markdown File",
+                Description = "This is a new markdown file created for testing.",
+                Date = DateTime.Now,
+                Tags = new List<string>() { "test", "markdown", "unit-test" },
+            });
+
+            var newMarkdown = MarkdownManager.LoadMarkdownFile(markdownFilename);
+        }
+
+
+
+
+
+
+
+
+
+            [Fact()]
         public void Markdown_LoadWith_NO_FrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
