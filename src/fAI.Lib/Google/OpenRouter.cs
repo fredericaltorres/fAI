@@ -75,6 +75,13 @@ namespace fAI
                 "moonshotai/kimi-k2.6",//    $0.55 / $3.20per 1M, Context 262K
                 "moonshotai/kimi-k3",  // $3 / $15per 1M, Context 1M, Released Jul 16, 2026
 
+                /*
+                    provider: {
+                        order: ["moonshotai/mxfp4",  "baseten/fp8"],
+                        allow_fallbacks: false
+                    }
+                 */
+
                 //"moonshotai/kimi-k2.7-code", TOO SLOW  
                 //"moonshotai/kimi-k2.5",
                 //"moonshotai/kimi-k2-thinking",
