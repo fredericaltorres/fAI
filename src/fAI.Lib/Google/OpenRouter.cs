@@ -74,6 +74,7 @@ namespace fAI
 
                 "moonshotai/kimi-k2.6",//    $0.55 / $3.20per 1M, Context 262K
                 "moonshotai/kimi-k3",  // $3 / $15per 1M, Context 1M, Released Jul 16, 2026
+                "qwen/qwen3.8-max", // $2 / $6per 1M, Context 1M, Released Aug 3, 2026
 
                 /*
                     provider: {
