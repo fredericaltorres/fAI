@@ -24,7 +24,7 @@ namespace fAI.Tests
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
-        Regex _quickFilter = new Regex("gemini-3.1-flash-lite");
+        Regex _quickFilter = new Regex("google/gemini-3.1-flash-lite");
         
         //Regex _quickFilter = null;
 
@@ -96,10 +96,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
-                var sw = Stopwatch.StartNew();
                 var client = new GenericAI();
-                //////var model = "gemini-3.1-flash-lite";
-
                 // Conversation step 1
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Name);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
@@ -136,9 +133,6 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
                 Assert.Equal("user", result3.Contents[4].Role);
                 Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
-
-                sw.Stop();
-                HttpBase.Trace($"[CONVERSATION] Model: {model.Name}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
             }
         }
 
