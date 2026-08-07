@@ -98,9 +98,9 @@ namespace fAI
             public List<ContentMessagePart> Parts { get; set; }
         }
 
-        public static List<string> GetModels(System.Text.RegularExpressions.Regex filter = null)
+        public static List<AIModel> GetModels(System.Text.RegularExpressions.Regex filter = null)
         {
-            var models = new List<string>();
+            var models = new List<AIModel>();
             models.AddRange(OpenRouter.GetModels());
             models.AddRange(Anthropic.GetModels());
             models.AddRange(GoogleAI.GetModels());
@@ -109,9 +109,9 @@ namespace fAI
             if (filter == null)
                 return models;
             else
-                return models.Where(m => filter.IsMatch(m)).ToList();
+                return models.Where(m => filter.IsMatch(m.Name)).ToList();
         }
-
+            
         public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
         {
             HttpBase._timeout = 60 * 4;
@@ -141,11 +141,11 @@ namespace fAI
            List<AnthropicTool> tools = null,
            FunctionCallers functionCallers = null)
         {
-            if (Anthropic.GetModels().Contains(model))
+            if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
             {
                 return new Anthropic(key: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
             }
-            else if (GoogleAI.GetModels().Contains(model))
+            else if (GoogleAI.GetModels().Select(m => m.Name).Contains(model))
             {
                 return new GoogleAI(apiKey: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
             }
@@ -253,10 +253,7 @@ namespace fAI
             return i.LoadSkill();
         }
 
-        /// <summary>
-        /// This mode will not support multithreading
-        /// </summary>
-        public static List<string> __experimentMultiModelMode = new List<string>();
+        
 
         public (string, GenericAI.Contents, GenericAIUsage) Create(
             string prompt, string systemPrompt, string model, 
@@ -264,25 +261,6 @@ namespace fAI
         {
             try
             {
-                var experimentMultiModelMode = new List<string>();
-                if (__experimentMultiModelMode.Count > 0)
-                {
-                    experimentMultiModelMode = __experimentMultiModelMode.ToList();
-                    __experimentMultiModelMode.Clear();
-                    for(var i=0; i<experimentMultiModelMode.Count; i++)
-                    {
-                        var m = experimentMultiModelMode[i];
-                        HttpBase.Trace($"[EXPERIMENT_MULTI_MODEL_MODE] Running model {m} for the same prompt.", this);
-                        base._key = null; // to allow different API keys for different models in the experiment mode, the API key is reset before each call, so that the __Create method will pick up the right key for each model.
-                        var (s, c, u) = __Create(prompt, systemPrompt, m, contents);
-                        if(i == experimentMultiModelMode.Count -1)
-                        {
-                            __experimentMultiModelMode = experimentMultiModelMode;
-                            return (s, c, u); // Return the last model evaluation result to be used in the application
-                        }
-                    }
-                }
-
                 return __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
             }
             catch (Exception e)
@@ -324,7 +302,7 @@ namespace fAI
                     Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
                 });
 
-                if (Anthropic.GetModels().Contains(model))
+                if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
                 {
                     var isAnthpropicFastMode = model.ToLowerInvariant().EndsWith("-fast");
                     model = model.Replace("-fast", "");
@@ -377,7 +355,7 @@ namespace fAI
 
                     return (answerContent.Text, contents, usage);
                 }
-                else if (GoogleAI.GetModels().Contains(model))
+                else if (GoogleAI.GetModels().Select(m => m.Name).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
@@ -407,7 +385,7 @@ namespace fAI
                     return (r.GetText(), contents, usage);
                 }
 
-                else if (OpenRouter.GetModels().Contains(model))
+                else if (OpenRouter.GetModels().Select(m => m.Name).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
@@ -452,7 +430,7 @@ namespace fAI
                     else return (null, contents, usage);
                 }
 
-                else if (OpenAI.GetModels().Contains(model))
+                else if (OpenAI.GetModels().Select(m => m.Name).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");

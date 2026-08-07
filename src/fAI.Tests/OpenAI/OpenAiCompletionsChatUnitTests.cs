@@ -270,12 +270,12 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         {
             foreach (var model in GenericAI.GetModels())
             {
-                if(model == "gemini-2.0-flash")
+                if(model.Name == "gemini-2.0-flash")    
                     continue;
 
                 var client = new GenericAI();
                 var question = "Who was king of France in 1032?";
-                var r = client.Completions.AnswerQuestionBasedOnFacts(model, question, KingOfFrances);
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Name, question, KingOfFrances);
                 Assert.Equal("Henry I", r.Text);
                 HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }
@@ -292,7 +292,7 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
 
                 var client = new GenericAI();
                 var question = "Who was king of france in 2016?";
-                var r = client.Completions.AnswerQuestionBasedOnFacts(model, question, KingOfFrances);
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Name, question, KingOfFrances);
                 Assert.Equal("Answer not found.", r.Text);
                 HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }

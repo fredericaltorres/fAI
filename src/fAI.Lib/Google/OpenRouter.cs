@@ -6,6 +6,36 @@ using System.Security.Cryptography;
 
 namespace fAI
 {
+    public class AIModel 
+    {
+        public string Name { get; set; }
+        public float InputTokenPricePer1M { get; set; }
+        public float OutputTokenPricePer1M { get; set; }
+        public int ContextLength { get; set; }
+        public DateTime ReleaseDate { get; set; }
+        public DateTime KnowledgeCutoff { get; set; }
+
+        public override string ToString()
+        {
+            //return $"Model: {Name}, Input: ${InputTokenPricePer1M}/1M, Output: ${OutputTokenPricePer1M}/1M, Context Length: {ContextLength}, Release Date: {ReleaseDate.ToShortDateString()}, Knowledge Cutoff: {KnowledgeCutoff.ToShortDateString()}";
+            return this.Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var z = obj as AIModel;
+            if (z == null) return false;
+            return this.Name.ToLowerInvariant() == z.Name.ToLowerInvariant();
+        }
+
+        public float ComputeCost(int inputTokens, int outputTokens)
+        {
+            float inputCost = (inputTokens / 1_000_000f) * InputTokenPricePer1M;
+            float outputCost = (outputTokens / 1_000_000f) * OutputTokenPricePer1M;
+            return inputCost + outputCost;
+        }
+    }
+
     public class OpenRouter : HttpBase
     {
         /*
@@ -23,85 +53,52 @@ namespace fAI
     ]
   }'
          */
-        public static List<string> GetModels()
+        public static List<AIModel>  GetModels()
         {
-            return DS.List(
+            var aiModels = new List<AIModel>
+            {
+                new AIModel { Name = "google/gemini-3.1-flash-lite",      InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 1.50f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 7)  },
+                new AIModel { Name = "google/gemini-3.5-flash",           InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 9.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 19),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
+                new AIModel { Name = "openai/gpt-5.5",                    InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 24),  KnowledgeCutoff = new DateTime(2025, 12, 1) },
+                new AIModel { Name = "openai/gpt-5-mini",                 InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 400_000,   ReleaseDate = new DateTime(2025, 8, 7),   KnowledgeCutoff = new DateTime(2024, 5, 1) },
+                new AIModel { Name = "openai/gpt-5.6-luna",               InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
+                new AIModel { Name = "openai/gpt-5.6-terra",              InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
+                new AIModel { Name = "openai/gpt-5.6-sol",                InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
+                new AIModel { Name = "anthropic/claude-fable-5",          InputTokenPricePer1M = 10.00f, OutputTokenPricePer1M = 50.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 6, 9)  },
+                new AIModel { Name = "anthropic/claude-opus-5",           InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 24) },
+                new AIModel { Name = "anthropic/claude-opus-4.7",         InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 16) },
+                new AIModel { Name = "anthropic/claude-opus-4.7-fast",    InputTokenPricePer1M = 30.00f, OutputTokenPricePer1M = 150.00f, ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 12) },
+                new AIModel { Name = "anthropic/claude-opus-4.6",         InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 2, 4)  },
+                new AIModel { Name = "anthropic/claude-sonnet-4.5",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2025, 9, 29),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
+                new AIModel { Name = "anthropic/claude-sonnet-4.6",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 2, 17) },
+                new AIModel { Name = "anthropic/claude-haiku-4.5",        InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 5.00f,   ContextLength = 200_000,   ReleaseDate = new DateTime(2025, 10, 15) },
+                new AIModel { Name = "mistralai/mistral-small-2603",      InputTokenPricePer1M = 0.15f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2026, 3, 16) },
+                new AIModel { Name = "mistralai/mistral-medium-3.1",      InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000,   ReleaseDate = new DateTime(2025, 8, 13),  KnowledgeCutoff = new DateTime(2025, 6, 1) },
+                new AIModel { Name = "mistralai/mistral-medium-3-5",      InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 7.50f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2026, 4, 30) },
+                new AIModel { Name = "mistralai/mistral-medium-3",        InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000 },
+                new AIModel { Name = "mistralai/mistral-large-2512",      InputTokenPricePer1M = 0.50f,  OutputTokenPricePer1M = 1.50f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2025, 12, 1) },
+                new AIModel { Name = "x-ai/grok-4.5",                     InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 500_000,   ReleaseDate = new DateTime(2026, 7, 8)  },
+                new AIModel { Name = "x-ai/grok-4.20",                    InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 2_000_000 },
+                new AIModel { Name = "x-ai/grok-4.3",                     InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 1_000_000 },
+                new AIModel { Name = "deepseek/deepseek-v4-flash",        InputTokenPricePer1M = 0.084f, OutputTokenPricePer1M = 0.168f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
+                new AIModel { Name = "deepseek/deepseek-v4-pro",          InputTokenPricePer1M = 0.435f, OutputTokenPricePer1M = 0.87f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
+                new AIModel { Name = "thinkingmachines/inkling",          InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 4.05f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 17) },
+                new AIModel { Name = "moonshotai/kimi-k2.6",              InputTokenPricePer1M = 0.55f,  OutputTokenPricePer1M = 3.20f,   ContextLength = 262_000 },
+                new AIModel { Name = "moonshotai/kimi-k3",                InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 16) },
+                new AIModel { Name = "qwen/qwen3.8-max",                  InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 8, 3)  },
+            };
+            return aiModels;
 
-                "google/gemini-3.1-flash-lite",     // $0.25 / $1.50 per 1M, Context 1M, Released May 7, 2026
-                "google/gemini-3.5-flash",          // $1.50 / $9per 1M, Context 1M Released May 19, 2026 Knowledge Cutoff Jan 2025
+            //    /*
+            //        provider: {
+            //            order: ["moonshotai/mxfp4",  "baseten/fp8"],
+            //            allow_fallbacks: false
+            //        }
+            //     */
 
-                "openai/gpt-5.5",                   // $5 / $30per 1M, Context 1M, Released Apr 24, 2026, Knowledge Cutoff Dec 2025
-                "openai/gpt-5-mini",                // $0.25 / $2per 1M, Context, 400K, Released, Aug 7, 2025, Knowledge Cutoff May 2024
-                "openai/gpt-5.6-luna",              // $1 / $6per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
-                "openai/gpt-5.6-terra",             // $2.50 / $15per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
-                "openai/gpt-5.6-sol",               // $5 / $30 per 1M, Context, 1M, Released, Jul 9, 2026, Knowledge Cutoff Feb 2026
 
-                "anthropic/claude-fable-5",         // $10 / $50per 1M, Context 1M, Released Jun 9, 2026
-                "anthropic/claude-opus-5",          // $5 / $25per 1M, Context, 1M, Released Jul 24, 2026
-                "anthropic/claude-opus-4.7",        // $5 / $25 per 1M, Context 1M, Released Apr 16, 2026
-                "anthropic/claude-opus-4.7-fast",   // $30 / $150per 1M, Context 1M, Released May 12, 2026
-                "anthropic/claude-opus-4.6",        // $5 / $25 per 1M, Context 1M, Released Feb 4, 2026
 
-                "anthropic/claude-sonnet-4.5",      // $3 / $15per 1M, Context 1M, Released Sep 29, 2025, Knowledge Cutoff Jan 2025
-                "anthropic/claude-sonnet-4.6",      // $3 / $15per 1M, Context 1M, Released Feb 17, 2026
-                "anthropic/claude-haiku-4.5",       // $1 / $5per 1M, Context 200K, Released Oct 15, 2025
-
-                "mistralai/mistral-small-2603",     // Mistral: Mistral Small 4, $0.15 / $0.60 per 1M, Context , 262K Released Mar 16, 2026
-                "mistralai/mistral-medium-3.1",     // $0.40 / $2 per 1M, Context 131K, Released Aug 13, 2025, Knowledge Cutoff Jun 2025
-                "mistralai/mistral-medium-3-5",     // $1.50 / $7.50per 1M, Context 262K, Released Apr 30, 2026
-                "mistralai/mistral-medium-3",       // $0.40 / $ 2per 1M. Context 131K
-                "mistralai/mistral-large-2512",     // Mistral: Mistral Large 3 2512
-
-                "x-ai/grok-4.5",                    // $2 / $6per 1M, Context 500K, Released Jul 8, 2026
-                "x-ai/grok-4.20",                   // $1.25 / $2.50per 1M, Context 2M
-                "x-ai/grok-4.3",                    // $1.25 / $2.50per 1M, Context 1M
-
-                "deepseek/deepseek-v4-flash",       // $0.084 / $0.168 per 1M, Context, 1M Released Apr 23, 2026
-                "deepseek/deepseek-v4-pro",         // $0.435 / $0.87per 1M, Context 1M, Released Apr 23, 2026
-                "thinkingmachines/inkling",         // $1 / $4.05per 1M Context 1M, Released Jul 17, 2026
-                //"mistralai/mistral-large-2512",
-                //"mistralai/mistral-medium-3.1",
-
-                //"minimax/minimax-m3",  TOO SLOW
-                //"minimax/minimax-m2.5",
-                //"minimax/minimax-m2.1",
-                //"minimax/minimax-m2",
-
-                //"nvidia/nemotron-3-super-120b-a12b:free",
-                //"nvidia/nemotron-3-ultra-550b-a55b:free",
-                //"nvidia/nemotron-3.5-content-safety:free", // LIMITED No bullet point or Translate
-                //"nvidia/nemotron-nano-9b-v2:free",
-
-                "moonshotai/kimi-k2.6",//    $0.55 / $3.20per 1M, Context 262K
-                "moonshotai/kimi-k3",  // $3 / $15per 1M, Context 1M, Released Jul 16, 2026
-                "qwen/qwen3.8-max", // $2 / $6per 1M, Context 1M, Released Aug 3, 2026
-
-                /*
-                    provider: {
-                        order: ["moonshotai/mxfp4",  "baseten/fp8"],
-                        allow_fallbacks: false
-                    }
-                 */
-
-                //"moonshotai/kimi-k2.7-code", TOO SLOW  
-                //"moonshotai/kimi-k2.5",
-                //"moonshotai/kimi-k2-thinking",
-
-                //"qwen/qwen3.7-plus", TOO SLOW
-                //"qwen/qwen3.6-35b-a3b",
-                //"qwen/qwen3.6-flash",
-                //"qwen/qwen3.6-plus",
-                //"qwen/qwen3-next-80b-a3b-thinking",
-                // "qwen/qwen3-next-80b-a3b-instruct:free", LIMITED
-
-                //"deepseek/deepseek-v3.2",
-                "deepseek/deepseek-v3.1-terminus",
-                //"deepseek/deepseek-chat-v3.1",
-
-                //"google/gemma-4-26b-a4b-it:free", 
-                //"google/gemma-4-31b-it:free",
-                "amazon/nova-2-lite-v1"
-                );
+            //    );
         }
 
         public OpenRouter(int timeOut = -1, string apiKey = null)

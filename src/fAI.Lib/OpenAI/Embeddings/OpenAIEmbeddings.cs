@@ -66,12 +66,12 @@ namespace fAI
                 chunks.Add(currentText.ToString());
             return chunks;
         }
-        public string TextStudy(string text)
+        public string TextStudy(string text, string tokenType = "input")
         {
             var tokenCount = CountToken(text);
             var wordCount = CountWords(text);
             var textLenth = text.Length;
-            return $"{textLenth} characters, {wordCount} words, {tokenCount} tokens";
+            return $"{textLenth} characters, {wordCount} words, {tokenCount} {tokenType} tokens";
         }
 
         public static int CountWordS(string sentence)

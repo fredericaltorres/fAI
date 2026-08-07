@@ -46,9 +46,6 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 var expectedWords = DS.List("alice", "insurance", "car");
                 var client = new GenericAI();
 
-                //GenericAICompletions.__experimentMultiModelMode = GoogleAI.GetModels();
-                GenericAICompletions.__experimentMultiModelMode = GenericAI.GetModels();
-
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
 
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
@@ -63,7 +60,6 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             }
             finally
             {
-                GenericAICompletions.__experimentMultiModelMode.Clear();
             }
         }
 
@@ -78,10 +74,10 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Name);
                 
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
-                HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
+                HttpBase.Trace($"[SUMMARIZATION] Model: {model.Name}, Duration: {result.Duration:0.0}, ", this);
 
                 Assert.True(client.Completions.LastUsage.InputTokens > 0);
                 Assert.True(client.Completions.LastUsage.OutputTokens > 0);
@@ -105,7 +101,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 //////var model = "gemini-3.1-flash-lite";
 
                 // Conversation step 1
-                var result = client.Completions.TextImprovement(text: text, language: "English", model: model);
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Name);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
 
                 Assert.Equal(2, result.Contents.Count); // Query + Response
@@ -118,7 +114,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 // Conversation step 2
                 var text2 = @"What is this conversation about?";
 
-                var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
+                var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model.Name, systemPrompt: systemPrompt, contents: result.Contents);
                 Assert.Equal(4, result2.Contents.Count); // Query + Response
                 Assert.Equal("user", result2.Contents[0].Role);
                 Assert.True("model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
@@ -130,7 +126,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 // Conversation step 3
                 var text3 = @"is the car insurance proposal approved? Answer with YES or NO only.";
 
-                var result3 = client.Completions.TextImprovement(text: text3, language: "English", model: model, systemPrompt: systemPrompt, contents: result.Contents);
+                var result3 = client.Completions.TextImprovement(text: text3, language: "English", model: model.Name, systemPrompt: systemPrompt, contents: result.Contents);
                 Assert.Contains("yes", result3.Text.ToLower());
 
                 Assert.Equal(6, result3.Contents.Count); // Query + Response
@@ -142,7 +138,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
 
                 sw.Stop();
-                HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
+                HttpBase.Trace($"[CONVERSATION] Model: {model.Name}, Duration: {sw.ElapsedMilliseconds / 1000:0.0}, ", this);
             }
         }
 
@@ -184,8 +180,8 @@ glycemic control and overall well-being.
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
-                HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model.Name, summarizeWordCount: 64);
+                HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model.Name}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
             }
         }
 
@@ -199,7 +195,7 @@ glycemic control and overall well-being.
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
+                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model.Name, summarizeWordCount: 64);
                 HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, text: {result.Text}", this);
             }
         }
@@ -213,8 +209,8 @@ glycemic control and overall well-being.
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:00.00}, Model: {model}, Text: {result.Title}", this);
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Name);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:00.00}, Model: {model.Name}, Text: {result.Title}", this);
             }
         }
 
@@ -225,8 +221,8 @@ glycemic control and overall well-being.
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
-                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model}, Text: {result.Title}", this);
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Name);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model.Name}, Text: {result.Title}", this);
             }
         }
 
@@ -239,7 +235,7 @@ glycemic control and overall well-being.
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model.Name);
                 HttpBase.Trace($"[TRANSLATE] Duration: {result.Duration:00.00}, Model: {model}, destLanguage: {result.TranslatedText}", this);
             }
         }
@@ -253,7 +249,7 @@ glycemic control and overall well-being.
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
+                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model.Name);
                 Assert.NotNull(result.Text);
                 HttpBase.Trace($"[GENERATE-BULLETPOINT] Duration: {result.Duration:00.00}, Model: {model}, Text: {result.Text}", this);
             }
@@ -266,7 +262,7 @@ glycemic control and overall well-being.
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model.Name);
                 HttpBase.Trace($"[TRANSLATE] Model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
@@ -278,7 +274,7 @@ glycemic control and overall well-being.
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
+                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model.Name);
                 HttpBase.Trace($"[GENERATE-BULLETPOINT] Model: {model}, Duration: {result.Duration:0.0}, Text: {result.Text}", this);
             }
         }
@@ -303,9 +299,9 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             foreach (var model in GenericAI.GetModels(_quickFilter))
             {
                 var client = new GenericAI();
-                var result = client.Completions.Conversation(text: CSharpJsonDotNetQuestion, model: model);
+                var result = client.Completions.Conversation(text: CSharpJsonDotNetQuestion, model: model.Name);
                 Assert.Contains("[JsonConverter(typeof(StringEnumConverter))]", result.Response);
-                HttpBase.Trace($"[CONVERSATION] Model: {model}, Duration: {result.Duration:0.0}, Response: {result.Response}", this);
+                HttpBase.Trace($"[CONVERSATION] Model: {model.Name}, Duration: {result.Duration:0.0}, Response: {result.Response}", this);
             }
         }
 
@@ -318,22 +314,22 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 AIPromptCache.Instance.Clear();
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
 
-                Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model.Name));
 
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model));
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is the color of the sky?", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model.Name));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is the color of the sky?", model: model.Name));
 
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model));
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Name     ));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Name));
 
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model.Name));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model.Name));
 
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model));
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model));
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model.Name));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model.Name));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model.Name));
                 
-                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model));
+                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model.Name));
             });
         }
 
@@ -346,23 +342,23 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 try
                 {
                     var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-                    var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model);
+                    var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model.Name);
                     Assert.Contains("Your highest priority is __SOMETHING__", answer);
                     var j = answer.ToJSON();
 
-                    answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do?", model: model);
+                    answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do?", model: model.Name);
                     Assert.Contains("Your next task to do is __SOMETHING__", answer);
 
-                    answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do with the highest priority?", model: model);
+                    answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my next task to do with the highest priority?", model: model.Name);
                     Assert.Contains("Your next task to do with the highest priority is __SOMETHING__", answer);
 
-                    answer = client.Completions.RePhraseQuestionIntoAffirmation("When is my next meeting?", model: model);
+                    answer = client.Completions.RePhraseQuestionIntoAffirmation("When is my next meeting?", model: model.Name);
                     Assert.True(
                         answer.Contains("Your next meeting is at __SOMETHING__") ||
                         answer.Contains("Your next meeting is __SOMETHING__")
                         );
 
-                    answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model);
+                    answer = client.Completions.RePhraseQuestionIntoAffirmation("With whom is my next meeting?", model: model.Name);
                     Assert.Contains("Your next meeting is with __SOMETHING__", answer);
                 }
                 catch (Exception ex)
@@ -379,10 +375,10 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
-                var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model);
+                var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model.Name);
                 //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
-                fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model);
-                fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model);
+                fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model.Name);
+                fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model.Name   );
             });
         }
 
@@ -400,7 +396,7 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI();
-                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model).MetaData;
+                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes1, model: model.Name).MetaData;
                 Assert.Equal("John Smith", medataDictionary["people"].First());
                 Assert.Equal("Paris", medataDictionary["locations"].First());
                 Assert.Equal("2026-01-15", medataDictionary["dates_mentioned"].First());
@@ -416,7 +412,7 @@ I need to prepare a presentation for the next meeting on July 20th, 2026
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI();
-                var keywords = client.Completions.ExtractKeywordFromNotes(notes1, model: model);
+                var keywords = client.Completions.ExtractKeywordFromNotes(notes1, model: model.Name);
                 Assert.True(keywords.Any());
             });
         }
@@ -462,7 +458,7 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-                var metaData = client.Completions.ExtractMetaDataFromNotes(notes2, model: model);
+                var metaData = client.Completions.ExtractMetaDataFromNotes(notes2, model: model.Name);
                 Assert.True(metaData.Keywords.Any());
 
                 var medataDictionary = metaData.MetaData;
@@ -515,7 +511,7 @@ with a follow-up executive briefing tentatively set for the week of June 22nd, 2
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
                 var client = new GenericAI();
-                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model).MetaData;
+                var medataDictionary = client.Completions.ExtractMetaDataFromNotes(notes2, model: model.Name).MetaData;
                 Assert.True(medataDictionary["people"].Count > 1);
                 Assert.True(medataDictionary["dates_mentioned"].Count > 1);
                 Assert.True(medataDictionary["action_items"].Count > 1);

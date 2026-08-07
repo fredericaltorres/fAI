@@ -28,11 +28,17 @@ namespace fAI
             return r.Data[0].Embedding;
         }
 
-        public static List<string> GetModels()
+        public static List<AIModel> GetModels()
         {
-            return DS.List(
-                "gpt-5.4-mini", "gpt-5.5", "gpt-5", /*"gpt-5.1", older version of .2 */ "gpt-5.2", "gpt-5-mini", "gpt-5-nano"
-            );
+            return new List<AIModel> 
+            {
+                new AIModel { Name = "gpt-5.4-mini"},
+                new AIModel { Name = "gpt-5.5"},
+                new AIModel { Name = "gpt-5"},
+                new AIModel { Name = "gpt-5.2"},
+                new AIModel { Name = "gpt-5-mini"},
+                new AIModel { Name = "gpt-5-nano"}
+            };
         }
 
         public OpenAI(int timeOut = -1, string apiKey = null, string openAiOrg = null)

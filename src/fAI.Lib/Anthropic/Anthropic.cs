@@ -8,22 +8,15 @@ namespace fAI
     {
         public static string AnthropicApiVersion = "2023-06-01" ;
 
-        public static List<string> GetModels()
+        public static List<AIModel> GetModels()
         {
-            return DS.List(
-                /// "claude-opus-4-6-fast", // 4-6-fast is the same as 4-6 but with a faster response time, but it may be less accurate. It is not recommended for use in production.
-                /// FAST is not available for the sonnet and haiku models, but it is available for the opus models.
-                "claude-fable-5",
-                "claude-haiku-4-5",
-                "claude-opus-4-7",
-                "claude-opus-4-6",
-                "claude-sonnet-4-5" 
-                
-                //"claude-opus-4-1",
-                //"claude-opus-4-0"
-                //"claude-3-7-sonnet-latest",
-                //"claude-3-5-haiku-latest"
-            );
+            return new List<AIModel> { 
+                new AIModel { Name = "claude-fable-5"},
+                new AIModel { Name = "claude-haiku-4-5"},
+                new AIModel { Name = "claude-opus-4-7"},
+                new AIModel { Name = "claude-opus-4-6"},
+                new AIModel { Name = "claude-sonnet-4-5"},
+            };
         }
 
         public Anthropic(int timeOut = -1, string key = null)

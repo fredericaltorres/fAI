@@ -152,7 +152,7 @@ namespace fAI.Tests
 
             models.ForEach(model =>
             {
-                var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model, tools: DS.List(tool), functionCallers: functionCallers);
+                var r = googleAIClient.Completions.CreateAgenticLoop(userPrompt, model.Name, tools: DS.List(tool), functionCallers: functionCallers);
                 var a = r.GetText();
                 Assert.Contains("partly cloudy", a.ToLowerInvariant());
             });

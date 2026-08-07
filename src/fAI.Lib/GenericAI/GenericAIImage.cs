@@ -1,6 +1,7 @@
 ﻿using AnthropicImageAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static fAI.HumeAISpeech;
 
 namespace fAI
@@ -65,7 +66,7 @@ Be specific and descriptive in your analysis.
 Use MARKDOWN syntax for formatting the response, with headings and bullet points where appropriate.
 ")
         {
-            if (Anthropic.GetModels().Contains(model))
+            if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
             {
                 var analyzer = new ImageAnalyzer(base._key);
                 var (analysis, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
@@ -84,7 +85,7 @@ and reading order of the original. Output only the Markdown — no preamble, no 
 no code fences wrapping the entire output.
 ")
         {
-            if (Anthropic.GetModels().Contains(model))
+            if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
             {
                 var analyzer = new ImageAnalyzer(base._key);
                 var (extractedMarkdown, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
