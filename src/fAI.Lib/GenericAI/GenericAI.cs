@@ -154,6 +154,13 @@ namespace fAI
 
         public class GenericAIUsage 
         {
+
+            public float ComputeCost()
+            {
+                return 1;
+            }
+
+
             [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int TTSTokens { get; set; }
             [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -261,7 +268,15 @@ namespace fAI
         {
             try
             {
-                return __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
+                var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
+
+                GenericAI.GetModels().Where(m => m.Name == model).ToList().ForEach(m =>
+                {
+                    var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
+                    HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}", this);
+                });
+
+                return (result, updatedContents, usage);
             }
             catch (Exception e)
             {
