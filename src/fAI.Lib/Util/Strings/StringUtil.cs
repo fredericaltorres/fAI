@@ -104,6 +104,19 @@ namespace fAI.Util.Strings
             return (int)(CountWords(input) * 0.75f);
         }
 
+        private static readonly Random _random = new Random(Environment.TickCount);
+
+        public static List<string> GetRandom(List<string> theList, int elementCount)
+        {
+            if (theList == null || theList.Count < elementCount)
+                throw new ArgumentException($"List must contain at least {elementCount} elements.");
+
+            return theList
+                .OrderBy(_ => _random.Next())
+                .Take(elementCount)
+                .ToList();
+        }
+
         public static int CountWords(string input)
         {
             if (string.IsNullOrWhiteSpace(input))

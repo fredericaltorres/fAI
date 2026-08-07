@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using fAI;
+using fAI.Util.Strings;
 using Markdig;
 using Newtonsoft.Json;
 using System;
@@ -176,6 +177,8 @@ glycemic control and overall well-being.
                 var client = new GenericAI();
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model.Name, summarizeWordCount: 64);
                 HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model.Name}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}", this);
+                var cost = client.Completions.LastUsage.ComputeCost();
+                Assert.True(cost > 0, $"Cost should be greater than 0 for model {model.Name}");
             }
         }
 
@@ -184,13 +187,15 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_OpenRouterModels()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = OpenRouter.GetModels().Take(4).ToList();
-            
+            var models =  StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Name).ToList(), 3);
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model.Name, summarizeWordCount: 64);
+                var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
                 HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, text: {result.Text}", this);
+
+                var cost = client.Completions.LastUsage.ComputeCost();
+                Assert.True(cost > 0, $"Cost should be greater than 0 for model {model}");
             }
         }
 
@@ -198,13 +203,15 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void GenerateTitle_GenericAI_OpenRouterModels()
         {
-            var models = OpenRouter.GetModels().Take(4).ToList();
+            var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Name).ToList(), 3);
 
             foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Name);
-                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:00.00}, Model: {model.Name}, Text: {result.Title}", this);
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:00.00}, Model: {model}, Text: {result.Title}", this);
+                var cost = client.Completions.LastUsage.ComputeCost();
+                Assert.True(cost > 0, $"Cost should be greater than 0 for model {model}");
             }
         }
 

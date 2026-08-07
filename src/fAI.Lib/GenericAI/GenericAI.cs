@@ -154,12 +154,11 @@ namespace fAI
 
         public class GenericAIUsage 
         {
-
             public float ComputeCost()
             {
-                return 1;
+                var model = GenericAI.GetModels().FirstOrDefault(m => m.Name == this.Model);
+                return model.ComputeCost(InputTokens, OutputTokens);
             }
-
 
             [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
             public int TTSTokens { get; set; }
