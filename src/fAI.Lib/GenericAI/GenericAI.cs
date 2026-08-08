@@ -225,6 +225,9 @@ namespace fAI
                 this.AudioFileSize += u.AudioFileSize;
                 this.Prompt += u.Prompt;
                 this.SystemPrompt += u.SystemPrompt;
+
+                if(string.IsNullOrEmpty(this.Model))
+                    this.Model = u.Model;
             }
 
             public void SetTokenCount( int inputTokens, int outputTokens)
