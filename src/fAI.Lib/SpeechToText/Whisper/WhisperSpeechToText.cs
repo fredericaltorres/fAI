@@ -44,7 +44,7 @@ namespace fAI
             var sw = System.Diagnostics.Stopwatch.StartNew();
             if(extractCaptions)
             {
-                this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
+                model = WHISPERSPEECHTOTEXT_DEFAULT_MODEL_FOR_CAPTIONS;
             }
             this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
 

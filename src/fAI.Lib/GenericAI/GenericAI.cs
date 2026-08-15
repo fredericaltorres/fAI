@@ -157,6 +157,8 @@ namespace fAI
             public float ComputeCost()
             {
                 var model = GenericAI.GetModels().FirstOrDefault(m => m.Name == this.Model);
+                if(model == null)
+                    return 0f;
                 return model.ComputeCost(InputTokens, OutputTokens);
             }
 

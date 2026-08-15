@@ -37,7 +37,8 @@ namespace fAI
                 new AIModel { Name = "gpt-5"},
                 new AIModel { Name = "gpt-5.2"},
                 new AIModel { Name = "gpt-5-mini"},
-                new AIModel { Name = "gpt-5-nano"}
+                new AIModel { Name = "gpt-5-nano"},
+                new AIModel { Name = "gpt-4o-mini-transcribe"}  // Just defined for Whisper speech-to-text so the ComputeCost does not throw, but can be used for other tasks as well
             };
         }
 
