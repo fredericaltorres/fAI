@@ -37,12 +37,17 @@ namespace fAI
         public GenericAICompletions.GenericAIUsage LastUsage { get; set; } = new GenericAICompletions.GenericAIUsage(WHISPERSPEECHTOTEXT_DEFAULT_MODEL, null, null);
 
         public const string WHISPERSPEECHTOTEXT_DEFAULT_MODEL = "gpt-4o-mini-transcribe";  /*"whisper-1"*/
+        public const string WHISPERSPEECHTOTEXT_DEFAULT_MODEL_FOR_CAPTIONS = "whisper-1";
 
         public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = WHISPERSPEECHTOTEXT_DEFAULT_MODEL)
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
+            if(extractCaptions)
+            {
+                this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
+            }
             this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
-            
+
             using (var tfh = new TestFileHelper())
             {
                 if (SpeechToTextEngine.IsUrl(fileNameOrUrl))
