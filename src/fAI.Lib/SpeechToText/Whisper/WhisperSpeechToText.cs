@@ -34,9 +34,11 @@ namespace fAI
         // Special Whisper feature
         public bool WordTimestampGranularities { get; set;} = false;
 
-        public GenericAICompletions.GenericAIUsage LastUsage { get; set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
+        public GenericAICompletions.GenericAIUsage LastUsage { get; set; } = new GenericAICompletions.GenericAIUsage(WHISPERSPEECHTOTEXT_DEFAULT_MODEL, null, null);
 
-        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = "gpt-4o-mini-transcribe" /*"whisper-1"*/)
+        public const string WHISPERSPEECHTOTEXT_DEFAULT_MODEL = "gpt-4o-mini-transcribe";  /*"whisper-1"*/
+
+        public SpeechToTextResult ExtractText(string fileNameOrUrl, string languageIsoCode, bool extractCaptions, string model = WHISPERSPEECHTOTEXT_DEFAULT_MODEL)
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             this.LastUsage = new GenericAICompletions.GenericAIUsage(model, null, null);
