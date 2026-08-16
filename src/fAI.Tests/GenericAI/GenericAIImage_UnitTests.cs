@@ -49,7 +49,7 @@ namespace fAI.Tests
             var i = new GenericAIImage(apiKey: Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY"));
             Anthropic.GetModels().Take(1).ToList().ForEach(model =>
             {
-                var (description, title, usage) = i.AnalyzeImageFromFile(model.Name, imageFileName);
+                var (description, title, usage) = i.AnalyzeImageFromFile(model.Id, imageFileName);
                 Assert.True(description.Length > 0);
                 Assert.True(title.Length > 0);    
                 Assert.NotNull(usage);
@@ -57,7 +57,7 @@ namespace fAI.Tests
                 Assert.True(usage.OutputTokens > 0);
                 Assert.True(usage.Duration > 0);
 
-                (description, title, usage) = i.AnalyzeImageFromFile(model.Name, imageFileName);
+                (description, title, usage) = i.AnalyzeImageFromFile(model.Id, imageFileName);
                 Assert.True(description.Length > 0);
                 Assert.True(title.Length > 0);
                 Assert.NotNull(usage);
@@ -76,7 +76,7 @@ namespace fAI.Tests
             var i = new GenericAIImage();
             Anthropic.GetModels().Take(1).ToList().ForEach(model =>
             {
-                var (markdownExtracted, title, usage) = i.OcrImageFromFile(model.Name, imageFileName);
+                var (markdownExtracted, title, usage) = i.OcrImageFromFile(model.Id, imageFileName);
                 Assert.True(markdownExtracted.Length > 0);
                 Assert.True(title.Length > 0);
                 Assert.NotNull(usage);
@@ -84,7 +84,7 @@ namespace fAI.Tests
                 Assert.True(usage.OutputTokens > 0);
                 Assert.True(usage.Duration > 0);
 
-                (markdownExtracted, title, usage) = i.OcrImageFromFile(model.Name, imageFileName);
+                (markdownExtracted, title, usage) = i.OcrImageFromFile(model.Id, imageFileName);
                 Assert.True(markdownExtracted.Length > 0);
                 Assert.True(title.Length > 0);
                 Assert.NotNull(usage);

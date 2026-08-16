@@ -270,12 +270,12 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
         {
             foreach (var model in GenericAI.GetModels())
             {
-                if(model.Name == "gemini-2.0-flash")    
+                if(model.Id == "gemini-2.0-flash")    
                     continue;
 
                 var client = new GenericAI();
                 var question = "Who was king of France in 1032?";
-                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Name, question, KingOfFrances);
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Id, question, KingOfFrances);
                 Assert.Equal("Henry I", r.Text);
                 HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }
@@ -292,10 +292,35 @@ Trust me, folks, this isn't your ordinary gadget – this is a game-changer. ";
 
                 var client = new GenericAI();
                 var question = "Who was king of france in 2016?";
-                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Name, question, KingOfFrances);
+                var r = client.Completions.AnswerQuestionBasedOnFacts(model.Id, question, KingOfFrances);
                 Assert.Equal("Answer not found.", r.Text);
                 HttpBase.Trace(new { model, r.Duration, r.Text, Answered = "[ANSWER]" }, this);
             }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_GetModels_FirstLoading()
+        {
+            var models = OpenRouter.GetModels(Environment.GetEnvironmentVariable("OPENROUTER_API_KEY"));
+            ValidateModelPrice(models);
+
+            var models2 = OpenRouter.GetModels(Environment.GetEnvironmentVariable("OPENROUTER_API_KEY"));
+            ValidateModelPrice(models2);
+
+            var models3 = OpenRouter.GetModels();
+            ValidateModelPrice(models3);
+        }
+
+        private static void ValidateModelPrice(List<AIModel> models)
+        {
+            var mm = models.FirstOrDefault(m => m.Id == "moonshotai/kimi-k3");
+            Assert.Equal(2.8f, mm.InputTokenPricePer1M);
+            Assert.Equal(14f, mm.OutputTokenPricePer1M);
+
+            mm = models.FirstOrDefault(m => m.Id == "deepseek/deepseek-v4-flash");
+            Assert.Equal(0.06426f, mm.InputTokenPricePer1M);
+            Assert.Equal(0.12852f, mm.OutputTokenPricePer1M);
         }
 
         [Fact()]

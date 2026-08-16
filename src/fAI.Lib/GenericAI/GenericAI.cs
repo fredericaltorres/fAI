@@ -109,7 +109,7 @@ namespace fAI
             if (filter == null)
                 return models;
             else
-                return models.Where(m => filter.IsMatch(m.Name)).ToList();
+                return models.Where(m => filter.IsMatch(m.Id)).ToList();
         }
             
         public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
@@ -141,11 +141,11 @@ namespace fAI
            List<AnthropicTool> tools = null,
            FunctionCallers functionCallers = null)
         {
-            if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
+            if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
             {
                 return new Anthropic(key: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
             }
-            else if (GoogleAI.GetModels().Select(m => m.Name).Contains(model))
+            else if (GoogleAI.GetModels().Select(m => m.Id).Contains(model))
             {
                 return new GoogleAI(apiKey: base._key).Completions.CreateAgenticLoop(userPrompt, model, systemPrompt, tools, functionCallers);
             }
@@ -156,7 +156,7 @@ namespace fAI
         {
             public float ComputeCost()
             {
-                var model = GenericAI.GetModels().FirstOrDefault(m => m.Name == this.Model);
+                var model = GenericAI.GetModels().FirstOrDefault(m => m.Id == this.Model);
                 if(model == null)
                     return 0f;
                 return model.ComputeCost(InputTokens, OutputTokens);
@@ -274,7 +274,7 @@ namespace fAI
             {
                 var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
 
-                GenericAI.GetModels().Where(m => m.Name == model).ToList().ForEach(m =>
+                GenericAI.GetModels().Where(m => m.Id == model).ToList().ForEach(m =>
                 {
                     var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
                     HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}", this);
@@ -321,7 +321,7 @@ namespace fAI
                     Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
                 });
 
-                if (Anthropic.GetModels().Select(m => m.Name).Contains(model))
+                if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
                 {
                     var isAnthpropicFastMode = model.ToLowerInvariant().EndsWith("-fast");
                     model = model.Replace("-fast", "");
@@ -374,7 +374,7 @@ namespace fAI
 
                     return (answerContent.Text, contents, usage);
                 }
-                else if (GoogleAI.GetModels().Select(m => m.Name).Contains(model))
+                else if (GoogleAI.GetModels().Select(m => m.Id).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY");
@@ -404,7 +404,7 @@ namespace fAI
                     return (r.GetText(), contents, usage);
                 }
 
-                else if (OpenRouter.GetModels().Select(m => m.Name).Contains(model))
+                else if (OpenRouter.GetModels().Select(m => m.Id).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
@@ -449,7 +449,7 @@ namespace fAI
                     else return (null, contents, usage);
                 }
 
-                else if (OpenAI.GetModels().Select(m => m.Name).Contains(model))
+                else if (OpenAI.GetModels().Select(m => m.Id).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");

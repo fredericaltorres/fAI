@@ -19,11 +19,11 @@ namespace fAI
         public static List<AIModel> GetModels()
         {
             return new List<AIModel>() {
-                new AIModel { Name = "gemini-3.5-flash"},
-                new AIModel { Name = "gemini-3.1-flash-lite"},
-                new AIModel { Name = "gemini-3-flash-preview"},
-                new AIModel { Name = "gemini-2.5-pro"},
-                new AIModel { Name = "gemini-2.5-flash"}
+                new AIModel { Id = "gemini-3.5-flash"},
+                new AIModel { Id = "gemini-3.1-flash-lite"},
+                new AIModel { Id = "gemini-3-flash-preview"},
+                new AIModel { Id = "gemini-2.5-pro"},
+                new AIModel { Id = "gemini-2.5-flash"}
             };
         }
 

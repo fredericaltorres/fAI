@@ -11,11 +11,11 @@ namespace fAI
         public static List<AIModel> GetModels()
         {
             return new List<AIModel> { 
-                new AIModel { Name = "claude-fable-5"},
-                new AIModel { Name = "claude-haiku-4-5"},
-                new AIModel { Name = "claude-opus-4-7"},
-                new AIModel { Name = "claude-opus-4-6"},
-                new AIModel { Name = "claude-sonnet-4-5"},
+                new AIModel { Id = "claude-fable-5"},
+                new AIModel { Id = "claude-haiku-4-5"},
+                new AIModel { Id = "claude-opus-4-7"},
+                new AIModel { Id = "claude-opus-4-6"},
+                new AIModel { Id = "claude-sonnet-4-5"},
             };
         }
 
