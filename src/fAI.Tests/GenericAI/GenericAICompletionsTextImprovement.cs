@@ -525,7 +525,7 @@ Find root cause.
             {
                 foreach(var testVoice in request.TestsVoices)
                 {
-                    var inputFile = client.GenericAISpeech.Create(text, testVoice, request.Model);
+                    var inputFile = client.GenericAISpeech.Create(text, testVoice, request.Model, cost: request.ComputeCost(text));
                     Assert.True(File.Exists(inputFile));
                 }
             });

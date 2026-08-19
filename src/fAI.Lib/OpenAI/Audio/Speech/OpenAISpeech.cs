@@ -14,7 +14,8 @@ namespace fAI
             string model ,
             string mp3FileName = null,
              string instructions = "Speak in a cheerful and positive tone.",
-             int inputTokenCount = -1);
+             int inputTokenCount = -1,
+             float cost = 0);
     }
         
     public class OpenAISpeech : HttpBase, IGenericAISpeech
@@ -94,7 +95,8 @@ namespace fAI
         public string _Create(string input, string voice, string mp3FileName = null, 
             string model = "gpt-4o-mini-tts", //  tts-1, tts-1-hd, gpt-4o-mini-tts,
             string instructions = "Speak in a cheerful and positive tone.",
-            int inputTokenCount = -1) // "tts-1"
+            int inputTokenCount = -1, 
+            float cost = 0) // "tts-1"
         {
             var inputToken = StringUtil.QuickDeriveTokenCount(input);
             this.LastUsage = new GenericAICompletions.GenericAIUsage(model, input, null);
