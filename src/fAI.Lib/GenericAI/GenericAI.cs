@@ -28,6 +28,7 @@ namespace fAI
 {
     public class GenericAISpeech : HttpBase, IGenericAISpeech
     {
+        //https://openrouter.ai/docs/api/api-reference/tts/create-speech
         public const string __url = "https://openrouter.ai/api/v1/audio/speech";
 
         public GenericAISpeech(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
