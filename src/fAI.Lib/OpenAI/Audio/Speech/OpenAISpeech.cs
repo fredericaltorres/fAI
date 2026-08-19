@@ -87,7 +87,7 @@ namespace fAI
 
         public string Create(string input, string voice, string model, string mp3FileName = null,
             string instructions = "Speak in a cheerful and positive tone.",
-            int inputTokenCount = -1) // "tts-1"
+            int inputTokenCount = -1, float cost = 0) // "tts-1"
         {
             return _Create(input, voice, mp3FileName, model, instructions, inputTokenCount);
         }

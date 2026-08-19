@@ -107,8 +107,8 @@ namespace fAI
                 var ext = wc.GetResponseImageExtension();
                 File.WriteAllBytes(mp3FileName, response.Buffer);
                 sw.Stop();
-                var costStr = cost > 0 ? $"Cost: ${cost:0.0000}, " : "";
-                OpenAI.Trace($"[TTS] Model: {model}, Duration: {sw.ElapsedMilliseconds} ms, {costStr} mp3FileName: ({mp3FileName})", this);
+                var costStr = cost > 0 ? $"Cost: ${cost:0.00000}, " : "";
+                OpenAI.Trace($"[TTS] Duration: {sw.ElapsedMilliseconds} ms, {costStr} Model: {model}, mp3FileName: ({mp3FileName})", this);
                 return mp3FileName;
             }
             else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
