@@ -508,23 +508,6 @@ Find root cause.
         }
 
 
-        public class TTSRequest
-        {
-            public string Input { get; set; }
-            public List<string> Voices { get; set; } 
-            public string TestVoice => Voices != null && Voices.Count > 0 ? Voices[0] : null;
-
-            public List<string> TestsVoices
-            {
-                get
-                {
-                    if (Voices != null && Voices.Count > 0)
-                        return new List<string>() { Voices[0], Voices[this.Voices.Count - 1] };
-                    return new List<string>();
-                }
-            }
-            public string Model { get; set; }
-        }
 
         [Fact()]
         [TestBeforeAfter]
@@ -536,29 +519,13 @@ Jane Doe, a 55-year-old female, presents with extremely painful lower back pain 
 MRI scan shows fracture at L4.
 Find root cause.
 ";
-            var ttsRequests = new List<TTSRequest>
-            {
-                new TTSRequest { Input = text, Model = "mistralai/voxtral-mini-tts-2603", Voices = new List<string>() {
-                    "en_paul_neutral", "en_paul_sad" , "en_paul_happy" , "en_paul_frustrated" , "en_paul_excited" , "en_paul_confident" , "en_paul_cheerful" , "en_paul_angry",
-                    "gb_oliver_neutral", "gb_oliver_sad" , "gb_oliver_excited" , "gb_oliver_curious" , "gb_oliver_confident" , "gb_oliver_cheerful" , "gb_oliver_angry", 
-                    "fr_marie_sad" ,  "fr_marie_happy" , "fr_marie_excited" , "fr_marie_curious" , "fr_marie_angry","fr_marie_neutral",
-                    "gb_jane_sarcasm" , "gb_jane_confused" , "gb_jane_shameful" , "gb_jane_sad" , "gb_jane_neutral" , "gb_jane_jealousy" , "gb_jane_frustrated" , "gb_jane_curious" , "gb_jane_confident"
-                } },
 
-                new TTSRequest { Input = text, Model = "x-ai/grok-voice-tts-1.0", Voices = new List<string>() { "eve", "ara", "rex", "sal", "leo" } },
-                new TTSRequest { Input = text, Model = "deepgram/aura-2", Voices = new List<string>() { "aura-2-thalia-en", "aura-2-agathe-fr", "aura-2-agustina-es", "aura-2-alvaro-es", "aura-2-ama-ja", "aura-2-amalthea-en", "aura-2-andromeda-en", "aura-2-antonia-es", "aura-2-apollo-en", "aura-2-aquila-es", "aura-2-arcas-en", "aura-2-aries-en", "aura-2-asteria-en", "aura-2-athena-en", "aura-2-atlas-en", "aura-2-aurelia-de", "aura-2-aurora-en", "aura-2-beatrix-nl", "aura-2-callista-en", "aura-2-carina-es", "aura-2-celeste-es", "aura-2-cesare-it", "aura-2-cinzia-it", "aura-2-cora-en", "aura-2-cordelia-en", "aura-2-cornelia-nl", "aura-2-daphne-nl", "aura-2-delia-en", "aura-2-demetra-it", "aura-2-diana-es", "aura-2-dionisio-it", "aura-2-draco-en", "aura-2-ebisu-ja", "aura-2-elara-de", "aura-2-electra-en", "aura-2-elio-it", "aura-2-estrella-es", "aura-2-fabian-de", "aura-2-flavio-it", "aura-2-fujin-ja", "aura-2-gloria-es", "aura-2-harmonia-en", "aura-2-hector-fr", "aura-2-helena-en", "aura-2-hera-en", "aura-2-hermes-en", "aura-2-hestia-nl", "aura-2-hyperion-en", "aura-2-iris-en", "aura-2-izanami-ja", "aura-2-janus-en", "aura-2-javier-es", "aura-2-julius-de", "aura-2-juno-en", "aura-2-jupiter-en", "aura-2-kara-de", "aura-2-lara-de", "aura-2-lars-nl", "aura-2-leda-nl", "aura-2-livia-it", "aura-2-luciano-es", "aura-2-luna-en", "aura-2-maia-it", "aura-2-mars-en", "aura-2-melia-it", "aura-2-minerva-en", "aura-2-neptune-en", "aura-2-nestor-es", "aura-2-odysseus-en", "aura-2-olivia-es", "aura-2-ophelia-en", "aura-2-orion-en", "aura-2-orpheus-en", "aura-2-pandora-en", "aura-2-phoebe-en", "aura-2-pluto-en", "aura-2-rhea-nl", "aura-2-roman-nl", "aura-2-sander-nl", "aura-2-saturn-en", "aura-2-selena-es", "aura-2-selene-en", "aura-2-silvia-es", "aura-2-sirio-es", "aura-2-theia-en", "aura-2-uzume-ja", "aura-2-valerio-es", "aura-2-vesta-en", "aura-2-viktoria-de", "aura-2-zeus-en" } },
-                new TTSRequest { Input = text, Model = "qwen/qwen-audio-3.0-tts-flash", Voices = new List<string>() { "longanhuan_v3.6", "loongjohn" } },
-                new TTSRequest { Input = text, Model = "microsoft/mai-voice-2-flash", Voices = new List<string>() { "en-US-Harper:MAI-Voice-2", "es-MX-Valeria:MAI-Voice-2", "fr-FR-Soleil:MAI-Voice-2", "de-DE-Klaus:MAI-Voice-2" } },
-                new TTSRequest { Input = text, Model = "deepgram/flux-tts:free", Voices = new List<string>() { "flux-alexis-en", "flux-bree-en", "flux-brittany-en", "flux-brooke-en", "flux-bruce-en", "flux-cliff-en", "flux-cole-en", "flux-colin-en", "flux-conor-en", "flux-donovan-en", "flux-drew-en", "flux-elise-en", "flux-gemma-en", "flux-haley-en", "flux-hannah-en", "flux-heather-en", "flux-jack-en", "flux-kai-en", "flux-kelsey-en", "flux-kit-en", "flux-maeve-en", "flux-marcelo-en", "flux-marcus-en", "flux-meena-en", "flux-meghan-en", "flux-miles-en", "flux-naveen-en", "flux-paige-en", "flux-priya-en", "flux-rufus-en", "flux-sean-en", "flux-sharon-en", "flux-sienna-en", "flux-tanner-en", "flux-wade-en", "flux-wes-en" } },
-                new TTSRequest { Input = text, Model = "google/gemini-3.1-flash-tts-preview", Voices = new List<string>() {"Zephyr" , "Puck" , "Charon" , "Kore" , "Fenrir" , "Leda" , "Orus" , "Aoede" , "Callirrhoe" , "Autonoe" , "Enceladus" , "Iapetus" , "Umbriel" , "Algieba" , "Despina" , "Erinome" , "Algenib" , "Rasalgethi" , "Laomedeia" , "Achernar" , "Alnilam" , "Schedar" , "Gacrux" , "Pulcherrima" , "Achird" , "Zubenelgenubi" , "Vindemiatrix" , "Sadachbia" , "Sadaltager" , "Sulafat" } },
-            };
-
-            ttsRequests.ForEach(request =>
+            var client = new GenericAI();
+            client.GenericAISpeech.TTSVoiceInfos.ForEach(request =>
             {
-                var client = new GenericAI();
                 foreach(var testVoice in request.TestsVoices)
                 {
-                    var inputFile = client.GenericAISpeech.Create(request.Input, testVoice, request.Model);
+                    var inputFile = client.GenericAISpeech.Create(text, testVoice, request.Model);
                     Assert.True(File.Exists(inputFile));
                 }
             });
