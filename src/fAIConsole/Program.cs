@@ -354,7 +354,7 @@ It also highlights the brutality of slavery and the courage of those who fought 
             var text = $@"{answer} {question.Replace("Who", "")}.";
             if (answer == notFoundAnswer)
                 text = $@"{notFoundAnswer} to the question: {question}.";
-            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo.ToString());
+            var mp3FileName = client.Audio.Speech.Create(text, OpenAISpeech.Voices.echo.ToString(), "gpt-4o-mini-tts");
             AudioUtil.PlayMp3WithWindowsPlayer(mp3FileName);
             Thread.Sleep(1000 * 4);
         }

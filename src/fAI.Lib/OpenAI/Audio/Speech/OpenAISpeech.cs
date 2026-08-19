@@ -8,7 +8,16 @@ using System.Net.Cache;
 
 namespace fAI
 {
-    public class OpenAISpeech : HttpBase
+    public interface IGenericAISpeech
+    {
+        string Create(string input, string voice,
+            string model ,
+            string mp3FileName = null,
+             string instructions = "Speak in a cheerful and positive tone.",
+             int inputTokenCount = -1);
+    }
+        
+    public class OpenAISpeech : HttpBase, IGenericAISpeech
     {
         const string __url = "https://api.openai.com/v1/audio/speech";
 
@@ -75,7 +84,14 @@ namespace fAI
 
         public fAI.GenericAICompletions.GenericAIUsage LastUsage { get; private set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
 
-        public string Create(string input, string voice, string mp3FileName = null, 
+        public string Create(string input, string voice, string model, string mp3FileName = null,
+            string instructions = "Speak in a cheerful and positive tone.",
+            int inputTokenCount = -1) // "tts-1"
+        {
+            return _Create(input, voice, mp3FileName, model, instructions, inputTokenCount);
+        }
+
+        public string _Create(string input, string voice, string mp3FileName = null, 
             string model = "gpt-4o-mini-tts", //  tts-1, tts-1-hd, gpt-4o-mini-tts,
             string instructions = "Speak in a cheerful and positive tone.",
             int inputTokenCount = -1) // "tts-1"
@@ -90,8 +106,8 @@ namespace fAI
             if (inputTokenCount > OPEN_AI_MAX_TOKEN_FOR_SPEECH) // <<<< THIS MAY NOT APPLY WITH THE NEW MODEL gpt-4o-mini-tts
             {
                 var (s1, s2) = SplitFromMiddleOnDot(input);
-                var f1 = Create(s1, voice, mp3FileName: null, model, instructions);
-                var f2 = Create(s2, voice, mp3FileName: null, model, instructions);
+                var f1 = Create(s1, voice, model, mp3FileName: null, instructions);
+                var f2 = Create(s2, voice, model, mp3FileName: null, instructions);
                 var f1WavFile = AudioUtil.ConvertMp3ToWav(f1, f1 + ".wav");
                 var f2WavFile = AudioUtil.ConvertMp3ToWav(f2, f2 + ".wav");
                 var finalMp3 = AudioUtil.ConcatenateWavFiles(f1WavFile, f2WavFile , f1WavFile + ".concat.mp3", asMp3: true);

@@ -285,7 +285,7 @@ glycemic control and overall well-being.
         public void GenerateBulletPoints_GenericAI_IsPassedTheWrongApiKey()
         {
             var model = "gpt-5-nano";
-            var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+            var client = new GenericAI(apiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
             var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model);
             Assert.Null(result.Text);
         }
@@ -342,7 +342,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             {
                 try
                 {
-                    var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                    var client = new GenericAI(apiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
                     var answer = client.Completions.RePhraseQuestionIntoAffirmation("What is my highest priority?", model: model.Id);
                     Assert.Contains("Your highest priority is __SOMETHING__", answer);
                     var j = answer.ToJSON();
@@ -375,7 +375,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         {
             GenericAI.GetModels(_quickFilter).ForEach(model =>
             {
-                var client = new GenericAI(ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
+                var client = new GenericAI(apiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY"));
                 var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model.Id);
                 //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
                 fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model.Id);
@@ -504,6 +504,54 @@ Find root cause.
                 HttpBase.Trace($"[SUMMARIZATION] Model: {model}, Duration: {result.Duration:0.0}, ", this);
                 Assert.True(client.Completions.LastUsage.InputTokens > 0);
                 Assert.True(client.Completions.LastUsage.OutputTokens > 0);
+            });
+        }
+
+
+        public class TTSRequest
+        {
+            public string Input { get; set; }
+            public List<string> Voices { get; set; } 
+            public string TestVoice => Voices != null && Voices.Count > 0 ? Voices[0] : null;
+
+            public List<string> TestsVoices
+            {
+                get
+                {
+                    if (Voices != null && Voices.Count > 0)
+                        return new List<string>() { Voices[0], Voices[this.Voices.Count - 1] };
+                    return new List<string>();
+                }
+            }
+            public string Model { get; set; }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAISpeech_Create()
+        {
+            var text = @"
+diagnose the following patient as a spine orthopedic surgeon:
+Jane Doe, a 55-year-old female, presents with extremely painful lower back pain and in the left legs.
+MRI scan shows fracture at L4.
+Find root cause.
+";
+            var ttsRequests = new List<TTSRequest>
+            {
+                new TTSRequest { Input = text, Model = "deepgram/aura-2", Voices = new List<string>() { "aura-2-thalia-en", "aura-2-agathe-fr", "aura-2-agustina-es", "aura-2-alvaro-es", "aura-2-ama-ja", "aura-2-amalthea-en", "aura-2-andromeda-en", "aura-2-antonia-es", "aura-2-apollo-en", "aura-2-aquila-es", "aura-2-arcas-en", "aura-2-aries-en", "aura-2-asteria-en", "aura-2-athena-en", "aura-2-atlas-en", "aura-2-aurelia-de", "aura-2-aurora-en", "aura-2-beatrix-nl", "aura-2-callista-en", "aura-2-carina-es", "aura-2-celeste-es", "aura-2-cesare-it", "aura-2-cinzia-it", "aura-2-cora-en", "aura-2-cordelia-en", "aura-2-cornelia-nl", "aura-2-daphne-nl", "aura-2-delia-en", "aura-2-demetra-it", "aura-2-diana-es", "aura-2-dionisio-it", "aura-2-draco-en", "aura-2-ebisu-ja", "aura-2-elara-de", "aura-2-electra-en", "aura-2-elio-it", "aura-2-estrella-es", "aura-2-fabian-de", "aura-2-flavio-it", "aura-2-fujin-ja", "aura-2-gloria-es", "aura-2-harmonia-en", "aura-2-hector-fr", "aura-2-helena-en", "aura-2-hera-en", "aura-2-hermes-en", "aura-2-hestia-nl", "aura-2-hyperion-en", "aura-2-iris-en", "aura-2-izanami-ja", "aura-2-janus-en", "aura-2-javier-es", "aura-2-julius-de", "aura-2-juno-en", "aura-2-jupiter-en", "aura-2-kara-de", "aura-2-lara-de", "aura-2-lars-nl", "aura-2-leda-nl", "aura-2-livia-it", "aura-2-luciano-es", "aura-2-luna-en", "aura-2-maia-it", "aura-2-mars-en", "aura-2-melia-it", "aura-2-minerva-en", "aura-2-neptune-en", "aura-2-nestor-es", "aura-2-odysseus-en", "aura-2-olivia-es", "aura-2-ophelia-en", "aura-2-orion-en", "aura-2-orpheus-en", "aura-2-pandora-en", "aura-2-phoebe-en", "aura-2-pluto-en", "aura-2-rhea-nl", "aura-2-roman-nl", "aura-2-sander-nl", "aura-2-saturn-en", "aura-2-selena-es", "aura-2-selene-en", "aura-2-silvia-es", "aura-2-sirio-es", "aura-2-theia-en", "aura-2-uzume-ja", "aura-2-valerio-es", "aura-2-vesta-en", "aura-2-viktoria-de", "aura-2-zeus-en" } },
+                new TTSRequest { Input = text, Model = "qwen/qwen-audio-3.0-tts-flash", Voices = new List<string>() { "longanhuan_v3.6", "loongjohn" } },
+                new TTSRequest { Input = text, Model = "microsoft/mai-voice-2-flash", Voices = new List<string>() { "en-US-Harper:MAI-Voice-2", "es-MX-Valeria:MAI-Voice-2", "fr-FR-Soleil:MAI-Voice-2", "de-DE-Klaus:MAI-Voice-2" } },
+                new TTSRequest { Input = text, Model = "deepgram/flux-tts:free", Voices = new List<string>() { "flux-alexis-en", "flux-bree-en", "flux-brittany-en", "flux-brooke-en", "flux-bruce-en", "flux-cliff-en", "flux-cole-en", "flux-colin-en", "flux-conor-en", "flux-donovan-en", "flux-drew-en", "flux-elise-en", "flux-gemma-en", "flux-haley-en", "flux-hannah-en", "flux-heather-en", "flux-jack-en", "flux-kai-en", "flux-kelsey-en", "flux-kit-en", "flux-maeve-en", "flux-marcelo-en", "flux-marcus-en", "flux-meena-en", "flux-meghan-en", "flux-miles-en", "flux-naveen-en", "flux-paige-en", "flux-priya-en", "flux-rufus-en", "flux-sean-en", "flux-sharon-en", "flux-sienna-en", "flux-tanner-en", "flux-wade-en", "flux-wes-en" } },
+            };
+
+            ttsRequests.ForEach(request =>
+            {
+                var client = new GenericAI();
+                foreach(var testVoice in request.TestsVoices)
+                {
+                    var inputFile = client.GenericAISpeech.Create(request.Input, testVoice, request.Model);
+                    Assert.True(File.Exists(inputFile));
+                }
             });
         }
     }

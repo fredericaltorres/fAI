@@ -509,7 +509,7 @@ namespace fAI
                 }
                 else
                 {
-                    var client = new GenericAI(ApiKey: llmApiKey);
+                    var client = new GenericAI(apiKey: llmApiKey);
                     aiMemory.Title = GenerateTitle(aiMemory, model, language, client);
                     return (true, client.Completions.LastUsage);
                 }
@@ -549,7 +549,7 @@ namespace fAI
                 }
                 else
                 {
-                    var client = new GenericAI(ApiKey: llmApiKey);
+                    var client = new GenericAI(apiKey: llmApiKey);
                     var summaryWordCount = aiMemory.WordCount * percent / 100;
                     aiMemory.Summary = Summarize(aiMemory, model, language, client, summaryWordCount);
                     return (true, client.Completions.LastUsage);
@@ -596,7 +596,7 @@ namespace fAI
             {
                 if (__metadata_computation_on__)
                 {
-                    var client = new GenericAI(ApiKey: llmApiKey);
+                    var client = new GenericAI(apiKey: llmApiKey);
                     var metaDataSources = d.Text;
                     // Front loader should be part of the text
                     //if (d.IsMarkDownFile())

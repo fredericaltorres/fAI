@@ -25,9 +25,62 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
- 
+
+    public class GenericAISpeech : HttpBase, IGenericAISpeech
+    {
+        public const string __url = "https://openrouter.ai/api/v1/audio/speech";
+
+        public GenericAISpeech(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
+        {
+        }
+
+        public string Create(
+            string input, 
+            string voice,
+            string model,
+            string mp3FileName = null, 
+            string instructions = "Speak in a cheerful and positive tone.", 
+            int inputTokenCount = -1)
+        {
+            var sw = Stopwatch.StartNew();
+            OpenAI.Trace(new { input, voice, model }, this);
+
+            if(base._key == null)
+                base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
+
+            if (mp3FileName == null)
+                mp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
+
+            var wc = InitWebClient();
+            var response = wc.POST(__url, GetPayLoad(input, voice, model, instructions));
+            if (response.Success)
+            {
+                var ext = wc.GetResponseImageExtension();
+                File.WriteAllBytes(mp3FileName, response.Buffer);
+                sw.Stop();
+                OpenAI.Trace($"[TTS] Model: {model}, Duration: {sw.ElapsedMilliseconds} ms", this);
+                return mp3FileName;
+            }
+            else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
+        }
+
+        private string GetPayLoad(string input, string voice, string model, string instructions, string response_format = "mp3", int speed = 1)
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                input,
+                model,
+                response_format,
+                speed,
+                voice
+            });
+        }
+    }
+
     public class GenericAI : HttpBase
     {
+        public GenericAISpeech GenericAISpeech => new GenericAISpeech(timeOut: HttpBase._timeout, apiKey: base._key);
+
         public class Contents : List<ContentMessage>
         {
             public List<GPTMessage>  GetOpenAIContents(string systemPrompt)
@@ -112,16 +165,17 @@ namespace fAI
                 return models.Where(m => filter.IsMatch(m.Id)).ToList();
         }
             
-        public GenericAI(int timeOut = -1, string ApiKey = null, string openAiOrg = null)
+        public GenericAI(int timeOut = -1, string apiKey = null, string openAiOrg = null)
         {
             HttpBase._timeout = 60 * 4;
 
             if (timeOut > 0)
                 HttpBase._timeout = timeOut;
 
-            if (ApiKey != null)
-                base._key = ApiKey;
+            if (apiKey != null)
+                base._key = apiKey;
         }
+
         public GenericAICompletions _completions = null;
         public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: base._key));
 

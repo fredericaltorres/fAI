@@ -73,7 +73,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 usage.Add(analyzeImageUsage);
 
                 // Use the same model for the title generation to keep usage consistent
-                var genericAI = new GenericAI(ApiKey: _apiKey);
+                var genericAI = new GenericAI(apiKey: _apiKey);
                 var titleResponse = genericAI.Completions.GenerateTitle(analysis, language: language, model: model);
                 var title = titleResponse.Title;
                 var marker = "# Title";
