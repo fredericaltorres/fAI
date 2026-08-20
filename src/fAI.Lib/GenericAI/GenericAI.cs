@@ -137,7 +137,7 @@ namespace fAI
             else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        private string GetPayLoad(string input, string voice, string model, string instructions, string response_format = "mp3", int speed = 1)
+        private string GetPayLoad(string input, string voice, string model, string instructions, string response_format = "mp3", float speed = 1.2f)
         {
             return JsonConvert.SerializeObject(new
             {
