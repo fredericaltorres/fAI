@@ -131,7 +131,7 @@ namespace fAI
                 File.WriteAllBytes(mp3FileName, response.Buffer);
                 sw.Stop();
                 var costStr = $"Cost: ${cost:0.00000},";
-                OpenAI.Trace($"[TTS] Duration: {sw.ElapsedMilliseconds} ms, {costStr} Model: {model}, mp3FileName: ({mp3FileName})", this);
+                OpenAI.Trace($"[TTS] Duration: {sw.ElapsedMilliseconds:00000} ms, {costStr} Model: {model}, mp3FileName: ({mp3FileName})", this);
                 return mp3FileName;
             }
             else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
