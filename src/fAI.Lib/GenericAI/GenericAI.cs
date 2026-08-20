@@ -110,11 +110,11 @@ namespace fAI
             if (useOpenAI) // this model "gpt-4o-mini-tts" is not supported by OpenRouter, so we use OpenAI directly for this model
             {
                 var openAI = new OpenAI(apiKey: base._key);
-                var f = openAI.Audio.Speech.Create(input, voice, model, mp3FileName, instructions, inputTokenCount, cost);
+                mp3FileName = openAI.Audio.Speech.Create(input, voice, model, mp3FileName, instructions, inputTokenCount, cost);
                 sw.Stop();
                 var costStr = $"Cost: ${cost:0.00000},";
                 OpenAI.Trace($"[TTS] Duration: {sw.ElapsedMilliseconds:00000} ms, {costStr} Model: {model}, mp3FileName: ({mp3FileName})", this);
-                return f;
+                return mp3FileName;
             }
 
             if(base._key == null)
