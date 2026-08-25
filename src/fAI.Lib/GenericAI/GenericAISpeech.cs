@@ -22,7 +22,11 @@ namespace fAI
 
         public List<string> GetModels()
         {
-            return DS.List("openai/gpt-transcribe", "qwen/qwen3-asr-0.6b");
+            return DS.List(
+                "openai/gpt-transcribe", 
+                "qwen/qwen3-asr-0.6b",
+                "x-ai/grok-stt-1.0"
+                );
         }
 
         [JsonConverter(typeof(StringEnumConverter))]

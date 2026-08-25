@@ -531,7 +531,7 @@ Find root cause.
 
         [Fact()]
         [TestBeforeAfter]
-        public void GenericAITranscription_Create()
+        public void GenericAITranscription_Create_Mp3_en()
         {
             var client = new GenericAI();
             var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
@@ -543,6 +543,24 @@ Find root cause.
                 var  (text, usage) = client.Transcription.Create(mp3FileName, model: model);
                 Assert.True(
                     WhisperSpeechToTextEngineTests.ReplacePunctuation(expected1) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text) || 
+                    WhisperSpeechToTextEngineTests.ReplacePunctuation(expected2) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text));
+            });
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAITranscription_Create_wav_en()
+        {
+            var client = new GenericAI();
+            var mp3FileName = base.GetTestFile("Fred Voice Sample - With Compressor - I am Jordan Lee.wav");
+            var expected1 = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+            var expected2 = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I Am crying.";
+
+            client.Transcription.GetModels().Take(1).ToList().ForEach(model =>
+            {
+                var (text, usage) = client.Transcription.Create(mp3FileName, model: model);
+                Assert.True(
+                    WhisperSpeechToTextEngineTests.ReplacePunctuation(expected1) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text) ||
                     WhisperSpeechToTextEngineTests.ReplacePunctuation(expected2) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text));
             });
         }

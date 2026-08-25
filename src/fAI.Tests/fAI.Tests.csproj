@@ -143,6 +143,10 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+    <Content Include="TestFiles\Fred Voice Sample - With Compressor - EN FRANCAIS.ORIGINAL.wav" />
+    <Content Include="TestFiles\Fred Voice Sample - With Compressor - I am Jordan Lee.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestFiles\I am Frederic Torres 2025.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
