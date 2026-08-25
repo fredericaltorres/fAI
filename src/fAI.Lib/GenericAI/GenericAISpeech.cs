@@ -26,11 +26,19 @@ namespace fAI
                 "openai/gpt-transcribe",
                 "openai/gpt-4o-mini-transcribe",
                 "openai/whisper-large-v3-turbo",
+
+                "qwen/qwen3-asr-1.7b",
                 "qwen/qwen3-asr-0.6b",
+                "qwen/qwen3-asr-flash-2026-02-10",
+
                 "x-ai/grok-stt-1.0",
                 "deepgram/nova-3",
+
+                "mistralai/voxtral-small-24b-2507-stt",
+                "mistralai/voxtral-mini-3b-2507",
                 "mistralai/voxtral-mini-transcribe",
-                "qwen/qwen3-asr-flash-2026-02-10"
+                "qwen/qwen3-asr-flash-2026-02-10",
+                "nvidia/nemotron-3.5-asr-streaming-multilingual-0.6b"
                 );
         }
 
@@ -84,8 +92,7 @@ namespace fAI
                     OutputTokens = r.usage.output_tokens,
                 };
                 usage.SetDuration(sw);
-
-                OpenAI.Trace($"[STT] Duration: {sw.ElapsedMilliseconds:00000} ms, Model: {model}", this);
+                OpenAI.Trace($"[STT] Duration: {sw.ElapsedMilliseconds:00000} ms, Cost: {r.usage.cost:0.0000}  Model: {model}", this);
 
                 return (r.text, usage);
             }
