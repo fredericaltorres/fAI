@@ -507,8 +507,6 @@ Find root cause.
             });
         }
 
-
-
         [Fact()]
         [TestBeforeAfter]
         public void GenericAISpeech_Create()
@@ -528,6 +526,18 @@ Find root cause.
                     var inputFile = client.GenericAISpeech.Create(text, testVoice, request.Model, cost: request.ComputeCost(text), useOpenAI: !request.OpenRouterSupported);
                     Assert.True(File.Exists(inputFile));
                 }
+            });
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAITranscription_Create()
+        {
+            var client = new GenericAI();
+            var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
+            client.GenericAITranscription.GetModels().ForEach(model =>
+            {
+                var  (text, usage )= client.GenericAITranscription.Create(mp3FileName, model: model);
             });
         }
     }

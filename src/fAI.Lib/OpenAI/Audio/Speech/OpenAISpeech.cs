@@ -5,9 +5,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Cache;
+using static fAI.GenericAITranscription;
 
 namespace fAI
 {
+    public interface IGenericAITranscription
+    {
+        (string text, GenericAICompletions.GenericAIUsage usage) Create(
+            string audioFileName,
+            string model = "openai/whisper-large-v3",
+            string language = "en"
+        );
+    }
     public interface IGenericAISpeech
     {
         string Create(string input, string voice,
