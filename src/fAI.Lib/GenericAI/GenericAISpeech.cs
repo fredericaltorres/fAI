@@ -1,10 +1,12 @@
 ﻿using DynamicSugar;
 using fAI.Util.Strings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace fAI
 {
@@ -23,6 +25,7 @@ namespace fAI
             return DS.List("openai/gpt-transcribe", "qwen/qwen3-asr-0.6b");
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public enum TranscriptionFormat
         {
             wav,
@@ -63,6 +66,7 @@ namespace fAI
             var response = wc.POST(__url, GetPayLoad(audioFileName, format, model, language));
             if (response.Success)
             {
+                response.SetText(response.Buffer, response.ContenType);
                 var r = TranscriptionResponse.FromJson(response.Text);
                 sw.Stop();
                 var usage = new GenericAICompletions.GenericAIUsage(model, "","")
@@ -83,10 +87,12 @@ namespace fAI
         {
             return JsonConvert.SerializeObject(new
             {
-                data = FileUtil.FileToBase64(audioFileName),
-                format,
+                input_audio = new {
+                    data = FileUtil.FileToBase64(audioFileName),
+                    format,
+                },
+                language,
                 model,
-                language
             });
         }
     }

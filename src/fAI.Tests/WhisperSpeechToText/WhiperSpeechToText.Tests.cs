@@ -14,7 +14,7 @@ namespace fAI.Tests
     [CollectionDefinition("Sequential", DisableParallelization = true)]
     public class WhisperSpeechToTextEngineTests : UnitTestBase
     {
-        private string ReplacePunctuation(string input)
+        public static string ReplacePunctuation(string input)
         {
             var punctuation = new string[] { ",", ".", "!", "?", ";", ":" };
             foreach (var p in punctuation)

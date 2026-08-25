@@ -519,11 +519,11 @@ Find root cause.
 ";
 
             var client = new GenericAI();
-            client.GenericAISpeech.TTSVoiceInfos.ForEach(request =>
+            client.Speech.TTSVoiceInfos.ForEach(request =>
             {
                 foreach(var testVoice in request.TestsVoices)
                 {
-                    var inputFile = client.GenericAISpeech.Create(text, testVoice, request.Model, cost: request.ComputeCost(text), useOpenAI: !request.OpenRouterSupported);
+                    var inputFile = client.Speech.Create(text, testVoice, request.Model, cost: request.ComputeCost(text), useOpenAI: !request.OpenRouterSupported);
                     Assert.True(File.Exists(inputFile));
                 }
             });
@@ -535,9 +535,15 @@ Find root cause.
         {
             var client = new GenericAI();
             var mp3FileName = base.GetTestFile("TestFile.01.48Khz.mp3");
-            client.GenericAITranscription.GetModels().ForEach(model =>
+            var expected1 = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
+            var expected2 = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I Am crying.";
+
+            client.Transcription.GetModels().ForEach(model =>
             {
-                var  (text, usage )= client.GenericAITranscription.Create(mp3FileName, model: model);
+                var  (text, usage) = client.Transcription.Create(mp3FileName, model: model);
+                Assert.True(
+                    WhisperSpeechToTextEngineTests.ReplacePunctuation(expected1) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text) || 
+                    WhisperSpeechToTextEngineTests.ReplacePunctuation(expected2) == WhisperSpeechToTextEngineTests.ReplacePunctuation(text));
             });
         }
     }

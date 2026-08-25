@@ -30,8 +30,8 @@ namespace fAI
 
     public class GenericAI : HttpBase
     {
-        public GenericAISpeech GenericAISpeech => new GenericAISpeech(timeOut: HttpBase._timeout, apiKey: base._key);
-        public GenericAITranscription GenericAITranscription => new GenericAITranscription(timeOut: HttpBase._timeout, apiKey: base._key);
+        public GenericAISpeech Speech => new GenericAISpeech(timeOut: HttpBase._timeout, apiKey: base._key);
+        public GenericAITranscription Transcription => new GenericAITranscription(timeOut: HttpBase._timeout, apiKey: base._key);
 
         public class Contents : List<ContentMessage>
         {
