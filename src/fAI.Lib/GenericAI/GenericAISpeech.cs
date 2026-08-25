@@ -23,9 +23,14 @@ namespace fAI
         public List<string> GetModels()
         {
             return DS.List(
-                "openai/gpt-transcribe", 
+                "openai/gpt-transcribe",
+                "openai/gpt-4o-mini-transcribe",
+                "openai/whisper-large-v3-turbo",
                 "qwen/qwen3-asr-0.6b",
-                "x-ai/grok-stt-1.0"
+                "x-ai/grok-stt-1.0",
+                "deepgram/nova-3",
+                "mistralai/voxtral-mini-transcribe",
+                "qwen/qwen3-asr-flash-2026-02-10"
                 );
         }
 
@@ -80,7 +85,7 @@ namespace fAI
                 };
                 usage.SetDuration(sw);
 
-                OpenAI.Trace($"[TTS] Duration: {sw.ElapsedMilliseconds:00000} ms, Model: {model}", this);
+                OpenAI.Trace($"[STT] Duration: {sw.ElapsedMilliseconds:00000} ms, Model: {model}", this);
 
                 return (r.text, usage);
             }
