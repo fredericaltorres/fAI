@@ -595,6 +595,7 @@ Find root cause.
             client.Transcription.GetModels().ToList().ForEach(model =>
             {
                 var (text, usage) = client.Transcription.Create(mp3FileName, model: model);
+                DS.List("excited", "super", "jordan").ForEach(word => Assert.Contains(word, text.ToLowerInvariant()));
             });
         }
     }
