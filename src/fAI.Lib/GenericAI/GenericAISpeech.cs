@@ -37,7 +37,7 @@ namespace fAI
                 "mistralai/voxtral-small-24b-2507-stt",
                 "mistralai/voxtral-mini-3b-2507",
                 "mistralai/voxtral-mini-transcribe",
-                "qwen/qwen3-asr-flash-2026-02-10",
+                
                 "nvidia/nemotron-3.5-asr-streaming-multilingual-0.6b"
                 );
         }
