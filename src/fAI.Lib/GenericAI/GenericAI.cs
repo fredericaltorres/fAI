@@ -34,6 +34,8 @@ namespace fAI
         public GenericAITranscription Transcription => new GenericAITranscription(timeOut: HttpBase._timeout, apiKey: base._key);
         public GenericAIUtility Utility => new GenericAIUtility(timeOut: HttpBase._timeout, apiKey: base._key);
 
+        public GenericAIImage Image => new GenericAIImage(timeOut: HttpBase._timeout, apiKey: base._key);
+
         public class Contents : List<ContentMessage>
         {
             public List<GPTMessage>  GetOpenAIContents(string systemPrompt)

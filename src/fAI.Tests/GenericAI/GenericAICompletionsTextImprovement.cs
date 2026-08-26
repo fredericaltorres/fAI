@@ -609,5 +609,34 @@ Find root cause.
             Assert.True(credits.TotalCredits > 0);
             Assert.True(credits.CreditsRemaining > 0);
         }
+
+
+        private static string ReplaceInvalidFileNameChars(string fileName)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars();
+            foreach (var c in invalidChars)
+            {
+                fileName = fileName.Replace(c, '_');
+            }
+            return fileName;
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_Image()
+        {
+            var imagePrompt = @"
+A futuristic city skyline at sunset, 
+with flying cars and neon lights, 
+in the style of cyberpunk, highly detailed, 8k resolution
+";
+            var client = new GenericAI();
+            var model = "x-ai/grok-imagine-image-2.0";
+            var imageFileName = Path.Combine(Path.GetTempPath(), $"{ReplaceInvalidFileNameChars(model)}.{Guid.NewGuid()}.jpg");
+            var (image, usage)= client.Image.Create(imagePrompt, model: model, filePath: imageFileName);
+            Assert.True(File.Exists(image));
+            Assert.True(usage.InputTokens > 0);
+            Assert.True(usage.OutputTokens > 0);
+        }
     }
 }

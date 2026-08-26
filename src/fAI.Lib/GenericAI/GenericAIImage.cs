@@ -22,18 +22,24 @@ namespace fAI
         public List<string> GetModels()
         {
             return DS.List(
-               "x-ai/grok-imagine-image-2.0",
-               "qwen/qwen-image-3-pro"
+               "qwen/qwen-image-3-pro",
+               "bytedance-seed/seedream-4.5",
+               "x-ai/grok-imagine-image-2.0"
+               
                 );
         }
 
         public class Datum
         {
             public string b64_json { get; set; }
+            public string media_type { get; set; }
 
-            public string SaveToFile()
+            public string SaveToFile(string filePath = null)
             {
-                var filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.png");
+                var extension = media_type == "image/jpeg" ? ".jpg" : ".png";
+                if (filePath == null)
+                    filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}{extension}");
+
                 var bytes = Convert.FromBase64String(b64_json);
                 System.IO.File.WriteAllBytes(filePath, bytes);
                 return filePath;
@@ -46,10 +52,10 @@ namespace fAI
             public List<Datum> data { get; set; }
             public OpenRouterImageCreationUsage usage { get; set; }
 
-            public string SaveToFile()
+            public string SaveToFile(string filePath = null)
             {
                 if (data != null && data.Count > 0)
-                    return data[0].SaveToFile();
+                    return data[0].SaveToFile(filePath);
                 return null;
             }
 
@@ -58,16 +64,17 @@ namespace fAI
 
         public class OpenRouterImageCreationUsage
         {
+            public int prompt_tokens { get; set; }
             public int completion_tokens { get; set; }
             public double cost { get; set; }
-            public int prompt_tokens { get; set; }
             public int total_tokens { get; set; }
         }
 
 
         public (string text, GenericAICompletions.GenericAIUsage usage) Create(
             string prompt,
-            string model = "x-ai/grok-imagine-image-2.0"
+            string model = "x-ai/grok-imagine-image-2.0",
+            string filePath = null
             )
         {
             OpenAI.Trace(new { model, prompt}, this);
@@ -86,9 +93,11 @@ namespace fAI
                 usage.InputTokens = r.usage.prompt_tokens;
                 usage.OutputTokens = r.usage.completion_tokens;
                 usage.SetDuration(sw);
-                OpenAI.Trace($"[IMAGE] Duration: {sw.ElapsedMilliseconds:00000} ms, Cost: {r.usage.cost:0.0000}  Model: {model}", this);
 
-                return ("", usage);
+                var imageFileName = r.SaveToFile(filePath);
+                OpenAI.Trace($"[IMAGE] Duration: {sw.ElapsedMilliseconds:00000} ms, Cost: {r.usage.cost:0.0000}  Model: {model}, fileName: ({imageFileName})", this);
+
+                return (imageFileName, usage);
             }
             else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
