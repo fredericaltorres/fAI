@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using static fAI.GenericAIUtility;
 using static System.Net.WebRequestMethods;
 
 namespace fAI
@@ -19,13 +21,85 @@ namespace fAI
         {
         }
 
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class Architecture
+        {
+            public List<string> input_modalities { get; set; }
+            public List<string> output_modalities { get; set; }
+        }
+
+        public class Datum
+        {
+            public Architecture architecture { get; set; }
+            public int created { get; set; }
+            public string description { get; set; }
+            public string endpoints { get; set; }
+            public string id { get; set; }
+            public string name { get; set; }
+            public SupportedParameters supported_parameters { get; set; }
+            public bool supports_streaming { get; set; }
+        }
+
+        public class Resolution
+        {
+            public string type { get; set; }
+            public List<string> values { get; set; }
+        }
+
+        public class GetModelsResponse
+        {
+            public List<Datum> data { get; set; }
+
+            public static GetModelsResponse FromJson(string json) => JsonConvert.DeserializeObject<GetModelsResponse>(json, new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal });
+        }
+
+        public class SupportedParameters
+        {
+            public Resolution resolution { get; set; }
+        }
+
+        public List<string> GetModelsApi()
+        {
+            OpenAI.Trace(new { }, this);
+
+            if (base._key == null)
+                base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
+
+            var wc = InitWebClient();
+            var response = wc.GET("https://openrouter.ai/api/v1/images/models");
+            if (response.Success)
+            {
+                var r = GetModelsResponse.FromJson(response.Text);
+                Logger.Trace(response.Text, this);
+                return r.data.Select(x => x.id).ToList();
+            }
+            else throw new OpenAIAudioSpeechException($"{nameof(GetModelsApi)}() failed - {response.Exception.Message}", response.Exception);
+        }
+
         public List<string> GetModels()
         {
             return DS.List(
-               "qwen/qwen-image-3-pro",
-               "bytedance-seed/seedream-4.5",
-               "x-ai/grok-imagine-image-2.0"
-               
+                "recraft/recraft-v4-styles-pro",
+                "recraft/recraft-v4-styles-pro-vector",
+                "qwen/qwen-image-3-pro",
+                "bytedance-seed/seedream-5-0-pro",
+                "x-ai/grok-imagine-image-2.0",
+                "microsoft/mai-image-2.5-pro",
+                "krea/krea-2-medium",
+                "krea/krea-2-medium-turbo",
+                "openai/gpt-image-2",
+                "google/gemini-3.1-flash-image",
+                "google/gemini-3-pro-image",
+                "sourceful/riverflow-v2.5-pro",
+                "sourceful/riverflow-v2.5-fast",
+                "x-ai/grok-imagine-image-quality",
+                "recraft/recraft-v4.1-utility-pro",
+                "openai/gpt-5.4-image-2",
+                "black-forest-labs/flux.2-flex",
+                "black-forest-labs/flux.2-pro",
+                "openai/gpt-5-image",
+                "google/gemini-2.5-flash-image",
+                "meta/muse-image"
                 );
         }
 
