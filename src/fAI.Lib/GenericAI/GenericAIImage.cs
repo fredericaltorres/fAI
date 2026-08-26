@@ -76,30 +76,32 @@ namespace fAI
             else throw new OpenAIAudioSpeechException($"{nameof(GetModelsApi)}() failed - {response.Exception.Message}", response.Exception);
         }
 
-        public List<string> GetModels()
+        public List<string> GetCheapModels()
         {
             return DS.List(
-                "recraft/recraft-v4-styles-pro",
-                "recraft/recraft-v4-styles-pro-vector",
-                "qwen/qwen-image-3-pro",
-                "bytedance-seed/seedream-5-0-pro",
-                "x-ai/grok-imagine-image-2.0",
-                "microsoft/mai-image-2.5-pro",
+                "meta/muse-image",
+                "bytedance-seed/seedream-5-0-lite",
+                "qwen/qwen-image-3",
                 "krea/krea-2-medium",
                 "krea/krea-2-medium-turbo",
+                "google/gemini-3.1-flash-lite-image",
                 "openai/gpt-image-2",
-                "google/gemini-3.1-flash-image",
-                "google/gemini-3-pro-image",
-                "sourceful/riverflow-v2.5-pro",
+                "openai/gpt-image-1-mini",
                 "sourceful/riverflow-v2.5-fast",
+                "microsoft/mai-image-2.5",
                 "x-ai/grok-imagine-image-quality",
-                "recraft/recraft-v4.1-utility-pro",
+                "recraft/recraft-v4.1-utility",
+                "recraft/recraft-v4.1",
+                "recraft/recraft-v4",
+                "recraft/recraft-v3",
                 "openai/gpt-5.4-image-2",
+                "sourceful/riverflow-v2-fast",
+                "black-forest-labs/flux.2-klein-4b",
+                "bytedance-seed/seedream-4.5",
                 "black-forest-labs/flux.2-flex",
                 "black-forest-labs/flux.2-pro",
-                "openai/gpt-5-image",
-                "google/gemini-2.5-flash-image",
-                "meta/muse-image"
+                "openai/gpt-5-image-mini",
+                "google/gemini-2.5-flash-image"
                 );
         }
 

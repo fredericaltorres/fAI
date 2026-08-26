@@ -623,7 +623,7 @@ Find root cause.
 
         [Fact()]
         [TestBeforeAfter]
-        public void GenericAI_Image()
+        public void GenericAI_Image__futuristic_city_skyline_at_sunset()
         {
             var imagePrompt = @"
 A futuristic city skyline at sunset, 
