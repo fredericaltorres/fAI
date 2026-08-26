@@ -598,5 +598,16 @@ Find root cause.
                 DS.List("excited", "super", "jordan").ForEach(word => Assert.Contains(word, text.ToLowerInvariant()));
             });
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_Credits()
+        {
+            var client = new GenericAI();
+            var credits = client.Utility.GetCredits();
+            Assert.NotNull(credits);
+            Assert.True(credits.TotalCredits > 0);
+            Assert.True(credits.CreditsRemaining > 0);
+        }
     }
 }

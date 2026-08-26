@@ -1,98 +1,108 @@
-﻿using AnthropicImageAnalysis;
+﻿using DynamicSugar;
+using fAI.Util.Strings;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using static fAI.HumeAISpeech;
+using System.Diagnostics;
+using System.IO;
+using static System.Net.WebRequestMethods;
 
 namespace fAI
 {
-
-    public partial class GenericAIImage : HttpBase
+    public class GenericAIImage : HttpBase
     {
+        //https://openrouter.ai/docs/api/api-reference/images/generate-an-image
+        public const string __url = "https://openrouter.ai/api/v1/images";
+
         public GenericAIImage(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
         }
 
-        public List<string> GenerateUrl(string prompt, string model = "dall-e-3", int imageCount = 1, OpenAIImage.ImageSize size = OpenAIImage.ImageSize._1024x1024)
+        public List<string> GetModels()
         {
-            if (model == "dall-e-3")
+            return DS.List(
+               "x-ai/grok-imagine-image-2.0",
+               "qwen/qwen-image-3-pro"
+                );
+        }
+
+        public class Datum
+        {
+            public string b64_json { get; set; }
+
+            public string SaveToFile()
             {
-                var client = new OpenAI(apiKey: base._key);
-                var r = client.Image.GenerateDalle(prompt, size: size);
-                return r.GetUrls();
-            }
-            else
-            {
-                throw new Exception($"Model {model} not supported for image generation.");
+                var filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.png");
+                var bytes = Convert.FromBase64String(b64_json);
+                System.IO.File.WriteAllBytes(filePath, bytes);
+                return filePath;
             }
         }
 
-        public List<string> GenerateLocalFile(string prompt, string model = "dall-e-3", int imageCount = 1, OpenAIImage.ImageSize size = OpenAIImage.ImageSize._1024x1024)
+        public class ImageResponse
         {
-            if (model == "dall-e-3")
+            public int created { get; set; }
+            public List<Datum> data { get; set; }
+            public OpenRouterImageCreationUsage usage { get; set; }
+
+            public string SaveToFile()
             {
-                var client = new OpenAI(apiKey: base._key);
-                var r = client.Image.GenerateDalle(prompt, size: size, model: model);
-                if (r.Success)
-                    return r.DownloadImages();
-                else
-                    throw new Exception($"Image generation failed: {r.Exception}");
+                if (data != null && data.Count > 0)
+                    return data[0].SaveToFile();
+                return null;
             }
-            else if (model == "gpt-5.5" || model == "gpt-5.3" /* fast one*/)
-            {
-                var client = new OpenAI(apiKey: base._key);
-                var r = client.Image.GenerateGpt(prompt, size: size, model: model);
-                if (r.Success)
-                    return r.DownloadImages();
-                else
-                    throw new Exception($"Image generation failed: {r.Exception}");
-            }
-            else
-            {
-                throw new Exception($"Model {model} not supported for image generation.");
-            }
+
+            public static ImageResponse FromJson(string json) => JsonConvert.DeserializeObject<ImageResponse>(json, new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal });
         }
 
-        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
-Please analyze this image thoroughly and provide:
-1. **Overall Description** - A concise summary of what the image shows.
-2. **Key Elements** - List the main subjects, objects, or focal points.
-3. **Colors & Composition** - Describe the dominant colors, lighting, and layout.
-4. **Context & Setting** - Infer the environment, time of day, or scenario if possible.
-5. **Mood & Atmosphere** - Describe the emotional tone or feeling conveyed.
-6. **Notable Details** - Highlight any interesting, unusual, or fine-grained details.
-Be specific and descriptive in your analysis.
-
-Use MARKDOWN syntax for formatting the response, with headings and bullet points where appropriate.
-")
+        public class OpenRouterImageCreationUsage
         {
-            if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
-            {
-                var analyzer = new ImageAnalyzer(base._key);
-                var (analysis, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
-                return (analysis, title, usage);
-            }
-            else throw new Exception($"Model {model} not supported for image analysis.");
+            public int completion_tokens { get; set; }
+            public double cost { get; set; }
+            public int prompt_tokens { get; set; }
+            public int total_tokens { get; set; }
         }
 
-        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) OcrImageFromFile(string model, string imagePath, string prompt = @"
-Perform OCR on this image. Extract all visible text and format the output as valid Markdown.
-Use appropriate Markdown elements to reflect the document structure: headings (#, ##, ###)
-for titles and section headers, bullet or numbered lists where lists appear, **bold** or
-*italic* for emphasized text, `code` or code blocks for any code or monospace content,
-tables for tabular data, and blockquotes for quoted content. Preserve the logical hierarchy
-and reading order of the original. Output only the Markdown — no preamble, no explanation,
-no code fences wrapping the entire output.
-")
+
+        public (string text, GenericAICompletions.GenericAIUsage usage) Create(
+            string prompt,
+            string model = "x-ai/grok-imagine-image-2.0"
+            )
         {
-            if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
+            OpenAI.Trace(new { model, prompt}, this);
+
+            var sw = Stopwatch.StartNew();
+            var usage = new GenericAICompletions.GenericAIUsage(model, "","");
+            if (base._key == null)
+                base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
+            var wc = InitWebClient();
+            var response = wc.POST(__url, GetPayLoad(prompt, model));
+            if (response.Success)
             {
-                var analyzer = new ImageAnalyzer(base._key);
-                var (extractedMarkdown, title, usage) = analyzer.AnalyzeImageFromFile(model, imagePath, prompt);
-                return (extractedMarkdown, title, usage);
+                response.SetText(response.Buffer, response.ContenType);
+                var r = ImageResponse.FromJson(response.Text);
+                sw.Stop();
+                usage.InputTokens = r.usage.prompt_tokens;
+                usage.OutputTokens = r.usage.completion_tokens;
+                usage.SetDuration(sw);
+                OpenAI.Trace($"[IMAGE] Duration: {sw.ElapsedMilliseconds:00000} ms, Cost: {r.usage.cost:0.0000}  Model: {model}", this);
+
+                return ("", usage);
             }
-            else throw new Exception($"Model {model} not supported for image analysis.");
+            else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
 
+        private string GetPayLoad(string prompt, string model)
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                prompt,
+                model,
+            });
+        }
     }
 }
+
+
+

@@ -32,6 +32,7 @@ namespace fAI
     {
         public GenericAISpeech Speech => new GenericAISpeech(timeOut: HttpBase._timeout, apiKey: base._key);
         public GenericAITranscription Transcription => new GenericAITranscription(timeOut: HttpBase._timeout, apiKey: base._key);
+        public GenericAIUtility Utility => new GenericAIUtility(timeOut: HttpBase._timeout, apiKey: base._key);
 
         public class Contents : List<ContentMessage>
         {
@@ -131,8 +132,8 @@ namespace fAI
         public GenericAICompletions _completions = null;
         public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: base._key));
 
-        public GenericAIImage _images = null;
-        public GenericAIImage Images => _images ?? (_images = new GenericAIImage(apiKey: base._key));
+        public GenericAIOpenAIImage _images = null;
+        public GenericAIOpenAIImage Images => _images ?? (_images = new GenericAIOpenAIImage(apiKey: base._key));
     }
 
     public partial class GenericAICompletions : HttpBase 

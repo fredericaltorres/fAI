@@ -134,7 +134,7 @@ namespace fAI
         [JsonIgnore] // Ignore for exporting to JSON text
         public List<List<float>> Embeddings { get; set; }
 
-        public int TokenCount { get; set; }
+        public int EmbeddingsTokenCount { get; set; }
         public int EmbeddingsChunkCount { get; set; }
 
         [BsonIgnore]

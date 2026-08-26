@@ -34,7 +34,7 @@ namespace fAI.Tests
         [TestBeforeAfter]
         public void GenerateImage()
         {
-            var i = new GenericAIImage();
+            var i = new GenericAIOpenAIImage();
             DS.List("gpt-5.5", "dall-e-3" ).ForEach(model => 
             {
                 var images = i.GenerateLocalFile(imagePrompt, model);
@@ -46,7 +46,7 @@ namespace fAI.Tests
         public void Completion_AnalyzeImage()
         {
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-            var i = new GenericAIImage(apiKey: Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY"));
+            var i = new GenericAIOpenAIImage(apiKey: Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY"));
             Anthropic.GetModels().Take(1).ToList().ForEach(model =>
             {
                 var (description, title, usage) = i.AnalyzeImageFromFile(model.Id, imageFileName);
@@ -73,7 +73,7 @@ namespace fAI.Tests
         public void Completion_OCR()
         {
             var imageFileName = base.GetTestFile("OCR_1.png");
-            var i = new GenericAIImage();
+            var i = new GenericAIOpenAIImage();
             Anthropic.GetModels().Take(1).ToList().ForEach(model =>
             {
                 var (markdownExtracted, title, usage) = i.OcrImageFromFile(model.Id, imageFileName);

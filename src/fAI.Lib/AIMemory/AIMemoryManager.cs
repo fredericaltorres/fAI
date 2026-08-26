@@ -646,11 +646,10 @@ namespace fAI
                         d.Embeddings = new List<List<float>>();
                         var (v, eUsages) = ToVector(chunks, openAiKey);
                         d.Embeddings.AddRange(v);
-                        d.TokenCount = new OpenAI().Embeddings.CountToken(t);
+                        d.EmbeddingsTokenCount = new OpenAI().Embeddings.CountToken(t);
                         d.EmbeddingsChunkCount = chunks.Count;
                         eUsages.ForEach((e) => usage.Add(e.InputTokens));
                     }
-                    
                 }
                 else
                 {
@@ -662,7 +661,7 @@ namespace fAI
                         {
                             d.Embeddings[0].Add((float)(c * 0.113416));
                         }
-                        d.TokenCount = 1;
+                        d.EmbeddingsTokenCount = 1;
                     }
                 }
                 return (true, usage);
