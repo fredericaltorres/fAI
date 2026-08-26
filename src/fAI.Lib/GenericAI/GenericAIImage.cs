@@ -28,7 +28,7 @@ namespace fAI
             public List<string> output_modalities { get; set; }
         }
 
-        public class Datum
+        public class DatumModelWbApi
         {
             public Architecture architecture { get; set; }
             public int created { get; set; }
@@ -48,7 +48,7 @@ namespace fAI
 
         public class GetModelsResponse
         {
-            public List<Datum> data { get; set; }
+            public List<DatumModelWbApi> data { get; set; }
 
             public static GetModelsResponse FromJson(string json) => JsonConvert.DeserializeObject<GetModelsResponse>(json, new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal });
         }
