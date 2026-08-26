@@ -143,6 +143,7 @@
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.lu.dll" />
     <Content Include="MS.DLL\Microsoft.CognitiveServices.Speech.extension.mas.dll" />
+    <Content Include="OpenRouter\open_router_images.__futuristic_city_skyline_at_sunset.html" />
     <Content Include="TestFiles\Fred Voice Sample - With Compressor - EN FRANCAIS.ORIGINAL.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

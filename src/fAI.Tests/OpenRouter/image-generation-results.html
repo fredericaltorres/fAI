@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Generation Results</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th {
+      text-align: left;
+      padding: 10px 16px;
+      background: #2a2a2a;
+      color: #aaa;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #333;
+    }
+    tr:nth-child(even) td {
+      background: #222;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #2a2a2a;
+      vertical-align: middle;
+    }
+    .model-name {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #7dd3fc;
+      white-space: nowrap;
+    }
+    .cost {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #86efac;
+    }
+    .duration {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #fbbf24;
+    }
+    .thumb {
+      display: block;
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #111;
+      cursor: zoom-in;
+      transition: opacity 0.15s;
+    }
+    .thumb:hover {
+      opacity: 0.85;
+    }
+
+    /* Lightbox */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #lightbox.open {
+      display: flex;
+    }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+    }
+    #lightbox-caption {
+      font-family: monospace;
+      color: #7dd3fc;
+      font-size: 0.95rem;
+    }
+    #lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+      opacity: 0.7;
+    }
+    #lightbox-close:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>OpenRouter Image Generation Results</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Model</th>
+        <th>Cost</th>
+        <th>Duration</th>
+        <th>Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td class="model-name">meta/muse-image</td>
+        <td class="cost">$0.0100</td>
+        <td class="duration">12 420 ms</td>
+        <td><img class="thumb" src="meta_muse-image.0dabb2aa-5921-4d49-9416-dd567d985f4e.jpg" alt="meta/muse-image"></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td class="model-name">bytedance-seed/seedream-5-0-lite</td>
+        <td class="cost">$0.0350</td>
+        <td class="duration">34 707 ms</td>
+        <td><img class="thumb" src="bytedance-seed_seedream-5-0-lite.21e86390-6af4-42d0-984e-f3ad844bc591.jpg" alt="bytedance-seed/seedream-5-0-lite"></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td class="model-name">bytedance-seed/seedream-5-0-pro</td>
+        <td class="cost">$0.0900</td>
+        <td class="duration">78 092 ms</td>
+        <td><img class="thumb" src="bytedance-seed_seedream-5-0-pro.a42b5038-1de9-4899-a960-1422475e6648.jpg" alt="bytedance-seed/seedream-5-0-pro"></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td class="model-name">x-ai/grok-imagine-image-2.0</td>
+        <td class="cost">$0.0600</td>
+        <td class="duration">112 025 ms</td>
+        <td><img class="thumb" src="x-ai_grok-imagine-image-2.0.431bf0c2-cfd7-45c2-9130-d5fe2708c21b.jpg" alt="x-ai/grok-imagine-image-2.0"></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td class="model-name">qwen/qwen-image-3-pro</td>
+        <td class="cost">$0.0750</td>
+        <td class="duration">83 857 ms</td>
+        <td><img class="thumb" src="qwen_qwen-image-3-pro.55322256-9e8b-44cc-b356-0bdbd2cbb057.jpg" alt="qwen/qwen-image-3-pro"></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td class="model-name">qwen/qwen-image-3</td>
+        <td class="cost">$0.0300</td>
+        <td class="duration">72 245 ms</td>
+        <td><img class="thumb" src="qwen_qwen-image-3.9eb43120-ba4b-4632-ab85-f4f7e894e6fd.jpg" alt="qwen/qwen-image-3"></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td class="model-name">microsoft/mai-image-2.5-pro</td>
+        <td class="cost">$0.1107</td>
+        <td class="duration">27 590 ms</td>
+        <td><img class="thumb" src="microsoft_mai-image-2.5-pro.9c2eadc3-a3d9-49d8-9590-268215e137cd.jpg" alt="microsoft/mai-image-2.5-pro"></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td class="model-name">krea/krea-2-large</td>
+        <td class="cost">$0.0600</td>
+        <td class="duration">26 246 ms</td>
+        <td><img class="thumb" src="krea_krea-2-large.e30dcdac-2e4b-4e41-a29a-b426ce96b448.jpg" alt="krea/krea-2-large"></td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td class="model-name">krea/krea-2-medium</td>
+        <td class="cost">$0.0300</td>
+        <td class="duration">13 374 ms</td>
+        <td><img class="thumb" src="krea_krea-2-medium.624f3b1e-3c42-4a6f-b9e8-55b81804c8b4.jpg" alt="krea/krea-2-medium"></td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td class="model-name">krea/krea-2-medium-turbo</td>
+        <td class="cost">$0.0150</td>
+        <td class="duration">7 613 ms</td>
+        <td><img class="thumb" src="krea_krea-2-medium-turbo.f96f348a-0f32-49ca-b248-c8c6de959450.jpg" alt="krea/krea-2-medium-turbo"></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td class="model-name">google/gemini-3.1-flash-lite-image</td>
+        <td class="cost">$0.0336</td>
+        <td class="duration">5 198 ms</td>
+        <td><img class="thumb" src="google_gemini-3.1-flash-lite-image.b4cffcc5-36de-48e4-86f4-63f9287af9bc.jpg" alt="google/gemini-3.1-flash-lite-image"></td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td class="model-name">openai/gpt-image-2</td>
+        <td class="cost">$0.0182</td>
+        <td class="duration">32 266 ms</td>
+        <td><img class="thumb" src="openai_gpt-image-2.45233d24-3ae0-4f6e-8e1d-075839779fe4.jpg" alt="openai/gpt-image-2"></td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td class="model-name">openai/gpt-image-1-mini</td>
+        <td class="cost">$0.0497</td>
+        <td class="duration">45 715 ms</td>
+        <td><img class="thumb" src="openai_gpt-image-1-mini.5a560a4f-047b-4ccb-bb4c-b1d76c68df26.jpg" alt="openai/gpt-image-1-mini"></td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td class="model-name">openai/gpt-image-1</td>
+        <td class="cost">$0.2485</td>
+        <td class="duration">56 328 ms</td>
+        <td><img class="thumb" src="openai_gpt-image-1.02807f78-2a12-499d-9365-483fdd0e0658.jpg" alt="openai/gpt-image-1"></td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td class="model-name">google/gemini-3.1-flash-image</td>
+        <td class="cost">$0.0686</td>
+        <td class="duration">10 229 ms</td>
+        <td><img class="thumb" src="google_gemini-3.1-flash-image.832a2daf-1185-48f7-b501-7b22c5d98697.jpg" alt="google/gemini-3.1-flash-image"></td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td class="model-name">google/gemini-3-pro-image</td>
+        <td class="cost">$0.1362</td>
+        <td class="duration">15 355 ms</td>
+        <td><img class="thumb" src="google_gemini-3-pro-image.78920a38-02a0-40a5-8b07-bf48c365ed90.jpg" alt="google/gemini-3-pro-image"></td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td class="model-name">sourceful/riverflow-v2.5-pro</td>
+        <td class="cost">$0.1839</td>
+        <td class="duration">142 133 ms</td>
+        <td><img class="thumb" src="sourceful_riverflow-v2.5-pro.ecb55c2a-abec-4f1a-83ea-bd02353a77fb.jpg" alt="sourceful/riverflow-v2.5-pro"></td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td class="model-name">sourceful/riverflow-v2.5-fast</td>
+        <td class="cost">$0.0185</td>
+        <td class="duration">22 018 ms</td>
+        <td><img class="thumb" src="sourceful_riverflow-v2.5-fast.ce1773e1-de2b-49eb-bd43-a4e133474e21.jpg" alt="sourceful/riverflow-v2.5-fast"></td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td class="model-name">microsoft/mai-image-2.5</td>
+        <td class="cost">$0.0483</td>
+        <td class="duration">21 134 ms</td>
+        <td><img class="thumb" src="microsoft_mai-image-2.5.fa3149b2-71b9-403e-9e73-835d158425ed.jpg" alt="microsoft/mai-image-2.5"></td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td class="model-name">x-ai/grok-imagine-image-quality</td>
+        <td class="cost">$0.0500</td>
+        <td class="duration">4 680 ms</td>
+        <td><img class="thumb" src="x-ai_grok-imagine-image-quality.193c6ad6-1aca-4b08-af0a-7a60ae51dda9.jpg" alt="x-ai/grok-imagine-image-quality"></td>
+      </tr>
+      <tr>
+        <td>23</td>
+        <td class="model-name">recraft/recraft-v4.1-utility-pro</td>
+        <td class="cost">$0.2100</td>
+        <td class="duration">22 627 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4.1-utility-pro.b2875ec3-f156-4195-b78a-fb6ce16b2de8.jpg" alt="recraft/recraft-v4.1-utility-pro"></td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td class="model-name">recraft/recraft-v4.1-utility</td>
+        <td class="cost">$0.0350</td>
+        <td class="duration">9 947 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4.1-utility.247f6a1f-4f95-41cd-a896-85e42bb388d7.jpg" alt="recraft/recraft-v4.1-utility"></td>
+      </tr>
+      <tr>
+        <td>25</td>
+        <td class="model-name">recraft/recraft-v4.1-pro</td>
+        <td class="cost">$0.2100</td>
+        <td class="duration">25 252 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4.1-pro.8ba41fed-cc61-4c7f-bcba-9edad6941e93.jpg" alt="recraft/recraft-v4.1-pro"></td>
+      </tr>
+      <tr>
+        <td>26</td>
+        <td class="model-name">recraft/recraft-v4.1</td>
+        <td class="cost">$0.0350</td>
+        <td class="duration">7 826 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4.1.27d19491-555c-4fd7-9d96-65a2ff230a88.jpg" alt="recraft/recraft-v4.1"></td>
+      </tr>
+      <tr>
+        <td>29</td>
+        <td class="model-name">recraft/recraft-v4-pro</td>
+        <td class="cost">$0.2500</td>
+        <td class="duration">21 945 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4-pro.e5d2fbde-15a2-4bff-bf09-ce99869f87aa.jpg" alt="recraft/recraft-v4-pro"></td>
+      </tr>
+      <tr>
+        <td>30</td>
+        <td class="model-name">recraft/recraft-v4</td>
+        <td class="cost">$0.0400</td>
+        <td class="duration">11 396 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v4.b1a62b89-b54f-486c-9477-9b5cdb284114.jpg" alt="recraft/recraft-v4"></td>
+      </tr>
+      <tr>
+        <td>31</td>
+        <td class="model-name">recraft/recraft-v3</td>
+        <td class="cost">$0.0400</td>
+        <td class="duration">6 155 ms</td>
+        <td><img class="thumb" src="recraft_recraft-v3.989c0703-c95f-4266-a52a-2ed56d5983d5.jpg" alt="recraft/recraft-v3"></td>
+      </tr>
+      <tr>
+        <td>32</td>
+        <td class="model-name">openai/gpt-5.4-image-2</td>
+        <td class="cost">$0.0183</td>
+        <td class="duration">30 429 ms</td>
+        <td><img class="thumb" src="openai_gpt-5.4-image-2.f1e1ebde-88d5-4cd8-b169-016e8acf58b4.jpg" alt="openai/gpt-5.4-image-2"></td>
+      </tr>
+      <tr>
+        <td>33</td>
+        <td class="model-name">google/gemini-3.1-flash-image-preview</td>
+        <td class="cost">$0.0685</td>
+        <td class="duration">9 558 ms</td>
+        <td><img class="thumb" src="google_gemini-3.1-flash-image-preview.37e73a7a-530b-4595-9873-c5c38b650cc9.jpg" alt="google/gemini-3.1-flash-image-preview"></td>
+      </tr>
+      <tr>
+        <td>34</td>
+        <td class="model-name">sourceful/riverflow-v2-pro</td>
+        <td class="cost">$0.1500</td>
+        <td class="duration">52 564 ms</td>
+        <td><img class="thumb" src="sourceful_riverflow-v2-pro.ab47e6c7-b202-4741-9b62-cac0b5d1edda.jpg" alt="sourceful/riverflow-v2-pro"></td>
+      </tr>
+      <tr>
+        <td>35</td>
+        <td class="model-name">sourceful/riverflow-v2-fast</td>
+        <td class="cost">$0.0200</td>
+        <td class="duration">25 540 ms</td>
+        <td><img class="thumb" src="sourceful_riverflow-v2-fast.9c3c761e-ded5-4b14-bd4f-979bdb6767a3.jpg" alt="sourceful/riverflow-v2-fast"></td>
+      </tr>
+      <tr>
+        <td>36</td>
+        <td class="model-name">black-forest-labs/flux.2-klein-4b</td>
+        <td class="cost">$0.0140</td>
+        <td class="duration">2 903 ms</td>
+        <td><img class="thumb" src="black-forest-labs_flux.2-klein-4b.7ea5dbae-3316-4e4e-8da5-3a57d143b3af.jpg" alt="black-forest-labs/flux.2-klein-4b"></td>
+      </tr>
+      <tr>
+        <td>37</td>
+        <td class="model-name">bytedance-seed/seedream-4.5</td>
+        <td class="cost">$0.0400</td>
+        <td class="duration">8 804 ms</td>
+        <td><img class="thumb" src="bytedance-seed_seedream-4.5.66415d39-9510-4ac3-99d6-1c4c8f5f8c05.jpg" alt="bytedance-seed/seedream-4.5"></td>
+      </tr>
+      <tr>
+        <td>38</td>
+        <td class="model-name">black-forest-labs/flux.2-max</td>
+        <td class="cost">$0.0700</td>
+        <td class="duration">18 962 ms</td>
+        <td><img class="thumb" src="black-forest-labs_flux.2-max.342347ed-8dc6-4e78-b75c-7d1f194a118a.jpg" alt="black-forest-labs/flux.2-max"></td>
+      </tr>
+      <tr>
+        <td>39</td>
+        <td class="model-name">black-forest-labs/flux.2-flex</td>
+        <td class="cost">$0.0500</td>
+        <td class="duration">9 467 ms</td>
+        <td><img class="thumb" src="black-forest-labs_flux.2-flex.8733903e-a343-4b35-830d-a0819dec37ed.jpg" alt="black-forest-labs/flux.2-flex"></td>
+      </tr>
+      <tr>
+        <td>40</td>
+        <td class="model-name">black-forest-labs/flux.2-pro</td>
+        <td class="cost">$0.0300</td>
+        <td class="duration">10 348 ms</td>
+        <td><img class="thumb" src="black-forest-labs_flux.2-pro.45ec8c40-abda-4c42-883d-0b59c02c1f41.jpg" alt="black-forest-labs/flux.2-pro"></td>
+      </tr>
+      <tr>
+        <td>41</td>
+        <td class="model-name">google/gemini-3-pro-image-preview</td>
+        <td class="cost">$0.1358</td>
+        <td class="duration">16 535 ms</td>
+        <td><img class="thumb" src="google_gemini-3-pro-image-preview.c4729e9f-39da-4bf3-8596-24d8bf7df74a.jpg" alt="google/gemini-3-pro-image-preview"></td>
+      </tr>
+      <tr>
+        <td>42</td>
+        <td class="model-name">openai/gpt-5-image-mini</td>
+        <td class="cost">$0.0498</td>
+        <td class="duration">45 967 ms</td>
+        <td><img class="thumb" src="openai_gpt-5-image-mini.f448de91-9d12-411a-a746-fdd5ffef094e.jpg" alt="openai/gpt-5-image-mini"></td>
+      </tr>
+      <tr>
+        <td>43</td>
+        <td class="model-name">openai/gpt-5-image</td>
+        <td class="cost">$0.2487</td>
+        <td class="duration">56 650 ms</td>
+        <td><img class="thumb" src="openai_gpt-5-image.28fefad9-d45a-4982-aa22-527bcd0443fa.jpg" alt="openai/gpt-5-image"></td>
+      </tr>
+      <tr>
+        <td>44</td>
+        <td class="model-name">google/gemini-2.5-flash-image</td>
+        <td class="cost">$0.0388</td>
+        <td class="duration">7 627 ms</td>
+        <td><img class="thumb" src="google_gemini-2.5-flash-image.54356dd3-59ec-422c-b63d-02c6c663e042.jpg" alt="google/gemini-2.5-flash-image"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Lightbox overlay -->
+  <div id="lightbox">
+    <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-caption"></div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.thumb').forEach(img => {
+      img.addEventListener('click', () => {
+        document.getElementById('lightbox-img').src = img.src;
+        document.getElementById('lightbox-img').alt = img.alt;
+        document.getElementById('lightbox-caption').textContent = img.alt;
+        document.getElementById('lightbox').classList.add('open');
+      });
+    });
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+
+    document.getElementById('lightbox').addEventListener('click', e => {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>

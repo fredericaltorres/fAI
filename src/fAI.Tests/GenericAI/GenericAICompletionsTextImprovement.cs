@@ -647,5 +647,34 @@ in the style of cyberpunk, highly detailed, 8k resolution
                 }
             });
         }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_Image__EricClaptonAndEs335()
+        {
+            var imagePrompt = @"
+make the image only about Eric Clapton.
+# Presentation Title: Gibson ES 335
+# Slide 4: Famous Players and the Guitar's Cultural Rise
+Famous Players and the Guitar's Cultural RiseChuck BerryBrought the 335 to mass attention — defined the vocabulary of rock and roll guitar.Eric ClaptonUsed a 1964 ES-335 on the legendary Beano album with John Mayall's Bluesbreakers.Freddie KingSearing Texas blues tone — articulate but never sterile. A defining sound of the genre.Larry CarltonNicknamed 'Mr. 335' for his studio work in the 1970s spanning jazz, soul, and fusion.Alvin LeeBlazed through 'I'm Going Home' at Woodstock 1969 — one of the festival's great moments.B.B. KingHis ES-355 sibling 'Lucille' cemented the semi-hollow as the blues guitar of choice.
+";
+            var client = new GenericAI();
+            client.Image.GetCheapModels().ForEach(model =>
+            {
+                try
+                {
+                    var imageFileName = Path.Combine(Path.GetTempPath(), $"{ReplaceInvalidFileNameChars(model)}.{Guid.NewGuid()}.jpg");
+                    var (image, usage) = client.Image.Create(imagePrompt, model: model, filePath: imageFileName);
+                    Assert.True(File.Exists(image));
+                    Assert.True(usage.InputTokens > 0);
+                    Assert.True(usage.OutputTokens > 0);
+                }
+                catch (Exception ex)
+                {
+                    HttpBase.Trace($"[ERROR] Model: {model}, Exception: {ex.Message}", this);
+                }
+            });
+        }
     }
 }
