@@ -654,14 +654,21 @@ in the style of cyberpunk, highly detailed, 8k resolution
         public void GenericAI_Image__EricClaptonAndEs335()
         {
             var imagePrompt = @"
-Create a realistic image based the following presentation slide content.
+Create a realistic image based the following content.
 IMPORTANT: Do not include any text, letters, numbers, logos, labels, signs, or watermarks anywhere in the image.
 ------------
-Final requirement: The image must contain absolutely no text or typography of any kind.
-make the image only about Eric Clapton.
-# Presentation Title: Gibson ES 335 - AI IMAGE - AUTOMATION - *** DO NOT DELETE ***
-## Slide 4: Famous Players and the Guitar's Cultural Rise
-Famous Players and the Guitar's Cultural Rise\u001fChuck Berry\u001fBrought the 335 to mass attention ??? defined the vocabulary of rock and roll guitar.\u001fEric Clapton\u001fUsed a 1964 ES-335 on the legendary Beano album with John Mayall's Bluesbreakers.\u001fFreddie King\u001fSearing Texas blues tone ??? articulate but never sterile. A defining sound of the genre.\u001fLarry Carlton\u001fNicknamed 'Mr. 335' for his studio work in the 1970s spanning jazz, soul, and fusion.\u001fAlvin Lee\u001fBlazed through 'I'm Going Home' at Woodstock 1969 ??? one of the festival's great moments.\u001fB.B. King\u001fHis ES-355 sibling 'Lucille' cemented the semi-hollow as the blues guitar of choice.
+
+MAKE THE IMAGE ONLY ABOUT ERIC CLAPTON.
+
+# Gibson ES 335
+## Famous Players and the Guitar's Cultural Rise
+Famous Players and the Guitar's Cultural Rise
+- Chuck Berry: Brought the 335 to mass attention ??? defined the vocabulary of rock and roll guitar.
+- Eric Clapton: Used a 1964 ES-335 on the legendary Beano album with John Mayall's Bluesbreakers.
+- Freddie King: Searing Texas blues tone ??? articulate but never sterile. A defining sound of the genre.
+- Larry Carlton: Nicknamed 'Mr. 335' for his studio work in the 1970s spanning jazz, soul, and fusion.
+- Alvin Lee: Blazed through 'I'm Going Home' at Woodstock 1969 ??? one of the festival's great moments. 
+- B.B. King: His ES-355 sibling 'Lucille' cemented the semi-hollow as the blues guitar of choice.
 ------------
 ";
             var client = new GenericAI();
