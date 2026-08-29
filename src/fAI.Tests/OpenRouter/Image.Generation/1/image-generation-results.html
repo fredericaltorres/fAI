@@ -5,439 +5,615 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Generation Results</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: sans-serif;
-      background: #1a1a1a;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 24px;
-    }
-    h1 {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-      color: #fff;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th {
-      text-align: left;
-      padding: 10px 16px;
-      background: #2a2a2a;
-      color: #aaa;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-bottom: 1px solid #333;
-    }
-    tr:nth-child(even) td {
-      background: #222;
-    }
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #2a2a2a;
-      vertical-align: middle;
-    }
-    .model-name {
-      font-family: monospace;
-      font-size: 0.9rem;
-      color: #7dd3fc;
-      white-space: nowrap;
-    }
-    .cost {
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: #86efac;
-    }
-    .duration {
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: #fbbf24;
-    }
-    .thumb {
-      display: block;
-      width: 160px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid #333;
-      background: #111;
-      cursor: zoom-in;
-      transition: opacity 0.15s;
-    }
-    .thumb:hover {
-      opacity: 0.85;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0d0d0f;
+      color: #e2e2e2;
+      min-height: 100vh;
     }
 
-    /* Lightbox */
+    /* ── Header ── */
+    .header {
+      padding: 48px 40px 32px;
+      border-bottom: 1px solid #1e1e24;
+      background: linear-gradient(180deg, #111118 0%, #0d0d0f 100%);
+    }
+    .header-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #5b5b72;
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .prompt-block {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #16161e;
+      border: 1px solid #2a2a38;
+      border-radius: 10px;
+      padding: 14px 18px;
+      max-width: 860px;
+    }
+    .prompt-icon {
+      font-size: 1rem;
+      line-height: 1.5;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+    .prompt-text {
+      font-size: 0.92rem;
+      color: #c9c9e0;
+      line-height: 1.55;
+      font-style: italic;
+    }
+    .stats-row {
+      display: flex;
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4e4e66;
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid #1a1a22;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .sort-group {
+      display: flex;
+      gap: 6px;
+    }
+    .sort-btn {
+      background: #16161e;
+      border: 1px solid #2a2a38;
+      color: #9090aa;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .sort-btn:hover, .sort-btn.active {
+      background: #22223a;
+      border-color: #4a4a72;
+      color: #d0d0f0;
+    }
+    .view-group {
+      display: flex;
+      gap: 6px;
+    }
+    .view-btn {
+      background: #16161e;
+      border: 1px solid #2a2a38;
+      color: #9090aa;
+      font-size: 1rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+    .view-btn:hover, .view-btn.active {
+      background: #22223a;
+      border-color: #4a4a72;
+      color: #d0d0f0;
+    }
+
+    /* ── Grid ── */
+    .grid-container {
+      padding: 32px 40px 60px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .grid.compact {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #111118;
+      border: 1px solid #1e1e2c;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .card:hover {
+      border-color: #3a3a5a;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: #0a0a10;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .card:hover .card-img-wrap img {
+      transform: scale(1.04);
+    }
+    .card-rank {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #888;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      backdrop-filter: blur(6px);
+      letter-spacing: 0.05em;
+    }
+    .card-zoom-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.0);
+      transition: background 0.2s;
+    }
+    .card:hover .card-zoom-hint {
+      background: rgba(0,0,0,0.25);
+    }
+    .zoom-icon {
+      opacity: 0;
+      font-size: 2rem;
+      transition: opacity 0.2s;
+    }
+    .card:hover .zoom-icon {
+      opacity: 0.9;
+    }
+
+    .card-body {
+      padding: 14px 16px 16px;
+    }
+    .card-model {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: #8b9cf4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 10px;
+      letter-spacing: 0.01em;
+    }
+    .card-meta {
+      display: flex;
+      gap: 12px;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .meta-val {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .meta-val.cost { color: #4ade80; }
+    .meta-val.dur  { color: #fbbf24; }
+    .meta-lbl {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #3e3e56;
+    }
+
+    /* compact card overrides */
+    .grid.compact .card-body { padding: 10px 12px 12px; }
+    .grid.compact .card-model { font-size: 0.72rem; margin-bottom: 6px; }
+    .grid.compact .meta-val { font-size: 0.74rem; }
+
+    /* ── Lightbox ── */
     #lightbox {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.88);
+      background: rgba(5,5,10,0.96);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 12px;
+      gap: 0;
     }
-    #lightbox.open {
-      display: flex;
-    }
-    #lightbox img {
-      max-width: 90vw;
-      max-height: 85vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.7);
-    }
-    #lightbox-caption {
-      font-family: monospace;
-      color: #7dd3fc;
-      font-size: 0.95rem;
-    }
+    #lightbox.open { display: flex; }
+
     #lightbox-close {
       position: fixed;
-      top: 18px;
-      right: 24px;
-      font-size: 2rem;
-      color: #fff;
+      top: 20px;
+      right: 28px;
+      font-size: 1.8rem;
+      color: #666;
       cursor: pointer;
-      line-height: 1;
       background: none;
       border: none;
-      opacity: 0.7;
+      line-height: 1;
+      transition: color 0.15s;
+      z-index: 10;
     }
-    #lightbox-close:hover {
-      opacity: 1;
+    #lightbox-close:hover { color: #fff; }
+
+    #lightbox-nav-prev,
+    #lightbox-nav-next {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: #444;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      width: 48px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      z-index: 10;
+    }
+    #lightbox-nav-prev { left: 16px; }
+    #lightbox-nav-next { right: 16px; }
+    #lightbox-nav-prev:hover,
+    #lightbox-nav-next:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      border-color: #4a4a6a;
+    }
+
+    #lightbox-img-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 60px 80px 0;
+    }
+    #lightbox-img {
+      max-width: 100%;
+      max-height: calc(100vh - 160px);
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+    }
+
+    #lightbox-footer {
+      width: 100%;
+      padding: 20px 80px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #1a1a24;
+      margin-top: 20px;
+    }
+    #lightbox-caption {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #8b9cf4;
+      font-size: 0.9rem;
+    }
+    #lightbox-meta {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .lb-meta-item { display: flex; flex-direction: column; gap: 2px; text-align: right; }
+    .lb-meta-val {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .lb-meta-val.cost { color: #4ade80; }
+    .lb-meta-val.dur  { color: #fbbf24; }
+    .lb-meta-lbl {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #3e3e56;
+    }
+    #lightbox-counter {
+      font-size: 0.78rem;
+      color: #3e3e56;
+      min-width: 60px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>OpenRouter Image Generation Results</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Model</th>
-        <th>Cost</th>
-        <th>Duration</th>
-        <th>Image</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td class="model-name">meta/muse-image</td>
-        <td class="cost">$0.0100</td>
-        <td class="duration">12 420 ms</td>
-        <td><img class="thumb" src="meta_muse-image.0dabb2aa-5921-4d49-9416-dd567d985f4e.jpg" alt="meta/muse-image"></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td class="model-name">bytedance-seed/seedream-5-0-lite</td>
-        <td class="cost">$0.0350</td>
-        <td class="duration">34 707 ms</td>
-        <td><img class="thumb" src="bytedance-seed_seedream-5-0-lite.21e86390-6af4-42d0-984e-f3ad844bc591.jpg" alt="bytedance-seed/seedream-5-0-lite"></td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td class="model-name">bytedance-seed/seedream-5-0-pro</td>
-        <td class="cost">$0.0900</td>
-        <td class="duration">78 092 ms</td>
-        <td><img class="thumb" src="bytedance-seed_seedream-5-0-pro.a42b5038-1de9-4899-a960-1422475e6648.jpg" alt="bytedance-seed/seedream-5-0-pro"></td>
-      </tr>
-      <tr>
-        <td>4</td>
-        <td class="model-name">x-ai/grok-imagine-image-2.0</td>
-        <td class="cost">$0.0600</td>
-        <td class="duration">112 025 ms</td>
-        <td><img class="thumb" src="x-ai_grok-imagine-image-2.0.431bf0c2-cfd7-45c2-9130-d5fe2708c21b.jpg" alt="x-ai/grok-imagine-image-2.0"></td>
-      </tr>
-      <tr>
-        <td>5</td>
-        <td class="model-name">qwen/qwen-image-3-pro</td>
-        <td class="cost">$0.0750</td>
-        <td class="duration">83 857 ms</td>
-        <td><img class="thumb" src="qwen_qwen-image-3-pro.55322256-9e8b-44cc-b356-0bdbd2cbb057.jpg" alt="qwen/qwen-image-3-pro"></td>
-      </tr>
-      <tr>
-        <td>6</td>
-        <td class="model-name">qwen/qwen-image-3</td>
-        <td class="cost">$0.0300</td>
-        <td class="duration">72 245 ms</td>
-        <td><img class="thumb" src="qwen_qwen-image-3.9eb43120-ba4b-4632-ab85-f4f7e894e6fd.jpg" alt="qwen/qwen-image-3"></td>
-      </tr>
-      <tr>
-        <td>7</td>
-        <td class="model-name">microsoft/mai-image-2.5-pro</td>
-        <td class="cost">$0.1107</td>
-        <td class="duration">27 590 ms</td>
-        <td><img class="thumb" src="microsoft_mai-image-2.5-pro.9c2eadc3-a3d9-49d8-9590-268215e137cd.jpg" alt="microsoft/mai-image-2.5-pro"></td>
-      </tr>
-      <tr>
-        <td>8</td>
-        <td class="model-name">krea/krea-2-large</td>
-        <td class="cost">$0.0600</td>
-        <td class="duration">26 246 ms</td>
-        <td><img class="thumb" src="krea_krea-2-large.e30dcdac-2e4b-4e41-a29a-b426ce96b448.jpg" alt="krea/krea-2-large"></td>
-      </tr>
-      <tr>
-        <td>9</td>
-        <td class="model-name">krea/krea-2-medium</td>
-        <td class="cost">$0.0300</td>
-        <td class="duration">13 374 ms</td>
-        <td><img class="thumb" src="krea_krea-2-medium.624f3b1e-3c42-4a6f-b9e8-55b81804c8b4.jpg" alt="krea/krea-2-medium"></td>
-      </tr>
-      <tr>
-        <td>10</td>
-        <td class="model-name">krea/krea-2-medium-turbo</td>
-        <td class="cost">$0.0150</td>
-        <td class="duration">7 613 ms</td>
-        <td><img class="thumb" src="krea_krea-2-medium-turbo.f96f348a-0f32-49ca-b248-c8c6de959450.jpg" alt="krea/krea-2-medium-turbo"></td>
-      </tr>
-      <tr>
-        <td>11</td>
-        <td class="model-name">google/gemini-3.1-flash-lite-image</td>
-        <td class="cost">$0.0336</td>
-        <td class="duration">5 198 ms</td>
-        <td><img class="thumb" src="google_gemini-3.1-flash-lite-image.b4cffcc5-36de-48e4-86f4-63f9287af9bc.jpg" alt="google/gemini-3.1-flash-lite-image"></td>
-      </tr>
-      <tr>
-        <td>12</td>
-        <td class="model-name">openai/gpt-image-2</td>
-        <td class="cost">$0.0182</td>
-        <td class="duration">32 266 ms</td>
-        <td><img class="thumb" src="openai_gpt-image-2.45233d24-3ae0-4f6e-8e1d-075839779fe4.jpg" alt="openai/gpt-image-2"></td>
-      </tr>
-      <tr>
-        <td>13</td>
-        <td class="model-name">openai/gpt-image-1-mini</td>
-        <td class="cost">$0.0497</td>
-        <td class="duration">45 715 ms</td>
-        <td><img class="thumb" src="openai_gpt-image-1-mini.5a560a4f-047b-4ccb-bb4c-b1d76c68df26.jpg" alt="openai/gpt-image-1-mini"></td>
-      </tr>
-      <tr>
-        <td>14</td>
-        <td class="model-name">openai/gpt-image-1</td>
-        <td class="cost">$0.2485</td>
-        <td class="duration">56 328 ms</td>
-        <td><img class="thumb" src="openai_gpt-image-1.02807f78-2a12-499d-9365-483fdd0e0658.jpg" alt="openai/gpt-image-1"></td>
-      </tr>
-      <tr>
-        <td>15</td>
-        <td class="model-name">google/gemini-3.1-flash-image</td>
-        <td class="cost">$0.0686</td>
-        <td class="duration">10 229 ms</td>
-        <td><img class="thumb" src="google_gemini-3.1-flash-image.832a2daf-1185-48f7-b501-7b22c5d98697.jpg" alt="google/gemini-3.1-flash-image"></td>
-      </tr>
-      <tr>
-        <td>16</td>
-        <td class="model-name">google/gemini-3-pro-image</td>
-        <td class="cost">$0.1362</td>
-        <td class="duration">15 355 ms</td>
-        <td><img class="thumb" src="google_gemini-3-pro-image.78920a38-02a0-40a5-8b07-bf48c365ed90.jpg" alt="google/gemini-3-pro-image"></td>
-      </tr>
-      <tr>
-        <td>17</td>
-        <td class="model-name">sourceful/riverflow-v2.5-pro</td>
-        <td class="cost">$0.1839</td>
-        <td class="duration">142 133 ms</td>
-        <td><img class="thumb" src="sourceful_riverflow-v2.5-pro.ecb55c2a-abec-4f1a-83ea-bd02353a77fb.jpg" alt="sourceful/riverflow-v2.5-pro"></td>
-      </tr>
-      <tr>
-        <td>18</td>
-        <td class="model-name">sourceful/riverflow-v2.5-fast</td>
-        <td class="cost">$0.0185</td>
-        <td class="duration">22 018 ms</td>
-        <td><img class="thumb" src="sourceful_riverflow-v2.5-fast.ce1773e1-de2b-49eb-bd43-a4e133474e21.jpg" alt="sourceful/riverflow-v2.5-fast"></td>
-      </tr>
-      <tr>
-        <td>19</td>
-        <td class="model-name">microsoft/mai-image-2.5</td>
-        <td class="cost">$0.0483</td>
-        <td class="duration">21 134 ms</td>
-        <td><img class="thumb" src="microsoft_mai-image-2.5.fa3149b2-71b9-403e-9e73-835d158425ed.jpg" alt="microsoft/mai-image-2.5"></td>
-      </tr>
-      <tr>
-        <td>20</td>
-        <td class="model-name">x-ai/grok-imagine-image-quality</td>
-        <td class="cost">$0.0500</td>
-        <td class="duration">4 680 ms</td>
-        <td><img class="thumb" src="x-ai_grok-imagine-image-quality.193c6ad6-1aca-4b08-af0a-7a60ae51dda9.jpg" alt="x-ai/grok-imagine-image-quality"></td>
-      </tr>
-      <tr>
-        <td>23</td>
-        <td class="model-name">recraft/recraft-v4.1-utility-pro</td>
-        <td class="cost">$0.2100</td>
-        <td class="duration">22 627 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4.1-utility-pro.b2875ec3-f156-4195-b78a-fb6ce16b2de8.jpg" alt="recraft/recraft-v4.1-utility-pro"></td>
-      </tr>
-      <tr>
-        <td>24</td>
-        <td class="model-name">recraft/recraft-v4.1-utility</td>
-        <td class="cost">$0.0350</td>
-        <td class="duration">9 947 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4.1-utility.247f6a1f-4f95-41cd-a896-85e42bb388d7.jpg" alt="recraft/recraft-v4.1-utility"></td>
-      </tr>
-      <tr>
-        <td>25</td>
-        <td class="model-name">recraft/recraft-v4.1-pro</td>
-        <td class="cost">$0.2100</td>
-        <td class="duration">25 252 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4.1-pro.8ba41fed-cc61-4c7f-bcba-9edad6941e93.jpg" alt="recraft/recraft-v4.1-pro"></td>
-      </tr>
-      <tr>
-        <td>26</td>
-        <td class="model-name">recraft/recraft-v4.1</td>
-        <td class="cost">$0.0350</td>
-        <td class="duration">7 826 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4.1.27d19491-555c-4fd7-9d96-65a2ff230a88.jpg" alt="recraft/recraft-v4.1"></td>
-      </tr>
-      <tr>
-        <td>29</td>
-        <td class="model-name">recraft/recraft-v4-pro</td>
-        <td class="cost">$0.2500</td>
-        <td class="duration">21 945 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4-pro.e5d2fbde-15a2-4bff-bf09-ce99869f87aa.jpg" alt="recraft/recraft-v4-pro"></td>
-      </tr>
-      <tr>
-        <td>30</td>
-        <td class="model-name">recraft/recraft-v4</td>
-        <td class="cost">$0.0400</td>
-        <td class="duration">11 396 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v4.b1a62b89-b54f-486c-9477-9b5cdb284114.jpg" alt="recraft/recraft-v4"></td>
-      </tr>
-      <tr>
-        <td>31</td>
-        <td class="model-name">recraft/recraft-v3</td>
-        <td class="cost">$0.0400</td>
-        <td class="duration">6 155 ms</td>
-        <td><img class="thumb" src="recraft_recraft-v3.989c0703-c95f-4266-a52a-2ed56d5983d5.jpg" alt="recraft/recraft-v3"></td>
-      </tr>
-      <tr>
-        <td>32</td>
-        <td class="model-name">openai/gpt-5.4-image-2</td>
-        <td class="cost">$0.0183</td>
-        <td class="duration">30 429 ms</td>
-        <td><img class="thumb" src="openai_gpt-5.4-image-2.f1e1ebde-88d5-4cd8-b169-016e8acf58b4.jpg" alt="openai/gpt-5.4-image-2"></td>
-      </tr>
-      <tr>
-        <td>33</td>
-        <td class="model-name">google/gemini-3.1-flash-image-preview</td>
-        <td class="cost">$0.0685</td>
-        <td class="duration">9 558 ms</td>
-        <td><img class="thumb" src="google_gemini-3.1-flash-image-preview.37e73a7a-530b-4595-9873-c5c38b650cc9.jpg" alt="google/gemini-3.1-flash-image-preview"></td>
-      </tr>
-      <tr>
-        <td>34</td>
-        <td class="model-name">sourceful/riverflow-v2-pro</td>
-        <td class="cost">$0.1500</td>
-        <td class="duration">52 564 ms</td>
-        <td><img class="thumb" src="sourceful_riverflow-v2-pro.ab47e6c7-b202-4741-9b62-cac0b5d1edda.jpg" alt="sourceful/riverflow-v2-pro"></td>
-      </tr>
-      <tr>
-        <td>35</td>
-        <td class="model-name">sourceful/riverflow-v2-fast</td>
-        <td class="cost">$0.0200</td>
-        <td class="duration">25 540 ms</td>
-        <td><img class="thumb" src="sourceful_riverflow-v2-fast.9c3c761e-ded5-4b14-bd4f-979bdb6767a3.jpg" alt="sourceful/riverflow-v2-fast"></td>
-      </tr>
-      <tr>
-        <td>36</td>
-        <td class="model-name">black-forest-labs/flux.2-klein-4b</td>
-        <td class="cost">$0.0140</td>
-        <td class="duration">2 903 ms</td>
-        <td><img class="thumb" src="black-forest-labs_flux.2-klein-4b.7ea5dbae-3316-4e4e-8da5-3a57d143b3af.jpg" alt="black-forest-labs/flux.2-klein-4b"></td>
-      </tr>
-      <tr>
-        <td>37</td>
-        <td class="model-name">bytedance-seed/seedream-4.5</td>
-        <td class="cost">$0.0400</td>
-        <td class="duration">8 804 ms</td>
-        <td><img class="thumb" src="bytedance-seed_seedream-4.5.66415d39-9510-4ac3-99d6-1c4c8f5f8c05.jpg" alt="bytedance-seed/seedream-4.5"></td>
-      </tr>
-      <tr>
-        <td>38</td>
-        <td class="model-name">black-forest-labs/flux.2-max</td>
-        <td class="cost">$0.0700</td>
-        <td class="duration">18 962 ms</td>
-        <td><img class="thumb" src="black-forest-labs_flux.2-max.342347ed-8dc6-4e78-b75c-7d1f194a118a.jpg" alt="black-forest-labs/flux.2-max"></td>
-      </tr>
-      <tr>
-        <td>39</td>
-        <td class="model-name">black-forest-labs/flux.2-flex</td>
-        <td class="cost">$0.0500</td>
-        <td class="duration">9 467 ms</td>
-        <td><img class="thumb" src="black-forest-labs_flux.2-flex.8733903e-a343-4b35-830d-a0819dec37ed.jpg" alt="black-forest-labs/flux.2-flex"></td>
-      </tr>
-      <tr>
-        <td>40</td>
-        <td class="model-name">black-forest-labs/flux.2-pro</td>
-        <td class="cost">$0.0300</td>
-        <td class="duration">10 348 ms</td>
-        <td><img class="thumb" src="black-forest-labs_flux.2-pro.45ec8c40-abda-4c42-883d-0b59c02c1f41.jpg" alt="black-forest-labs/flux.2-pro"></td>
-      </tr>
-      <tr>
-        <td>41</td>
-        <td class="model-name">google/gemini-3-pro-image-preview</td>
-        <td class="cost">$0.1358</td>
-        <td class="duration">16 535 ms</td>
-        <td><img class="thumb" src="google_gemini-3-pro-image-preview.c4729e9f-39da-4bf3-8596-24d8bf7df74a.jpg" alt="google/gemini-3-pro-image-preview"></td>
-      </tr>
-      <tr>
-        <td>42</td>
-        <td class="model-name">openai/gpt-5-image-mini</td>
-        <td class="cost">$0.0498</td>
-        <td class="duration">45 967 ms</td>
-        <td><img class="thumb" src="openai_gpt-5-image-mini.f448de91-9d12-411a-a746-fdd5ffef094e.jpg" alt="openai/gpt-5-image-mini"></td>
-      </tr>
-      <tr>
-        <td>43</td>
-        <td class="model-name">openai/gpt-5-image</td>
-        <td class="cost">$0.2487</td>
-        <td class="duration">56 650 ms</td>
-        <td><img class="thumb" src="openai_gpt-5-image.28fefad9-d45a-4982-aa22-527bcd0443fa.jpg" alt="openai/gpt-5-image"></td>
-      </tr>
-      <tr>
-        <td>44</td>
-        <td class="model-name">google/gemini-2.5-flash-image</td>
-        <td class="cost">$0.0388</td>
-        <td class="duration">7 627 ms</td>
-        <td><img class="thumb" src="google_gemini-2.5-flash-image.54356dd3-59ec-422c-b63d-02c6c663e042.jpg" alt="google/gemini-2.5-flash-image"></td>
-      </tr>
-    </tbody>
-  </table>
 
-  <!-- Lightbox overlay -->
+  <!-- Header -->
+  <header class="header">
+    <div class="header-label">OpenRouter · Image Generation Benchmark</div>
+    <h1>Model Comparison</h1>
+    <div class="prompt-block">
+      <span class="prompt-icon">✦</span>
+      <span class="prompt-text">A futuristic city skyline at sunset, with flying cars and neon lights, in the style of cyberpunk, highly detailed, 8k resolution.</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-value" id="stat-models">0</span>
+        <span class="stat-label">Models</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-min-cost">—</span>
+        <span class="stat-label">Min cost</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-max-cost">—</span>
+        <span class="stat-label">Max cost</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-fastest">—</span>
+        <span class="stat-label">Fastest</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="sort-group">
+      <span style="font-size:0.78rem;color:#4e4e66;margin-right:4px;align-self:center;">Sort:</span>
+      <button class="sort-btn active" data-sort="rank">Rank</button>
+      <button class="sort-btn" data-sort="cost-asc">Cost ↑</button>
+      <button class="sort-btn" data-sort="cost-desc">Cost ↓</button>
+      <button class="sort-btn" data-sort="duration-asc">Speed ↑</button>
+      <button class="sort-btn" data-sort="name">Name</button>
+    </div>
+    <div class="view-group">
+      <button class="view-btn active" data-view="normal" title="Normal grid">⊞</button>
+      <button class="view-btn" data-view="compact" title="Compact grid">⊟</button>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-container">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Lightbox -->
   <div id="lightbox">
-    <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
-    <img id="lightbox-img" src="" alt="">
-    <div id="lightbox-caption"></div>
+    <button id="lightbox-close" onclick="closeLightbox()" title="Close (Esc)">&times;</button>
+    <button id="lightbox-nav-prev" onclick="lightboxNav(-1)">&#8249;</button>
+    <button id="lightbox-nav-next" onclick="lightboxNav(1)">&#8250;</button>
+    <div id="lightbox-img-wrap">
+      <img id="lightbox-img" src="" alt="">
+    </div>
+    <div id="lightbox-footer">
+      <div id="lightbox-caption"></div>
+      <div id="lightbox-counter"></div>
+      <div id="lightbox-meta">
+        <div class="lb-meta-item">
+          <span class="lb-meta-val cost" id="lb-cost"></span>
+          <span class="lb-meta-lbl">Cost</span>
+        </div>
+        <div class="lb-meta-item">
+          <span class="lb-meta-val dur" id="lb-dur"></span>
+          <span class="lb-meta-lbl">Duration</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    document.querySelectorAll('.thumb').forEach(img => {
-      img.addEventListener('click', () => {
-        document.getElementById('lightbox-img').src = img.src;
-        document.getElementById('lightbox-img').alt = img.alt;
-        document.getElementById('lightbox-caption').textContent = img.alt;
-        document.getElementById('lightbox').classList.add('open');
+    const RAW = [
+      { rank:1,  model:'meta/muse-image',                        cost:0.0100, dur:12420,  src:'meta_muse-image.0dabb2aa-5921-4d49-9416-dd567d985f4e.jpg' },
+      { rank:2,  model:'bytedance-seed/seedream-5-0-lite',        cost:0.0350, dur:34707,  src:'bytedance-seed_seedream-5-0-lite.21e86390-6af4-42d0-984e-f3ad844bc591.jpg' },
+      { rank:3,  model:'bytedance-seed/seedream-5-0-pro',         cost:0.0900, dur:78092,  src:'bytedance-seed_seedream-5-0-pro.a42b5038-1de9-4899-a960-1422475e6648.jpg' },
+      { rank:4,  model:'x-ai/grok-imagine-image-2.0',             cost:0.0600, dur:112025, src:'x-ai_grok-imagine-image-2.0.431bf0c2-cfd7-45c2-9130-d5fe2708c21b.jpg' },
+      { rank:5,  model:'qwen/qwen-image-3-pro',                   cost:0.0750, dur:83857,  src:'qwen_qwen-image-3-pro.55322256-9e8b-44cc-b356-0bdbd2cbb057.jpg' },
+      { rank:6,  model:'qwen/qwen-image-3',                       cost:0.0300, dur:72245,  src:'qwen_qwen-image-3.9eb43120-ba4b-4632-ab85-f4f7e894e6fd.jpg' },
+      { rank:7,  model:'microsoft/mai-image-2.5-pro',             cost:0.1107, dur:27590,  src:'microsoft_mai-image-2.5-pro.9c2eadc3-a3d9-49d8-9590-268215e137cd.jpg' },
+      { rank:8,  model:'krea/krea-2-large',                       cost:0.0600, dur:26246,  src:'krea_krea-2-large.e30dcdac-2e4b-4e41-a29a-b426ce96b448.jpg' },
+      { rank:9,  model:'krea/krea-2-medium',                      cost:0.0300, dur:13374,  src:'krea_krea-2-medium.624f3b1e-3c42-4a6f-b9e8-55b81804c8b4.jpg' },
+      { rank:10, model:'krea/krea-2-medium-turbo',                cost:0.0150, dur:7613,   src:'krea_krea-2-medium-turbo.f96f348a-0f32-49ca-b248-c8c6de959450.jpg' },
+      { rank:11, model:'google/gemini-3.1-flash-lite-image',      cost:0.0336, dur:5198,   src:'google_gemini-3.1-flash-lite-image.b4cffcc5-36de-48e4-86f4-63f9287af9bc.jpg' },
+      { rank:12, model:'openai/gpt-image-2',                      cost:0.0182, dur:32266,  src:'openai_gpt-image-2.45233d24-3ae0-4f6e-8e1d-075839779fe4.jpg' },
+      { rank:13, model:'openai/gpt-image-1-mini',                 cost:0.0497, dur:45715,  src:'openai_gpt-image-1-mini.5a560a4f-047b-4ccb-bb4c-b1d76c68df26.jpg' },
+      { rank:14, model:'openai/gpt-image-1',                      cost:0.2485, dur:56328,  src:'openai_gpt-image-1.02807f78-2a12-499d-9365-483fdd0e0658.jpg' },
+      { rank:15, model:'google/gemini-3.1-flash-image',           cost:0.0686, dur:10229,  src:'google_gemini-3.1-flash-image.832a2daf-1185-48f7-b501-7b22c5d98697.jpg' },
+      { rank:16, model:'google/gemini-3-pro-image',               cost:0.1362, dur:15355,  src:'google_gemini-3-pro-image.78920a38-02a0-40a5-8b07-bf48c365ed90.jpg' },
+      { rank:17, model:'sourceful/riverflow-v2.5-pro',            cost:0.1839, dur:142133, src:'sourceful_riverflow-v2.5-pro.ecb55c2a-abec-4f1a-83ea-bd02353a77fb.jpg' },
+      { rank:18, model:'sourceful/riverflow-v2.5-fast',           cost:0.0185, dur:22018,  src:'sourceful_riverflow-v2.5-fast.ce1773e1-de2b-49eb-bd43-a4e133474e21.jpg' },
+      { rank:19, model:'microsoft/mai-image-2.5',                 cost:0.0483, dur:21134,  src:'microsoft_mai-image-2.5.fa3149b2-71b9-403e-9e73-835d158425ed.jpg' },
+      { rank:20, model:'x-ai/grok-imagine-image-quality',         cost:0.0500, dur:4680,   src:'x-ai_grok-imagine-image-quality.193c6ad6-1aca-4b08-af0a-7a60ae51dda9.jpg' },
+      { rank:23, model:'recraft/recraft-v4.1-utility-pro',        cost:0.2100, dur:22627,  src:'recraft_recraft-v4.1-utility-pro.b2875ec3-f156-4195-b78a-fb6ce16b2de8.jpg' },
+      { rank:24, model:'recraft/recraft-v4.1-utility',            cost:0.0350, dur:9947,   src:'recraft_recraft-v4.1-utility.247f6a1f-4f95-41cd-a896-85e42bb388d7.jpg' },
+      { rank:25, model:'recraft/recraft-v4.1-pro',                cost:0.2100, dur:25252,  src:'recraft_recraft-v4.1-pro.8ba41fed-cc61-4c7f-bcba-9edad6941e93.jpg' },
+      { rank:26, model:'recraft/recraft-v4.1',                    cost:0.0350, dur:7826,   src:'recraft_recraft-v4.1.27d19491-555c-4fd7-9d96-65a2ff230a88.jpg' },
+      { rank:29, model:'recraft/recraft-v4-pro',                  cost:0.2500, dur:21945,  src:'recraft_recraft-v4-pro.e5d2fbde-15a2-4bff-bf09-ce99869f87aa.jpg' },
+      { rank:30, model:'recraft/recraft-v4',                      cost:0.0400, dur:11396,  src:'recraft_recraft-v4.b1a62b89-b54f-486c-9477-9b5cdb284114.jpg' },
+      { rank:31, model:'recraft/recraft-v3',                      cost:0.0400, dur:6155,   src:'recraft_recraft-v3.989c0703-c95f-4266-a52a-2ed56d5983d5.jpg' },
+      { rank:32, model:'openai/gpt-5.4-image-2',                  cost:0.0183, dur:30429,  src:'openai_gpt-5.4-image-2.f1e1ebde-88d5-4cd8-b169-016e8acf58b4.jpg' },
+      { rank:33, model:'google/gemini-3.1-flash-image-preview',   cost:0.0685, dur:9558,   src:'google_gemini-3.1-flash-image-preview.37e73a7a-530b-4595-9873-c5c38b650cc9.jpg' },
+      { rank:34, model:'sourceful/riverflow-v2-pro',              cost:0.1500, dur:52564,  src:'sourceful_riverflow-v2-pro.ab47e6c7-b202-4741-9b62-cac0b5d1edda.jpg' },
+      { rank:35, model:'sourceful/riverflow-v2-fast',             cost:0.0200, dur:25540,  src:'sourceful_riverflow-v2-fast.9c3c761e-ded5-4b14-bd4f-979bdb6767a3.jpg' },
+      { rank:36, model:'black-forest-labs/flux.2-klein-4b',       cost:0.0140, dur:2903,   src:'black-forest-labs_flux.2-klein-4b.7ea5dbae-3316-4e4e-8da5-3a57d143b3af.jpg' },
+      { rank:37, model:'bytedance-seed/seedream-4.5',             cost:0.0400, dur:8804,   src:'bytedance-seed_seedream-4.5.66415d39-9510-4ac3-99d6-1c4c8f5f8c05.jpg' },
+      { rank:38, model:'black-forest-labs/flux.2-max',            cost:0.0700, dur:18962,  src:'black-forest-labs_flux.2-max.342347ed-8dc6-4e78-b75c-7d1f194a118a.jpg' },
+      { rank:39, model:'black-forest-labs/flux.2-flex',           cost:0.0500, dur:9467,   src:'black-forest-labs_flux.2-flex.8733903e-a343-4b35-830d-a0819dec37ed.jpg' },
+      { rank:40, model:'black-forest-labs/flux.2-pro',            cost:0.0300, dur:10348,  src:'black-forest-labs_flux.2-pro.45ec8c40-abda-4c42-883d-0b59c02c1f41.jpg' },
+      { rank:41, model:'google/gemini-3-pro-image-preview',       cost:0.1358, dur:16535,  src:'google_gemini-3-pro-image-preview.c4729e9f-39da-4bf3-8596-24d8bf7df74a.jpg' },
+      { rank:42, model:'openai/gpt-5-image-mini',                 cost:0.0498, dur:45967,  src:'openai_gpt-5-image-mini.f448de91-9d12-411a-a746-fdd5ffef094e.jpg' },
+      { rank:43, model:'openai/gpt-5-image',                      cost:0.2487, dur:56650,  src:'openai_gpt-5-image.28fefad9-d45a-4982-aa22-527bcd0443fa.jpg' },
+      { rank:44, model:'google/gemini-2.5-flash-image',           cost:0.0388, dur:7627,   src:'google_gemini-2.5-flash-image.54356dd3-59ec-422c-b63d-02c6c663e042.jpg' },
+    ];
+
+    let currentSort = 'rank';
+    let currentIndex = 0;
+    let currentItems = [...RAW];
+
+    function fmtCost(c) { return '$' + c.toFixed(4); }
+    function fmtDur(ms) {
+      if (ms >= 60000) return (ms/60000).toFixed(1) + ' min';
+      return (ms/1000).toFixed(1) + ' s';
+    }
+
+    function sortItems(key) {
+      const arr = [...RAW];
+      if (key === 'rank')         arr.sort((a,b) => a.rank - b.rank);
+      else if (key === 'cost-asc')  arr.sort((a,b) => a.cost - b.cost);
+      else if (key === 'cost-desc') arr.sort((a,b) => b.cost - a.cost);
+      else if (key === 'duration-asc') arr.sort((a,b) => a.dur - b.dur);
+      else if (key === 'name')    arr.sort((a,b) => a.model.localeCompare(b.model));
+      return arr;
+    }
+
+    function renderGrid() {
+      currentItems = sortItems(currentSort);
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      currentItems.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.index = idx;
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            <img src="${item.src}" alt="${item.model}" loading="lazy">
+            <div class="card-rank">#${item.rank}</div>
+            <div class="card-zoom-hint"><span class="zoom-icon">⤢</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-model">${item.model}</div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-val cost">${fmtCost(item.cost)}</span>
+                <span class="meta-lbl">Cost</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-val dur">${fmtDur(item.dur)}</span>
+                <span class="meta-lbl">Duration</span>
+              </div>
+            </div>
+          </div>`;
+        card.addEventListener('click', () => openLightbox(idx));
+        grid.appendChild(card);
       });
-    });
+    }
+
+    function updateStats() {
+      document.getElementById('stat-models').textContent = RAW.length;
+      const costs = RAW.map(r => r.cost);
+      document.getElementById('stat-min-cost').textContent = fmtCost(Math.min(...costs));
+      document.getElementById('stat-max-cost').textContent = fmtCost(Math.max(...costs));
+      const fastest = RAW.reduce((a,b) => a.dur < b.dur ? a : b);
+      document.getElementById('stat-fastest').textContent = fmtDur(fastest.dur);
+    }
+
+    function openLightbox(idx) {
+      currentIndex = idx;
+      updateLightbox();
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function updateLightbox() {
+      const item = currentItems[currentIndex];
+      document.getElementById('lightbox-img').src = item.src;
+      document.getElementById('lightbox-img').alt = item.model;
+      document.getElementById('lightbox-caption').textContent = item.model;
+      document.getElementById('lb-cost').textContent = fmtCost(item.cost);
+      document.getElementById('lb-dur').textContent = fmtDur(item.dur);
+      document.getElementById('lightbox-counter').textContent = `${currentIndex + 1} / ${currentItems.length}`;
+    }
 
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('open');
     }
 
-    document.getElementById('lightbox').addEventListener('click', e => {
-      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    function lightboxNav(dir) {
+      currentIndex = (currentIndex + dir + currentItems.length) % currentItems.length;
+      updateLightbox();
+    }
+
+    // Sort buttons
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSort = btn.dataset.sort;
+        renderGrid();
+      });
     });
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeLightbox();
+    // View buttons
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const grid = document.getElementById('grid');
+        if (btn.dataset.view === 'compact') grid.classList.add('compact');
+        else grid.classList.remove('compact');
+      });
     });
+
+    // Lightbox backdrop click
+    document.getElementById('lightbox').addEventListener('click', e => {
+      if (e.target === document.getElementById('lightbox') ||
+          e.target === document.getElementById('lightbox-img-wrap') ||
+          e.target === document.getElementById('lightbox-footer')) {
+        closeLightbox();
+      }
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') lightboxNav(1);
+      if (e.key === 'ArrowLeft')  lightboxNav(-1);
+    });
+
+    updateStats();
+    renderGrid();
   </script>
 </body>
 </html>

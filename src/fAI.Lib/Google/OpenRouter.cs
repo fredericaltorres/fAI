@@ -258,6 +258,10 @@ namespace fAI
                 new AIModel { Id = "moonshotai/kimi-k2.6",              InputTokenPricePer1M = 0.55f,  OutputTokenPricePer1M = 3.20f,   ContextLength = 262_000 },
                 new AIModel { Id = "moonshotai/kimi-k3",                InputTokenPricePer1M = 2.81f,  OutputTokenPricePer1M = 14.01f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 16) },
                 new AIModel { Id = "qwen/qwen3.8-max",                  InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 8, 3)  },
+
+                new AIModel { Id = "poolside/laguna-s-2.1",             InputTokenPricePer1M = 0.09f,  OutputTokenPricePer1M = 0.18f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 21)  },
+                new AIModel { Id = "poolside/laguna-xs-2.1",            InputTokenPricePer1M = 0.06f,  OutputTokenPricePer1M = 0.12f,   ContextLength = 262*1024,  ReleaseDate = new DateTime(2026, 7, 2)  },
+                // https://poolside.ai/models
             };
 
             openRouterApiKey = openRouterApiKey ?? Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
