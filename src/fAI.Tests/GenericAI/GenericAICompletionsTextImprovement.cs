@@ -533,6 +533,14 @@ Find root cause.
         [TestBeforeAfter]
         public void GenericAISpeech_Create___fish_audio_s2_1_pro()
         {
+            var TTS_TEXT = @"
+diagnose the following patient as a spine orthopedic surgeon:
+Jane Doe, a 55-year-old female, presents with extremely painful lower back pain and in the left legs.
+MRI scan shows fracture at L4.
+Find root cause.
+";
+
+            // https://fish.audio/app/default-voices/
             var client = new GenericAI();
             client.Speech.TTSVoiceInfos.Where(v => v.Model== "fish-audio/s2.1-pro").ToList().ForEach(request =>
             {
