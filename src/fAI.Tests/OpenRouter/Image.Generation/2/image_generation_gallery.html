@@ -245,13 +245,20 @@ Famous Players and the Guitar's Cultural Rise
   </div>
 
   <script>
-    const lightbox = document.getElementById('lightbox');
-    const lbImg    = document.getElementById('lightbox-img');
+    const lightbox    = document.getElementById('lightbox');
+    const lbImg       = document.getElementById('lightbox-img');
+    const lbModel     = document.getElementById('lightbox-model');
+    const lbDur       = document.getElementById('lightbox-dur');
+    const lbCost      = document.getElementById('lightbox-cost');
 
     document.querySelectorAll('.card img').forEach(img => {
       img.addEventListener('click', () => {
-        lbImg.src = img.src;
-        lbImg.alt = img.alt;
+        const card  = img.closest('.card');
+        lbImg.src   = img.src;
+        lbImg.alt   = img.alt;
+        lbModel.textContent = card.querySelector('.model').textContent;
+        lbDur.textContent   = card.querySelector('.dur').textContent;
+        lbCost.textContent  = card.querySelector('.cost').textContent;
         lightbox.classList.add('active');
       });
     });

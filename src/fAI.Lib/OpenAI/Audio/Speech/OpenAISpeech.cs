@@ -19,13 +19,18 @@ namespace fAI
     }
     public interface IGenericAISpeech
     {
-        string Create(string input, string voice,
-            string model ,
-            string mp3FileName = null,
-             string instructions = "Speak in a cheerful and positive tone.",
-             int inputTokenCount = -1,
-             float cost = 0
-            ,bool useOpenAI = false);
+        string Create(
+           string input,
+           string voice,
+           string model,
+           string mp3FileName = null,
+           string instructions = "Speak in a cheerful and positive tone.",
+           int inputTokenCount = -1,
+           float cost = 0,
+           bool useOpenAI = false,
+           string inputVoiceFileName = null,
+           string inputVoiceText = null
+           );
     }
         
     public class OpenAISpeech : HttpBase, IGenericAISpeech
@@ -97,7 +102,9 @@ namespace fAI
 
         public string Create(string input, string voice, string model, string mp3FileName = null,
             string instructions = "Speak in a cheerful and positive tone.",
-            int inputTokenCount = -1, float cost = 0, bool useOpenAI = false
+            int inputTokenCount = -1, float cost = 0, bool useOpenAI = false,
+            string inputVoiceFileName = null,
+            string inputVoiceText = null
             ) // "tts-1"
         {
             return _Create(input, voice, mp3FileName, model, instructions, inputTokenCount);
