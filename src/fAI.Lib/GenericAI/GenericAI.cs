@@ -823,7 +823,9 @@ Use the following rules to guide your summarization:
             Undefined,
             Question,
             Order,
-            Statement
+            Statement,
+            ImageGenerationRequest,
+            TTSGenerationRequest,
         }
 
         public class DetermineTheTypeOfPhraseResult
