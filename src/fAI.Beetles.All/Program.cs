@@ -57,12 +57,12 @@ namespace fAI.Beetles.All
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
             var topK = 10;
+            var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
 
             while (true)
             {
-                var client = new GenericAI();
-                var embeddingModel = client.Embedding.GetModels().FirstOrDefault(m => m.Id == OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
-                var minimumScore = embeddingModel.RelevantScore;
+                //var minimumScore = embeddingModel.RelevantScore;
+                var minimumScore = -1f;
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit" || criteria == "quit")
                     break;
@@ -71,23 +71,11 @@ namespace fAI.Beetles.All
                 {
                     var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
-
-                    if (inMemoryResponse.Count == 0)
-                    {
-                        inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
-                    }
-
-                    var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
+                    var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.90f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
-
-                    if(inMemoryResponse.Count == 0)
-                    {
-                        Debugger.Break();
-                    }
-
                     foreach (var r in inMemoryResponse)
                         WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
                     Console.WriteLine($"");

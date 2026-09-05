@@ -86,7 +86,7 @@ namespace fAI
             public string Id { get; set; }
             public int Dimensions { get; set; }
 
-            public float RelevantScore { get; set; } = 0.0f;
+            public float RelevantScore__UseLess { get; set; } = 0.0f;
 
             public GenericAIembeddingModel()
             {
@@ -103,10 +103,10 @@ namespace fAI
         {
             OpenAI.Trace(new { }, this);
             return new List<GenericAIembeddingModel> {
-                new GenericAIembeddingModel() { Id = "openai/text-embedding-3-small", Dimensions = 1536, RelevantScore = 0.05f },
-                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-4b", Dimensions = 1536, RelevantScore = 0.05f  },
-                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-8b", Dimensions = 1536, RelevantScore = 0.05f  },
-                new GenericAIembeddingModel() { Id = "mistralai/mistral-embed-2312", Dimensions = 1024, RelevantScore = 0.05f  },
+                new GenericAIembeddingModel() { Id = "openai/text-embedding-3-small", Dimensions = 1536, RelevantScore__UseLess = 0.3f },
+                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-4b", Dimensions = 1536, RelevantScore__UseLess = 0.3f  },
+                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-8b", Dimensions = 1536, RelevantScore__UseLess = 0.3f  },
+                new GenericAIembeddingModel() { Id = "mistralai/mistral-embed-2312", Dimensions = 1024, RelevantScore__UseLess = 0.3f  },
             };
         }
 
