@@ -36,6 +36,8 @@ namespace fAI
 
         public GenericAIImage Image => new GenericAIImage(timeOut: HttpBase._timeout, apiKey: base._key);
 
+        public GenericAIembedding Embedding => new GenericAIembedding(timeOut: HttpBase._timeout, apiKey: base._key);
+
         public class Contents : List<ContentMessage>
         {
             public List<GPTMessage>  GetOpenAIContents(string systemPrompt)
