@@ -34,7 +34,7 @@ namespace fAI.VectorDB
             return minimumScore;
         }
 
-        public static (List<float> Embedding, EmbeddingUsage Usage) ToVector(string text, string apiKey = null)
+        public static (List<float> Embedding, EmbeddingUsage Usage) ToVector(string text, string openRouterApiKey = null, string model = null)
         {
             var cacheEntry = $"VectorSearch: {text}";
             var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry) ;
@@ -44,17 +44,31 @@ namespace fAI.VectorDB
                 return (cacheR.Embedding, new EmbeddingUsage());
             }
 
-            var client = new OpenAI(apiKey: apiKey);
-            var r = client.Embeddings.Create(text);
-            if (r.Success)
+            var client = new GenericAI(apiKey: openRouterApiKey);
+            var (actualEmbeddings, usage_) =  model == null ? client.Embedding.Create(text) : client.Embedding.Create(text, model: model);
+
+            if (actualEmbeddings != null)
             {
-                AIPromptCache.Instance.Add(cacheEntry, r.Data[0].Embedding);
-                return (r.Data[0].Embedding, r.Usage);
+                var usage = new EmbeddingUsage { PromptTokens = usage_.InputTokens, TotalTokens = usage_.TotalTokens };
+                AIPromptCache.Instance.Add(cacheEntry, actualEmbeddings);
+                return (actualEmbeddings, usage);
             }
             else
             {
                 return (null, new EmbeddingUsage());
             }
+
+            //var client = new OpenAI(apiKey: apiKey);
+            //var r = client.Embeddings.Create(text);
+            //if (r.Success)
+            //{
+            //    AIPromptCache.Instance.Add(cacheEntry, r.Data[0].Embedding);
+            //    return (r.Data[0].Embedding, r.Usage);
+            //}
+            //else
+            //{
+            //    return (null, new EmbeddingUsage());
+            //}
         }
 
         public static List<EmbeddingCommonRecord> SimilaritySearch(

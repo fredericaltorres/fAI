@@ -31,22 +31,24 @@ namespace fAI.Beetles.All
         static void WriteInformation(string message) => WriteLine(message, ConsoleColor.White);
         static void WriteAnswer(string message) => WriteLine(message, ConsoleColor.Green);
 
-        const string JsonOutputFilename = @".\Beatles.All.json";
+        static string JsonOutputFilename = @".\Beatles.All.json";
 
         static void Main(string[] args)
         {
             Console.Clear();
             ///WebScrapLyrics();
-            ComputeEmbedding();
-            Environment.Exit(0);
+            //ComputeEmbedding();
+            //Environment.Exit(0);
+
+            AIPromptCache.Instance.Clear();
+
+            JsonOutputFilename = @".\Beatles.All.qwen3-embedding-4b.json";
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
-
-
 
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
@@ -63,10 +65,10 @@ namespace fAI.Beetles.All
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var (v,u) = SimilaritySearchEngine.ToVector(criteria);
+                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: QWEN3_EMBEDDING_4B_MODEL);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
-                    minimumScore = bestScore * 0.80f;
+                    minimumScore = bestScore * 0.87f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
@@ -239,6 +241,8 @@ namespace fAI.Beetles.All
             Console.ReadLine();
         }
 
+        const string QWEN3_EMBEDDING_4B_MODEL = "qwen/qwen3-embedding-4b";
+
         static void ComputeEmbedding()
         {
             ///WebScrapLyrics();
@@ -248,16 +252,15 @@ namespace fAI.Beetles.All
                 e.Embedding.Clear();
             EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
 
-
-            var client = new OpenAI();
+            var client = new GenericAI();
             var i = 0;
             foreach (var e in embeddingSongRecords)
             {
                 Console.WriteLine($"{i} - {e.Album} - {e.Title}");
                 if (e.Embedding == null || e.Embedding.Count == 0)
                 {
-                    var r = client.Embeddings.Create(e.Text);
-                    e.Embedding = r.Data[0].Embedding;
+                    var (r, usage) = client.Embedding.Create(e.Text, model: QWEN3_EMBEDDING_4B_MODEL);
+                    e.Embedding = r;
 
                     if (i++ % 10 == 0)
                         EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
