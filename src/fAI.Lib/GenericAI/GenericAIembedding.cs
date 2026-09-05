@@ -81,19 +81,36 @@ namespace fAI
         }
 
 
-        public class GenericAIembeddingModels
+        public class GenericAIembeddingModel
         {
             public string Id { get; set; }
             public int Dimensions { get; set; }
 
-            public GenericAIembeddingModels(DatumEmbeddingModel d)
+            public float RelevantScore { get; set; } = 0.0f;
+
+            public GenericAIembeddingModel()
+            {
+
+            }
+            public GenericAIembeddingModel(DatumEmbeddingModel d)
             {
                 Id = d.id;
                 Dimensions = d.context_length;
             }
         }
 
-        public List<GenericAIembeddingModels> GetModelsApi()
+        public List<GenericAIembeddingModel> GetModels()
+        {
+            OpenAI.Trace(new { }, this);
+            return new List<GenericAIembeddingModel> {
+                new GenericAIembeddingModel() { Id = "openai/text-embedding-3-small", Dimensions = 1536, RelevantScore = 0.05f },
+                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-4b", Dimensions = 1536, RelevantScore = 0.05f  },
+                new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-8b", Dimensions = 1536, RelevantScore = 0.05f  },
+                new GenericAIembeddingModel() { Id = "mistralai/mistral-embed-2312", Dimensions = 1024, RelevantScore = 0.05f  },
+            };
+        }
+
+        public List<GenericAIembeddingModel> GetModelsApi()
         {
             OpenAI.Trace(new { }, this);
 
@@ -106,7 +123,7 @@ namespace fAI
             {
                 var r = GetEmbeddingModelsApi.FromJson(response.Text);
                 Logger.Trace(response.Text, this);
-                return r.data.Select(x => new GenericAIembeddingModels(x)).ToList();
+                return r.data.Select(x => new GenericAIembeddingModel(x)).ToList();
             }
             else throw new OpenAIAudioSpeechException($"{nameof(GetModelsApi)}() failed - {response.Exception.Message}", response.Exception);
         }
@@ -137,11 +154,11 @@ namespace fAI
         public (List<float>, GenericAICompletions.GenericAIUsage usage) Create(
             string text,
             string model = "openai/text-embedding-3-small",
-            int dimension = 1536,
             string filePath = null
             )
         {
             OpenAI.Trace(new { model, text}, this);
+            var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
             var sw = Stopwatch.StartNew();
             var usage = new GenericAICompletions.GenericAIUsage(model, "","");
             if (base._key == null)

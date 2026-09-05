@@ -36,8 +36,8 @@ namespace fAI.VectorDB
 
         public static (List<float> Embedding, EmbeddingUsage Usage) ToVector(string text, 
             string openRouterApiKey = null, 
-            string model = null,
-            int? dimensions = null)
+            string model = null
+            )
         {
             var cacheEntry = $"VectorSearch: {text}";
             var cacheR = AIPromptCache.Instance.GetEntry(cacheEntry) ;
@@ -48,7 +48,7 @@ namespace fAI.VectorDB
             }
 
             var client = new GenericAI(apiKey: openRouterApiKey);
-            var (actualEmbeddings, usage_) =  model == null ? client.Embedding.Create(text) : client.Embedding.Create(text, model: model, dimension: dimensions.Value);
+            var (actualEmbeddings, usage_) =  model == null ? client.Embedding.Create(text) : client.Embedding.Create(text, model: model);
 
             if (actualEmbeddings != null)
             {

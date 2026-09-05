@@ -56,21 +56,27 @@ namespace fAI.Beetles.All
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
-
-            var minimumScore = -1.0; // with new model score does not count
             var topK = 10;
 
             while (true)
             {
-                AIPromptCache.Instance.Clear();
+                var client = new GenericAI();
+                var embeddingModel = client.Embedding.GetModels().FirstOrDefault(m => m.Id == OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
+                var minimumScore = embeddingModel.RelevantScore;
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit" || criteria == "quit")
                     break;
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL, dimensions: DIMENSIONS);
+                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
+
+                    if (inMemoryResponse.Count == 0)
+                    {
+                        inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
+                    }
+
                     var bestScore = inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.90f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
@@ -255,7 +261,7 @@ namespace fAI.Beetles.All
         const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
 
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
-        const int DIMENSIONS = 1536;//1024;//1536;
+        
 
 
 
@@ -276,7 +282,7 @@ namespace fAI.Beetles.All
                 Console.WriteLine($"{i} - {e.Album} - {e.Title}");
                 if (e.Embedding == null || e.Embedding.Count == 0)
                 {
-                    var (r, usage) = client.Embedding.Create(e.Text, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL, dimension: DIMENSIONS);
+                    var (r, usage) = client.Embedding.Create(e.Text, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
                     e.Embedding = r;
 
                     if (i++ % 10 == 0)
