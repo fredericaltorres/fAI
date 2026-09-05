@@ -1,9 +1,17 @@
 ﻿in the navy
 sad people in church
+sad religious people
 endless love
-parenting
-irs
-lady
+
+parenting family issue wednesday
+child going away from house
+daugther mother father relationship in the morning
+mother father relationship with grown-up daugther
+mother father relationship with adult daugther on a wednesday
+in difficult time, somebody come with wise knowledge
+
+IRS
+Controle Fiscal
 Tibetan Book of the Dead
 Timothy Leary
 animals
@@ -33,3 +41,5 @@ cosin distance,
 0.777245647027691
 
 350-14-41
+
+openai-text-embedding-3-small

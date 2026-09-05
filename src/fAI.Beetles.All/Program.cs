@@ -72,7 +72,7 @@ namespace fAI.Beetles.All
                     var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
-                    minimumScore = bestScore * 0.90f;
+                    minimumScore = bestScore * 0.9f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
