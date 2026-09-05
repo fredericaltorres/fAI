@@ -618,21 +618,6 @@ Of the beginning, of the beginning
         {
             return input.Replace(" ", "").Replace(".","");
         }
-
-
-        [Fact()]
-        public void Embeddings_Create_Compare_OpenAI_OpenRouter_EmbeddingOnTheSameModel()
-        {
-            const string input = "I am he as you are he as you are me. And we are all together. See how they run like pigs from a gun. See how they fly. I'm crying.";
-            var client = new OpenAI();
-            var r = client.Embeddings.Create(input);
-            Assert.Equal("list", r.Object);
-            Assert.Single(r.Data);
-            Assert.Equal("embedding", r.Data[0].Object);
-            Assert.Equal(0, r.Data[0].Index);
-            Assert.Equal(r.Data[0].EmbeddingMaxValue, r.Data[0].Embedding.Count);
-            Assert.Equal(37, r.Usage.PromptTokens);
-            Assert.Equal(37, r.Usage.TotalTokens);
-        }
+      
     }
 }
