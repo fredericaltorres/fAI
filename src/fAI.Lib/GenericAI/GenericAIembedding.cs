@@ -166,12 +166,23 @@ namespace fAI
 
         private string GetPayLoad(string input, string model, int dimensions)
         {
-            return JsonConvert.SerializeObject(new
+            if (dimensions == 1536)
             {
-                input,
-                model,
-                dimensions
-            });
+                return JsonConvert.SerializeObject(new
+                {
+                    input,
+                    model,
+                    dimensions
+                });
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new
+                {
+                    input,
+                    model
+                });
+            }
         }
     }
 }

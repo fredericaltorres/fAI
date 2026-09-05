@@ -145,6 +145,7 @@ namespace fAI
                     {
                         string errorMessage = reader.ReadToEnd();
                         var newEx = new Exception(errorMessage);
+                        Logger.Trace($"[ERROR]{errorMessage}", this);
                         r.SetException(newEx);
                         r.SetText(errorMessage, "application/json");
                     }
