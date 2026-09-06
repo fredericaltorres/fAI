@@ -95,6 +95,8 @@ namespace fAI
                 var entries = GetEntries();
                 if (entries.Count < 2)
                     return entries[0];
+                if (entries.Count == 2)
+                    return entries[1];
                 float maxGap = float.MinValue;
                 ScoreEntry gapEntry = null;
                 for (int i = 0; i < entries.Count - 1; i++)
