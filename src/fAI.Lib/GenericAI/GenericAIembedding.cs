@@ -107,6 +107,8 @@ namespace fAI
                 new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-4b", Dimensions = 1536, RelevantScore__UseLess = 0.3f  },
                 new GenericAIembeddingModel() { Id = "qwen/qwen3-embedding-8b", Dimensions = 1536, RelevantScore__UseLess = 0.3f  },
                 new GenericAIembeddingModel() { Id = "mistralai/mistral-embed-2312", Dimensions = 1024, RelevantScore__UseLess = 0.3f  },
+
+                new GenericAIembeddingModel() { Id = "google/gemini-embedding-2", Dimensions = 1536, RelevantScore__UseLess = 0.3f  },
             };
         }
 

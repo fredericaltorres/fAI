@@ -85,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Beatles.All.google.gemini-embedding-2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Beatles.All.mistral-embed-2312.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

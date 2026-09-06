@@ -1,14 +1,15 @@
-﻿using System;
-using DynamicSugar;
+﻿using DynamicSugar;
+using fAI.ScoreRankManagerSpace;
+using fAI.VectorDB;
+using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
 using static DynamicSugar.DS;
-using fAI.VectorDB;
-using System.Diagnostics;
 
 namespace fAI.Beetles.All
 {
@@ -18,8 +19,10 @@ namespace fAI.Beetles.All
         const string QWEN3_EMBEDDING_8B_MODEL = "qwen/qwen3-embedding-8b";
         const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
+        const string GOOGLE_GEMINI_EMBEDDING_2_MODEL = "google/gemini-embedding-2";
 
-        static string _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
+
+        static string _currentEmbeddingModel = GOOGLE_GEMINI_EMBEDDING_2_MODEL;
 
         static void Write(string message, ConsoleColor color)
         {
@@ -58,6 +61,11 @@ namespace fAI.Beetles.All
                     _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
                     JsonOutputFilename = @".\Beatles.All.mistral-embed-2312.json";
                 }
+                if (model == "google")
+                {
+                    _currentEmbeddingModel = GOOGLE_GEMINI_EMBEDDING_2_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.google.gemini-embedding-2.json";
+                }
             }
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
@@ -85,15 +93,27 @@ namespace fAI.Beetles.All
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: _currentEmbeddingModel);
+                    var (v, u) = SimilaritySearchEngine.ToVector(criteria, model: _currentEmbeddingModel);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.9f;
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
+                    var scoreRankManager = new ScoreRankManager();
+                    scoreRankManager.AddScores(inMemoryResponse.Select(r => r.Score).ToList(), inMemoryResponse.Select(r => r.Id).ToList());
+
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
-                    foreach (var r in inMemoryResponse)
-                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}");
+                    foreach (var r in scoreRankManager.GetEntries())
+                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}, {r.Difference:0.0000}");
+                    Console.WriteLine($"");
+
+                    var gapE = scoreRankManager.GetGapEntry();
+                    Console.WriteLine($"Gap Entry: {gapE.ToString()}");
+
+                    Console.WriteLine($"=====================");
+
+                    foreach (var r in scoreRankManager.GetEntriesGapped())
+                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}, {r.Difference:0.0000}");
                     Console.WriteLine($"");
                 }
                 WriteQuestion(message);

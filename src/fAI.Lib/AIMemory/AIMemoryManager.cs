@@ -24,6 +24,111 @@ using JsonIgnore2Attribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 namespace fAI
 {
+    namespace ScoreRankManagerSpace
+    {
+        public class ScoreEntry
+        {
+            public float Score { get; private set; }
+            public float Difference { get; private set; }
+            public string Id { get; private set; }
+            public int Index { get; internal set; }
+
+            public ScoreEntry(float score, float difference, string id)
+            {
+                Score = score;
+                Difference = difference;
+                Id = id;    
+            }
+
+            public override string ToString()
+            {
+                return $"[{Index}] Score: {Score:0.0000}, Difference: {Difference:0.0000}, Id: {Id}";
+            }
+        }
+
+        public class ScoreRankManager
+        {
+            private readonly List<ScoreEntry> _entries = new List<ScoreEntry>();
+            public List<ScoreEntry> Entries { get { return _entries; } }
+            
+            public int Count { get { return _entries.Count; } }
+
+            public void AddScore(float score, string id)
+            {
+                float difference = _entries.Count > 0 ? 
+                    ((score - _entries[_entries.Count - 1].Score) * -1)
+                    : 
+                    0f;
+                _entries.Add(new ScoreEntry(score, difference, id));
+            }
+
+            public void AddScores(IEnumerable<double> scores, List<string> ids)
+            {
+                this.AddScores(scores.Select(s => (float)s), ids);
+            }
+            public void AddScores(IEnumerable<float> scores, List<string> ids)
+            {
+                var x = 0;
+                foreach (float score in scores)
+                {
+                    AddScore(score, ids[x++]);
+                }
+            }
+
+            public List<ScoreEntry> GetEntries()
+            {
+                var r = _entries.OrderByDescending(e => e.Score).ToList();
+                for(var index = 0; index < r.Count; index++)
+                    r[index].Index = index;
+                return r;
+            }
+
+            public List<ScoreEntry> GetEntriesGapped()
+            {
+                var e =  GetGapEntry();
+                var entries = GetEntries();
+                return entries.Take(e.Index+1).ToList();
+            }
+
+            public ScoreEntry GetGapEntry()
+            {
+                var entries = GetEntries();
+                if (entries.Count < 2)
+                    return null;
+                float maxGap = float.MinValue;
+                ScoreEntry gapEntry = null;
+                for (int i = 0; i < entries.Count - 1; i++)
+                {
+                    float gap = entries[i].Score - entries[i + 1].Score;
+                    if (gap > maxGap)
+                    {
+                        maxGap = gap;
+                        gapEntry = entries[i];
+                    }
+                }
+                return gapEntry;
+            }
+
+            public ScoreEntry GetEntry(int index)
+            {
+                if (index < 0 || index >= _entries.Count)
+                    throw new ArgumentOutOfRangeException("index");
+                return _entries[index];
+            }
+
+            public bool RemoveLast()
+            {
+                if (_entries.Count == 0) return false;
+                _entries.RemoveAt(_entries.Count - 1);
+                return true;
+            }
+
+            public void Clear()
+            {
+                _entries.Clear();
+            }
+        }
+    }
     namespace RRF // Reciprocal Rank Fusion
     {
         public class RRFObject 
