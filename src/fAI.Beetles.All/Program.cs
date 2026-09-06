@@ -14,6 +14,13 @@ namespace fAI.Beetles.All
 {
     internal class Program
     {
+        const string QWEN3_EMBEDDING_4B_MODEL = "qwen/qwen3-embedding-4b";
+        const string QWEN3_EMBEDDING_8B_MODEL = "qwen/qwen3-embedding-8b";
+        const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
+        const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
+
+        static string _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
+
         static void Write(string message, ConsoleColor color)
         {
             ConsoleColor originalColor = Console.ForegroundColor;
@@ -43,7 +50,15 @@ namespace fAI.Beetles.All
 
             AIPromptCache.Instance.Clear();
 
-            // JsonOutputFilename = @".\Beatles.All.mistral-embed-2312.json";
+            if(args.Length > 0)
+            {
+                var model = args[0].Trim();
+                if (model == "mistral")
+                {
+                    _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.mistral-embed-2312.json";
+                }
+            }
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
@@ -52,12 +67,13 @@ namespace fAI.Beetles.All
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
 
             WriteInformation($"Beatles Lyrics Search - File: {JsonOutputFilename}");
+            WriteInformation($"model: {_currentEmbeddingModel}");
 
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
             WriteInformation("Enter 'exit' to quit.");
             var topK = 10;
-            var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
+            var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
 
             while (true)
             {
@@ -69,7 +85,7 @@ namespace fAI.Beetles.All
 
                 if (!criteria.IsNullOrEmpty())
                 {
-                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
+                    var (v,u) = SimilaritySearchEngine.ToVector(criteria, model: _currentEmbeddingModel);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.9f;
@@ -244,11 +260,6 @@ namespace fAI.Beetles.All
             Console.ReadLine();
         }
 
-        const string QWEN3_EMBEDDING_4B_MODEL = "qwen/qwen3-embedding-4b";
-        const string QWEN3_EMBEDDING_8B_MODEL = "qwen/qwen3-embedding-8b";
-        const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
-
-        const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
         
 
 
@@ -270,7 +281,7 @@ namespace fAI.Beetles.All
                 Console.WriteLine($"{i} - {e.Album} - {e.Title}");
                 if (e.Embedding == null || e.Embedding.Count == 0)
                 {
-                    var (r, usage) = client.Embedding.Create(e.Text, model: OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL);
+                    var (r, usage) = client.Embedding.Create(e.Text, model: _currentEmbeddingModel);
                     e.Embedding = r;
 
                     if (i++ % 10 == 0)
