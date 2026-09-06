@@ -104,7 +104,7 @@ namespace fAI.Beetles.All
 
                     Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
                     foreach (var r in scoreRankManager.GetEntries())
-                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}, {r.Difference:0.0000}");
+                        WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {r.Id}");
                     Console.WriteLine($"");
 
                     var gapE = scoreRankManager.GetGapEntry();
@@ -113,8 +113,8 @@ namespace fAI.Beetles.All
                     Console.WriteLine($"=====================");
 
                     foreach (var r in scoreRankManager.GetEntriesGapped())
-                        WriteAnswer($"Id: {r.Id}, {r.Score:0.0000}, {r.Difference:0.0000}");
-                    Console.WriteLine($"");
+                        WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {r.Id}");
+                    Console.WriteLine($"\r\n\r\n");
                 }
                 WriteQuestion(message);
             }
