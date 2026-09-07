@@ -126,19 +126,19 @@ namespace fAI.Beetles.All
                     var scoreRankManager = new ScoreRankManager();
                     scoreRankManager.AddScores(inMemoryResponse.Select(r => r.Score).ToList(), inMemoryResponse.Select(r => r.Id).ToList());
 
-                    Console.WriteLine($"bestScore: {bestScore}, minimumScore: {minimumScore}");
+                    Console.WriteLine($"\r\nbestScore: {bestScore}, minimumScore: {minimumScore}");
                     foreach (var r in scoreRankManager.GetEntries())
                         WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
                     Console.WriteLine($"");
 
-                    var gapE = scoreRankManager.GetGapEntry();
-                    Console.WriteLine($"Gap Entry: {gapE.ToString()}");
+                    //var gapE = scoreRankManager.GetGapEntry();
+                    //Console.WriteLine($"Gap Entry: {GetLastSegment(gapE.ToString())}");
 
                     Console.WriteLine($"=====================");
 
                     foreach (var r in scoreRankManager.GetEntriesGapped())
                         WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
-                    Console.WriteLine($"\r\n\r\n");
+                    Console.WriteLine($"\r\n");
                 }
                 WriteQuestion(message);
             }

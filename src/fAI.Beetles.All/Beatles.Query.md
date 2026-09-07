@@ -1,13 +1,9 @@
 ﻿1. Model intro
 1. Explain the 10 best result, than apply the top 10%, but
-
-in the navy
-
 1. Explain new filtering and caveat when there are 2 elements
 
 sad people in church
-endless love
-
+in the navy
 child going away from house
 parenting family issue wednesday
     parenting family issue wednesday
@@ -16,9 +12,10 @@ parenting family issue wednesday
     mother father relationship with grown-up daugther
     mother father relationship with adult daugther on a wednesday
 
-
 in difficult time, somebody come with wise knowledge
-in difficult time, what is wise knowledge
+
+endless love
+endless love, life time
 
 IRS
 Controle Fiscal
