@@ -367,7 +367,7 @@ namespace fAI
             return SimilaritySearchEngine.ToVector(text, openAiKey);
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) AddUpdate(
+        public (bool, GenericAIUsage, LiteDB.ObjectId) AddUpdate(
             AIMemory d, string localFile,
             string openAiKey = null, string llmApiKey = null,
             bool clearEmbeddings = false,
@@ -382,7 +382,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(localFile));
             }
 
-            var usage = new GenericAICompletions.GenericAIUsage("", "", "");
+            var usage = new GenericAIUsage("", "", "");
             var r = true;
             try
             {
@@ -526,7 +526,7 @@ namespace fAI
             return sb.ToString();
         }
 
-        public (GenericAICompletions.GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
+        public (GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
             LiteDB.ObjectId id = new LiteDB.ObjectId();
             if (d.Type == PublishedDocumentInfoType.ImageFile)
@@ -566,7 +566,7 @@ namespace fAI
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "deepseek/deepseek-v4-flash";
         //public static string DEFAULT_MODEL_FOR_META_DATA_EXTRACTION = "deepseek/deepseek-v4-pro";
 
-        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddingsAndMetaDataAndSummary(AIMemory d,
+        public (bool, GenericAIUsage) ComputeEmbeddingsAndMetaDataAndSummary(AIMemory d,
             string embeddingsOpenAIApiKey = null,
             string llmApiKey = null,
             string model = null,
@@ -585,7 +585,7 @@ namespace fAI
             }
 
             var (r1, usage) = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
-            var extractUsage = new GenericAICompletions.GenericAIUsage("", "", "");
+            var extractUsage = new GenericAIUsage("", "", "");
             var r2 = false;
 
             (r2, extractUsage) = ExtractMetaDataFromText(d, model, llmApiKey, aiMetaDataToMerge);
@@ -600,19 +600,19 @@ namespace fAI
             return (r1 && r2 && r3 && r4, usage);
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) GenerateTitleIfNeeded(AIMemory aiMemory, string model = null, string llmApiKey = null, string language = "")
+        public (bool, GenericAIUsage) GenerateTitleIfNeeded(AIMemory aiMemory, string model = null, string llmApiKey = null, string language = "")
         {
             if (string.IsNullOrEmpty(model))
                 model = DEFAULT_MODEL_FOR_META_DATA_EXTRACTION;
 
             if(!string.IsNullOrEmpty(aiMemory.Title))
-                return (true, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                return (true, new GenericAIUsage(model, $"", "") { });
 
             try
             {
                 if (!__summary_on__)
                 {
-                    return (false, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                    return (false, new GenericAIUsage(model, $"", "") { });
                 }
                 else
                 {
@@ -642,7 +642,7 @@ namespace fAI
             return r.Title;
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) SummarizeInXPercentOfWords(AIMemory aiMemory, int percent, 
+        public (bool, GenericAIUsage) SummarizeInXPercentOfWords(AIMemory aiMemory, int percent, 
             string model = null, string llmApiKey = null, string language = "", AIMetaData aiMetaDataToMerge = null)
         {
             if (string.IsNullOrEmpty(model))
@@ -652,7 +652,7 @@ namespace fAI
             {
                 if (!__summary_on__)
                 {
-                    return (false, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                    return (false, new GenericAIUsage(model, $"", "") { });
                 }
                 else
                 {
@@ -683,7 +683,7 @@ namespace fAI
             return r.Summary;
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) ExtractMetaDataFromText(AIMemory d, 
+        public (bool, GenericAIUsage) ExtractMetaDataFromText(AIMemory d, 
             string model = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
             if (string.IsNullOrEmpty(model))
@@ -696,7 +696,7 @@ namespace fAI
                 HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
                 d.AIMetaData = JsonConvert.DeserializeObject<AIMetaData>(cacheR.Response);
                 d.AIMetaData.Merge(aiMetaDataToMerge);
-                return (true, new GenericAICompletions.GenericAIUsage(model, $"ExtractMetadata: CACHED", ""));
+                return (true, new GenericAIUsage(model, $"ExtractMetadata: CACHED", ""));
             }
 
             try
@@ -730,7 +730,7 @@ namespace fAI
                         Keywords = null
                     };
                     d.AIMetaData.Merge(aiMetaDataToMerge);
-                    return (true, new GenericAICompletions.GenericAIUsage(model, $"", "") { });
+                    return (true, new GenericAIUsage(model, $"", "") { });
                 }
             }
             catch (Exception ex)
@@ -739,9 +739,9 @@ namespace fAI
             }
         }
 
-        public (bool, GenericAICompletions.GenericAIUsage) ComputeEmbeddings(AIMemory d, string openAiKey = null)
+        public (bool, GenericAIUsage) ComputeEmbeddings(AIMemory d, string openAiKey = null)
         {
-            var usage = new GenericAICompletions.GenericAIUsage("", "", "");
+            var usage = new GenericAIUsage("", "", "");
             try
             {
                 if (__embedding_computation_on__)

@@ -57,8 +57,6 @@ namespace fAI.Beetles.All
         static void Main(string[] args)
         {
             Console.Clear();
-            
-
             AIPromptCache.Instance.Clear();
 
             if (args.Length > 0)

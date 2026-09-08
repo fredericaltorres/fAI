@@ -1,5 +1,4 @@
 ﻿using DynamicSugar;
-using fAI.AnthropicLib;
 using fAI.Google;
 using fAI.Util.Strings;
 using Markdig.Extensions.Tables;
@@ -27,20 +26,18 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace fAI
 {
-
     public class GenericAI : HttpBase
     {
         public GenericAISpeech Speech => new GenericAISpeech(timeOut: HttpBase._timeout, apiKey: base._key);
         public GenericAITranscription Transcription => new GenericAITranscription(timeOut: HttpBase._timeout, apiKey: base._key);
         public GenericAIUtility Utility => new GenericAIUtility(timeOut: HttpBase._timeout, apiKey: base._key);
-
         public GenericAIImage Image => new GenericAIImage(timeOut: HttpBase._timeout, apiKey: base._key);
-
         public GenericAIembedding Embedding => new GenericAIembedding(timeOut: HttpBase._timeout, apiKey: base._key);
+
 
         public class Contents : List<ContentMessage>
         {
-            public List<GPTMessage>  GetOpenAIContents(string systemPrompt)
+            public List<GPTMessage>  GetOpenAICompatibleContents(string systemPrompt)
             {
                 var r = new List<GPTMessage>();
                 r.Add(new GPTMessage { Role = MessageRole.system, Content = systemPrompt });
@@ -163,109 +160,6 @@ namespace fAI
             else throw new Exception($"Model {model} not supported for agentic loop.");
         }
 
-        public class GenericAIUsage 
-        {
-            public float ComputeCost()
-            {
-                var model = GenericAI.GetModels().FirstOrDefault(m => m.Id == this.Model);
-                if(model == null)
-                    return 0f;
-                return model.ComputeCost(InputTokens, OutputTokens);
-            }
-
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public int TTSTokens { get; set; }
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public int STTTokens { get; set; }
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public int InputTokens { get; set; }
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public int OutputTokens { get; set; }
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public int Duration { get; set; }
-
-            [JsonIgnore]
-            public int TotalTokens => TTSTokens + STTTokens + InputTokens + OutputTokens;
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public string Model { get; set; }
-
-            [JsonIgnore]
-            public string Prompt { get; set; }
-            [JsonIgnore]
-            public string SystemPrompt { get; set; }
-
-            public DateTime StartTime { get; set; }
-
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-            public long AudioFileSize { get; set; }
-
-            public void Add(int token)
-            {
-                this.InputTokens += token;
-            }
-
-            public void Add(AnthropicCompletionResponse a)
-            {
-                this.InputTokens += a.Usage.input_tokens;
-                this.OutputTokens += a.Usage.output_tokens;
-            }
-
-            public GenericAIUsage(string model, string prompt, string SystemPrompt)
-            {
-                this.StartTime = DateTime.UtcNow;
-                this.Model = model;
-                this.Prompt = prompt;
-                this.SystemPrompt = SystemPrompt;
-            }
-
-            public void SetDuration(Stopwatch sw)
-            {
-                sw.Stop();
-                this.Duration = (int)sw.ElapsedMilliseconds;
-            }
-
-            public void Add(GenericAIUsage u)
-            {
-                if (u == null)
-                    return;
-
-                this.InputTokens += u.InputTokens;
-                this.OutputTokens += u.OutputTokens;
-                this.TTSTokens += u.TTSTokens;
-                this.STTTokens += u.STTTokens;
-                this.Duration += u.Duration;
-                this.AudioFileSize += u.AudioFileSize;
-                this.Prompt += u.Prompt;
-                this.SystemPrompt += u.SystemPrompt;
-
-                if(string.IsNullOrEmpty(this.Model))
-                    this.Model = u.Model;
-            }
-
-            public void SetTokenCount( int inputTokens, int outputTokens)
-            {
-                this.InputTokens = inputTokens;
-                this.OutputTokens = outputTokens;
-            }
-            public override string ToString()
-            {
-                if(TTSTokens > 0)
-                {
-                    return $"[TTS.USAGE]Model: {Model}, TTS Tokens: {TTSTokens}";
-                }
-                if (STTTokens > 0)
-                {
-                    return $"[STT.USAGE]Model: {Model}, STT Tokens: {STTTokens}, AudioFileSize: {AudioFileSize}";
-                }
-                if(InputTokens > 0)
-                {
-                    return $"[LLM.USAGE]Model: {Model}, InputTokens: {InputTokens}, OutputTokens: {OutputTokens}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLength: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
-                }
-                return $"[UNDEFINED.USAGE]Model: {Model}, Duration: {Duration / 1000f:0.000}, StartTime: {StartTime}, PromptLength: {Prompt?.Length ?? 0}, SystemPromptLength: {SystemPrompt?.Length ?? 0}";
-            }
-        }
-
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
 
         public SkillFile LoadSkill(string skillName, string skillRootFolder)
@@ -275,8 +169,6 @@ namespace fAI
             return i.LoadSkill();
         }
 
-        
-
         public (string, GenericAI.Contents, GenericAIUsage) Create(
             string prompt, string systemPrompt, string model, 
             GenericAI.Contents contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null)
@@ -285,11 +177,9 @@ namespace fAI
             {
                 var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
 
-                GenericAI.GetModels().Where(m => m.Id == model).ToList().ForEach(m =>
-                {
-                    var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
-                    HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}", this);
-                });
+                var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
+                var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
+                HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}", this);
 
                 return (result, updatedContents, usage);
             }
@@ -306,7 +196,6 @@ namespace fAI
                 }
             }
         }
-
         private (string, GenericAI.Contents, GenericAIUsage) __Create(
             string prompt, string systemPrompt, string model, 
             GenericAI.Contents contents = null,  string skillName = null, string skillRootFolder = null)
@@ -332,6 +221,7 @@ namespace fAI
                     Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
                 });
 
+                // Anthropic, My own abstraction, but we now use Open Router
                 if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
                 {
                     var isAnthpropicFastMode = model.ToLowerInvariant().EndsWith("-fast");
@@ -385,6 +275,8 @@ namespace fAI
 
                     return (answerContent.Text, contents, usage);
                 }
+
+                // Google, My own abstraction, but we now use Open Router
                 else if (GoogleAI.GetModels().Select(m => m.Id).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
@@ -415,19 +307,20 @@ namespace fAI
                     return (r.GetText(), contents, usage);
                 }
 
+                // OpenRouter, My own abstraction, but we now use Open Router
                 else if (OpenRouter.GetModels().Select(m => m.Id).Contains(model))
                 {
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
-                    var openRouter = contents.GetOpenAIContents(systemPrompt);
+                    var openRouter = contents.GetOpenAICompatibleContents(systemPrompt);
                     var openRouterClient = new OpenRouter(apiKey: base._key);
                     var p = new Prompt_GPT_4
                     {
                         Messages = new List<GPTMessage>()
                         {
                             new GPTMessage { Role = MessageRole.system, Content = systemPrompt },
-                            new GPTMessage { Role = MessageRole.user, Content = prompt },
+                            new GPTMessage { Role = MessageRole.user, Content = prompt }
                         },
                         Model = model
                     };
@@ -451,9 +344,7 @@ namespace fAI
                                 new GenericAI.ContentMessagePart { Text = answerContent.Content }
                             }
                         });
-
                         usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
-
                         var responseText = response.Text;
                         return (responseText, contents, usage);
                     }
@@ -465,7 +356,7 @@ namespace fAI
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-                    var openAIContents = contents.GetOpenAIContents(systemPrompt);
+                    var openAIContents = contents.GetOpenAICompatibleContents(systemPrompt);
                     var openAIClient = new OpenAI(apiKey: base._key);
                     var p = new Prompt_GPT_4
                     {
@@ -789,7 +680,7 @@ Translate the following [language] paragraph into [destinationLanguage].
             public string Title { get; set; }
             public double Duration { get; set; }
 
-            public GenericAICompletions.GenericAIUsage Usage { get; set; }
+            public GenericAIUsage Usage { get; set; }
         }
 
         public GenerateTitleResult GenerateTitle(

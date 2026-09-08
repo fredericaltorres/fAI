@@ -153,7 +153,7 @@ namespace fAI
             public int total_tokens { get; set; }
         }
 
-        public (List<float>, GenericAICompletions.GenericAIUsage usage) Create(
+        public (List<float>, GenericAIUsage usage) Create(
             string text,
             string model = "openai/text-embedding-3-small",
             string filePath = null
@@ -162,7 +162,7 @@ namespace fAI
             OpenAI.Trace(new { model, text}, this);
             var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
             var sw = Stopwatch.StartNew();
-            var usage = new GenericAICompletions.GenericAIUsage(model, "","");
+            var usage = new GenericAIUsage(model, "","");
             if (base._key == null)
                 base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
             var wc = InitWebClient();

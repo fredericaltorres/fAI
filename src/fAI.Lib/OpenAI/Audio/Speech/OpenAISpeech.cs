@@ -11,7 +11,7 @@ namespace fAI
 {
     public interface IGenericAITranscription
     {
-        (string text, GenericAICompletions.GenericAIUsage usage) Create(
+        (string text, GenericAIUsage usage) Create(
             string audioFileName,
             string model = "openai/whisper-large-v3",
             string language = "en"
@@ -98,7 +98,7 @@ namespace fAI
 
         const int OPEN_AI_MAX_TOKEN_FOR_SPEECH = 1900;
 
-        public fAI.GenericAICompletions.GenericAIUsage LastUsage { get; private set; } = new GenericAICompletions.GenericAIUsage(null, null, null);
+        public fAI.GenericAIUsage LastUsage { get; private set; } = new GenericAIUsage(null, null, null);
 
         public string Create(string input, string voice, string model, string mp3FileName = null,
             string instructions = "Speak in a cheerful and positive tone.",
@@ -117,7 +117,7 @@ namespace fAI
             float cost = 0) // "tts-1"
         {
             var inputToken = StringUtil.QuickDeriveTokenCount(input);
-            this.LastUsage = new GenericAICompletions.GenericAIUsage(model, input, null);
+            this.LastUsage = new GenericAIUsage(model, input, null);
             this.LastUsage.SetTokenCount(inputToken, 0);
 
             if (mp3FileName == null)

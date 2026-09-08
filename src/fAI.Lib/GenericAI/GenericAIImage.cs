@@ -143,7 +143,7 @@ namespace fAI
         }
 
 
-        public (string text, GenericAICompletions.GenericAIUsage usage) Create(
+        public (string text, GenericAIUsage usage) Create(
             string prompt,
             string model = "x-ai/grok-imagine-image-2.0",
             string filePath = null
@@ -152,7 +152,7 @@ namespace fAI
             OpenAI.Trace(new { model, prompt}, this);
 
             var sw = Stopwatch.StartNew();
-            var usage = new GenericAICompletions.GenericAIUsage(model, "","");
+            var usage = new GenericAIUsage(model, "","");
             if (base._key == null)
                 base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
             var wc = InitWebClient();

@@ -53,7 +53,7 @@ namespace fAI
             }
         }
 
-        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title, GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
 Please analyze this image thoroughly and provide:
 1. **Overall Description** - A concise summary of what the image shows.
 2. **Key Elements** - List the main subjects, objects, or focal points.
@@ -75,7 +75,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             else throw new Exception($"Model {model} not supported for image analysis.");
         }
 
-        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) OcrImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title, GenericAIUsage usage) OcrImageFromFile(string model, string imagePath, string prompt = @"
 Perform OCR on this image. Extract all visible text and format the output as valid Markdown.
 Use appropriate Markdown elements to reflect the document structure: headings (#, ##, ###)
 for titles and section headers, bullet or numbered lists where lists appear, **bold** or

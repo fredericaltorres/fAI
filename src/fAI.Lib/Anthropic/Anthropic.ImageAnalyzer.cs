@@ -36,7 +36,7 @@ namespace AnthropicImageAnalysis
         /// <summary>
         /// Analyzes an image from a file path and returns a detailed description.
         /// </summary>
-        public (string analysis, string title, GenericAICompletions.GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
+        public (string analysis, string title, GenericAIUsage usage) AnalyzeImageFromFile(string model, string imagePath, string prompt = @"
 Please analyze this image thoroughly and provide:
 1. **Overall Description** - A concise summary of what the image shows.
 2. **Key Elements** - List the main subjects, objects, or focal points.
@@ -57,10 +57,10 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             if (cacheR != null)
             {
                 HttpBase.Trace(new { cacheHit = true, cacheEntry }, new { });
-                return (cacheR.Response, cacheR.Title, new GenericAICompletions.GenericAIUsage(model, cacheEntry, string.Empty));
+                return (cacheR.Response, cacheR.Title, new GenericAIUsage(model, cacheEntry, string.Empty));
             }
 
-            var usage = new GenericAICompletions.GenericAIUsage(model, prompt, "");
+            var usage = new GenericAIUsage(model, prompt, "");
             var sw = System.Diagnostics.Stopwatch.StartNew();
             try
             {
@@ -97,9 +97,9 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
             }
         }
 
-        public (string text, GenericAICompletions.GenericAIUsage usage) AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt, int maxTokens = 16 * 1024)
+        public (string text, GenericAIUsage usage) AnalyzeImage(string model, byte[] imageBytes, string mediaType, string prompt, int maxTokens = 16 * 1024)
         {
-            var usage = new GenericAICompletions.GenericAIUsage(model, prompt, ""); 
+            var usage = new GenericAIUsage(model, prompt, ""); 
             string base64Image = Convert.ToBase64String(imageBytes);
             var requestBody = new
             {

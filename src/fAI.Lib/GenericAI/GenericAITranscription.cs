@@ -64,7 +64,7 @@ namespace fAI
             public int total_tokens { get; set; }
         }
 
-        public (string text, GenericAICompletions.GenericAIUsage usage) Create(
+        public (string text, GenericAIUsage usage) Create(
             string audioFileName,
             string model = "openai/whisper-large-v3",
             string language = "en"
@@ -85,7 +85,7 @@ namespace fAI
                 var r = TranscriptionResponse.FromJson(response.Text);
                 sw.Stop();
                 Logger.Trace(response.Text, this);
-                var usage = new GenericAICompletions.GenericAIUsage(model, "","")
+                var usage = new GenericAIUsage(model, "","")
                 {
                     InputTokens = r.usage.input_tokens,
                     OutputTokens = r.usage.output_tokens,
