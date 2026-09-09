@@ -526,7 +526,7 @@ namespace fAI
             return sb.ToString();
         }
 
-        public (GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string openAiKey = null, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
+        public (GenericAIUsage, LiteDB.ObjectId) Add(AIMemory d, string llmApiKey = null, AIMetaData aiMetaDataToMerge = null)
         {
             LiteDB.ObjectId id = new LiteDB.ObjectId();
             if (d.Type == PublishedDocumentInfoType.ImageFile)
@@ -534,7 +534,7 @@ namespace fAI
                 d.MediaBase64 = Convert.ToBase64String(File.ReadAllBytes(d.LocalFile));
             }
 
-            var (r, u) = ComputeEmbeddingsAndMetaDataAndSummary(d, embeddingsOpenAIApiKey: openAiKey, llmApiKey: llmApiKey, aiMetaDataToMerge: aiMetaDataToMerge);
+            var (r, u) = ComputeEmbeddingsAndMetaDataAndSummary(d, embeddingsOpenAIApiKey: llmApiKey, llmApiKey: llmApiKey, aiMetaDataToMerge: aiMetaDataToMerge);
             d.Init();
 
             using (var db = new LiteDatabase(this.FileName))
@@ -585,6 +585,9 @@ namespace fAI
             }
 
             var (r1, usage) = ComputeEmbeddings(d, embeddingsOpenAIApiKey); /* TODO COMPUTE AND RETURN TOKENS */
+            if(r1 == false)
+                return (r1, usage);
+
             var extractUsage = new GenericAIUsage("", "", "");
             var r2 = false;
 

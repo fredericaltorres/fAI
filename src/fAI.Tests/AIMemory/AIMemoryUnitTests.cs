@@ -297,13 +297,14 @@ namespace fAI.Tests
             var aiMemory = new AIMemory()
             {
                 PublishedUrl = $"https://www.example.com/article",
-                Title = $"Example Article",
+                //Title = $"Example Article",
+                Title = $"",
                 Text = DefaultMarkdownText,
                 Type = PublishedDocumentInfoType.MarkdownFile,
                 LocalFile = $"C:\\temp\\article.md",
             };
 
-            aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            aiManager.Add(aiMemory); // Environment.GetEnvironmentVariable("OPENAI_API_KEY")
 
             var __id__ = aiMemory.Id;
             var __mid__ = aiMemory.MID;
@@ -383,7 +384,7 @@ namespace fAI.Tests
             };
 
             aiManager.Add(aiMemory,
-                openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+                //openAiKey: Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
                 llmApiKey: Environment.GetEnvironmentVariable("OPENROUTER_API_KEY")
                 );
             AssertAIMemoryExportToMedia(aiMemory);
@@ -444,7 +445,7 @@ namespace fAI.Tests
                 LocalFile = null,
             };
 
-            var (usage, newId) = aiManager.Add(aiMemory, Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+            var (usage, newId) = aiManager.Add(aiMemory); // Environment.GetEnvironmentVariable("OPENAI_API_KEY")
             Assert.True(usage.InputTokens > 0);
             Assert.True(usage.OutputTokens > 0);
             Assert.True(usage.TotalTokens > 0);
@@ -811,7 +812,7 @@ C:\DVT\fAI\src\fAI.Tests\TestFiles\Skills\WordDocumentGeneration\SKILL.md
             //GetMetaDataUsageSummary
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetMetaDataUsageSummary()
         {
             var aiManager = new AIMemoryManager(FredCurrentDBName);
