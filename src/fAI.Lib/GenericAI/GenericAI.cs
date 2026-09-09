@@ -172,11 +172,12 @@ namespace fAI
 
         public (string, GenericAI.Contents, GenericAIUsage) Create(
             string prompt, string systemPrompt, string model, 
-            GenericAI.Contents contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null)
+            GenericAI.Contents contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null,
+            string imageFileName = null)
         {
             try
             {
-                var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder);
+                var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder, imageFileName);
 
                 var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
                 var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
@@ -199,7 +200,7 @@ namespace fAI
         }
         private (string, GenericAI.Contents, GenericAIUsage) __Create(
             string prompt, string systemPrompt, string model, 
-            GenericAI.Contents contents = null,  string skillName = null, string skillRootFolder = null)
+            GenericAI.Contents contents = null,  string skillName = null, string skillRootFolder = null, string imageFileName = null)
         {
             var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;
@@ -317,17 +318,27 @@ namespace fAI
                     var openRouterClient = new OpenRouter(apiKey: base._key);
                     var pp = new GPTPrompt2
                     {
-                        Messages = new List<GPTMessage2>()
-                        {
-                            new GPTMessage2 { Role = MessageRole.system, Content = new List<GPTMessageContent>() {
-                                GPTMessageContent.GetAsText(systemPrompt)
-                            }},
-                            new GPTMessage2 { Role = MessageRole.user, Content = new List<GPTMessageContent>() {
-                                GPTMessageContent.GetAsText(prompt)
-                            }}
-                        },
-                        Model = model
+                        Messages = new List<GPTMessage2>(), Model = model
                     };
+
+                    if (!string.IsNullOrEmpty(systemPrompt))
+                    {
+                        pp.Messages.Add(new GPTMessage2 { Role = MessageRole.system });
+                        pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(systemPrompt));
+                    }
+
+                    if (!string.IsNullOrEmpty(prompt))
+                    {
+                        pp.Messages.Add(new GPTMessage2 { Role = MessageRole.user });
+                        pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(prompt));
+                    }
+
+                    if (!string.IsNullOrEmpty(imageFileName))
+                    {
+                        if(pp.Messages.Count == 0)
+                            pp.Messages.Add(new GPTMessage2 { Role = MessageRole.user });
+                        pp.Messages.Last().Content.Add(GPTMessageContent.GetAsBase64Image(imageFileName));
+                    }
 
                     var response = openRouterClient.Completions.Create(pp);
                     if (response.Success)
@@ -515,6 +526,35 @@ Follow these rules:
             sw.Stop();
             return markDownFile;
         }
+
+
+        public string AnalyzeImage(
+           string imageFileName,
+           string model,
+           string systemPrompt = @"
+Describe image
+            "
+           )
+        {
+            var (newText, contents2, usage) = Create(null, systemPrompt, model, imageFileName: imageFileName);
+            return newText;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public class TextImprovementResult
         {

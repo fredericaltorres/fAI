@@ -79,7 +79,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             {
                 var client = new GenericAI();
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Id);
-                
+
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
                 HttpBase.Trace($"[SUMMARIZATION] Model: {model.Id}, Duration: {result.Duration:0.0}, ", this);
 
@@ -87,7 +87,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.True(client.Completions.LastUsage.OutputTokens > 0);
             }
         }
-        
+
         //[Fact()]
         [TestBeforeAfter]
         public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode__BROKEN_FOR_NOW()
@@ -190,7 +190,7 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_OpenRouterModels()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models =  StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), 3);
+            var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), 3);
             foreach (var model in models)
             {
                 var client = new GenericAI();
@@ -203,7 +203,7 @@ glycemic control and overall well-being.
         }
 
 
-        
+
 
         [Fact()]
         [TestBeforeAfter]
@@ -326,7 +326,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is the color of the sky?", model: model.Id));
 
-                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Id     ));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Id));
 
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model.Id));
@@ -335,7 +335,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model.Id));
-                
+
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model.Id));
             });
         }
@@ -385,7 +385,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 var fixedPhrase = client.Completions.FixPhrase("Your to-do number one in the personal section is  Taxes 2025", "English", model: model.Id);
                 //Assert.Contains("Your next task to do is __SOMETHING__", fixedPhrase);
                 fixedPhrase = client.Completions.FixPhrase("Your highest priority to-do in the personal section is  Create and sign a Will and Trust", "English", model: model.Id);
-                fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model.Id   );
+                fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model.Id);
             });
         }
 
@@ -515,6 +515,16 @@ Find root cause.
             });
         }
 
-  
+        [Fact()]
+        [TestBeforeAfter]
+        public void AnalImage()
+        {
+            var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
+            foreach (var model in GenericAI.GetModels(_quickFilter))
+            {
+                var client = new GenericAI();
+                var result = client.Completions.AnalyzeImage(imageFileName, model.Id);
+            }
+        }
     }
 }

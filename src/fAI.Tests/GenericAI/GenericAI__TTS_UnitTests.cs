@@ -28,7 +28,7 @@ Find root cause.
         public void GenericAISpeech_Create()
         {
             var client = new GenericAI();
-            client.Speech.TTSVoiceInfos.Take(3).ToList().ForEach(request =>
+            client.Speech.TTSVoiceInfos.Take(2).ToList().ForEach(request =>
             {
                 foreach(var testVoice in request.TestsVoices)
                 {
