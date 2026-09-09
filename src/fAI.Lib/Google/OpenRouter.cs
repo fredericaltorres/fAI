@@ -232,6 +232,8 @@ namespace fAI
                 new AIModel { Id = "google/gemini-3.5-flash",           InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 9.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 19),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
                 new AIModel { Id = "google/gemini-3.8-flash",           InputTokenPricePer1M = 0.75f,  OutputTokenPricePer1M = 3.75f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 9, 2),   KnowledgeCutoff = new DateTime(2026, 9, 2) },
 
+                new AIModel { Id = "openai/gpt-6-astra",                InputTokenPricePer1M = 10.00f,  OutputTokenPricePer1M = 50.00f,  ContextLength = 1_100_000, ReleaseDate = new DateTime(2026, 9, 4),  KnowledgeCutoff = new DateTime(2026, 9, 4) },
+
                 new AIModel { Id = "openai/gpt-5.5",                    InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 24),  KnowledgeCutoff = new DateTime(2025, 12, 1) },
                 new AIModel { Id = "openai/gpt-5-mini",                 InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 400_000,   ReleaseDate = new DateTime(2025, 8, 7),   KnowledgeCutoff = new DateTime(2024, 5, 1) },
                 new AIModel { Id = "openai/gpt-5.6-luna",               InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
