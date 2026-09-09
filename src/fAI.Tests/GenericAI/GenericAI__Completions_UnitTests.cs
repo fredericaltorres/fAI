@@ -517,14 +517,20 @@ Find root cause.
 
         [Fact()]
         [TestBeforeAfter]
-        public void AnalImage()
+        public void AnalyzeImage()
         {
+            var models = DS.List(
+                "moonshotai/kimi-k3","qwen/qwen3.8-max",
+                "google/gemini-3.1-flash-lite", "openai/gpt-5.6-luna",
+                "anthropic/claude-opus-4.6", "mistralai/mistral-medium-3-5", "x-ai/grok-4.6"
+                );     
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-            foreach (var model in GenericAI.GetModels(_quickFilter))
+            models.ForEach(model =>
             {
                 var client = new GenericAI();
-                var result = client.Completions.AnalyzeImage(imageFileName, model.Id);
-            }
+                var text = client.Completions.AnalyzeImage(imageFileName, model);
+                Assert.True(DS.List("maritime", "ship").All(w => text.ToLower().Contains(w)));
+            });
         }
     }
 }

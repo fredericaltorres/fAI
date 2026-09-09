@@ -335,7 +335,7 @@ namespace fAI
 
                     if (!string.IsNullOrEmpty(imageFileName))
                     {
-                        if(pp.Messages.Count == 0)
+                        if(pp.Messages.Count == 0 || (pp.Messages.Count == 1 & pp.Messages[0].Role == MessageRole.system))
                             pp.Messages.Add(new GPTMessage2 { Role = MessageRole.user });
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsBase64Image(imageFileName));
                     }
