@@ -7,7 +7,8 @@ using System.Linq;
 
 namespace fAI
 {
-    public partial class OpenRouterCompletions : HttpBase, IOpenAICompletion
+    // doc https://openrouter.ai/docs/quickstart
+    public partial class OpenRouterCompletions : HttpBase//, IOpenAICompletion
     {
         public OpenRouterCompletions(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
@@ -16,15 +17,15 @@ namespace fAI
         // https://openrouter.ai/deepseek/deepseek-v4-pro
         const string __url = "https://openrouter.ai/api/v1/chat/completions";
 
-        public AnthropicErrorCompletionResponse Create(GPTPrompt p)
+        public AnthropicErrorCompletionResponse Create(GPTPrompt2 p)
         {
-            p.Url = __url;
-            OpenAI.Trace(new { p.Url }, this);
+            OpenAI.Trace(new { __url }, this);
             //OpenAI.Trace(new { Prompt = p }, this);
             OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(p.Url, p.GetPostBody());
+            var response = InitWebClient().POST(__url, p.GetPostBody());
+            
             sw.Stop();
             OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
             if (response.Success)
@@ -39,7 +40,7 @@ namespace fAI
                 anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
                 anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
 
-                anthropicFormatResponse.GPTPrompt = p;
+                //anthropicFormatResponse.GPTPrompt = p;
                 anthropicFormatResponse.Stopwatch = sw;
                 return anthropicFormatResponse;
             }

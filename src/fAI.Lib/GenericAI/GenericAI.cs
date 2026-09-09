@@ -3,6 +3,7 @@ using fAI.Google;
 using fAI.Util.Strings;
 using Markdig.Extensions.Tables;
 using Mistral.SDK.DTOs;
+//using NAudio.CoreAudioApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SharpToken;
@@ -37,7 +38,7 @@ namespace fAI
 
         public class Contents : List<ContentMessage>
         {
-            public List<GPTMessage>  GetOpenAICompatibleContents(string systemPrompt)
+            public List<GPTMessage> AddSystemPromptAsSystemMessageToAllMessages(string systemPrompt)
             {
                 var r = new List<GPTMessage>();
                 r.Add(new GPTMessage { Role = MessageRole.system, Content = systemPrompt });
@@ -313,28 +314,24 @@ namespace fAI
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
-                    var openRouter = contents.GetOpenAICompatibleContents(systemPrompt);
                     var openRouterClient = new OpenRouter(apiKey: base._key);
-                    var p = new Prompt_GPT_4
+                    var pp = new GPTPrompt2
                     {
-                        Messages = new List<GPTMessage>()
+                        Messages = new List<GPTMessage2>()
                         {
-                            new GPTMessage { Role = MessageRole.system, Content = systemPrompt },
-                            new GPTMessage { Role = MessageRole.user, Content = prompt }
+                            new GPTMessage2 { Role = MessageRole.system, Content = new List<GPTMessageContent>() {
+                                GPTMessageContent.GetAsText(systemPrompt)
+                            }},
+                            new GPTMessage2 { Role = MessageRole.user, Content = new List<GPTMessageContent>() {
+                                GPTMessageContent.GetAsText(prompt)
+                            }}
                         },
                         Model = model
                     };
 
-                    if (openRouter.Count > 1)
-                    {
-                        p.Messages = openRouter;
-                    }
-
-                    var response = openRouterClient.Completions.Create(p);
+                    var response = openRouterClient.Completions.Create(pp);
                     if (response.Success)
                     {
-                        //```                            
-                        // Update the contents discussion with the answer from the AI
                         var answerContent = response.Choices.First().message;
                         contents.Add(new GenericAI.ContentMessage
                         {
@@ -356,7 +353,7 @@ namespace fAI
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-                    var openAIContents = contents.GetOpenAICompatibleContents(systemPrompt);
+                    var openAIContents = contents.AddSystemPromptAsSystemMessageToAllMessages(systemPrompt);
                     var openAIClient = new OpenAI(apiKey: base._key);
                     var p = new Prompt_GPT_4
                     {

@@ -462,7 +462,6 @@ IMAGE 4
             Assert.Contains("Tutu chapeau pointu", markDownDocument.MarkdownBody);
         }
 
-
         [Fact()]
         public void Markdown_Create()
         {
@@ -479,15 +478,7 @@ IMAGE 4
             var newMarkdown = MarkdownManager.LoadMarkdownFile(markdownFilename);
         }
 
-
-
-
-
-
-
-
-
-            [Fact()]
+        [Fact()]
         public void Markdown_LoadWith_NO_FrontLoader_And_Update()
         {
             var markdownFilename = @".\TestFiles\MarkdownWithNoFrontLoader.md";
@@ -551,7 +542,7 @@ blah
         }
 
 
-            [Fact()]
+        [Fact()]
         public void IsMarkdownContentHasFrontLoader_No_RemoveIt()
         {
             var mdFile = @".\TestFiles\MarkdownWithNoFrontLoader.2.md";

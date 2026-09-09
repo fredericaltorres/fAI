@@ -1,10 +1,13 @@
 ﻿using DynamicSugar;
 using MimeTypes;
+using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+//using System.Text.Json.Serialization;
 
 namespace fAI
 {
@@ -13,6 +16,60 @@ namespace fAI
         user, 
         assistant, 
         function
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum GPTMessageContentType
+    {
+        text,
+        image_url
+    }
+    public class GPTMessageContent
+    {
+        [JsonProperty("type")]
+        public GPTMessageContentType Type { get; set; }
+
+        [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
+        public string Text { get; set; }
+
+        [JsonProperty("image_url", NullValueHandling = NullValueHandling.Ignore)]
+        public object ImageUrl { get; set; }
+
+        public static GPTMessageContent GetAsText(string text) 
+        {
+            return new GPTMessageContent { Type = GPTMessageContentType.text, Text = text };
+        }
+        public static GPTMessageContent GetAsBase64Image(string fileName)
+        {
+            return new GPTMessageContent { Type = GPTMessageContentType.image_url,
+                ImageUrl = new { url = Util.Strings.FileUtil.ImageToBase64Html(fileName) }
+            };
+        }
+    }
+
+    public class GPTMessage2
+    {
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "role")]
+        public MessageRole Role { get; set; }
+
+        [JsonProperty(PropertyName = "content")]
+        public List<GPTMessageContent> Content { get; set; } = new List<GPTMessageContent>();
+
+        public void SetAsText(string text)
+        {
+            this.Content.Add(new GPTMessageContent { Type = GPTMessageContentType.text, Text = text });
+        }
+
+        public void SetAsImage(string fileName)
+        {
+            this.Content.Add(new GPTMessageContent { Type = GPTMessageContentType.image_url, ImageUrl = new { url = Util.Strings.FileUtil.ImageToBase64Html(fileName) } });
+        }
+
+        public override string ToString()
+        {
+            return $"Role:{this.Role}, Content:{this.Content}";
+        }
     }
 
     public class GPTMessage
@@ -31,6 +88,23 @@ namespace fAI
         }
     }
 
+    public class GPTPrompt2
+    {
+        public List<GPTMessage2> Messages { get; set; } = new List<GPTMessage2>();
+        public string Model { get; set; }
+        public JsonResponseFormat response_format { get; set; } = null;
+
+        public string GetPostBody()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                model = Model,
+                messages = Messages,
+                response_format = response_format,
+            });
+           
+        }
+    }
     public class GPTPrompt
     {
         public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
@@ -41,6 +115,7 @@ namespace fAI
         public string Url { get; set; }
         public string Text { get; set; }
         public List<GPTMessage> Messages { get; set; } = new List<GPTMessage>();
+
 
         public string PrePrompt { get; set; }
         public string PostPrompt { get; set; }
@@ -149,6 +224,8 @@ namespace fAI
                 });
             }
         }
+
+        
     }
 }
 
