@@ -30,9 +30,34 @@ namespace fAI.Tests
             OpenAI.TraceOn = true;
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_Image__WomanAtTheBeach()
+        {
+            var imagePrompt = @"
+A smiling woman relaxing on a tropical Caribbean beach, wearing beach clothes, with palm trees and coconut trees in the background, crystal-clear turquoise water, white sand, perfect blue sky, bright sunshine, vacation photography, highly detailed, natural colors.
+";
+            var client = new GenericAI();
+            client.Image.GetCheapModels().ForEach(model =>
+            {
+                try
+                {
+                    //model = "black-forest-labs/flux.2-klein-4b";
+                    var imageFileName = Path.Combine(Path.GetTempPath(), $"{ReplaceInvalidFileNameChars(model)}.{Guid.NewGuid()}.jpg");
+                    var (image, usage) = client.Image.Create(imagePrompt, model: model, filePath: imageFileName);
+
+                    Assert.True(File.Exists(image));
+                    Assert.True(usage.InputTokens > 0);
+                    Assert.True(usage.OutputTokens > 0);
+                }
+                catch (Exception ex)
+                {
+                    HttpBase.Trace($"[ERROR] Model: {model}, Exception: {ex.Message}", this);
+                }
+            });
+        }
 
 
-   
 
         [Fact()]
         [TestBeforeAfter]
@@ -44,7 +69,7 @@ with flying cars and neon lights,
 in the style of cyberpunk, highly detailed, 8k resolution
 ";
             var client = new GenericAI();
-            client.Image.GetModelsApi().ForEach(model =>
+            client.Image.GetCheapModels().ForEach(model =>
             {
                 try
                 {

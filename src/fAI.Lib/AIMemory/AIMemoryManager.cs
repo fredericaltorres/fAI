@@ -369,7 +369,7 @@ namespace fAI
 
         public (bool, GenericAIUsage, LiteDB.ObjectId) AddUpdate(
             AIMemory d, string localFile,
-            string openAiKey = null, string llmApiKey = null,
+            string llmApiKey = null,
             bool clearEmbeddings = false,
             AIMetaData aiMetaData = null // if not passed the aiMetadata is re-computed
             )
@@ -405,7 +405,7 @@ namespace fAI
                     }
 
                     var (rr, usageEmbeddingsAndMetaData) = ComputeEmbeddingsAndMetaDataAndSummary(existingAIMemory,
-                                            embeddingsOpenAIApiKey: openAiKey,
+                                            embeddingsOpenAIApiKey: llmApiKey,
                                             llmApiKey: llmApiKey,
                                             aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
 
@@ -424,7 +424,7 @@ namespace fAI
                 }
                 else
                 {
-                    var (uu, newId) = Add(d, openAiKey, aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
+                    var (uu, newId) = Add(d, llmApiKey, aiMetaDataToMerge: aiMetaData /* if defined then no recomputed*/ );
                     usage = uu;
                     id = newId;
                 }
