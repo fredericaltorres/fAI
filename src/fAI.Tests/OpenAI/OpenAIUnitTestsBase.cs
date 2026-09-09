@@ -23,6 +23,16 @@ namespace fAI.Tests
             ""6"": ""Is a great way to visualize information about users""
         }";
 
+        public static string ReplaceInvalidFileNameChars(string fileName)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars();
+            foreach (var c in invalidChars)
+            {
+                fileName = fileName.Replace(c, '_');
+            }
+            return fileName;
+        }
+
         //public static List<string> GetTwoRandomElements(List<string> list)
         //{
         //    if (list == null) throw new ArgumentNullException(nameof(list));

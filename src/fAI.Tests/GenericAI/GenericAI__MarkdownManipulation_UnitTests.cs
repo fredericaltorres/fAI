@@ -21,9 +21,9 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class GenericAICompletionsMarkdownManipulation_UnitTests : OpenAIUnitTestsBase, IDisposable
+    public class GenericAI__MarkdownManipulation_UnitTests : OpenAIUnitTestsBase, IDisposable
     {
-        public GenericAICompletionsMarkdownManipulation_UnitTests()
+        public GenericAI__MarkdownManipulation_UnitTests()
         {
             OpenAI.TraceOn = true;
         }

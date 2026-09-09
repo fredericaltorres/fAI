@@ -23,7 +23,7 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class GenericAiCompletions_UnitTests : OpenAIUnitTestsBase
+    public class GenericAI__Completions_UnitTests : OpenAIUnitTestsBase
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
@@ -32,7 +32,7 @@ namespace fAI.Tests
 
         //Regex _quickFilter = null;
 
-        public GenericAiCompletions_UnitTests()
+        public GenericAI__Completions_UnitTests()
         {
             OpenAI.TraceOn = true;
         }

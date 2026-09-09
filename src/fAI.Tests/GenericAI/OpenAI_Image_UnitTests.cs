@@ -21,9 +21,9 @@ namespace fAI.Tests
 {
     [Collection("Sequential")]
     [CollectionDefinition("Sequential", DisableParallelization = true)]
-    public class GenericAIImage_UnitTests : OpenAIUnitTestsBase
+    public class OpenAI_Image_UnitTests : OpenAIUnitTestsBase
     {
-        public GenericAIImage_UnitTests()
+        public OpenAI_Image_UnitTests()
         {
             OpenAI.TraceOn = true;
             AIPromptCache.Instance.Clear();
