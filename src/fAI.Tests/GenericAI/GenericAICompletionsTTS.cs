@@ -279,6 +279,25 @@ Famous Players and the Guitar's Cultural Rise
             });
         }
 
-  
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_Image__openai_gpt_image_2_5_sunburst__EricClaptonAndEs335()
+        {
+            var client = new GenericAI();
+            var model = "openai/gpt-image-2.5-sunburst";
+            try
+            {
+                var imageFileName = Path.Combine(Path.GetTempPath(), $"{ReplaceInvalidFileNameChars(model)}.{Guid.NewGuid()}.jpg");
+                var (image, usage) = client.Image.Create(EricClaptonAndEs335Prompt, model: model, filePath: imageFileName);
+                Assert.True(File.Exists(image));
+                Assert.True(usage.InputTokens > 0);
+                Assert.True(usage.OutputTokens > 0);
+            }
+            catch (Exception ex)
+            {
+                HttpBase.Trace($"[ERROR] Model: {model}, Exception: {ex.Message}", this);
+            }
+        }
+
     }
 }

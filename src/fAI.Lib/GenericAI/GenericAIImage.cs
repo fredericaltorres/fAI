@@ -79,6 +79,7 @@ namespace fAI
         public List<string> GetCheapModels()
         {
             return DS.List(
+                "openai/gpt-image-2.5-sunburst",
                 "meta/muse-image",
                 "google/gemini-3.1-flash-lite-image",
                 "openai/gpt-image-2",

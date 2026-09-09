@@ -23,6 +23,20 @@ namespace fAI.Tests
             ""6"": ""Is a great way to visualize information about users""
         }";
 
+        //public static List<string> GetTwoRandomElements(List<string> list)
+        //{
+        //    if (list == null) throw new ArgumentNullException(nameof(list));
+        //    if (list.Count < 2) throw new ArgumentException("List must contain at least 2 elements.", nameof(list));
+
+        //    var random = new Random();
+        //    var indices = Enumerable.Range(0, list.Count)
+        //                            .OrderBy(_ => random.Next())
+        //                            .Take(2)
+        //                            .ToList();
+
+        //    return [list[indices[0]], list[indices[1]]];
+        //}
+
         public static bool AreFloatsEqual(float a, float b, int significantDigits = 5)
         {
             if (a == b) return true;
