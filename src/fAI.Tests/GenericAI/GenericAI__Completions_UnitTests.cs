@@ -547,7 +547,8 @@ Find root cause.
                 "x-ai/grok-4.6",
                 "anthropic/claude-opus-4.6",
                 "mistralai/mistral-medium-3-5",
-                "moonshotai/kimi-k3", "qwen/qwen3.8-max"
+                "moonshotai/kimi-k3", 
+                "qwen/qwen3.8-max"
             );
 
             var imageFileName = base.GetTestFile("OCR_1.png");

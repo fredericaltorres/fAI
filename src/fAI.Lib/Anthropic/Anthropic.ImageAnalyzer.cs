@@ -9,6 +9,9 @@ using System.Text.Json;
 
 namespace AnthropicImageAnalysis
 {
+    /// <summary>
+    /// DEPRECATED FOR THE GenericAI.Completions method
+    /// </summary>
     public class ImageAnalyzer
     {
         private readonly HttpClient _httpClient;
@@ -78,9 +81,7 @@ Use MARKDOWN syntax for formatting the response, with headings and bullet points
                 var title = titleResponse.Title;
                 var marker = "# Title";
                 if (title.StartsWith(marker))
-                {
                     title = title.Substring(marker.Length).Trim();
-                }
                 usage.Add(titleResponse.Usage);
 
                 var finalTitle = titleResponse.Title.Replace("*", "").Replace("\n", "").Replace("\r", "");

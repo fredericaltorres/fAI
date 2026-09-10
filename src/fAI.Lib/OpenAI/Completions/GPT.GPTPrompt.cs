@@ -92,7 +92,7 @@ namespace fAI
     {
         public List<GPTMessageEx> Messages { get; set; } = new List<GPTMessageEx>();
 
-        [JsonProperty("model"]
+        [JsonProperty("model")]
         public string Model { get; set; }
 
         [JsonProperty("response_format", NullValueHandling = NullValueHandling.Ignore)]

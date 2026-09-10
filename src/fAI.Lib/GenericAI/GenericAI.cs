@@ -415,7 +415,7 @@ namespace fAI
             }
         }
 
-        static string __ConvertPdfToMarkdown(string apiKey, string pdfFilePath, string model, string prompt)
+        string __ConvertPdfToMarkdown(string apiKey, string pdfFilePath, string model, string prompt)
         {
             const string ApiUrl = "https://api.anthropic.com/v1/messages";
 
@@ -456,6 +456,9 @@ namespace fAI
             };
 
             string jsonBody = JsonConvert.SerializeObject(requestObject);
+
+            HttpBase.Trace($"[ConvertPdfToMarkdown] Request sent to {ApiUrl} with model {model} and PDF file {pdfFilePath}", this);
+            HttpBase.Trace($"[ConvertPdfToMarkdown] Request body: {jsonBody}", this);
 
             // 3. Send request using HttpWebRequest (.NET 4.0 compatible)
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ApiUrl);
