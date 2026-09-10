@@ -527,34 +527,54 @@ Follow these rules:
             return markDownFile;
         }
 
-
-        public string AnalyzeImage(
+        public (string text, string title, GenericAIUsage usage) AnalyzeImage(
            string imageFileName,
            string model,
            string systemPrompt = @"
 Describe image
-            "
+            ",
+            string language = "English"   
            )
         {
             var (newText, contents2, usage) = Create(null, systemPrompt, model, imageFileName: imageFileName);
-            return newText;
+            var (finalTitle, titleResponse ) = GenerateTitle(model, language, newText, usage);
+            usage.Add(titleResponse.Usage);
+
+            return (newText, finalTitle, usage);
         }
 
+        private (string , GenerateTitleResult) GenerateTitle(string model, string language, string newText, GenericAIUsage usage)
+        {
+            var titleResponse = this.GenerateTitle(newText, language: language, model: model);
+            usage.Add(titleResponse.Usage);
+            var title = titleResponse.Title;
+            var marker = "# Title";
+            if (title.StartsWith(marker))
+                title = title.Substring(marker.Length).Trim();
+            var finalTitle = titleResponse.Title.Replace("*", "").Replace("\n", "").Replace("\r", "");
+            return (finalTitle, titleResponse);
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        public (string text, string title, GenericAIUsage usage) OcrImageFromFile(
+           string imageFileName,
+           string model,
+           string systemPrompt = @"
+Perform OCR on this image. Extract all visible text and format the output as valid Markdown.
+Use appropriate Markdown elements to reflect the document structure: headings (#, ##, ###)
+for titles and section headers, bullet or numbered lists where lists appear, **bold** or
+*italic* for emphasized text, `code` or code blocks for any code or monospace content,
+tables for tabular data, and blockquotes for quoted content. Preserve the logical hierarchy
+and reading order of the original. Output only the Markdown — no preamble, no explanation,
+no code fences wrapping the entire output.
+            ",
+            string language = "English"
+           )
+        {
+            var (newText, contents2, usage) = Create(null, systemPrompt, model, imageFileName: imageFileName);
+            var (finalTitle, titleResponse) = GenerateTitle(model, language, newText, usage);
+            usage.Add(titleResponse.Usage);
+            return (newText, finalTitle, usage);
+        }
 
         public class TextImprovementResult
         {

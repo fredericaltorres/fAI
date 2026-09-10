@@ -528,8 +528,39 @@ Find root cause.
             models.ForEach(model =>
             {
                 var client = new GenericAI();
-                var text = client.Completions.AnalyzeImage(imageFileName, model);
+                var (text, title, usage)    = client.Completions.AnalyzeImage(imageFileName, model);
                 Assert.True(DS.List("maritime", "ship").All(w => text.ToLower().Contains(w)));
+
+                Assert.True(!string.IsNullOrEmpty(title));
+                Assert.True(usage.InputTokens > 0);
+                Assert.True(usage.OutputTokens > 0);
+            });
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void OcrImageFromFile()
+        {
+            var models = DS.List(
+                "google/gemini-3.1-flash-lite", 
+                "openai/gpt-5.6-luna",
+                "x-ai/grok-4.6",
+                "anthropic/claude-opus-4.6",
+                "mistralai/mistral-medium-3-5",
+                "moonshotai/kimi-k3", "qwen/qwen3.8-max"
+            );
+
+            var imageFileName = base.GetTestFile("OCR_1.png");
+
+            models.ForEach(model =>
+            {
+                var client = new GenericAI();
+                var (text, title, usage) = client.Completions.OcrImageFromFile(imageFileName, model);
+                Assert.True(DS.List("maritime", "ship").All(w => text.ToLower().Contains(w)));
+
+                Assert.True(!string.IsNullOrEmpty(title));
+                Assert.True(usage.InputTokens > 0);
+                Assert.True(usage.OutputTokens > 0);
             });
         }
     }
