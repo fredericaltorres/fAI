@@ -88,7 +88,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             }
         }
 
-        //[Fact()]
+        [Fact()]
         [TestBeforeAfter]
         public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode__BROKEN_FOR_NOW()
         {
@@ -105,10 +105,12 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Id);
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
 
-                Assert.Equal(2, result.Contents.Count); // Query + Response
-                Assert.Equal("user", result.Contents[0].Role);
-                Assert.Equal(text, result.Contents[0].Parts[0].Text);
-                Assert.True("model" == result.Contents[1].Role || "assistant" == result.Contents[1].Role);
+                Assert.Equal(3, result.Contents.Count); // Query + Response
+
+                Assert.Equal("system", result.Contents[0].Role.ToString());
+                Assert.Equal("user", result.Contents[1].Role.ToString());
+                Assert.Equal("assistant", result.Contents[2].Role.ToString());
+                Assert.Contains(text.Trim(), result.Contents[1].Content[0].Text.Trim());
 
                 var systemPrompt = @"You are a helpful assistant that analyzes English text"; // <<< Change the system prompt to force the LLM to answer the question and do not improve the text.
 
@@ -117,10 +119,10 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
                 var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
                 Assert.Equal(4, result2.Contents.Count); // Query + Response
-                Assert.Equal("user", result2.Contents[0].Role);
-                Assert.True("model" == result2.Contents[1].Role || "assistant" == result2.Contents[1].Role);
-                Assert.Equal("user", result2.Contents[2].Role);
-                Assert.True("model" == result2.Contents[3].Role || "assistant" == result2.Contents[1].Role);
+                Assert.Equal("user", result2.Contents[0].Role.ToString());
+                Assert.True("model" == result2.Contents[1].Role.ToString() || "assistant" == result2.Contents[1].Role.ToString());
+                Assert.Equal("user", result2.Contents[2].Role.ToString());
+                Assert.True("model" == result2.Contents[3].Role.ToString() || "assistant" == result2.Contents[3].Role.ToString());
 
                 Assert.True(expectedWords.All(w => result2.Text.ToLower().Contains(w)));
 
@@ -131,12 +133,12 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.Contains("yes", result3.Text.ToLower());
 
                 Assert.Equal(6, result3.Contents.Count); // Query + Response
-                Assert.Equal("user", result3.Contents[0].Role);
-                Assert.True("model" == result3.Contents[1].Role || "assistant" == result3.Contents[1].Role);
-                Assert.Equal("user", result3.Contents[2].Role);
-                Assert.True("model" == result3.Contents[3].Role || "assistant" == result3.Contents[3].Role);
-                Assert.Equal("user", result3.Contents[4].Role);
-                Assert.True("model" == result3.Contents[5].Role || "assistant" == result3.Contents[5].Role);
+                Assert.Equal("user", result3.Contents[0].Role.ToString());
+                Assert.True("model" == result3.Contents[1].Role.ToString() || "assistant" == result3.Contents[1].Role.ToString());
+                Assert.Equal("user", result3.Contents[2].Role.ToString());
+                Assert.True("model" == result3.Contents[3].Role.ToString() || "assistant" == result3.Contents[3].Role.ToString());
+                Assert.Equal("user", result3.Contents[4].Role.ToString());
+                Assert.True("model" == result3.Contents[5].Role.ToString() || "assistant" == result3.Contents[5].Role.ToString());
             }
         }
 

@@ -72,25 +72,20 @@ namespace fAI
         }
     }
 
-    public class GPTMessage
+    public class GPTMessageExs : List<GPTMessageEx>
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "role")]
-        public MessageRole Role { get; set; }
 
-        [JsonProperty(PropertyName = "content")]
-        public string Content { get; set; }
-
-
-        public override string ToString()
-        {
-            return $"Role:{this.Role}, Content:{this.Content}";
-        }
     }
 
     public class GPTPromptEx
     {
-        public List<GPTMessageEx> Messages { get; set; } = new List<GPTMessageEx>();
+        public void AddMessageIfMissing(MessageRole role)
+        {
+            if (this.Messages.Count == 0 || this.Messages.Where(m => m.Role == role).Count() == 0)
+                this.Messages.Add(new GPTMessageEx { Role = role });
+        }
+
+        public GPTMessageExs Messages { get; set; } = new GPTMessageExs();
 
         [JsonProperty("model")]
         public string Model { get; set; }
@@ -109,11 +104,27 @@ namespace fAI
            
         }
     }
+
+    public class GPTMessage
+    {
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "role")]
+        public MessageRole Role { get; set; }
+
+        [JsonProperty(PropertyName = "content")]
+        public string Content { get; set; }
+
+
+        public override string ToString()
+        {
+            return $"Role:{this.Role}, Content:{this.Content}";
+        }
+    }
     public class GPTPrompt
     {
-        public const string OPENAI_URL_V1_CHAT_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
-        public const string OPENAI_URL_V1_COMPLETIONS = "https://api.openai.com/v1/completions";
-        public const string OPENAI_URL_V2_COMPLETIONS = "https://api.openai.com/v1/chat/completions";
+        
+        public const string OPENAI_URL_V1_COMPLETIONS      = "https://api.openai.com/v1/completions";
+        public const string OPENAI_URL_V2_COMPLETIONS      = "https://api.openai.com/v1/chat/completions";
 
         public JsonResponseFormat response_format { get; set; } = null;
         public string Url { get; set; }

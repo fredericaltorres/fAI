@@ -170,9 +170,9 @@ namespace fAI
             return i.LoadSkill();
         }
 
-        public (string, GenericAI.Contents, GenericAIUsage) Create(
+        public (string, GPTMessageExs, GenericAIUsage) Create(
             string prompt, string systemPrompt, string model, 
-            GenericAI.Contents contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null,
+            GPTMessageExs contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null,
             string imageFileName = null)
         {
             try
@@ -198,9 +198,9 @@ namespace fAI
                 }
             }
         }
-        private (string, GenericAI.Contents, GenericAIUsage) __Create(
-            string prompt, string systemPrompt, string model, 
-            GenericAI.Contents contents = null,  string skillName = null, string skillRootFolder = null, string imageFileName = null)
+        private (string, GPTMessageExs, GenericAIUsage) __Create(
+            string prompt, string systemPrompt, string model,
+            GPTMessageExs contents = null,  string skillName = null, string skillRootFolder = null, string imageFileName = null)
         {
             var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;
@@ -215,13 +215,13 @@ namespace fAI
                         systemPrompt = $"{nl}{nl}<skill>{nl}{nl}{skill.MarkdownBody}{nl}{nl}</skill>{nl}{nl}" + systemPrompt;
                 }
 
-                contents = contents == null ? new GenericAI.Contents() : contents;
+                contents = contents == null ? new GPTMessageExs() : contents;
 
-                contents.Add(new GenericAI.ContentMessage
-                {
-                    Role = "user", // A conversation always starts with user message
-                    Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
-                });
+                //contents.Add(new GenericAI.ContentMessage
+                //{
+                //    Role = "user", // A conversation always starts with user message
+                //    Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
+                //});
 
                 // Anthropic, My own abstraction, but we now use Open Router
                 if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
@@ -240,11 +240,11 @@ namespace fAI
                         }
                     };
 
-                    var anthropicContents = contents.GetAnthropicContents();
-                    if (anthropicContents.Count > 1)
-                    {
-                        p.Messages = anthropicContents;
-                    }
+                    //var anthropicContents = contents.GetAnthropicContents();
+                    //if (anthropicContents.Count > 1)
+                    //{
+                    //    p.Messages = anthropicContents;
+                    //}
 
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
@@ -266,14 +266,14 @@ namespace fAI
 
                     // Update the contents discussion with the answer from the AI
                     var answerContent = response.Content.FirstOrDefault(c => c.IsText);
-                    contents.Add(new GenericAI.ContentMessage
-                    {
-                        Role = response.Role,
-                        Parts = new List<GenericAI.ContentMessagePart>
-                        {
-                            new GenericAI.ContentMessagePart { Text = answerContent.Text }
-                        }
-                    });
+                    //contents.Add(new GenericAI.ContentMessage
+                    //{
+                    //    Role = response.Role,
+                    //    Parts = new List<GenericAI.ContentMessagePart>
+                    //    {
+                    //        new GenericAI.ContentMessagePart { Text = answerContent.Text }
+                    //    }
+                    //});
 
                     return (answerContent.Text, contents, usage);
                 }
@@ -287,24 +287,22 @@ namespace fAI
                     var googleAIClient = new GoogleAI(apiKey: base._key);
 
                     // Convert GenericAI.Contents to GoogleAICompletionsBody.Contents
-                    var googleContents = contents.GetGoogleContents();
-                    var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model, googleContents);
+                    //var googleContents = contents.GetGoogleContents();
+                    var p = googleAIClient.Completions.GetPrompt(prompt, systemPrompt, model );//googleContents
                     var url = googleAIClient.Completions.GetUrl(model);
-
                     var r = googleAIClient.Completions.Create(p, url, model);
-
                     usage.SetTokenCount(r.usageMetadata.promptTokenCount, r.usageMetadata.candidatesTokenCount);
 
                     // Update the contents discussion with the answer from the AI
                     var answerContent = r.candidates[0].content;
-                    contents.Add(new GenericAI.ContentMessage
-                    {
-                        Role = answerContent.role,
-                        Parts = new List<GenericAI.ContentMessagePart>
-                        {
-                            new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
-                        }
-                    });
+                    //contents.Add(new GenericAI.ContentMessage
+                    //{
+                    //    Role = answerContent.role,
+                    //    Parts = new List<GenericAI.ContentMessagePart>
+                    //    {
+                    //        new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
+                    //    }
+                    //});
 
                     return (r.GetText(), contents, usage);
                 }
@@ -312,31 +310,39 @@ namespace fAI
                 // OpenRouter, My own abstraction, but we now use Open Router
                 else if (OpenRouter.GetModels().Select(m => m.Id).Contains(model))
                 {
+
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
                     var openRouterClient = new OpenRouter(apiKey: base._key);
                     var pp = new GPTPromptEx
                     {
-                        Messages = new List<GPTMessageEx>(), Model = model
+                        Messages = new GPTMessageExs(), Model = model
                     };
 
                     if (!string.IsNullOrEmpty(systemPrompt))
                     {
-                        pp.Messages.Add(new GPTMessageEx { Role = MessageRole.system });
+                        pp.AddMessageIfMissing(MessageRole.system);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(systemPrompt));
+                    }
+
+                    if (contents.Count > 0)
+                    {
+                        pp.Messages = contents;
+                        //pp.AddMessageIfMissing(MessageRole.user);
+                        //foreach (var z in contents)
+                        //    pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(z.Parts[0].Text));
                     }
 
                     if (!string.IsNullOrEmpty(prompt))
                     {
-                        pp.Messages.Add(new GPTMessageEx { Role = MessageRole.user });
+                        pp.AddMessageIfMissing(MessageRole.user);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(prompt));
                     }
 
                     if (!string.IsNullOrEmpty(imageFileName))
                     {
-                        if(pp.Messages.Count == 0 || (pp.Messages.Count == 1 & pp.Messages[0].Role == MessageRole.system))
-                            pp.Messages.Add(new GPTMessageEx { Role = MessageRole.user });
+                        pp.AddMessageIfMissing(MessageRole.user);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsBase64Image(imageFileName));
                     }
 
@@ -344,14 +350,13 @@ namespace fAI
                     if (response.Success)
                     {
                         var answerContent = response.Choices.First().message;
-                        contents.Add(new GenericAI.ContentMessage
-                        {
-                            Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
-                            Parts = new List<GenericAI.ContentMessagePart>
-                            {
-                                new GenericAI.ContentMessagePart { Text = answerContent.Content }
+                        contents.AddRange(pp.Messages);
+                        contents.Add(
+                            new GPTMessageEx() {
+                                Role = answerContent.Role,
+                                Content = new List<GPTMessageContent>() { new GPTMessageContent() { Type = GPTMessageContentType.text, Text = answerContent.Content } }
                             }
-                        });
+                        );
                         usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
                         var responseText = response.Text;
                         return (responseText, contents, usage);
@@ -364,7 +369,7 @@ namespace fAI
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-                    var openAIContents = contents.AddSystemPromptAsSystemMessageToAllMessages(systemPrompt);
+                    //var openAIContents = contents.AddSystemPromptAsSystemMessageToAllMessages(systemPrompt);
                     var openAIClient = new OpenAI(apiKey: base._key);
                     var p = new Prompt_GPT_4
                     {
@@ -376,10 +381,10 @@ namespace fAI
                         Model = model
                     };
 
-                    if (openAIContents.Count > 1)
-                    {
-                        p.Messages = openAIContents;
-                    }
+                    //if (openAIContents.Count > 1)
+                    //{
+                    //    p.Messages = openAIContents;
+                    //}
 
                     var response = openAIClient.Completions.Create(p);
                     if (response.Success)
@@ -387,14 +392,14 @@ namespace fAI
 //```                            
                         // Update the contents discussion with the answer from the AI
                         var answerContent = response.Choices.First().message;
-                        contents.Add(new GenericAI.ContentMessage
-                        {
-                            Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
-                            Parts = new List<GenericAI.ContentMessagePart>
-                            {
-                                new GenericAI.ContentMessagePart { Text = answerContent.Content }
-                            }
-                        });
+                        //contents.Add(new GenericAI.ContentMessage
+                        //{
+                        //    Role = answerContent.Role.ToString(), // Role are different in Google:model OpenAI:assistant
+                        //    Parts = new List<GenericAI.ContentMessagePart>
+                        //    {
+                        //        new GenericAI.ContentMessagePart { Text = answerContent.Content }
+                        //    }
+                        //});
 
                         usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
 
@@ -584,7 +589,7 @@ no code fences wrapping the entire output.
             public string Text { get; set; }
             public string OriginalText { get; set; }
             public double Duration { get; set; }
-            public GenericAI.Contents Contents { get; set; }
+            public GPTMessageExs Contents { get; set; }
         }
 
         public TextImprovementResult TextImprovement(
@@ -602,7 +607,7 @@ Use the following rules to guide your improvements:
  </rules>
  ===================================
             ",
-           GenericAI.Contents contents = null, string skillName = null, string skillRootFolder = null
+           GPTMessageExs contents = null, string skillName = null, string skillRootFolder = null
            )
         {
             var sw = Stopwatch.StartNew();

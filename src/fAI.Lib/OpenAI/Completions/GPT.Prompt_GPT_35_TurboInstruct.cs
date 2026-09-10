@@ -40,7 +40,7 @@ namespace fAI
         public Prompt_GPT_35_Turbo_JsonAnswer() : base()
         {
             Model = "gpt-3.5-turbo-1106";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
             response_format = new JsonResponseFormat();
         }
     }
@@ -50,7 +50,7 @@ namespace fAI
         public Prompt_GPT_4_Turbo_128k() : base()
         {
             Model = "gpt-4-turbo";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 
@@ -59,7 +59,7 @@ namespace fAI
         public Prompt_GPT_4() : base()
         {
             Model = "gpt-4";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 
@@ -68,7 +68,7 @@ namespace fAI
         public Prompt_GPT_4_32K() : base()
         {
             Model = "gpt-4-32k";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 
@@ -77,7 +77,7 @@ namespace fAI
         public Prompt_GPT_4o() : base()
         {
             Model = "gpt-4o";
-            Url = GPTPrompt.OPENAI_URL_V1_CHAT_COMPLETIONS;
+            Url = GPTPrompt.OPENAI_URL_V2_COMPLETIONS;
         }
     }
 
