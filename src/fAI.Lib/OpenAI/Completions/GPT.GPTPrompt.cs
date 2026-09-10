@@ -45,6 +45,13 @@ namespace fAI
                 ImageUrl = new { url = Util.Strings.FileUtil.ImageToBase64Html(fileName) }
             };
         }
+
+        public override string ToString()
+        {
+            if(this.ImageUrl != null)
+                return $"Type:{this.Type}, ImageUrl:{this.ImageUrl}";
+            return $"Type:{this.Type}, Text:{this.Text}";
+        }
     }
 
     public class GPTMessageEx

@@ -320,18 +320,15 @@ namespace fAI
                         Messages = new GPTMessageExs(), Model = model
                     };
 
+                    if (contents.Count > 0)
+                    {
+                        pp.Messages = contents;
+                    }
+
                     if (!string.IsNullOrEmpty(systemPrompt) && !pp.Messages.ContainSystemPrompt)
                     {
                         pp.AddMessageIfMissing(MessageRole.system);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(systemPrompt));
-                    }
-
-                    if (contents.Count > 0)
-                    {
-                        pp.Messages = contents;
-                        //pp.AddMessageIfMissing(MessageRole.user);
-                        //foreach (var z in contents)
-                        //    pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(z.Parts[0].Text));
                     }
 
                     if (!string.IsNullOrEmpty(prompt))
