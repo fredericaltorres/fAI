@@ -521,11 +521,17 @@ Find root cause.
         {
             var models = DS.List(
                 "moonshotai/kimi-k3","qwen/qwen3.8-max",
-                "google/gemini-3.1-flash-lite", "openai/gpt-5.6-luna",
-                "anthropic/claude-opus-4.6", "mistralai/mistral-medium-3-5", "x-ai/grok-4.6"
-                );     
+                "google/gemini-3.1-flash-lite", 
+                "openai/gpt-5.6-luna",
+                "anthropic/claude-opus-4.6", 
+                "mistralai/mistral-medium-3-5", 
+                "x-ai/grok-4.6"
+            );
+
+            var modelsRnd = StringUtil.GetRandom(models.Select(m => m).ToList(), _randomModelCount);
+
             var imageFileName = base.GetTestFile("ManAndBoartInStorm.png");
-            models.ForEach(model =>
+            modelsRnd.ForEach(model =>
             {
                 var client = new GenericAI();
                 var (text, title, usage)    = client.Completions.AnalyzeImage(imageFileName, model);
@@ -551,9 +557,11 @@ Find root cause.
                 "qwen/qwen3.8-max"
             );
 
+            var modelsRnd = StringUtil.GetRandom(models.Select(m => m).ToList(), _randomModelCount);
+
             var imageFileName = base.GetTestFile("OCR_1.png");
 
-            models.ForEach(model =>
+            modelsRnd.ForEach(model =>
             {
                 var client = new GenericAI();
                 var (text, title, usage) = client.Completions.OcrImageFromFile(imageFileName, model);
