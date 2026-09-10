@@ -90,7 +90,41 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
         [Fact()]
         [TestBeforeAfter]
-        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode__BROKEN_FOR_NOW()
+        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode_2()
+        {
+            var text = "What is the capital of France?";
+            var expectedWords = DS.List("paris", "france");
+
+            //Regex quickFilter = new Regex("google/gemini-3.1-flash-lite");
+            Regex quickFilter = new Regex("openai/gpt-5.6-luna");
+
+            var systemPrompt = @"
+you are a geography expert. You will answer questions about countries, capitals, and geography in general.
+";
+
+            foreach (var model in GenericAI.GetModels(quickFilter))
+            {
+                var client = new GenericAI();
+                // Conversation step 1
+                var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Id, systemPrompt: systemPrompt);
+                Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
+                
+                // Conversation step 2
+                var text2 = "What is its population?";
+
+                result = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, contents: result.Contents);
+                Assert.True(DS.List("million", "residents","2").All(w => result.Text.ToLower().Contains(w)));
+                
+                // Conversation step 3
+                var text3 = @"in the last 10 years, is Paris population shrinking? Answer with YES or NO only.";
+                result = client.Completions.TextImprovement(text: text3, language: "English", model: model.Id, contents: result.Contents);
+                Assert.Contains("yes", result.Text.ToLower());
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode_1()
         {
             var text = @"
 hi Alice I wanted to let you know that I review the previous email about your car insurance policy I read the proposal I approved we can move on 
@@ -111,12 +145,10 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 Assert.Equal("assistant", result.Contents[2].Role.ToString());
                 Assert.Contains(text.Trim(), result.Contents[1].Content[0].Text.Trim());
 
-                var systemPrompt = @"You are a helpful assistant that analyzes English text"; // <<< Change the system prompt to force the LLM to answer the question and do not improve the text.
-
                 // Conversation step 2
                 var text2 = @"What is this conversation about?";
 
-                result = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
+                result = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, contents: result.Contents);
                 Assert.True(DS.List("conversation", "insurance").All(w => result.Text.ToLower().Contains(w)));
 
                 Assert.Equal(5, result.Contents.Count); // Query + Response
@@ -128,7 +160,7 @@ hi Alice I wanted to let you know that I review the previous email about your ca
 
                 // Conversation step 3
                 var text3 = @"is the car insurance proposal approved? Answer with YES or NO only.";
-                result = client.Completions.TextImprovement(text: text3, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
+                result = client.Completions.TextImprovement(text: text3, language: "English", model: model.Id, contents: result.Contents);
                 Assert.Contains("yes", result.Text.ToLower());
 
                 Assert.Equal(7, result.Contents.Count); // Query + Response
