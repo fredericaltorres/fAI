@@ -103,10 +103,9 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 var client = new GenericAI();
                 // Conversation step 1
                 var result = client.Completions.TextImprovement(text: text, language: "English", model: model.Id);
+
                 Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
-
                 Assert.Equal(3, result.Contents.Count); // Query + Response
-
                 Assert.Equal("system", result.Contents[0].Role.ToString());
                 Assert.Equal("user", result.Contents[1].Role.ToString());
                 Assert.Equal("assistant", result.Contents[2].Role.ToString());
@@ -117,28 +116,29 @@ hi Alice I wanted to let you know that I review the previous email about your ca
                 // Conversation step 2
                 var text2 = @"What is this conversation about?";
 
-                var result2 = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
-                Assert.Equal(4, result2.Contents.Count); // Query + Response
-                Assert.Equal("user", result2.Contents[0].Role.ToString());
-                Assert.True("model" == result2.Contents[1].Role.ToString() || "assistant" == result2.Contents[1].Role.ToString());
-                Assert.Equal("user", result2.Contents[2].Role.ToString());
-                Assert.True("model" == result2.Contents[3].Role.ToString() || "assistant" == result2.Contents[3].Role.ToString());
+                result = client.Completions.TextImprovement(text: text2, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
+                Assert.True(DS.List("conversation", "insurance").All(w => result.Text.ToLower().Contains(w)));
 
-                Assert.True(expectedWords.All(w => result2.Text.ToLower().Contains(w)));
+                Assert.Equal(5, result.Contents.Count); // Query + Response
+                Assert.Equal("system", result.Contents[0].Role.ToString());
+                Assert.Equal("user", result.Contents[1].Role.ToString());
+                Assert.Equal("assistant", result.Contents[2].Role.ToString());
+                Assert.Equal("user", result.Contents[3].Role.ToString());
+                Assert.Equal("assistant", result.Contents[4].Role.ToString());
 
                 // Conversation step 3
                 var text3 = @"is the car insurance proposal approved? Answer with YES or NO only.";
+                result = client.Completions.TextImprovement(text: text3, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
+                Assert.Contains("yes", result.Text.ToLower());
 
-                var result3 = client.Completions.TextImprovement(text: text3, language: "English", model: model.Id, systemPrompt: systemPrompt, contents: result.Contents);
-                Assert.Contains("yes", result3.Text.ToLower());
-
-                Assert.Equal(6, result3.Contents.Count); // Query + Response
-                Assert.Equal("user", result3.Contents[0].Role.ToString());
-                Assert.True("model" == result3.Contents[1].Role.ToString() || "assistant" == result3.Contents[1].Role.ToString());
-                Assert.Equal("user", result3.Contents[2].Role.ToString());
-                Assert.True("model" == result3.Contents[3].Role.ToString() || "assistant" == result3.Contents[3].Role.ToString());
-                Assert.Equal("user", result3.Contents[4].Role.ToString());
-                Assert.True("model" == result3.Contents[5].Role.ToString() || "assistant" == result3.Contents[5].Role.ToString());
+                Assert.Equal(7, result.Contents.Count); // Query + Response
+                Assert.Equal("system", result.Contents[0].Role.ToString());
+                Assert.Equal("user", result.Contents[1].Role.ToString());
+                Assert.Equal("assistant", result.Contents[2].Role.ToString());
+                Assert.Equal("user", result.Contents[3].Role.ToString());
+                Assert.Equal("assistant", result.Contents[4].Role.ToString());
+                Assert.Equal("user", result.Contents[5].Role.ToString());
+                Assert.Equal("assistant", result.Contents[6].Role.ToString());
             }
         }
 

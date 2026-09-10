@@ -74,7 +74,12 @@ namespace fAI
 
     public class GPTMessageExs : List<GPTMessageEx>
     {
+        public bool ContainSystemPrompt => this.Where(m => m.Role == MessageRole.system).Count() > 0;
 
+        public string ToJSON()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
     }
 
     public class GPTPromptEx
@@ -82,7 +87,12 @@ namespace fAI
         public void AddMessageIfMissing(MessageRole role)
         {
             if (this.Messages.Count == 0 || this.Messages.Where(m => m.Role == role).Count() == 0)
-                this.Messages.Add(new GPTMessageEx { Role = role });
+                AddMessage(role);
+        }
+
+        public void AddMessage(MessageRole role)
+        {
+            this.Messages.Add(new GPTMessageEx { Role = role });
         }
 
         public GPTMessageExs Messages { get; set; } = new GPTMessageExs();

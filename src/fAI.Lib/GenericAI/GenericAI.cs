@@ -320,7 +320,7 @@ namespace fAI
                         Messages = new GPTMessageExs(), Model = model
                     };
 
-                    if (!string.IsNullOrEmpty(systemPrompt))
+                    if (!string.IsNullOrEmpty(systemPrompt) && !pp.Messages.ContainSystemPrompt)
                     {
                         pp.AddMessageIfMissing(MessageRole.system);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(systemPrompt));
@@ -336,7 +336,7 @@ namespace fAI
 
                     if (!string.IsNullOrEmpty(prompt))
                     {
-                        pp.AddMessageIfMissing(MessageRole.user);
+                        pp.AddMessage(MessageRole.user);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(prompt));
                     }
 
@@ -350,13 +350,16 @@ namespace fAI
                     if (response.Success)
                     {
                         var answerContent = response.Choices.First().message;
-                        contents.AddRange(pp.Messages);
+                        contents = pp.Messages;
                         contents.Add(
                             new GPTMessageEx() {
                                 Role = answerContent.Role,
                                 Content = new List<GPTMessageContent>() { new GPTMessageContent() { Type = GPTMessageContentType.text, Text = answerContent.Content } }
                             }
                         );
+
+                        HttpBase.Trace($"New Contents: {contents.ToJSON()}", this); 
+
                         usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
                         var responseText = response.Text;
                         return (responseText, contents, usage);
