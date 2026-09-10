@@ -47,7 +47,7 @@ namespace fAI
         }
     }
 
-    public class GPTMessage2
+    public class GPTMessageEx
     {
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "role")]
@@ -88,11 +88,15 @@ namespace fAI
         }
     }
 
-    public class GPTPrompt2
+    public class GPTPromptEx
     {
-        public List<GPTMessage2> Messages { get; set; } = new List<GPTMessage2>();
+        public List<GPTMessageEx> Messages { get; set; } = new List<GPTMessageEx>();
+
+        [JsonProperty("model"]
         public string Model { get; set; }
-        public JsonResponseFormat response_format { get; set; } = null;
+
+        [JsonProperty("response_format", NullValueHandling = NullValueHandling.Ignore)]
+        public JsonResponseFormat ResponseFormat { get; set; } = null;
 
         public string GetPostBody()
         {
@@ -100,7 +104,7 @@ namespace fAI
             {
                 model = Model,
                 messages = Messages,
-                response_format = response_format,
+                response_format = ResponseFormat,
             });
            
         }

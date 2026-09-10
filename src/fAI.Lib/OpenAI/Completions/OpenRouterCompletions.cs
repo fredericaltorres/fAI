@@ -17,7 +17,7 @@ namespace fAI
         // https://openrouter.ai/deepseek/deepseek-v4-pro
         const string __url = "https://openrouter.ai/api/v1/chat/completions";
 
-        public AnthropicErrorCompletionResponse Create(GPTPrompt2 p)
+        public AnthropicErrorCompletionResponse Create(GPTPromptEx p)
         {
             OpenAI.Trace(new { __url }, this);
             //OpenAI.Trace(new { Prompt = p }, this);

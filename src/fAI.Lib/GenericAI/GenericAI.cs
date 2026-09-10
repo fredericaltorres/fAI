@@ -316,27 +316,27 @@ namespace fAI
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
                     var openRouterClient = new OpenRouter(apiKey: base._key);
-                    var pp = new GPTPrompt2
+                    var pp = new GPTPromptEx
                     {
-                        Messages = new List<GPTMessage2>(), Model = model
+                        Messages = new List<GPTMessageEx>(), Model = model
                     };
 
                     if (!string.IsNullOrEmpty(systemPrompt))
                     {
-                        pp.Messages.Add(new GPTMessage2 { Role = MessageRole.system });
+                        pp.Messages.Add(new GPTMessageEx { Role = MessageRole.system });
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(systemPrompt));
                     }
 
                     if (!string.IsNullOrEmpty(prompt))
                     {
-                        pp.Messages.Add(new GPTMessage2 { Role = MessageRole.user });
+                        pp.Messages.Add(new GPTMessageEx { Role = MessageRole.user });
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(prompt));
                     }
 
                     if (!string.IsNullOrEmpty(imageFileName))
                     {
                         if(pp.Messages.Count == 0 || (pp.Messages.Count == 1 & pp.Messages[0].Role == MessageRole.system))
-                            pp.Messages.Add(new GPTMessage2 { Role = MessageRole.user });
+                            pp.Messages.Add(new GPTMessageEx { Role = MessageRole.user });
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsBase64Image(imageFileName));
                     }
 
