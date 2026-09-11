@@ -7,9 +7,9 @@ using static fAI.HumeAISpeech;
 namespace fAI
 {
 
-    public partial class GenericAIOpenAIImage : HttpBase
+    public partial class GenericAIOpenAIImage__obsolete      : HttpBase
     {
-        public GenericAIOpenAIImage(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
+        public GenericAIOpenAIImage__obsolete(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
         }
 

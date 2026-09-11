@@ -35,12 +35,12 @@ they share in the story.
             Assert.True(File.Exists(pngFileNames[0]));
         }
 
-        [Fact()]
-        public void GenericAI_Image_Generate()
-        {
-            var client = new GenericAI();
-            //var urls = client.Images.GenerateUrl(prompt, size: ImageSize._1024x1024);
-            var files = client.Images.GenerateLocalFile(prompt, size: ImageSize._1024x1024);
-        }
+        //[Fact()]
+        //public void GenericAI_Image_Generate()
+        //{
+        //    var client = new GenericAI();
+        //    //var urls = client.Images.GenerateUrl(prompt, size: ImageSize._1024x1024);
+        //    var files = client.Images.GenerateLocalFile(prompt, size: ImageSize._1024x1024);
+        //}
     }
 }

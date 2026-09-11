@@ -134,8 +134,8 @@ namespace fAI
         public GenericAICompletions _completions = null;
         public GenericAICompletions Completions => _completions ?? (_completions = new GenericAICompletions(ApiKey: base._key));
 
-        public GenericAIOpenAIImage _images = null;
-        public GenericAIOpenAIImage Images => _images ?? (_images = new GenericAIOpenAIImage(apiKey: base._key));
+        //public GenericAIOpenAIImage _images = null;
+        //public GenericAIOpenAIImage Images => _images ?? (_images = new GenericAIOpenAIImage(apiKey: base._key));
     }
 
     public partial class GenericAICompletions : HttpBase 

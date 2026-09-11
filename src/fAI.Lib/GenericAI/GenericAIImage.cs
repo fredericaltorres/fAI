@@ -144,7 +144,7 @@ namespace fAI
         }
 
 
-        public (string text, GenericAIUsage usage) Create(
+        public (string imageFileName, GenericAIUsage usage) Create(
             string prompt,
             string model = "x-ai/grok-imagine-image-2.0",
             string filePath = null
