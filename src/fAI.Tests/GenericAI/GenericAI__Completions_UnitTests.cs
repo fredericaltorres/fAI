@@ -348,6 +348,40 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
 
         [Fact()]
         [TestBeforeAfter]
+        public void DetermineTheTypeOfPhrase_InFrench()
+        {
+            GenericAI.GetModels(_quickFilter).ForEach(model => // _quickFilter
+            {
+                AIPromptCache.Instance.Clear();
+                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+
+                Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("ajouter un element a faire avec the titre suivant", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("quelle est la couleur du ciel?", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyser, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analysez, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("recommande, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Quelle est ma priorité principale ?", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Quelle est ma priorité principale", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Listez les médecins qui ont diagnostiqué Karen", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Liste les médecins qui ont diagnostiqué Karen", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Lister les médecins qui ont diagnostiqué Karen", model: model.Id));
+
+
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recherche ce sur quoi Joe travaille aujourd'hui", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Parle-moi du Docteur StrangeLove", model: model.Id));
+
+                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("Le ciel est bleu", model: model.Id));
+            });
+        }
+        [Fact()]
+        [TestBeforeAfter]
         public void DetermineTheTypeOfPhrase()
         {
             GenericAI.GetModels(_quickFilter).ForEach(model => // _quickFilter

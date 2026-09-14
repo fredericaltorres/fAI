@@ -812,13 +812,31 @@ Use the following rules to guide your summarization:
         }
 
 
+const string LIST_OF_VERB_WHICH_INDICATE_QUESTION_FR= @"quel,quelle,quoi,où,quand,qui,lequel,comment,pourquoi,peut,pourrait,devrait,voudrait,est,sont,faire,fait,fit,va,peut,pourrait,doit,
+lister,rechercher,trouver,déterminer,dire,analyser,analyser,résumer,localiser,identifier,rechercher,récupérer,découvrir,révéler,identifier,
+retrouver,enquêter,explorer,examiner,étudier,réviser,inspecter,sonder,auditer,évaluer,évaluer,comparer,calculer,
+mesurer,interpréter,classer,catégoriser,classer,prioriser,diagnostiquer,vérifier,valider,décrire,décrire,
+expliquer,rapporter,récapituler,mettreenévidence,illustrer,clarifier,compiler,organiser,structurer,tabuler,représenter,cartographier,
+énumérer,lister,décider,conclure,recommander,suggérer,prédire,prévoir,estimer,trouve,détermine,dire,analyse,analyse,résume,localise,identifie,
+recherche,récupére,découvri,révéle,identifie,
+retrouve,enquête,explore,examine,étudie,révise,inspecte,sonde,audite,évalue,évalue,compare,calcule,
+mesure,interpréte,classe,catégorise,classe,priorise,diagnostique,vérifie,valide,décrire,décrire,
+explique,rapporte,récapitule,mettreenévidence,illustre,clarifie,compile,organise,structure,tabule,représente,cartographie,
+énumére,liste,décide,conclure,recommande,suggére,prédire,prévoi,estime,
+listez,recherchez,trouvez,déterminez,analysez,résumez,localisez,identifiez,recherchez,récupérez,révélez,identifiez,
+retrouvez,enquêtez,explorez,examinez,étudiez,révisez,inspectez,sondez,auditez,évaluez,évaluez,comparez,calculez,
+mesurez,interprétez,classez,catégorisez,classez,priorisez,diagnostiquez,vérifiez,validez,décrire,décrire,
+expliquez,rapportez,récapitulez,mettreenévidence,illustrez,clarifiez,compilez,organisez,structurez,tabulez,représentez,cartographiez,
+énumérez,listez,décidez,recommandez,suggérez,prédit,estimez,trouvez,déterminez,résumez,
+localisez,";
+
         const string LIST_OF_VERB_WHICH_INDICATE_QUESTION = @"
 what,where,when,who,which,how,why,can,could,should,would,is,are,do,does,did,will,may,might,must,shall,
 list,research,find,determine,tell,analyze,analyse,summarize,locate,identify,search,retrieve,discover,uncover,pinpoint,
 track-down,investigate,explore,examine,study,review,inspect,probe,audit,evaluate,assess,compare,calculate,
 measure,interpret,classify,categorize,rank,prioritize,diagnose,verify,validate,outline,describe,
 explain,report,recap,highlight,illustrate,clarify,compile,organize,structure,tabulate,chart,map-out,
-enumerate,itemize,decide,conclude,recommend,suggest,predict,forecast,estimate";
+enumerate,itemize,decide,conclude,recommend,suggest,predict,forecast,estimate,"+ LIST_OF_VERB_WHICH_INDICATE_QUESTION_FR;
 
 
         public PhraseType DetermineTheTypeOfPhrase(
@@ -861,7 +879,7 @@ Output:
            )
         {
 
-            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "");
+            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
             var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
             var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
             if(cacheR != null)
