@@ -15,6 +15,7 @@ ollama list
 ollama run nomic-embed-text
 ollama run qwen3-embedding:8b
 ollama run qwen3-embedding:0.6b
+ollama run qwen3-embedding:4b
 ollama ps
 ollama stop nomic-embed-text
 ollama launch  

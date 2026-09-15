@@ -103,6 +103,12 @@
     <None Include="Beatles.All.ollama-qwen3-embedding-06b.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Beatles.All.ollama-qwen3-embedding-4b.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Beatles.All.ollama-qwen3-embedding-8b.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Beatles.All.openai-text-embedding-3-small.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

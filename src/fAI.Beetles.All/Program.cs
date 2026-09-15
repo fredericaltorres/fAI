@@ -21,13 +21,13 @@ namespace fAI.Beetles.All
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
         const string GOOGLE_GEMINI_EMBEDDING_2_MODEL = "google/gemini-embedding-2";
         const string OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL = "ollama/nomic-embed-text";
-        const string OLLAMA_QWEN3_EMBEDDING_06B_MODEL = "ollama/qwen3-embedding:0.6b";
+        const string OLLAMA_QWEN3_EMBEDDING_8B_MODEL = "ollama/qwen3-embedding:8b";
 
 
         
 
 
-        static string _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_06B_MODEL;
+        static string _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
 
         static void Write(string message, ConsoleColor color)
         {
@@ -92,12 +92,12 @@ namespace fAI.Beetles.All
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
                     JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
 
-                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_06B_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.ollama-qwen3-embedding-06b.json";
+                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.ollama-qwen3-embedding-8b.json";
                 }
             }
 
-            ///WebScrapLyrics();
+            /////WebScrapLyrics();
             //ComputeEmbedding();
             //Environment.Exit(0);
 
@@ -132,6 +132,9 @@ namespace fAI.Beetles.All
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * 0.9f;
+
+                    inMemoryResponse = inMemoryResponse.Select(r => !r.Id.Contains("Revolution 9") ? r : null).Where(r => r != null).ToList();
+                    
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
                     var scoreRankManager = new ScoreRankManager();
@@ -324,11 +327,6 @@ namespace fAI.Beetles.All
             Trace("Done");
             Console.ReadLine();
         }
-
-        
-
-
-
 
         static void ComputeEmbedding()
         {
