@@ -97,6 +97,12 @@
     <None Include="Beatles.All.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Beatles.All.ollama-nomic-embed-text.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Beatles.All.ollama-qwen3-embedding-06b.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Beatles.All.openai-text-embedding-3-small.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

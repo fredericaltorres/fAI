@@ -14,6 +14,9 @@ parenting family issue wednesday
 
 in difficult time, somebody come with wise knowledge
 
+getting high with people I Like
+need someone to like and getting high
+
 endless love
 endless love, life time
 

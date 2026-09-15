@@ -6,11 +6,18 @@
 ollama pull nomic-embed-text
 
 curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/json" -d "{ ""model"": ""nomic-embed-text"", ""prompt"": ""Your text to embed here"" }"
+curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/json" -d "{ ""model"": ""qwen3-embedding:8b"", ""prompt"": ""Your text to embed here"" }"
+
+
+
 
 ollama list
 ollama run nomic-embed-text
+ollama run qwen3-embedding:8b
+ollama run qwen3-embedding:0.6b
 ollama ps
 ollama stop nomic-embed-text
+ollama launch  
 ```
 
 
