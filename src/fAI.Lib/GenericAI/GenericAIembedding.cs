@@ -178,7 +178,7 @@ namespace fAI
            )
         {
             OpenAI.Trace(new { model, text }, this);
-            var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
+            var dimension = 0;
             var sw = Stopwatch.StartNew();
             var usage = new GenericAIUsage(model, "", "");
             if (base._key == null)

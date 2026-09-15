@@ -38,7 +38,10 @@ namespace fAI.Tests
             if (a == b) return true;
 
             double scale = Math.Pow(10, significantDigits);
-            return Math.Round(a * scale) == Math.Round(b * scale);
+            var r = Math.Round(a * scale) == Math.Round(b * scale);
+            if(!r)
+                Debugger.Break();
+            return r;
         }
 
         public static bool AreListOfFloatsEqual(IEnumerable<float> a, IEnumerable<float> b, int significantDigits = 5)
