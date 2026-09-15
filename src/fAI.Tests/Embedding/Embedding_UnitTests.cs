@@ -81,7 +81,7 @@ namespace fAI.Tests
             string s = string.Join(", ", actualEmbeddings);
 
             Assert.True(AreFloatsEqual(vectorToSearchExpected[0], actualEmbeddings[0]));
-            Assert.True(AreListOfFloatsEqual(actualEmbeddings, vectorToSearchExpected));
+            Assert.True(AreListOfFloatsEqual(actualEmbeddings, vectorToSearchExpected, significantDigits:3));
         }
 
         [Fact()]

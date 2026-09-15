@@ -20,9 +20,10 @@ namespace fAI.Beetles.All
         const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
         const string GOOGLE_GEMINI_EMBEDDING_2_MODEL = "google/gemini-embedding-2";
+        const string OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL = "ollama/nomic-embed-text";
 
 
-        static string _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
+        static string _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
 
         static void Write(string message, ConsoleColor color)
         {
@@ -82,11 +83,16 @@ namespace fAI.Beetles.All
                     _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
                     JsonOutputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
                 }
+                if (model == "ollama")
+                {
+                    _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
+                }
             }
 
             ///WebScrapLyrics();
-            //ComputeEmbedding();
-            //Environment.Exit(0);
+            ComputeEmbedding();
+            Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
