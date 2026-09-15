@@ -1,6 +1,5 @@
 ﻿# Ollama
 
-
 ## how to use embedding model with ollama localy making an http call
 
 ```
@@ -8,11 +7,10 @@ ollama pull nomic-embed-text
 
 curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/json" -d "{ ""model"": ""nomic-embed-text"", ""prompt"": ""Your text to embed here"" }"
 
+ollama list
+ollama run nomic-embed-text
 ollama ps
 ollama stop nomic-embed-text
-
-
-
 ```
 
 

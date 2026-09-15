@@ -75,6 +75,7 @@ namespace fAI
     {
         //https://openrouter.ai/docs/api/api-reference/images/generate-an-image
         public const string __url = "https://openrouter.ai/api/v1/embeddings";
+        public const string __ollama_url = "http://localhost:11434/api/embeddings";
 
         public GenericAIembedding(int timeOut = -1, string apiKey = null) : base(timeOut, apiKey)
         {
@@ -147,10 +148,57 @@ namespace fAI
             public static EmbeddingResponse FromJson(string json) => JsonConvert.DeserializeObject<EmbeddingResponse>(json);
         }
 
+        public class OllamaEmbeddingResponse
+        {
+            public List<float> embedding { get; set; }
+
+            public static OllamaEmbeddingResponse FromJson(string json) => JsonConvert.DeserializeObject<OllamaEmbeddingResponse>(json);
+        }
+
         public class Usage
         {
             public int prompt_tokens { get; set; }
             public int total_tokens { get; set; }
+        }
+
+        private static bool IsOllamaModel(string model)
+        {
+            return model.StartsWith("ollama");
+        }
+
+        private static string ExtractOllamaModel(string model)
+        {
+            return model.Replace("ollama/", "").Trim();
+        }
+
+        private (List<float>, GenericAIUsage usage) __CreateOllama(
+           string text,
+           string model,
+           string filePath = null
+           )
+        {
+            OpenAI.Trace(new { model, text }, this);
+            var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
+            var sw = Stopwatch.StartNew();
+            var usage = new GenericAIUsage(model, "", "");
+            if (base._key == null)
+                base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
+            var wc = InitWebClient();
+            var response = wc.POST(__ollama_url, GetOllamaPayLoad(text, model, dimension));
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                var r = OllamaEmbeddingResponse.FromJson(response.Text);
+                sw.Stop();
+                usage.InputTokens = 0;
+                usage.OutputTokens = 0;
+                usage.SetDuration(sw);
+
+                OpenAI.Trace($"[EMBEDDING] Duration: {sw.ElapsedMilliseconds:00000} ms, Model: {model}", this);
+
+                return (r.embedding, usage);
+            }
+            else throw new OpenAIAudioSpeechException($"{nameof(Create)}() failed - {response.Exception.Message}", response.Exception);
         }
 
         public (List<float>, GenericAIUsage usage) Create(
@@ -159,6 +207,11 @@ namespace fAI
             string filePath = null
             )
         {
+            if(IsOllamaModel(model))
+            {
+                return __CreateOllama(text, ExtractOllamaModel(model), filePath);
+            }
+
             OpenAI.Trace(new { model, text}, this);
             var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
             var sw = Stopwatch.StartNew();
@@ -202,6 +255,14 @@ namespace fAI
                     model
                 });
             }
+        }
+        private string GetOllamaPayLoad(string prompt, string model, int dimensions)
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                prompt,
+                model,
+            });
         }
     }
 }

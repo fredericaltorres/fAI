@@ -73,6 +73,19 @@ namespace fAI.Tests
 
         [Fact()]
         [TestBeforeAfter]
+        public void GenericAI_Embedding_Ollama_nomic_embed_text()
+        {
+            var client = new GenericAI();
+            var (actualEmbeddings, usage) = client.Embedding.Create(@"sad people", model : "ollama/nomic-embed-text");
+            var vectorToSearchExpected = new List<float>() {
+                
+            };
+            Assert.True(AreFloatsEqual(vectorToSearchExpected[0], actualEmbeddings[0]));
+            Assert.True(AreListOfFloatsEqual(actualEmbeddings, vectorToSearchExpected));
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void GenericAI_Embedding_OpenRouter_GetModels()
         {
             var client = new GenericAI();

@@ -81,8 +81,15 @@ namespace fAI
                 new AIModel { Id = "x-ai/grok-4.5",                     InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 500_000,   ReleaseDate = new DateTime(2026, 7, 8)  },
                 new AIModel { Id = "x-ai/grok-4.20",                    InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 2_000_000 },
                 new AIModel { Id = "x-ai/grok-4.3",                     InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 1_000_000 },
+
+
+                new AIModel { Id = "deepseek/deepseek-v4.1-flash",      InputTokenPricePer1M = 0.015f, OutputTokenPricePer1M = 0.6f,  ContextLength = 1_050_000, ReleaseDate = new DateTime(2026, 9, 10) },
+
+
                 new AIModel { Id = "deepseek/deepseek-v4-flash",        InputTokenPricePer1M = 0.084f, OutputTokenPricePer1M = 0.168f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
                 new AIModel { Id = "deepseek/deepseek-v4-pro",          InputTokenPricePer1M = 0.435f, OutputTokenPricePer1M = 0.87f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
+                
+                
                 new AIModel { Id = "thinkingmachines/inkling",          InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 4.05f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 17) },
                 new AIModel { Id = "moonshotai/kimi-k2.6",              InputTokenPricePer1M = 0.55f,  OutputTokenPricePer1M = 3.20f,   ContextLength = 262_000 },
                 new AIModel { Id = "moonshotai/kimi-k3",                InputTokenPricePer1M = 2.81f,  OutputTokenPricePer1M = 14.01f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 16) },
