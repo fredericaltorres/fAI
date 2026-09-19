@@ -87,13 +87,18 @@ namespace fAI.Beetles.All
                     _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
                     JsonOutputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
                 }
-                if (model == "ollama")
+                if (model == "ollama-nomic")
                 {
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
                     JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
 
                     _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
                     JsonOutputFilename = @".\Beatles.All.ollama-qwen3-embedding-8b.json";
+                }
+                if (model == "openai")
+                {
+                    _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.json";
                 }
             }
 

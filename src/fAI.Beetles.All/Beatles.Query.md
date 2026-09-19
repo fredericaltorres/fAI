@@ -2,7 +2,7 @@
 1. Explain the 10 best result, than apply the top 10%, but
 1. Explain new filtering and caveat when there are 2 elements
 
-sad people in church
+sad religious people 
 in the navy
 child going away from house
 parenting family issue wednesday
