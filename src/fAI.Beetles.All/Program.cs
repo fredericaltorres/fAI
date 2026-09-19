@@ -21,6 +21,9 @@ namespace fAI.Beetles.All
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
         const string GOOGLE_GEMINI_EMBEDDING_2_MODEL = "google/gemini-embedding-2";
         const string OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL = "ollama/nomic-embed-text";
+
+        const string OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL = "ollama/nomic-embed-text-v2-moe";
+
         const string OLLAMA_QWEN3_EMBEDDING_8B_MODEL = "ollama/qwen3-embedding:8b";
 
 
@@ -91,9 +94,11 @@ namespace fAI.Beetles.All
                 {
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
                     JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
-
-                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.ollama-qwen3-embedding-8b.json";
+                }
+                if (model == "ollama-nomic-v2")
+                {
+                    _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL;
+                    JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text-v2.json";
                 }
                 if (model == "openai")
                 {
@@ -103,8 +108,8 @@ namespace fAI.Beetles.All
             }
 
             /////WebScrapLyrics();
-            //ComputeEmbedding();
-            //Environment.Exit(0);
+            ComputeEmbedding();
+            Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 
@@ -115,6 +120,8 @@ namespace fAI.Beetles.All
 
             var topK = 10;
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
+
+            var minimumScoreRate = 0.8f;
 
             while (true)
             {
@@ -136,7 +143,7 @@ namespace fAI.Beetles.All
                     var (v, u) = SimilaritySearchEngine.ToVector(criteria, model: _currentEmbeddingModel);
                     var inMemoryResponse = SimilaritySearchEngine.SimilaritySearch(v, embeddingRecords, topK, minimumScore);
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
-                    minimumScore = bestScore * 0.9f;
+                    minimumScore = bestScore * minimumScoreRate;
 
                     inMemoryResponse = inMemoryResponse.Select(r => !r.Id.Contains("Revolution 9") ? r : null).Where(r => r != null).ToList();
                     
@@ -349,7 +356,12 @@ namespace fAI.Beetles.All
                 Console.WriteLine($"{i} - {e.Album} - {e.Title}");
                 if (e.Embedding == null || e.Embedding.Count == 0)
                 {
-                    var (r, usage) = client.Embedding.Create(e.Text, model: _currentEmbeddingModel);
+                    var text = e.Text;
+                    if (text.Length > 1500)
+                    {
+                        text = text.Substring(0, 1500);
+                    }
+                    var (r, usage) = client.Embedding.Create(text, model: _currentEmbeddingModel);
                     e.Embedding = r;
 
                     if (i++ % 10 == 0)
