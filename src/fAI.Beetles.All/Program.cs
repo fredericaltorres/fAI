@@ -108,8 +108,8 @@ namespace fAI.Beetles.All
             }
 
             /////WebScrapLyrics();
-            ComputeEmbedding();
-            Environment.Exit(0);
+            //ComputeEmbedding();
+            //Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
 

@@ -97,6 +97,9 @@
     <None Include="Beatles.All.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Beatles.All.ollama-nomic-embed-text-v2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Beatles.All.ollama-nomic-embed-text.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
