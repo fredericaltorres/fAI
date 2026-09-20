@@ -231,8 +231,9 @@ glycemic control and overall well-being.
                 var result = client.Completions.Summarize(text: GlycemicReseachText, language: "English", model: model, summarizeWordCount: 64);
                 HttpBase.Trace($"[SUMMARIZATION] Duration: {result.Duration:00.00}, Model: {model}, %: {result.PercentageSummzarized}, TextWordCount: {result.TextWordCount}, SummaryWordCount: {result.SummaryWordCount}, text: {result.Text}", this);
 
-                var cost = client.Completions.LastUsage.ComputeCost();
-                Assert.True(cost > 0, $"Cost should be greater than 0 for model {model}");
+                Assert.True(client.Completions.LastUsage.ComputeCost() > 0, $"Cost should be greater than 0 for model {model}");
+                Assert.True(client.Completions.LastUsage.ApiCost > 0, $"ApiCost should be greater than 0 for model {model}");
+                Assert.True(client.Completions.LastUsage.ComputeCost() >= client.Completions.LastUsage.ApiCost, $"ComputeCost should be greater than or equal to ApiCost for model {model}");
             }
         }
 

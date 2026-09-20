@@ -39,7 +39,9 @@ namespace fAI
 
         [JsonProperty(PropertyName = "service_tier")]
         public string ServiceTier { get; set; }
-
+        
+        [JsonProperty(PropertyName = "cost")]
+        public float ApiCost { get; set; } 
         
     }
 

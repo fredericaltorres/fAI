@@ -39,6 +39,7 @@ namespace fAI
                 anthropicFormatResponse.Usage = new AnthropicUsage();
                 anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
                 anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
+                anthropicFormatResponse.Usage.ApiCost = openAIFormatResponse.usage.cost;
 
                 //anthropicFormatResponse.GPTPrompt = p;
                 anthropicFormatResponse.Stopwatch = sw;

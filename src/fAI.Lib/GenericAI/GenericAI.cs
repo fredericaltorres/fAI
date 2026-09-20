@@ -181,7 +181,7 @@ namespace fAI
 
                 var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
                 var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
-                HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}", this);
+                HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
 
                 return (result, updatedContents, usage);
             }
@@ -355,9 +355,9 @@ namespace fAI
                             }
                         );
 
-                        HttpBase.Trace($"New Contents: {contents.ToJSON()}", this); 
+                        HttpBase.Trace($"New Contents: {contents.ToJSON()}", this);
 
-                        usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens);
+                        usage.SetTokenCount(response.Usage.InputTokens, response.Usage.OutputTokens, response.Usage.ApiCost); 
                         var responseText = response.Text;
                         return (responseText, contents, usage);
                     }
