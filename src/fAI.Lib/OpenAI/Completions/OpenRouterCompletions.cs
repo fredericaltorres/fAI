@@ -40,15 +40,13 @@ namespace fAI
 
                 var openAIFormatResponse = OpenAICompletionResponse.FromJson(response.Text);
 
-                var anthropicFormatResponse = AnthropicErrorCompletionResponse.FromJson(response.Text);
-                anthropicFormatResponse.Usage = new AnthropicUsage();
-                anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
-                anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
-                anthropicFormatResponse.Usage.ApiCost = openAIFormatResponse.usage.cost;
-
-                //anthropicFormatResponse.GPTPrompt = p;
-                anthropicFormatResponse.Stopwatch = sw;
-                return anthropicFormatResponse;
+                var r = AnthropicErrorCompletionResponse.FromJson(response.Text);
+                r.Usage = new AnthropicUsage();
+                r.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
+                r.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
+                r.Usage.ApiCost = openAIFormatResponse.usage.cost;
+                r.Stopwatch = sw;
+                return r;
             }
             else
             {

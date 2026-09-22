@@ -609,16 +609,15 @@ Describe image
            )
         {
             var (newText, contents2, usage) = Create(null, systemPrompt, model, imageFileName: imageFileName);
-            var (finalTitle, titleResponse ) = GenerateTitle(model, language, newText, usage);
+            var (finalTitle, titleResponse) = GenerateTitle(model, language, newText);
             usage.Add(titleResponse.Usage);
 
             return (newText, finalTitle, usage);
         }
 
-        private (string , GenerateTitleResult) GenerateTitle(string model, string language, string newText, GenericAIUsage usage)
+        private (string , GenerateTitleResult) GenerateTitle(string model, string language, string newText)
         {
             var titleResponse = this.GenerateTitle(newText, language: language, model: model);
-            usage.Add(titleResponse.Usage);
             var title = titleResponse.Title;
             var marker = "# Title";
             if (title.StartsWith(marker))
@@ -643,7 +642,7 @@ no code fences wrapping the entire output.
            )
         {
             var (newText, contents2, usage) = Create(null, systemPrompt, model, imageFileName: imageFileName);
-            var (finalTitle, titleResponse) = GenerateTitle(model, language, newText, usage);
+            var (finalTitle, titleResponse) = GenerateTitle(model, language, newText);
             usage.Add(titleResponse.Usage);
             return (newText, finalTitle, usage);
         }
