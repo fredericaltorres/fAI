@@ -14,6 +14,7 @@ namespace fAI
         public int ContextLength { get; set; }
         public DateTime ReleaseDate { get; set; }
         public DateTime KnowledgeCutoff { get; set; }
+        public bool ClassifierMode { get; internal set; }
 
         public override string ToString()
         {
@@ -54,6 +55,11 @@ namespace fAI
 
             var aiModels = new List<AIModel>
             {
+
+                new AIModel { Id = "typesafe/jev-1.13",                InputTokenPricePer1M = 0.042f, OutputTokenPricePer1M = 0.00f,  ContextLength = 32*1024, ReleaseDate = new DateTime(2026, 9, 18),  KnowledgeCutoff = new DateTime(2026, 9, 18) , ClassifierMode = true },
+
+
+
                 new AIModel { Id = "google/gemini-3.1-flash-lite",      InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 1.50f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 7)  },
                 new AIModel { Id = "google/gemini-3.5-flash",           InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 9.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 19),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
                 new AIModel { Id = "google/gemini-3.8-flash",           InputTokenPricePer1M = 0.75f,  OutputTokenPricePer1M = 3.75f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 9, 2),   KnowledgeCutoff = new DateTime(2026, 9, 2) },

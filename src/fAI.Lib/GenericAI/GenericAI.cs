@@ -1,5 +1,6 @@
 ﻿using DynamicSugar;
 using fAI.Google;
+using fAI.OpenAI_Completions_Response;
 using fAI.Util.Strings;
 using Markdig.Extensions.Tables;
 using Mistral.SDK.DTOs;
@@ -161,6 +162,98 @@ namespace fAI
             else throw new Exception($"Model {model} not supported for agentic loop.");
         }
 
+
+        /*{
+  "model": "typesafe/jev-1.13",
+  "state": "Task: clean up inactive accounts before the quarterly report.\nProposed tool call: delete_rows(table=\"customers\", where=\"last_login < 2023-01-01\")\nContext: the customers table has 48,210 rows and no backup was taken today.",
+  "questions": {
+    "safe_to_run": {
+      "type": "noul",
+      "instructions": "Is this action safe to run without a human approving it first?",
+      "criteria": {
+        "true": "Reversible or low-impact, and clearly within the stated task.",
+        "false": "Destructive, irreversible, or broader than the task requires."
+      }
+    }
+  }
+}*/
+
+
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class ClassifierCriteria
+        {
+            public string @true { get; set; }
+            public string @false { get; set; }
+        }
+
+        public class ClassifierQuestions
+        {
+            public ClassifierSafeToRun safe_to_run { get; set; }
+        }
+
+        public class ClassifierBody
+        {
+            public string model { get; set; }
+            public string state { get; set; }
+            public ClassifierQuestions questions { get; set; }
+
+            internal string GetPostBody()
+            {
+                return JsonConvert.SerializeObject(this);
+            }
+        }
+
+        [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public enum ClassifierType
+        {
+            Noul,
+            Choice,
+            Score
+        }
+
+        public class ClassifierSafeToRun
+        {
+            public ClassifierType type { get; set; }
+            public string instructions { get; set; }
+            public ClassifierCriteria criteria { get; set; }
+        }
+
+
+        /// <summary>
+        /// https://docs.typesafe.ai/concepts/system-one
+        /// </summary>
+        /// <returns></returns>
+        public (string, GenericAIUsage) CreateClassifier(
+            string state, 
+            string instructions,
+            ClassifierCriteria criteria,
+            ClassifierType type = ClassifierType.Noul,
+            string model = "typesafe/jev-1.13")
+        {
+            var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
+            GenericAIUsage usage = new GenericAIUsage(model, instructions, state);
+            var openRouterClient = new OpenRouter(apiKey: base._key);
+            var pp = new ClassifierBody {
+                model = model,
+                state = state,
+                questions = new ClassifierQuestions {
+                    safe_to_run = new ClassifierSafeToRun {
+                        type = type,
+                        instructions = instructions,
+                        criteria = criteria
+                    }
+                }
+            };
+            var response = openRouterClient.Completions.Create(pp);
+            if (response.Success)
+            {
+            }
+
+            var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
+            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
+            return ("" , usage);
+        }
+
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
 
         public SkillFile LoadSkill(string skillName, string skillRootFolder)
@@ -217,12 +310,6 @@ namespace fAI
 
                 contents = contents == null ? new GPTMessageExs() : contents;
 
-                //contents.Add(new GenericAI.ContentMessage
-                //{
-                //    Role = "user", // A conversation always starts with user message
-                //    Parts = new List<GenericAI.ContentMessagePart> { new GenericAI.ContentMessagePart { Text = prompt } }
-                //});
-
                 // Anthropic, My own abstraction, but we now use Open Router
                 if (Anthropic.GetModels().Select(m => m.Id).Contains(model))
                 {
@@ -239,12 +326,6 @@ namespace fAI
                             }
                         }
                     };
-
-                    //var anthropicContents = contents.GetAnthropicContents();
-                    //if (anthropicContents.Count > 1)
-                    //{
-                    //    p.Messages = anthropicContents;
-                    //}
 
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
@@ -266,14 +347,6 @@ namespace fAI
 
                     // Update the contents discussion with the answer from the AI
                     var answerContent = response.Content.FirstOrDefault(c => c.IsText);
-                    //contents.Add(new GenericAI.ContentMessage
-                    //{
-                    //    Role = response.Role,
-                    //    Parts = new List<GenericAI.ContentMessagePart>
-                    //    {
-                    //        new GenericAI.ContentMessagePart { Text = answerContent.Text }
-                    //    }
-                    //});
 
                     return (answerContent.Text, contents, usage);
                 }
@@ -295,29 +368,21 @@ namespace fAI
 
                     // Update the contents discussion with the answer from the AI
                     var answerContent = r.candidates[0].content;
-                    //contents.Add(new GenericAI.ContentMessage
-                    //{
-                    //    Role = answerContent.role,
-                    //    Parts = new List<GenericAI.ContentMessagePart>
-                    //    {
-                    //        new GenericAI.ContentMessagePart { Text = answerContent.parts[0].text }
-                    //    }
-                    //});
-
                     return (r.GetText(), contents, usage);
                 }
 
                 // OpenRouter, My own abstraction, but we now use Open Router
                 else if (OpenRouter.GetModels().Select(m => m.Id).Contains(model))
                 {
-
+                    var model_ = OpenRouter.GetModels().FirstOrDefault(m => m.Id == model);
                     if (string.IsNullOrEmpty(base._key))
                         base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 
                     var openRouterClient = new OpenRouter(apiKey: base._key);
                     var pp = new GPTPromptEx
                     {
-                        Messages = new GPTMessageExs(), Model = model
+                        Messages = new GPTMessageExs(), Model = model,
+                        ClassifierMode = model_.ClassifierMode,
                     };
 
                     if (contents.Count > 0)
@@ -904,6 +969,31 @@ Output:
             systemPrompt = systemPrompt.Template(new { text, listOfVerbWhichIndicateQuestion }, "[", "]");
             var sw = Stopwatch.StartNew();
             var (json, _, usage) = Create(text, systemPrompt, model);
+            sw.Stop();
+            var o = DetermineTheTypeOfPhraseResult.FromJson(json);
+
+            AIPromptCache.Instance.Add(cacheEntry, o.PhraseType.ToString());
+
+            return o.PhraseType;
+        }
+
+
+        public PhraseType Classifier(
+           string text,
+           string model = "typesafe/jev-1.13")
+        {
+
+            var cacheEntry = $"Classifier: {text}";
+            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
+            if (cacheR != null)
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
+                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
+                return phraseType;
+            }
+
+            var sw = Stopwatch.StartNew();
+            var (json, _, usage) = CreateClassifier(text, systemPrompt, model);
             sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
 

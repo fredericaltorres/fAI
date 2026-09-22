@@ -107,6 +107,9 @@ namespace fAI
         [JsonProperty("model")]
         public string Model { get; set; }
 
+        [JsonIgnore]
+        public bool ClassifierMode { get; set; }
+
         [JsonProperty("response_format", NullValueHandling = NullValueHandling.Ignore)]
         public JsonResponseFormat ResponseFormat { get; set; } = null;
 

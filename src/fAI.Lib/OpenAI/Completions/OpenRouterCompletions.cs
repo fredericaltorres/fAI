@@ -15,16 +15,20 @@ namespace fAI
         }
 
         // https://openrouter.ai/deepseek/deepseek-v4-pro
-        const string __url = "https://openrouter.ai/api/v1/chat/completions";
+        const string __urlLLM = "https://openrouter.ai/api/v1/chat/completions";
+        const string __urlClassifier = "https://openrouter.ai/api/alpha/decisions";
+
+
 
         public AnthropicErrorCompletionResponse Create(GPTPromptEx p)
         {
-            OpenAI.Trace(new { __url }, this);
+            var url = __urlLLM;
+            OpenAI.Trace(new { url }, this);
             //OpenAI.Trace(new { Prompt = p }, this);
             OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(__url, p.GetPostBody());
+            var response = InitWebClient().POST(url, p.GetPostBody());
             
             sw.Stop();
             OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
@@ -72,6 +76,41 @@ namespace fAI
         private bool IsNumeric(List<string> strings)
         {
             return strings.All(x => IsNumeric(x));
+        }
+
+        public AnthropicErrorCompletionResponse Create(GenericAICompletions.ClassifierBody p)
+        {
+            var url = __urlClassifier;
+            OpenAI.Trace(new { url }, this);
+            //OpenAI.Trace(new { Prompt = p }, this);
+            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
+
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().POST(url, p.GetPostBody());
+
+            sw.Stop();
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+
+                var openAIFormatResponse = OpenAICompletionResponse.FromJson(response.Text);
+
+                var anthropicFormatResponse = AnthropicErrorCompletionResponse.FromJson(response.Text);
+                anthropicFormatResponse.Usage = new AnthropicUsage();
+                anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
+                anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
+                anthropicFormatResponse.Usage.ApiCost = openAIFormatResponse.usage.cost;
+
+                //anthropicFormatResponse.GPTPrompt = p;
+                anthropicFormatResponse.Stopwatch = sw;
+                return anthropicFormatResponse;
+            }
+            else
+            {
+                return new AnthropicErrorCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
+            }
         }
     }
 }
