@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static fAI.GenericAICompletions;
 
 namespace fAI
 {
@@ -100,12 +101,16 @@ namespace fAI
             public Exception Exception { get; set; } = null;
             public bool Success => Exception == null;
             public Stopwatch Stopwatch { get; set; }    
+
+            public bool Yes => answers?.safe_to_run?.Yes ?? false;
         }
 
         public class SafeToRun
         {
-            public string type { get; set; }
-            public double noul { get; set; }
+            public ClassifierType type { get; set; }
+            public float noul { get; set; }
+
+            public bool Yes => noul*100f > 50f;
         }
 
         public class Usage

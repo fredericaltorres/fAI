@@ -223,7 +223,7 @@ namespace fAI
         /// https://docs.typesafe.ai/concepts/system-one
         /// </summary>
         /// <returns></returns>
-        public (string, GenericAIUsage) CreateClassifier(
+        public (bool, GenericAIUsage) CreateClassifier(
             string state, 
             string instructions,
             ClassifierCriteria criteria,
@@ -231,7 +231,6 @@ namespace fAI
             string model = "typesafe/jev-1.13")
         {
             var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
-            GenericAIUsage usage = new GenericAIUsage(model, instructions, state);
             var openRouterClient = new OpenRouter(apiKey: base._key);
             var pp = new ClassifierBody {
                 model = model,
@@ -245,13 +244,15 @@ namespace fAI
                 }
             };
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
-            if (response.Success)
-            {
-            }
-
             var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
             HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
-            return ("" , usage);
+
+            if (response.Success)
+            {
+                return (response.Yes, usage);
+            }
+           
+            throw new ApplicationException($"Classifier failed: {response.Exception}");
         }
 
         public GenericAIUsage LastUsage { get; set; } = new GenericAIUsage(null, null, null);
