@@ -850,6 +850,27 @@ Use the following rules to guide your summarization:
             TTSGenerationRequest,
         }
 
+        public PhraseType DetermineTheTypeOfPhraseClassifier(string text)
+        {
+            var (_, choice, usage) = CreateClassifier(
+                 state: text,
+                 instructions: "What is the type of this sentence?",
+                 new GenericAICompletions.ClassifierCriteria
+                 {
+                     ["question"] = "It is a question.",
+                     ["statement"] = "It is a statement.",
+                     ["order"] = "It is an order."
+                 },
+                 type: GenericAICompletions.ClassifierType.choice
+             );
+
+            PhraseType result  = (PhraseType)Enum.Parse(typeof(PhraseType), choice, ignoreCase: true);
+
+            return result;
+        }
+
+
+
         public class DetermineTheTypeOfPhraseResult
         {
             [JsonProperty("classification")]

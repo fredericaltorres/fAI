@@ -470,23 +470,22 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         public void Classifier_Choice_DeterminePhraseType()
         {
             AIPromptCache.Instance.Clear();
-            var client = new GenericAI();
+            var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
 
-            var (yes, choice, usage) = client.Completions.CreateClassifier(
-                 state: "What is the color of the sky?",
-                 instructions: "What is the type of this sentence?",
-                 new GenericAICompletions.ClassifierCriteria
-                 {
-                     ["question"] = "It is a question.",
-                     ["statement"] = "It is a statement.",
-                     ["order"] = "It is an order.    "
-                 },
-                 type: GenericAICompletions.ClassifierType.choice
-             );
+            Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhraseClassifier("Add a to-do item with the following title"));
 
-            Assert.Equal("question", choice);
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Paint the sky?"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("What is the color of the sky?"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier    ("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic."));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Recommend as a Medical Doctor, Karin health issue and issue a diagnostic."));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("What is my highest priority?"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("What is my highest priority?"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("List the doctors whom diagnosticated Karen"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Research what Joe is working on today"));
+            Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Tell me about Doctor StrangeLove"));
+
+            Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The sky is blue"));
         }
-
 
         [Fact()]
         [TestBeforeAfter]
