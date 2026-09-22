@@ -230,7 +230,7 @@ namespace fAI
             ClassifierType type = ClassifierType.noul,
             string model = "typesafe/jev-1.13")
         {
-            var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
+            //var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
             var openRouterClient = new OpenRouter(apiKey: base._key);
             var pp = new ClassifierBody {
                 model = model,
@@ -850,8 +850,30 @@ Use the following rules to guide your summarization:
             TTSGenerationRequest,
         }
 
-        public PhraseType DetermineTheTypeOfPhraseClassifier(string text)
+        public PhraseType DetermineTheTypeOfPhraseClassifier(string text,
+            string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION)
         {
+            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
+            var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
+            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
+            if (cacheR != null)
+            {
+                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
+                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
+                return phraseType;
+            }
+
+            var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
+            text = text.Trim();
+
+            // Non AI optimization
+            var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
+            if (startWithVerbWhichIndicateQuestion || text.EndsWith("?"))
+            {
+                AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
+                return PhraseType.Question;
+            }
+
             var (_, choice, usage) = CreateClassifier(
                  state: text,
                  instructions: "What is the type of this sentence?",
@@ -975,7 +997,6 @@ Output:
             }
 
             var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
-            //listOfVerbWhichIndicateQuestionAsList.Sort();
             text = text.Trim();
 
             // Non AI optimization
