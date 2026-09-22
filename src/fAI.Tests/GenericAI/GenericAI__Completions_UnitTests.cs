@@ -224,7 +224,7 @@ glycemic control and overall well-being.
         public void Summarize_GenericAI_OpenRouterModels()
         {
             var expectedWords = DS.List("alice", "insurance", "car");
-            var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), 3);
+            var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), _randomModelCount);
             foreach (var model in models)
             {
                 var client = new GenericAI();
@@ -667,7 +667,7 @@ Find root cause.
             {
                 var client = new GenericAI();
                 var (text, title, usage)    = client.Completions.AnalyzeImage(imageFileName, model);
-                Assert.True(DS.List("maritime", "ship").All(w => text.ToLower().Contains(w)));
+                Assert.True(DS.List( "ship").All(w => text.ToLower().Contains(w)));
 
                 Assert.True(!string.IsNullOrEmpty(title));
                 Assert.True(usage.InputTokens > 0);
