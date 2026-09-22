@@ -180,10 +180,10 @@ namespace fAI
 
 
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-        public class ClassifierCriteria
+        public class ClassifierCriteria : Dictionary<string, string>
         {
-            public string @true { get; set; }
-            public string @false { get; set; }
+            //public string @true { get; set; }
+            //public string @false { get; set; }
         }
 
         public class ClassifierQuestions
@@ -223,7 +223,7 @@ namespace fAI
         /// https://docs.typesafe.ai/concepts/system-one
         /// </summary>
         /// <returns></returns>
-        public (bool, GenericAIUsage) CreateClassifier(
+        public (bool yesNo, string choice, GenericAIUsage) CreateClassifier(
             string state, 
             string instructions,
             ClassifierCriteria criteria,
@@ -244,12 +244,11 @@ namespace fAI
                 }
             };
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
-            var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
-            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
+            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
 
             if (response.Success)
             {
-                return (response.Yes, usage);
+                return (response.Yes, response.answers.safe_to_run.choice, usage);
             }
            
             throw new ApplicationException($"Classifier failed: {response.Exception}");
@@ -383,7 +382,6 @@ namespace fAI
                     var pp = new GPTPromptEx
                     {
                         Messages = new GPTMessageExs(), Model = model,
-                        ClassifierMode = model_.ClassifierMode,
                     };
 
                     if (contents.Count > 0)

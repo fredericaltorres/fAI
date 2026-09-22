@@ -301,10 +301,12 @@ glycemic control and overall well-being.
         [TestBeforeAfter]
         public void Translate_GenericAI_InterfaceForOpenAIAndGoogle()
         {
-            foreach (var model in GenericAI.GetModels(_quickFilter))
+            var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), _randomModelCount);
+
+            foreach (var model in models)
             {
                 var client = new GenericAI();
-                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model.Id);
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model);
                 HttpBase.Trace($"[TRANSLATE] Model: {model}, Duration: {result.Duration:0.0}, SourceText: {result.SourceText}, destLanguage: {result.TranslatedText}", this);
             }
         }
@@ -411,22 +413,80 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
 
         [Fact()]
         [TestBeforeAfter]
-        public void Classifier()
+        public void Classifier_YesNo()
         {
             AIPromptCache.Instance.Clear();
             var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
 
-           client.Completions.CreateClassifier(
-                state: "Task: clean up inactive accounts before the quarterly report.\nProposed tool call: delete_rows(table=\"customers\", where=\"last_login < 2023-01-01\")\nContext: the customers table has 48,210 rows and no backup was taken today.",
-                instructions: "Is this action safe to run without a human approving it first?",
-                new GenericAICompletions.ClassifierCriteria {
-                    @false = "Reversible or low-impact, and clearly within the stated task.",
-                    @true = "Destructive, irreversible, or broader than the task requires."
-                }
-            )
-                 ;
+           //var (yes, usage ) = client.Completions.CreateClassifier(
+           //     state: "Task: clean up inactive accounts before the quarterly report.\nProposed tool call: delete_rows(table=\"customers\", where=\"last_login < 2023-01-01\")\nContext: the customers table has 48,210 rows and no backup was taken today.",
+           //     instructions: "Is this action safe to run without a human approving it first?",
+           //     new GenericAICompletions.ClassifierCriteria {
+           //         @false = "Reversible or low-impact, and clearly within the stated task.",
+           //         @true = "Destructive, irreversible, or broader than the task requires."
+           //     }
+           // );
+           // Assert.False(yes, "The classifier should return false for this input.");
+
+            var (yes, _, usage) = client.Completions.CreateClassifier(
+                 state: "Phrase: What is the color of the sky?",
+                 instructions: "Is this a question?",
+                 new GenericAICompletions.ClassifierCriteria
+                 {
+                     ["false"] = "It is not a question.",
+                     ["true"] = "It is a question."
+                 }
+             );
+
+            Assert.True(yes, "The classifier should return true for this input.");
 
         }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Classifier_Choice()
+        {
+            AIPromptCache.Instance.Clear();
+            var client = new GenericAI(); 
+
+            var (yes, choice, usage) = client.Completions.CreateClassifier(
+                 state: "My running shoes arrived in the wrong size. Can I swap them for a size 10?",
+                 instructions: "Which team should handle this?",
+                 new GenericAICompletions.ClassifierCriteria
+                 {
+                    ["returns"] = "Exchanges, wrong or damaged items",
+                    ["shipping"] = "Delivery status, delays, lost packages",
+                    ["billing"] = "Charges, invoices, payment problems"
+                 },
+                 type: GenericAICompletions.ClassifierType.choice
+             );
+
+            Assert.Equal("returns", choice);
+        }
+
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Classifier_Choice_DeterminePhraseType()
+        {
+            AIPromptCache.Instance.Clear();
+            var client = new GenericAI();
+
+            var (yes, choice, usage) = client.Completions.CreateClassifier(
+                 state: "What is the color of the sky?",
+                 instructions: "What is the type of this sentence?",
+                 new GenericAICompletions.ClassifierCriteria
+                 {
+                     ["question"] = "It is a question.",
+                     ["statement"] = "It is a statement.",
+                     ["order"] = "It is an order.    "
+                 },
+                 type: GenericAICompletions.ClassifierType.choice
+             );
+
+            Assert.Equal("question", choice);
+        }
+
 
         [Fact()]
         [TestBeforeAfter]

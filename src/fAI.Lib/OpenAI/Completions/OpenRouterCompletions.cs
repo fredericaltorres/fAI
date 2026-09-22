@@ -111,6 +111,11 @@ namespace fAI
             public float noul { get; set; }
 
             public bool Yes => noul*100f > 50f;
+
+            public Dictionary<string, string> probabilities { get; set; }
+
+            public float confidence { get; set; }
+            public string choice { get; set; }
         }
 
         public class Usage
