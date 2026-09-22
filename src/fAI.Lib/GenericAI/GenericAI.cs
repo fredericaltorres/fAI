@@ -206,9 +206,9 @@ namespace fAI
         [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public enum ClassifierType
         {
-            Noul,
-            Choice,
-            Score
+            noul,
+            choice,
+            score
         }
 
         public class ClassifierSafeToRun
@@ -227,7 +227,7 @@ namespace fAI
             string state, 
             string instructions,
             ClassifierCriteria criteria,
-            ClassifierType type = ClassifierType.Noul,
+            ClassifierType type = ClassifierType.noul,
             string model = "typesafe/jev-1.13")
         {
             var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
@@ -244,7 +244,7 @@ namespace fAI
                     }
                 }
             };
-            var response = openRouterClient.Completions.Create(pp);
+            var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
             if (response.Success)
             {
             }
@@ -978,29 +978,7 @@ Output:
         }
 
 
-        public PhraseType Classifier(
-           string text,
-           string model = "typesafe/jev-1.13")
-        {
-
-            var cacheEntry = $"Classifier: {text}";
-            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
-            if (cacheR != null)
-            {
-                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
-                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
-                return phraseType;
-            }
-
-            var sw = Stopwatch.StartNew();
-            var (json, _, usage) = CreateClassifier(text, systemPrompt, model);
-            sw.Stop();
-            var o = DetermineTheTypeOfPhraseResult.FromJson(json);
-
-            AIPromptCache.Instance.Add(cacheEntry, o.PhraseType.ToString());
-
-            return o.PhraseType;
-        }
+        
 
         public string RePhraseQuestionIntoAffirmation(
            string question,

@@ -78,38 +78,73 @@ namespace fAI
             return strings.All(x => IsNumeric(x));
         }
 
-        public AnthropicErrorCompletionResponse Create(GenericAICompletions.ClassifierBody p)
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class Answers
+        {
+            public SafeToRun safe_to_run { get; set; }
+        }
+
+        public class ClassifierResponse
+        {
+            public string model { get; set; }
+            public Answers answers { get; set; }
+            public Usage usage { get; set; }
+            public string id { get; set; }
+            public string provider { get; set; }
+
+            public static ClassifierResponse FromJson(string text)
+            {
+                return JsonUtils.FromJSON<ClassifierResponse>(text);
+            }
+
+            public Exception Exception { get; set; } = null;
+            public bool Success => Exception == null;
+            public Stopwatch Stopwatch { get; set; }    
+        }
+
+        public class SafeToRun
+        {
+            public string type { get; set; }
+            public double noul { get; set; }
+        }
+
+        public class Usage
+        {
+            public int input_tokens { get; set; }
+            public int output_tokens { get; set; }
+            public double cost { get; set; }
+        }
+
+
+        public (ClassifierResponse, GenericAIUsage) CreateClassifier(GenericAICompletions.ClassifierBody p)
         {
             var url = __urlClassifier;
             OpenAI.Trace(new { url }, this);
-            //OpenAI.Trace(new { Prompt = p }, this);
             OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(url, p.GetPostBody());
 
             sw.Stop();
-            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.model }, this);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 OpenAI.Trace(new { response.Text }, this);
 
-                var openAIFormatResponse = OpenAICompletionResponse.FromJson(response.Text);
+                var classifierResponse = ClassifierResponse.FromJson(response.Text);
 
-                var anthropicFormatResponse = AnthropicErrorCompletionResponse.FromJson(response.Text);
-                anthropicFormatResponse.Usage = new AnthropicUsage();
-                anthropicFormatResponse.Usage.InputTokens = openAIFormatResponse.usage.prompt_tokens;
-                anthropicFormatResponse.Usage.OutputTokens = openAIFormatResponse.usage.completion_tokens;
-                anthropicFormatResponse.Usage.ApiCost = openAIFormatResponse.usage.cost;
+                var usage = new GenericAIUsage(p.model, "", "");
+                usage.InputTokens = classifierResponse.usage.input_tokens;
+                usage.OutputTokens = classifierResponse.usage.output_tokens;
 
-                //anthropicFormatResponse.GPTPrompt = p;
-                anthropicFormatResponse.Stopwatch = sw;
-                return anthropicFormatResponse;
+                classifierResponse.Stopwatch = sw;
+                return (classifierResponse, usage);
             }
             else
             {
-                return new AnthropicErrorCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
+                return (new ClassifierResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) }, new GenericAIUsage(p.model, "", ""));
+
             }
         }
     }
