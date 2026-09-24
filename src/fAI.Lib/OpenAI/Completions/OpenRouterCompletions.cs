@@ -120,7 +120,7 @@ namespace fAI
         {
             public int input_tokens { get; set; }
             public int output_tokens { get; set; }
-            public double cost { get; set; }
+            public float cost { get; set; }
         }
 
 
@@ -145,6 +145,7 @@ namespace fAI
                 var usage = new GenericAIUsage(p.model, "", "");
                 usage.InputTokens = classifierResponse.usage.input_tokens;
                 usage.OutputTokens = classifierResponse.usage.output_tokens;
+                usage.ApiCost = (float)classifierResponse.usage.cost;
 
                 classifierResponse.Stopwatch = sw;
                 return (classifierResponse, usage);

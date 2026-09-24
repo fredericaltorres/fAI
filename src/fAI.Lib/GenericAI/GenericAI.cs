@@ -238,7 +238,7 @@ namespace fAI
                 }
             };
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
-            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
+            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.00000}, ApiCost: ${usage.ApiCost:0.00000}", this);
 
             if (response.Success)
                 return (response.Yes, response.answers.safe_to_run.choice, usage);
@@ -855,15 +855,16 @@ Use the following rules to guide your summarization:
                 return phraseType;
             }
 
-            var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
-            text = text.Trim();
-
-            // Non AI optimization
-            var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
-            if ((noneAIOptimization) && (startWithVerbWhichIndicateQuestion || text.EndsWith("?")))
+            if (noneAIOptimization) 
             {
-                AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
-                return PhraseType.Question;
+                var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
+                text = text.Trim();
+                var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
+                if (startWithVerbWhichIndicateQuestion || text.EndsWith("?"))
+                {
+                    AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
+                    return PhraseType.Question;
+                }
             }
 
             var (_, choice, usage) = CreateClassifier(
@@ -879,7 +880,10 @@ Use the following rules to guide your summarization:
              );
 
             PhraseType result  = (PhraseType)Enum.Parse(typeof(PhraseType), choice, ignoreCase: true);
-            AIPromptCache.Instance.Add(cacheEntry, result.ToString());
+            if (noneAIOptimization)
+            {
+                AIPromptCache.Instance.Add(cacheEntry, result.ToString());
+            }
             return result;
         }
 
@@ -988,15 +992,18 @@ Output:
                 return phraseType;
             }
 
-            var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
-            text = text.Trim();
-
-            // Non AI optimization
-            var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v+" ", StringComparison.OrdinalIgnoreCase) == 0);
-            if (noneAIOptimization && (startWithVerbWhichIndicateQuestion|| text.EndsWith("?")))
+            if (noneAIOptimization)
             {
-                AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
-                return PhraseType.Question;
+                var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
+                text = text.Trim();
+
+                // Non AI optimization
+                var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
+                if (startWithVerbWhichIndicateQuestion || text.EndsWith("?"))
+                {
+                    AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
+                    return PhraseType.Question;
+                }
             }
 
             systemPrompt = systemPrompt.Template(new { text, listOfVerbWhichIndicateQuestion }, "[", "]");
@@ -1005,7 +1012,10 @@ Output:
             sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
 
-            AIPromptCache.Instance.Add(cacheEntry, o.PhraseType.ToString());
+            if (noneAIOptimization)
+            {
+                AIPromptCache.Instance.Add(cacheEntry, o.PhraseType.ToString());
+            }
 
             return o.PhraseType;
         }
