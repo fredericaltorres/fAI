@@ -70,6 +70,9 @@ namespace fAI
                 new AIModel { Id = "anthropic/claude-opus-5",           InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 24) },
                 new AIModel { Id = "anthropic/claude-opus-4.7",         InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 16) },
                 //new AIModel { Id = "anthropic/claude-opus-4.7-fast",    InputTokenPricePer1M = 30.00f, OutputTokenPricePer1M = 150.00f, ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 12) },
+
+                new AIModel { Id = "anthropic/claude-opus-5.5",         InputTokenPricePer1M = 4.00f,  OutputTokenPricePer1M = 20.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 9, 22)  },
+
                 new AIModel { Id = "anthropic/claude-opus-4.6",         InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 2, 4)  },
                 new AIModel { Id = "anthropic/claude-sonnet-4.5",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2025, 9, 29),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
                 new AIModel { Id = "anthropic/claude-sonnet-4.6",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 2, 17) },
