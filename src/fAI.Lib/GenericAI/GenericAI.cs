@@ -842,7 +842,8 @@ Use the following rules to guide your summarization:
         }
 
         public PhraseType DetermineTheTypeOfPhraseClassifier(string text,
-            string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION)
+            string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION,
+            bool noneAIOptimization = true)
         {
             listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
             var cacheEntry = $"DetermineTheTypeOfPhraseClassifier: {text}";
@@ -859,7 +860,7 @@ Use the following rules to guide your summarization:
 
             // Non AI optimization
             var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
-            if (startWithVerbWhichIndicateQuestion || text.EndsWith("?"))
+            if ((noneAIOptimization) && (startWithVerbWhichIndicateQuestion || text.EndsWith("?")))
             {
                 AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
                 return PhraseType.Question;
@@ -972,8 +973,8 @@ Output: {""classification"": ""Statement""}
 Phrase: ""[question]""
 Output:
             ",
-           string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION
-
+           string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION,
+           bool noneAIOptimization = true
            )
         {
 
@@ -992,7 +993,7 @@ Output:
 
             // Non AI optimization
             var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v+" ", StringComparison.OrdinalIgnoreCase) == 0);
-            if (startWithVerbWhichIndicateQuestion|| text.EndsWith("?"))
+            if (noneAIOptimization && (startWithVerbWhichIndicateQuestion|| text.EndsWith("?")))
             {
                 AIPromptCache.Instance.Add(cacheEntry, PhraseType.Question.ToString());
                 return PhraseType.Question;

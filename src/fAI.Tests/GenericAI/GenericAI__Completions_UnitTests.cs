@@ -497,18 +497,18 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             var sw = Stopwatch.StartNew();
             phrases.ForEach(phrase =>
             {
-                var phraseType = client.Completions.DetermineTheTypeOfPhraseClassifier(phrase);
+                var phraseType = client.Completions.DetermineTheTypeOfPhraseClassifier(phrase, noneAIOptimization: false);
             });
             sw.Stop();
-            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds} ms for {phrases.Count} phrases", this);
+            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds/1000f:0.000} ms for {phrases.Count} phrases", this);
 
             sw = Stopwatch.StartNew();
             phrases.ForEach(phrase =>
             {
-                var phraseType = client.Completions.DetermineTheTypeOfPhrase(phrase, DefaultModelToUse);
+                var phraseType = client.Completions.DetermineTheTypeOfPhrase(phrase, DefaultModelToUse, noneAIOptimization: false);
             });
             sw.Stop();
-            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds} ms for {phrases.Count} phrases", this);
+            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds/1000f:0.000} ms for {phrases.Count} phrases", this);
         }
 
         [Fact()]
