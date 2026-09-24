@@ -380,6 +380,8 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Parle-moi du Docteur StrangeLove", model: model.Id));
 
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("Le ciel est bleu", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("La terre est basse", model: model.Id));
+
             });
         }
         [Fact()]
@@ -406,12 +408,14 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model.Id));
 
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model.Id));
+                Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The ground is low", model: model.Id));
+
             });
         }
 
         [Fact()]
         [TestBeforeAfter]
-        public void Classifier_YesNo()
+        public void Classifier_YesNo_QuestionType()
         {
             AIPromptCache.Instance.Clear();
             var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
@@ -423,6 +427,26 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                  {
                      ["false"] = "It is not a question.",
                      ["true"] = "It is a question."
+                 }
+             );
+
+            Assert.True(yes, "The classifier should return true for this input.");
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void Classifier_YesNo_ElectrucityQuestion()
+        {
+            AIPromptCache.Instance.Clear();
+            var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+
+            var (yes, _, usage) = client.Completions.CreateClassifier(
+                 state: "In electricity, we have high and low, or VCC or GROUND.",
+                 instructions: "is Ground low?",
+                 new GenericAICompletions.ClassifierCriteria
+                 {
+                     ["false"] = "Ground is high",
+                     ["true"] = "Ground is low"
                  }
              );
 
@@ -470,6 +494,8 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Tell me about Doctor StrangeLove"));
 
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The sky is blue"));
+            Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The ground is low"));
+
         }
 
         [Fact()]

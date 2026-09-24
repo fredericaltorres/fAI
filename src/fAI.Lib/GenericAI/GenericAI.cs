@@ -230,27 +230,19 @@ namespace fAI
             ClassifierType type = ClassifierType.noul,
             string model = "typesafe/jev-1.13")
         {
-            //var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
             var openRouterClient = new OpenRouter(apiKey: base._key);
             var pp = new ClassifierBody {
-                model = model,
-                state = state,
+                model = model, state = state,
                 questions = new ClassifierQuestions {
-                    safe_to_run = new ClassifierSafeToRun {
-                        type = type,
-                        instructions = instructions,
-                        criteria = criteria
-                    }
+                    safe_to_run = new ClassifierSafeToRun { type = type, instructions = instructions, criteria = criteria }
                 }
             };
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
             HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
 
             if (response.Success)
-            {
                 return (response.Yes, response.answers.safe_to_run.choice, usage);
-            }
-           
+
             throw new ApplicationException($"Classifier failed: {response.Exception}");
         }
 
@@ -853,7 +845,7 @@ Use the following rules to guide your summarization:
             string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION)
         {
             listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
-            var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
+            var cacheEntry = $"DetermineTheTypeOfPhraseClassifier: {text}";
             var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
             if (cacheR != null)
             {
@@ -886,7 +878,7 @@ Use the following rules to guide your summarization:
              );
 
             PhraseType result  = (PhraseType)Enum.Parse(typeof(PhraseType), choice, ignoreCase: true);
-
+            AIPromptCache.Instance.Add(cacheEntry, result.ToString());
             return result;
         }
 
