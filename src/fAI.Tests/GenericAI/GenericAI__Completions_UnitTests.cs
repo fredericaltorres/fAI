@@ -27,7 +27,8 @@ namespace fAI.Tests
     {
         //Regex _quickFilter = new Regex(AIMemoryManager.DEFAULT_MODEL_FOR_META_DATA_EXTRACTION);
         //Regex _quickFilter = new Regex("gemini-.*");
-        Regex _quickFilter = new Regex("google/gemini-3.1-flash-lite");
+        const string DefaultModelToUse = "google/gemini-3.1-flash-lite";
+        Regex _quickFilter = new Regex(DefaultModelToUse);
         const int _randomModelCount = 2;
 
         //Regex _quickFilter = null;
@@ -474,6 +475,41 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             Assert.Equal("returns", choice);
         }
 
+        [Fact()]
+        [TestBeforeAfter]
+        public void Jev_vs_GeminiFlash__Classifier_Choice_DeterminePhraseType_Performance()
+        {
+            AIPromptCache.Instance.Clear();
+            var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+
+            var phrases = DS.List("Add a to-do item with the following title",
+            "Paint the sky?",
+            "What is the color of the sky?",
+            "Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.",
+            "Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.",
+            "What is my highest priority?",
+            "List the doctors whom diagnosticated Karen",
+            "Research what Joe is working on today",
+            "Tell me about Doctor StrangeLove",
+            "The sky is blue",
+            "The ground is low");
+
+            var sw = Stopwatch.StartNew();
+            phrases.ForEach(phrase =>
+            {
+                var phraseType = client.Completions.DetermineTheTypeOfPhraseClassifier(phrase);
+            });
+            sw.Stop();
+            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds} ms for {phrases.Count} phrases", this);
+
+            sw = Stopwatch.StartNew();
+            phrases.ForEach(phrase =>
+            {
+                var phraseType = client.Completions.DetermineTheTypeOfPhrase(phrase, DefaultModelToUse);
+            });
+            sw.Stop();
+            Trace($"[PERFORMANCE] Classifier_Choice_DeterminePhraseType_Performance: Duration: {sw.ElapsedMilliseconds} ms for {phrases.Count} phrases", this);
+        }
 
         [Fact()]
         [TestBeforeAfter]
@@ -495,7 +531,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
 
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The sky is blue"));
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The ground is low"));
-
         }
 
         [Fact()]
