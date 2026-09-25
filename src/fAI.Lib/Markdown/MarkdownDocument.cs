@@ -88,6 +88,10 @@ public class FrontMatter
     public string Description { get; set; } = string.Empty;
     public DateTime? Date { get; set; }
 
+    public string Author { get; set; } = string.Empty;
+    public List<string> Tags { get; set; } = new List<string>();
+    public Dictionary<string, string> ExtraFields { get; set; } = new Dictionary<string, string>();
+
     public void SetDateToNow()
     {
         this.Date = DateTime.Now.Date;
@@ -99,9 +103,29 @@ public class FrontMatter
     }
 
 
-    public string Author { get; set; } = string.Empty;
-    public List<string> Tags { get; set; } = new List<string>();
-    public Dictionary<string, string> ExtraFields { get; set; } = new Dictionary<string, string>();
+
+    public string RemoveSemiColonFromExtraFields(string value)
+    {
+        return value.Replace(":", "--");
+    }
+
+    public void ValidatePropertiesValue()
+    {
+        var extraFields2 = new Dictionary<string, string>();
+        foreach (var kvp in ExtraFields)
+        {
+            if(kvp.Value.Contains(":")) // Not allowed
+                extraFields2.Add(kvp.Key, RemoveSemiColonFromExtraFields(kvp.Value));
+            else
+                extraFields2.Add(kvp.Key, kvp.Value);
+        }
+        this.ExtraFields = extraFields2;
+
+        this.Author = RemoveSemiColonFromExtraFields(this.Author);
+        this.Title = RemoveSemiColonFromExtraFields(this.Title);
+        this.Tags = this.Tags.ConvertAll(tag => RemoveSemiColonFromExtraFields(tag));
+        this.Description = RemoveSemiColonFromExtraFields(this.Description);
+    }
 
     public static bool IsFileNameWithDoubleQuote(string filename)
     {
@@ -178,6 +202,10 @@ public static class MarkdownLoader
             document.MarkdownBody = newMarkdownBody;
             if (frontMatter != null)
                 document.FrontMatter = frontMatter;
+
+            if(document.FrontMatter != null)
+                document.FrontMatter.ValidatePropertiesValue();
+
             document.Update(filePath);
             return document;
         }
