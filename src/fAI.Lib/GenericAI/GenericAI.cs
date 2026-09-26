@@ -186,7 +186,7 @@ namespace fAI
             //public string @false { get; set; }
         }
 
-        public class ClassifierQuestions: Dictionary<string, ClassifierQuestion>
+        public class ClassifierQuestions//: Dictionary<string, ClassifierQuestion>
         {
             public ClassifierQuestion question { get; set; }
             //public Dictionary<string, ClassifierQuestion> question { get; set; }
