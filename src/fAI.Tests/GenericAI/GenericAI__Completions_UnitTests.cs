@@ -436,7 +436,7 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
 
         [Fact()]
         [TestBeforeAfter]
-        public void Classifier_YesNo_ElectrucityQuestion()
+        public void Classifier_YesNo_ElectricityQuestion()
         {
             AIPromptCache.Instance.Clear();
             var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")

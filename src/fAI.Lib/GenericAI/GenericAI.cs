@@ -182,13 +182,11 @@ namespace fAI
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class ClassifierCriteria : Dictionary<string, string>
         {
-            //public string @true { get; set; }
-            //public string @false { get; set; }
         }
 
-        public class ClassifierQuestions//: Dictionary<string, ClassifierQuestion>
+        public class ClassifierQuestions: Dictionary<string, ClassifierQuestion>
         {
-            public ClassifierQuestion question { get; set; }
+            //public ClassifierQuestion question { get; set; }
             //public Dictionary<string, ClassifierQuestion> question { get; set; }
         }
 
@@ -241,10 +239,14 @@ namespace fAI
             var pp = new ClassifierBody {
                 model = model, 
                 state = ToJson(state),
-                questions = new ClassifierQuestions {
-                    question = new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria }
-                }
+                //questions = new ClassifierQuestions {
+                //    question = new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria }
+                //}
             };
+
+            pp.questions = new ClassifierQuestions();
+            pp.questions.Add("question", new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria });
+
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
             HttpBase.Trace($"[COST]Model: {model}, Duration: {response.Stopwatch.ElapsedMilliseconds / 1000.0}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.00000}, ApiCost: ${usage.ApiCost:0.00000}", this);
 
