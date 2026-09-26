@@ -480,19 +480,20 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
         public void Jev_vs_GeminiFlash__Classifier_Choice_DeterminePhraseType_Performance()
         {
             AIPromptCache.Instance.Clear();
-            var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-
-            var phrases = DS.List("Add a to-do item with the following title",
-            "Paint the sky?",
-            "What is the color of the sky?",
-            "Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.",
-            "Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.",
-            "What is my highest priority?",
-            "List the doctors whom diagnosticated Karen",
-            "Research what Joe is working on today",
-            "Tell me about Doctor StrangeLove",
-            "The sky is blue",
-            "The ground is low");
+            var client = new GenericAI();
+            var phrases = DS.List(
+                "Add a to-do item with the following title",
+                "Paint the sky?",
+                "What is the color of the sky?",
+                "Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.",
+                "Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.",
+                "What is my highest priority?",
+                "List the doctors whom diagnosticated Karen",
+                "Research what Joe is working on today",
+                "Tell me about Doctor StrangeLove",
+                "The sky is blue",
+                "The ground is low"
+            );
 
             var sw = Stopwatch.StartNew();
             phrases.ForEach(phrase =>

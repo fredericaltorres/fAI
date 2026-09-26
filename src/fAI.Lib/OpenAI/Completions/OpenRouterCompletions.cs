@@ -80,7 +80,7 @@ namespace fAI
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class Answers
         {
-            public SafeToRun safe_to_run { get; set; }
+            public AnswerForQuestion question { get; set; }
         }
 
         public class ClassifierResponse
@@ -100,10 +100,10 @@ namespace fAI
             public bool Success => Exception == null;
             public Stopwatch Stopwatch { get; set; }    
 
-            public bool Yes => answers?.safe_to_run?.Yes ?? false;
+            public bool Yes => answers?.question?.Yes ?? false;
         }
 
-        public class SafeToRun
+        public class AnswerForQuestion
         {
             public ClassifierType type { get; set; }
             public float noul { get; set; }

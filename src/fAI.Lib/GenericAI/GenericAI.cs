@@ -188,7 +188,7 @@ namespace fAI
 
         public class ClassifierQuestions
         {
-            public ClassifierSafeToRun safe_to_run { get; set; }
+            public ClassifierQuestion question { get; set; }
         }
 
         public class ClassifierBody
@@ -211,7 +211,7 @@ namespace fAI
             score
         }
 
-        public class ClassifierSafeToRun
+        public class ClassifierQuestion
         {
             public ClassifierType type { get; set; }
             public string instructions { get; set; }
@@ -234,14 +234,14 @@ namespace fAI
             var pp = new ClassifierBody {
                 model = model, state = state,
                 questions = new ClassifierQuestions {
-                    safe_to_run = new ClassifierSafeToRun { type = type, instructions = instructions, criteria = criteria }
+                    question = new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria }
                 }
             };
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
-            HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.00000}, ApiCost: ${usage.ApiCost:0.00000}", this);
+            HttpBase.Trace($"[COST]Model: {model}, Duration: {response.Stopwatch.ElapsedMilliseconds / 1000.0}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.00000}, ApiCost: ${usage.ApiCost:0.00000}", this);
 
             if (response.Success)
-                return (response.Yes, response.answers.safe_to_run.choice, usage);
+                return (response.Yes, response.answers.question.choice, usage);
 
             throw new ApplicationException($"Classifier failed: {response.Exception}");
         }
@@ -266,7 +266,7 @@ namespace fAI
 
                 var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
                 var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
-                HttpBase.Trace($"[COST]Model: {model}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
+                HttpBase.Trace($"[COST]Model: {model}, Duration: {usage.Duration}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
 
                 return (result, updatedContents, usage);
             }
@@ -845,18 +845,18 @@ Use the following rules to guide your summarization:
             string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION,
             bool noneAIOptimization = true)
         {
-            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
             var cacheEntry = $"DetermineTheTypeOfPhraseClassifier: {text}";
-            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
-            if (cacheR != null)
-            {
-                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
-                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
-                return phraseType;
-            }
-
             if (noneAIOptimization) 
             {
+                var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
+                if (cacheR != null)
+                {
+                    HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
+                    PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
+                    return phraseType;
+                }
+
+                listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
                 var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
                 text = text.Trim();
                 var startWithVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestionAsList.Any(v => text.IndexOf(v + " ", StringComparison.OrdinalIgnoreCase) == 0);
@@ -981,19 +981,20 @@ Output:
            bool noneAIOptimization = true
            )
         {
-
-            listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
             var cacheEntry = $"DetermineTheTypeOfPhrase: {text}";
-            var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
-            if(cacheR != null)
-            {
-                HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
-                PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
-                return phraseType;
-            }
 
             if (noneAIOptimization)
             {
+                listOfVerbWhichIndicateQuestion = listOfVerbWhichIndicateQuestion.Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                
+                var cacheR = AIPromptCache.Instance.GetPromptResponse(cacheEntry);
+                if (cacheR != null)
+                {
+                    HttpBase.Trace(new { cacheHit = true, cacheEntry }, this);
+                    PhraseType phraseType = (PhraseType)Enum.Parse(typeof(PhraseType), cacheR);
+                    return phraseType;
+                }
+
                 var listOfVerbWhichIndicateQuestionAsList = listOfVerbWhichIndicateQuestion.Split(',').Select(v => v.Trim()).ToList();
                 text = text.Trim();
 
@@ -1007,9 +1008,9 @@ Output:
             }
 
             systemPrompt = systemPrompt.Template(new { text, listOfVerbWhichIndicateQuestion }, "[", "]");
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
             var (json, _, usage) = Create(text, systemPrompt, model);
-            sw.Stop();
+            //sw.Stop();
             var o = DetermineTheTypeOfPhraseResult.FromJson(json);
 
             if (noneAIOptimization)
