@@ -236,22 +236,20 @@ namespace fAI
             string model = "typesafe/jev-1.13")
         {
             var openRouterClient = new OpenRouter(apiKey: base._key);
-            var pp = new ClassifierBody {
+            var pp = new ClassifierBody 
+            {
                 model = model, 
                 state = ToJson(state),
-                //questions = new ClassifierQuestions {
-                //    question = new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria }
-                //}
             };
 
             pp.questions = new ClassifierQuestions();
-            pp.questions.Add("question", new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria });
+            pp.questions.Add($"question", new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria });
 
             var (response, usage) = openRouterClient.Completions.CreateClassifier(pp);
             HttpBase.Trace($"[COST]Model: {model}, Duration: {response.Stopwatch.ElapsedMilliseconds / 1000.0}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${usage.ApiCost:0.00000}, ApiCost: ${usage.ApiCost:0.00000}", this);
 
             if (response.Success)
-                return (response.Yes, response.answers.question.choice, usage);
+                return (response.Yes, response.answers.Values.FirstOrDefault()?.choice, usage);
 
             throw new ApplicationException($"Classifier failed: {response.Exception}");
         }

@@ -78,9 +78,9 @@ namespace fAI
         }
 
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-        public class Answers
+        public class Answers : Dictionary<string, AnswerForQuestion>
         {
-            public AnswerForQuestion question { get; set; }
+            //public AnswerForQuestion question { get; set; }
         }
 
         public class ClassifierResponse
@@ -100,7 +100,7 @@ namespace fAI
             public bool Success => Exception == null;
             public Stopwatch Stopwatch { get; set; }    
 
-            public bool Yes => answers?.question?.Yes ?? false;
+            public bool Yes => answers?.Values.FirstOrDefault()?.Yes ?? false;
         }
 
         public class AnswerForQuestion
