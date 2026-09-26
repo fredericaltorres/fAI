@@ -186,9 +186,10 @@ namespace fAI
             //public string @false { get; set; }
         }
 
-        public class ClassifierQuestions
+        public class ClassifierQuestions: Dictionary<string, ClassifierQuestion>
         {
             public ClassifierQuestion question { get; set; }
+            //public Dictionary<string, ClassifierQuestion> question { get; set; }
         }
 
         public class ClassifierBody
@@ -218,13 +219,19 @@ namespace fAI
             public ClassifierCriteria criteria { get; set; }
         }
 
+        private string ToJson(object o)
+        {
+            if(o is string s)
+                return s;
+            return JsonConvert.SerializeObject(o);
+        }
 
         /// <summary>
         /// https://docs.typesafe.ai/concepts/system-one
         /// </summary>
         /// <returns></returns>
         public (bool yesNo, string choice, GenericAIUsage) CreateClassifier(
-            string state, 
+            object state, 
             string instructions,
             ClassifierCriteria criteria,
             ClassifierType type = ClassifierType.noul,
@@ -232,7 +239,8 @@ namespace fAI
         {
             var openRouterClient = new OpenRouter(apiKey: base._key);
             var pp = new ClassifierBody {
-                model = model, state = state,
+                model = model, 
+                state = ToJson(state),
                 questions = new ClassifierQuestions {
                     question = new ClassifierQuestion { type = type, instructions = instructions, criteria = criteria }
                 }
@@ -841,7 +849,8 @@ Use the following rules to guide your summarization:
             TTSGenerationRequest,
         }
 
-        public PhraseType DetermineTheTypeOfPhraseClassifier(string text,
+        public PhraseType DetermineTheTypeOfPhraseClassifier(
+            string text,
             string listOfVerbWhichIndicateQuestion = LIST_OF_VERB_WHICH_INDICATE_QUESTION,
             bool noneAIOptimization = true)
         {
