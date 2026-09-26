@@ -130,10 +130,11 @@ namespace fAI
             OpenAI.Trace(new { url }, this);
             OpenAI.Trace(new { Body = p.GetPostBody() }, this);
 
+            var wc = InitWebClient();
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(url, p.GetPostBody());
-
+            var response = wc.POST(url, p.GetPostBody());
             sw.Stop();
+
             OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.model }, this);
             if (response.Success)
             {
@@ -141,7 +142,6 @@ namespace fAI
                 OpenAI.Trace(new { response.Text }, this);
 
                 var classifierResponse = ClassifierResponse.FromJson(response.Text);
-
                 var usage = new GenericAIUsage(p.model, "", "");
                 usage.InputTokens = classifierResponse.usage.input_tokens;
                 usage.OutputTokens = classifierResponse.usage.output_tokens;
