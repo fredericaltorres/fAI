@@ -256,7 +256,9 @@ glycemic control and overall well-being.
                 Assert.Contains("jean-michel roche", result.Text.ToLower());
                 Assert.Contains("dannie monnier", result.Text.ToLower());
                 Assert.Contains("charles sammuel chapuis", result.Text.ToLower());
-                Assert.Contains("emilie sophie chapuis", result.Text.ToLower());
+
+                Assert.True(result.Text.ToLower().Contains("emilie sophie chapuis") || 
+                            result.Text.ToLower().Contains("émilie sophie chapuis"));
             }
         }
 
