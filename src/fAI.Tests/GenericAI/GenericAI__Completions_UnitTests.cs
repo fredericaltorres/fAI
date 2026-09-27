@@ -252,7 +252,7 @@ glycemic control and overall well-being.
             {
                 var client = new GenericAI();
                 var result = client.Completions.SkillTopicQuestion(skill, topic, question, language: "English", model: model.Id);
-                Assert.Contains("frederic torres", result.Text);
+                Assert.True(result.Text.ToLower().Contains("frederic torres") || result.Text.ToLower().Contains("frédéric torres"));
                 Assert.Contains("jean-michel roche", result.Text.ToLower());
                 Assert.Contains("dannie monnier", result.Text.ToLower());
                 Assert.Contains("charles sammuel chapuis", result.Text.ToLower());
