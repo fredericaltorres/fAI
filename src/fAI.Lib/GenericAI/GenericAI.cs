@@ -266,11 +266,12 @@ namespace fAI
         public (string, GPTMessageExs, GenericAIUsage) Create(
             string prompt, string systemPrompt, string model, 
             GPTMessageExs contents = null, int reTryCounter = 0, string skillName = null, string skillRootFolder = null,
-            string imageFileName = null)
+            string imageFileName = null,
+            string secondUserPrompt = null)
         {
             try
             {
-                var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder, imageFileName);
+                var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder, imageFileName, secondUserPrompt);
 
                 var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
                 var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
@@ -293,7 +294,7 @@ namespace fAI
         }
         private (string, GPTMessageExs, GenericAIUsage) __Create(
             string prompt, string systemPrompt, string model,
-            GPTMessageExs contents = null,  string skillName = null, string skillRootFolder = null, string imageFileName = null)
+            GPTMessageExs contents = null,  string skillName = null, string skillRootFolder = null, string imageFileName = null, string secondUserPrompt = null)
         {
             var usage = new GenericAIUsage(model, prompt, systemPrompt);
             var orginalModel = model;
@@ -399,6 +400,12 @@ namespace fAI
                     {
                         pp.AddMessage(MessageRole.user);
                         pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(prompt));
+                    }
+
+                    if (!string.IsNullOrEmpty(secondUserPrompt))
+                    {
+                        pp.AddMessage(MessageRole.user);
+                        pp.Messages.Last().Content.Add(GPTMessageContent.GetAsText(secondUserPrompt));
                     }
 
                     if (!string.IsNullOrEmpty(imageFileName))
@@ -654,6 +661,46 @@ no code fences wrapping the entire output.
             public double Duration { get; set; }
             public GPTMessageExs Contents { get; set; }
         }
+
+
+        public TextImprovementResult SkillTopicQuestion(
+           string skillOrSystemPrompt,
+           string topic,
+           string questionOrAction,
+           string language,
+           string model,
+           GPTMessageExs contents = null, string skillName = null, string skillRootFolder = null
+           )
+        {
+            var sw = Stopwatch.StartNew();
+            skillOrSystemPrompt = skillOrSystemPrompt.Template(new { language }, "[", "]");
+            var (newText, contents2, usage) = Create(topic, skillOrSystemPrompt, model, contents, skillName: skillName, skillRootFolder: skillRootFolder, secondUserPrompt: questionOrAction);
+            contents = contents2;
+            sw.Stop();
+            return new TextImprovementResult
+            {
+                Text = newText,
+                OriginalText = topic,
+                Duration = sw.ElapsedMilliseconds / 1000.0,
+                Contents = contents
+            };
+        }
+
+        //public class SummarizationResult
+        //{
+        //    public string Summary { get; set; }
+        //    public string Text { get; set; }
+        //    public int TextWordCount => CountWords(Text);
+        //    public int SummaryWordCount => CountWords(Summary);
+        //    public double Duration { get; set; }
+        //    public double PercentageSummzarized => TextWordCount == 0 ? 0 : (1.0 - ((double)SummaryWordCount / (double)TextWordCount)) * 100.0;
+
+        //    public static int CountWords(string text)
+        //    {
+        //        return OpenAIEmbeddings.CountWordS(text);
+        //    }
+        //}
+
 
         public TextImprovementResult TextImprovement(
            string text,
