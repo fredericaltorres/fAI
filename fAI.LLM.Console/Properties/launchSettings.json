@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "fAI.LLM.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\FredericTorres\\.ollama\\models\\blobs\\sha256-a5db3381f2e514d3490a3a31fe70eb1a65e95016c85c6c2c23223b810806594f\""
+    }
+  }
+}

@@ -15,10 +15,15 @@ ollama list
 ollama run nomic-embed-text
 ollama run qwen3-embedding:8b
 ollama run qwen3-embedding:0.6b
-ollama run qwen3-embedding:4b
+ollama run qwen3-embedding:8b
+ollama rm qwen3-embedding:8b
 ollama ps
 ollama stop nomic-embed-text
 ollama launch  
+
+ollama show nomic-embed-text-v2-moe:latest --modelfile 
+C:\Users\FredericTorres\.ollama\models\blobs\sha256-a5db3381f2e514d3490a3a31fe70eb1a65e95016c85c6c2c23223b810806594f
+
 ```
 
 
