@@ -65,7 +65,10 @@ namespace fAI
                 new AIModel { Id = "openai/gpt-5-mini",                 InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 400_000,   ReleaseDate = new DateTime(2025, 8, 7),   KnowledgeCutoff = new DateTime(2024, 5, 1) },
                 new AIModel { Id = "openai/gpt-5.6-luna",               InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
                 new AIModel { Id = "openai/gpt-5.6-terra",              InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
+
+                new AIModel { Id = "openai/gpt-6.1-sol-pro",            InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 10.00f,  ContextLength = 1_100_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 29, 1) },
                 new AIModel { Id = "openai/gpt-5.6-sol",                InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
+
                 new AIModel { Id = "anthropic/claude-fable-5",          InputTokenPricePer1M = 10.00f, OutputTokenPricePer1M = 50.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 6, 9)  },
                 new AIModel { Id = "anthropic/claude-opus-5",           InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 24) },
                 new AIModel { Id = "anthropic/claude-opus-4.7",         InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 25.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 16) },
