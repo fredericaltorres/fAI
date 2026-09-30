@@ -220,6 +220,14 @@ glycemic control and overall well-being.
             }
         }
 
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenericAI_OpenRouterModels_ToString()
+        {
+            var modelInfo = OpenRouter.GetModels().Select(model => model.ToString()).ToList();
+        }
+
         [Fact()]
         [TestBeforeAfter]
         public void Summarize_GenericAI_OpenRouterModels()

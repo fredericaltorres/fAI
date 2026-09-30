@@ -17,8 +17,7 @@ namespace fAI
 
         public override string ToString()
         {
-            //return $"Model: {Name}, Input: ${InputTokenPricePer1M}/1M, Output: ${OutputTokenPricePer1M}/1M, Context Length: {ContextLength}, Release Date: {ReleaseDate.ToShortDateString()}, Knowledge Cutoff: {KnowledgeCutoff.ToShortDateString()}";
-            return this.Id;
+            return $"{Id} (${InputTokenPricePer1M:0.00}, ${OutputTokenPricePer1M:0.00})";
         }
 
         public override bool Equals(object obj)
