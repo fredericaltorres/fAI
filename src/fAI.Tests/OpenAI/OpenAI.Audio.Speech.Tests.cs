@@ -51,9 +51,7 @@ Win Speak is a Windows Dictation Application which
             var client = new OpenAI();
             OpenAISpeech.VoicesAsString.ToList().ForEach(voiceName =>
             {
-                var mp3FileName = client.Audio.Speech.Create(TextSample, voiceName, "gpt-4o-mini-tts"
-                    //, instructions : "Speak like a drunken pirate."
-                    );
+                var mp3FileName = client.Audio.Speech.Create(TextSample, voiceName, "gpt-4o-mini-tts");
                 var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
                 Assert.True(mp3Info.DurationAsDouble > 3);
                 File.Copy(mp3FileName, Path.Combine(@"c:\temp\openai", $"{voiceName}.WinSpeak.mp3"), true);
@@ -68,7 +66,7 @@ Win Speak is a Windows Dictation Application which
         {
             var client = new OpenAI();
             var voiceName = OpenAISpeech.VoicesAsString[0];
-            var mp3FileName = client.Audio.Speech.Create(TextSample, voiceName, "gpt-4o-mini-tts", inputTokenCount: 5000 /* Force to create the mp3 in 2 operations */);
+            var mp3FileName = client.Audio.Speech.Create(TextSample, voiceName, "gpt-audio-1.5");
             var mp3Info = AudioUtil.GetMp3Info(mp3FileName);
             Assert.True(mp3Info.DurationAsDouble > 3);
             OpenAI.Trace(new { voiceName, mp3Info }, this);

@@ -1,10 +1,16 @@
-﻿using fAI.Util.Strings;
+﻿using Deepgram.Models;
+using fAI.Util.Strings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net.Cache;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using static fAI.GenericAITranscription;
 
 namespace fAI
@@ -107,11 +113,68 @@ namespace fAI
             string inputVoiceText = null
             ) // "tts-1"
         {
-            return _Create(input, voice, mp3FileName, model, instructions, inputTokenCount);
+            try
+            {
+                if (model == "gpt-audio-1.5")
+                    return _CreateGptAudio1_5(input, voice, mp3FileName, model, instructions, inputTokenCount);
+                else
+                    return _Create(input, voice, mp3FileName, model, instructions, inputTokenCount);
+            }
+            catch (Exception e)
+            {
+                OpenAI.Trace(e, this);
+                throw;
+            }
+        }
+
+        static HttpClient _httpClient = new HttpClient();
+
+        // This is a model that execute regular llm/completion and also return the audio.
+        // https://developers.openai.com/api/docs/models/gpt-audio-1.5?utm_source=chatgpt.com
+        private string _CreateGptAudio1_5(string input, string voice, string mp3FileName, string model, string instructions, int inputTokenCount)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", base._key);
+            var payload = new
+            {
+                model = model,
+                modalities = new[] { "text", "audio" },
+                audio = new { voice = voice, format = "mp3" },
+                messages = new[] { new { role = "user", content = input } }
+            };
+
+            if (mp3FileName == null)
+                mp3FileName = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".mp3");
+
+            var body = JsonConvert.SerializeObject(payload);
+            OpenAI.Trace(new { input, voice, model, body }, this);
+
+            var url = "https://api.openai.com/v1/chat/completions";
+            var response = _httpClient.PostAsync(url, new StringContent(body, Encoding.UTF8, "application/json")).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
+            string responseJson = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            OpenAI.Trace(new { responseJson }, this);
+
+            JObject result = JObject.Parse(responseJson);
+            string audioBase64 = (string)result.SelectToken("choices[0].message.audio.data");
+
+            int inputToken = int.Parse((string)result.SelectToken("usage.prompt_tokens"));
+            int outputToken = int.Parse((string)result.SelectToken("usage.completion_tokens"));
+            this.LastUsage = new GenericAIUsage(model, input, null);
+            this.LastUsage.SetTokenCount(inputToken, outputToken);
+
+            if (string.IsNullOrEmpty(audioBase64))
+                throw new Exception("No audio returned");
+
+            byte[] audioBytes = Convert.FromBase64String(audioBase64);
+
+            File.WriteAllBytes(mp3FileName, audioBytes);
+
+            return mp3FileName;
         }
 
         public string _Create(string input, string voice, string mp3FileName = null, 
-            string model = "gpt-4o-mini-tts", //  tts-1, tts-1-hd, gpt-4o-mini-tts,
+            string model = "gpt-4o-mini-tts", //  tts-1, tts-1-hd, gpt-4o-mini-tts, Model deprecated in 2027
             string instructions = "Speak in a cheerful and positive tone.",
             int inputTokenCount = -1, 
             float cost = 0) // "tts-1"
