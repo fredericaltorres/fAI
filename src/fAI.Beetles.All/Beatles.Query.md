@@ -2,9 +2,9 @@
 1. Explain the 10 best result, than apply the top 10%, but
 1. Explain new filtering and caveat when there are 2 elements
 
-sad religious people 
-in the navy
-child going away from house
+Sad religious people.
+In the navy.
+child going away from house.
 parenting family issue wednesday
     parenting family issue wednesday
     child going away from house
@@ -12,13 +12,13 @@ parenting family issue wednesday
     mother father relationship with grown-up daugther
     mother father relationship with adult daugther on a wednesday
 
-in difficult time, somebody come with wise knowledge
+In difficult time, somebody come with wise knowledge.
+Getting high with people I Like.
+Need someone to like and getting high.
 
-getting high with people I Like
-need someone to like and getting high
-
-endless love
-endless love, life time
+Endless love.
+Endless love, life time.
+Endless love, life time, place where I used to live.
 
 IRS
 Controle Fiscal
@@ -30,9 +30,9 @@ chuck berry
 letters sent by mail
 soviet
 mikhail gorbachev
+Johann Sebastian Bach
 
 ronald reagen
-donald trump
 luke skywalker
     Johannes Brahms died 1897 in Vienna
 Johann Sebastian Bach died 1750 in Leipzig

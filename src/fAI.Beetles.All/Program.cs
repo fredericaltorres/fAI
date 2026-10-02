@@ -21,13 +21,11 @@ namespace fAI.Beetles.All
         const string OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL = "openai/text-embedding-3-small";
         const string GOOGLE_GEMINI_EMBEDDING_2_MODEL = "google/gemini-embedding-2";
         const string OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL = "ollama/nomic-embed-text";
-
         const string OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL = "ollama/nomic-embed-text-v2-moe";
-
         const string OLLAMA_QWEN3_EMBEDDING_8B_MODEL = "ollama/qwen3-embedding:8b";
+        const string OLLAMA_EMBEDDINGGEMMA_MODEL = "ollama/embeddinggemma";
+        const string OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL = "ollama/snowflake-arctic-embed2";
 
-
-        
 
 
         static string _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
@@ -105,6 +103,20 @@ namespace fAI.Beetles.All
                     _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
                     JsonOutputFilename = @".\Beatles.All.json";
                 }
+
+                if (model == "gemma")
+                {
+                    _currentEmbeddingModel = OLLAMA_EMBEDDINGGEMMA_MODEL;
+                    JsonOutputFilename = @".\Beatles.All-embeddinggemma.json";
+                }
+
+                if (model == "snowflake-arctic-embed2")
+                {
+                    _currentEmbeddingModel = OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL;
+                    JsonOutputFilename = @".\Beatles.All-snowflake-arctic-embed2.json";
+                }
+
+                // ollama pull granite-embedding:30m
             }
 
             /////WebScrapLyrics();
@@ -112,7 +124,6 @@ namespace fAI.Beetles.All
             //Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
-
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
@@ -120,8 +131,10 @@ namespace fAI.Beetles.All
 
             var topK = 10;
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
-
             var minimumScoreRate = 0.8f;
+
+            embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
+            // ^^^^^^ These 2 songs have no lyrics and affect
 
             while (true)
             {
@@ -137,7 +150,6 @@ namespace fAI.Beetles.All
                     continue;
                 }
 
-
                 if (!criteria.IsNullOrEmpty())
                 {
                     var (v, u) = SimilaritySearchEngine.ToVector(criteria, model: _currentEmbeddingModel);
@@ -145,7 +157,8 @@ namespace fAI.Beetles.All
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * minimumScoreRate;
 
-                    inMemoryResponse = inMemoryResponse.Select(r => !r.Id.Contains("Revolution 9") ? r : null).Where(r => r != null).ToList();
+                    inMemoryResponse = inMemoryResponse.Select(r => (!r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
+                    // ^^^^^^ These 2 songs have no lyrics and affect
                     
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
