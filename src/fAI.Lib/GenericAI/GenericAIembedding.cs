@@ -153,6 +153,7 @@ namespace fAI
             public List<float> embedding { get; set; }
 
             public static OllamaEmbeddingResponse FromJson(string json) => JsonConvert.DeserializeObject<OllamaEmbeddingResponse>(json);
+            public string ToJSON() => JsonConvert.SerializeObject(this);
         }
 
         public class Usage
@@ -177,18 +178,20 @@ namespace fAI
            string filePath = null
            )
         {
-            OpenAI.Trace(new { model, text }, this);
             var dimension = 0;
+            var body = GetOllamaPayLoad(text, model, dimension); 
+            OpenAI.Trace(new { model, text, body }, this);
             var sw = Stopwatch.StartNew();
             var usage = new GenericAIUsage(model, "", "");
             if (base._key == null)
                 base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
             var wc = InitWebClient();
-            var response = wc.POST(__ollama_url, GetOllamaPayLoad(text, model, dimension));
+            var response = wc.POST(__ollama_url, body);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var r = OllamaEmbeddingResponse.FromJson(response.Text);
+                OpenAI.Trace(new { json = r.ToJSON() }, this);
                 sw.Stop();
                 usage.InputTokens = 0;
                 usage.OutputTokens = 0;

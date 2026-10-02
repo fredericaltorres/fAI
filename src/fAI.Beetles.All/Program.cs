@@ -133,7 +133,7 @@ namespace fAI.Beetles.All
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
             var minimumScoreRate = 0.8f;
 
-            embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
+            embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Wild Honey Pie") && !r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
             // ^^^^^^ These 2 songs have no lyrics and affect
 
             while (true)
@@ -175,8 +175,11 @@ namespace fAI.Beetles.All
 
                     Console.WriteLine($"=====================");
 
-                    foreach (var r in scoreRankManager.GetEntriesGapped())
-                        WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
+                    if (scoreRankManager.Entries.Count > 0)
+                    {
+                        foreach (var r in scoreRankManager.GetEntriesGapped())
+                            WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
+                    }
                     Console.WriteLine($"\r\n");
                 }
                 WriteQuestion(message);
