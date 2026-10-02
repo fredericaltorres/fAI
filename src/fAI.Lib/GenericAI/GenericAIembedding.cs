@@ -146,6 +146,7 @@ namespace fAI
             public Usage usage { get; set; }
 
             public static EmbeddingResponse FromJson(string json) => JsonConvert.DeserializeObject<EmbeddingResponse>(json);
+            public string ToJSON() => JsonConvert.SerializeObject(this);
         }
 
         public class OllamaEmbeddingResponse
@@ -214,20 +215,23 @@ namespace fAI
             {
                 return __CreateOllama(text, ExtractOllamaModel(model), filePath);
             }
-
-            OpenAI.Trace(new { model, text}, this);
             var dimension = this.GetModels().FirstOrDefault(x => x.Id == model).Dimensions;
+            var body = GetPayLoad(text, model, dimension);
+            OpenAI.Trace(new { model, text, body }, this);
             var sw = Stopwatch.StartNew();
             var usage = new GenericAIUsage(model, "","");
             if (base._key == null)
                 base._key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
             var wc = InitWebClient();
-            var response = wc.POST(__url, GetPayLoad(text, model, dimension));
+            var response = wc.POST(__url, body);
             if (response.Success)
             {
                 response.SetText(response.Buffer, response.ContenType);
                 var r = EmbeddingResponse.FromJson(response.Text);
                 sw.Stop();
+
+                OpenAI.Trace(new { json = r.ToJSON() }, this);
+
                 usage.InputTokens = r.usage.prompt_tokens;
                 usage.OutputTokens = 0;
                 usage.SetDuration(sw);

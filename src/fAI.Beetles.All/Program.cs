@@ -101,7 +101,7 @@ namespace fAI.Beetles.All
                 if (model == "openai")
                 {
                     _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.json";
+                    JsonOutputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
                 }
 
                 if (model == "gemma")
@@ -364,6 +364,8 @@ namespace fAI.Beetles.All
             foreach (var e in embeddingSongRecords)
                 e.Embedding.Clear();
             EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
+
+            Trace($"model: {_currentEmbeddingModel}");
 
             var client = new GenericAI();
             var i = 0;
