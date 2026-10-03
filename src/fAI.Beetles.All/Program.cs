@@ -15,6 +15,18 @@ namespace fAI.Beetles.All
 {
     internal class Program
     {
+        /*
+         
+fAI.Beetles.All.exe openai
+fAI.Beetles.All.exe mistral
+fAI.Beetles.All.exe google
+fAI.Beetles.All.exe qwen4
+fAI.Beetles.All.exe qwen8
+fAI.Beetles.All.exe ollama-nomic
+fAI.Beetles.All.exe ollama-nomic-v2
+
+
+         */
         const string QWEN3_EMBEDDING_4B_MODEL = "qwen/qwen3-embedding-4b";
         const string QWEN3_EMBEDDING_8B_MODEL = "qwen/qwen3-embedding-8b";
         const string MISTRALAI_EMBEDDING_2312_MODEL = "mistralai/mistral-embed-2312";
@@ -48,7 +60,7 @@ namespace fAI.Beetles.All
         static void WriteInformation(string message) => WriteLine(message, ConsoleColor.White);
         static void WriteAnswer(string message) => WriteLine(message, ConsoleColor.Green);
 
-        static string JsonOutputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
+        static string JsonInputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
 
         public static string GetLastSegment(string input)
         {
@@ -71,59 +83,59 @@ namespace fAI.Beetles.All
                 if (model == "mistral")
                 {
                     _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.mistral-embed-2312.json";
+                    JsonInputFilename = @".\Beatles.All.mistral-embed-2312.json";
                 }
                 if (model == "google")
                 {
                     _currentEmbeddingModel = GOOGLE_GEMINI_EMBEDDING_2_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.google.gemini-embedding-2.json";
+                    JsonInputFilename = @".\Beatles.All.google.gemini-embedding-2.json";
                 }
                 if (model == "qwen4")
                 {
                     _currentEmbeddingModel = QWEN3_EMBEDDING_4B_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.qwen3-embedding-4b.json";
+                    JsonInputFilename = @".\Beatles.All.qwen3-embedding-4b.json";
                 }
                 if (model == "qwen8")
                 {
                     _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
+                    JsonInputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
                 }
                 if (model == "ollama-nomic")
                 {
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
+                    JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
                 }
                 if (model == "ollama-nomic-v2")
                 {
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.ollama-nomic-embed-text-v2.json";
+                    JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text-v2.json";
                 }
                 if (model == "openai")
                 {
                     _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
-                    JsonOutputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
+                    JsonInputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
                 }
 
                 if (model == "gemma")
                 {
                     _currentEmbeddingModel = OLLAMA_EMBEDDINGGEMMA_MODEL;
-                    JsonOutputFilename = @".\Beatles.All-embeddinggemma.json";
+                    JsonInputFilename = @".\Beatles.All-embeddinggemma.json";
                 }
 
                 if (model == "snowflake-arctic-embed2")
                 {
                     _currentEmbeddingModel = OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL;
-                    JsonOutputFilename = @".\Beatles.All-snowflake-arctic-embed2.json";
+                    JsonInputFilename = @".\Beatles.All-snowflake-arctic-embed2.json";
                 }
 
                 // ollama pull granite-embedding:30m
             }
 
             /////WebScrapLyrics();
-            //ComputeEmbedding();
-            //Environment.Exit(0);
+            ComputeEmbedding();
+            Environment.Exit(0);
 
-            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonOutputFilename);
+            var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonInputFilename);
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
             var albums = embeddingSongRecords.Select(r => $"{r.Year} - {r.Album}").ToList().Distinct().OrderBy(a => a).ToList();
             var embeddingRecords = embeddingSongRecords.Select(e => e as EmbeddingCommonRecord).ToList();
@@ -157,23 +169,18 @@ namespace fAI.Beetles.All
                     var bestScore = (float)inMemoryResponse.Select(r => r.Score).DefaultIfEmpty(0).Max();
                     minimumScore = bestScore * minimumScoreRate;
 
-                    inMemoryResponse = inMemoryResponse.Select(r => (!r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
-                    // ^^^^^^ These 2 songs have no lyrics and affect
-                    
                     inMemoryResponse = inMemoryResponse.Where(r => r.Score >= minimumScore).ToList();
 
                     var scoreRankManager = new ScoreRankManager();
                     scoreRankManager.AddScores(inMemoryResponse.Select(r => r.Score).ToList(), inMemoryResponse.Select(r => r.Id).ToList());
 
                     Console.WriteLine($"\r\nbestScore: {bestScore}, minimumScore: {minimumScore}");
+                    Console.WriteLine($"= PHASE 1 ====================");
+
                     foreach (var r in scoreRankManager.GetEntries())
                         WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
                     Console.WriteLine($"");
-
-                    //var gapE = scoreRankManager.GetGapEntry();
-                    //Console.WriteLine($"Gap Entry: {GetLastSegment(gapE.ToString())}");
-
-                    Console.WriteLine($"=====================");
+                    Console.WriteLine($"= PHASE 2 ====================");
 
                     if (scoreRankManager.Entries.Count > 0)
                     {
@@ -188,7 +195,7 @@ namespace fAI.Beetles.All
 
         private static string WriteBanner(List<EmbeddingSongRecord> embeddingSongRecords)
         {
-            WriteInformation($"Beatles Lyrics Search - File: {JsonOutputFilename}");
+            WriteInformation($"Beatles Lyrics Search - File: {JsonInputFilename}");
             WriteInformation($"model: {_currentEmbeddingModel}");
             var message = $"{embeddingSongRecords.Count} songs loaded. Enter search criteria about the Beatles lyrics.";
             WriteQuestion(message);
@@ -387,6 +394,8 @@ namespace fAI.Beetles.All
                 }
             }
             EmbeddingSongRecord.SaveEmbeddingSongRecord(embeddingSongRecords, JsonOutputFilename);
+
+            File.Copy(JsonOutputFilename, @"C:\DVT\fAI\src\fAI.Beetles.All\" + JsonInputFilename.Replace(@".\",""), true);
         }
     }
 }
