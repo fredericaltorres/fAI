@@ -132,8 +132,8 @@ fAI.Beetles.All.exe ollama-nomic-v2
             }
 
             /////WebScrapLyrics();
-            ComputeEmbedding();
-            Environment.Exit(0);
+            //ComputeEmbedding();
+            //Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonInputFilename);
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
