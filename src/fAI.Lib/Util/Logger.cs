@@ -79,7 +79,7 @@ namespace fAI
         {
             if (TraceOn)
             {
-                var className = This.GetType().Name + ".";
+                var className = This == null ? "": This.GetType().Name + ".";
                 if (className.StartsWith("<"))
                     className = "";
 

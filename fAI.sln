@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.Beetles.All.supabase", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fAI.LLM.Console", "fAI.LLM.Console\fAI.LLM.Console.csproj", "{BEA61191-B974-4ADA-920F-9D0438EA7826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GptAudioConsole", "src\GptAudioConsole\GptAudioConsole.csproj", "{12802C74-9BA6-F17A-9F18-83A16B4D7432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{BEA61191-B974-4ADA-920F-9D0438EA7826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEA61191-B974-4ADA-920F-9D0438EA7826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEA61191-B974-4ADA-920F-9D0438EA7826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12802C74-9BA6-F17A-9F18-83A16B4D7432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12802C74-9BA6-F17A-9F18-83A16B4D7432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12802C74-9BA6-F17A-9F18-83A16B4D7432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12802C74-9BA6-F17A-9F18-83A16B4D7432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

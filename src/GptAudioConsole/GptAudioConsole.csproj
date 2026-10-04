@@ -11,4 +11,8 @@
     <PackageReference Include="NAudio" Version="2.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\fAI.Lib\fAI.csproj" />
+  </ItemGroup>
+
 </Project>
