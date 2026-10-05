@@ -5,8 +5,8 @@
 curl.exe -X POST https://ydc-index.io/v1/search -H "X-API-Key: ydc-sk-b80678eeaf1f4cb6-WEtTbUu6FL9SlssZrZpU7y2Dw6eMmFdv-aa129245" -H "Content-Type: application/json" -d "{""query"": ""best practices for scaling microservices architecture in production""}" 
 
 Sad religious people
-In the navy sailor living on board  
-    In the navy
+In the navy
+In the navy sailor living on board
 child going away from house
 mother father relationship with adult daugther on a wednesday
     parenting family issue wednesday
@@ -17,7 +17,7 @@ mother father relationship with adult daugther on a wednesday
 In difficult time, somebody come with wise knowledge
 Somebody who does not belong to any place
 Getting high with people I Like
-Need someone to like and getting high
+Singing badly,  needing someone and getting high
 
 Endless love
 Endless love, life time, place where I used to live
@@ -26,6 +26,7 @@ IRS, government tax policy
 when you die, register to the irs the money left on your face
     Now my advice for those who die\nDeclare the pennies on your eyes
 Controle Fiscal
+    impot sur la fortune
 
 Tibetan Book of the Dead
 Timothy Leary

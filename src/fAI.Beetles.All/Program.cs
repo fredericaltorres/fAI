@@ -131,9 +131,9 @@ fAI.Beetles.All.exe ollama-nomic-v2
                 // ollama pull granite-embedding:30m
             }
 
-            /////WebScrapLyrics();
-            //ComputeEmbedding();
-            //Environment.Exit(0);
+            ///WebScrapLyrics();
+            ComputeEmbedding();
+            Environment.Exit(0);
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonInputFilename);
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
@@ -143,7 +143,7 @@ fAI.Beetles.All.exe ollama-nomic-v2
 
             var topK = 10;
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
-            var minimumScoreRate = 0.8f;
+            var minimumScoreRate = 0.9f;
 
             embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Wild Honey Pie") && !r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
             // ^^^^^^ These 2 songs have no lyrics and affect
