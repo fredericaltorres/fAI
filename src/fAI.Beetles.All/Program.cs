@@ -85,66 +85,56 @@ fAI.Beetles.All.exe ollama.qwen3.8b
             {
                 var model = args[0].Trim();
 
-
-                if (model == "mistral")
+                switch (model)
                 {
-                    _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
-                    JsonInputFilename = @".\Beatles.All.mistral-embed-2312.json";
-                }
-                if (model == "google")
-                {
-                    _currentEmbeddingModel = GOOGLE_GEMINI_EMBEDDING_2_MODEL;
-                    JsonInputFilename = @".\Beatles.All.google.gemini-embedding-2.json";
-                }
-                if (model == "qwen4")
-                {
-                    _currentEmbeddingModel = QWEN3_EMBEDDING_4B_MODEL;
-                    JsonInputFilename = @".\Beatles.All.qwen3-embedding-4b.json";
-                }
-                if (model == "qwen8")
-                {
-                    _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
-                    JsonInputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
-                }
-                if (model == "ollama.qwen3.8b")
-                {
-                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
-                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-8b.json";
-                }
-                if (model == "ollama.qwen3.4b")
-                {
-                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_4B_MODEL;
-                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-4b.json";
-                }
-                if (model == "ollama.qwen3.06b")
-                {
-                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_06B_MODEL;
-                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-06b.json";
-                }
-                if (model == "ollama-nomic")
-                {
-                    _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
-                    JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
-                }
-                if (model == "ollama-nomic-v2")
-                {
-                    _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL;
-                    JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text-v2.json";
-                }
-                if (model == "openai")
-                {
-                    _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
-                    JsonInputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
-                }
-                if (model == "gemma")
-                {
-                    _currentEmbeddingModel = OLLAMA_EMBEDDINGGEMMA_MODEL;
-                    JsonInputFilename = @".\Beatles.All-embeddinggemma.json";
-                }
-                if (model == "snowflake-arctic-embed2")
-                {
-                    _currentEmbeddingModel = OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL;
-                    JsonInputFilename = @".\Beatles.All-snowflake-arctic-embed2.json";
+                    case "mistral":
+                        _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
+                        JsonInputFilename = @".\Beatles.All.mistral-embed-2312.json";
+                        break;
+                    case "google":
+                        _currentEmbeddingModel = GOOGLE_GEMINI_EMBEDDING_2_MODEL;
+                        JsonInputFilename = @".\Beatles.All.google.gemini-embedding-2.json";
+                        break;
+                    case "qwen4":
+                        _currentEmbeddingModel = QWEN3_EMBEDDING_4B_MODEL;
+                        JsonInputFilename = @".\Beatles.All.qwen3-embedding-4b.json";
+                        break;
+                    case "qwen8":
+                        _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
+                        JsonInputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
+                        break;
+                    case "ollama.qwen3.8b":
+                        _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
+                        JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-8b.json";
+                        break;
+                    case "ollama.qwen3.4b":
+                        _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_4B_MODEL;
+                        JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-4b.json";
+                        break;
+                    case "ollama.qwen3.06b":
+                        _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_06B_MODEL;
+                        JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-06b.json";
+                        break;
+                    case "ollama-nomic":
+                        _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
+                        JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text.json";
+                        break;
+                    case "ollama-nomic-v2":
+                        _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL;
+                        JsonInputFilename = @".\Beatles.All.ollama-nomic-embed-text-v2.json";
+                        break;
+                    case "openai":
+                        _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
+                        JsonInputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
+                        break;
+                    case "gemma":
+                        _currentEmbeddingModel = OLLAMA_EMBEDDINGGEMMA_MODEL;
+                        JsonInputFilename = @".\Beatles.All-embeddinggemma.json";
+                        break;
+                    case "snowflake-arctic-embed2":
+                        _currentEmbeddingModel = OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL;
+                        JsonInputFilename = @".\Beatles.All-snowflake-arctic-embed2.json";
+                        break;
                 }
 
                 // ollama pull granite-embedding:30m
@@ -168,7 +158,7 @@ fAI.Beetles.All.exe ollama.qwen3.8b
 
             var topK = 10;
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
-            var minimumScoreRate = 0.9f;
+            var minimumScoreRate = 0.85f;
 
             embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Wild Honey Pie") && !r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
             // ^^^^^^ These 2 songs have no lyrics and affect
@@ -180,12 +170,17 @@ fAI.Beetles.All.exe ollama.qwen3.8b
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit" || criteria == "quit")
                     break;
-                if (criteria == "cls")
-                {
-                    Console.Clear();
-                    WriteBanner(embeddingSongRecords);
-                    continue;
-                }
+
+
+                Console.Clear();
+                WriteBanner(embeddingSongRecords);
+
+                //if (criteria == "cls")
+                //{
+                //    Console.Clear();
+                //    WriteBanner(embeddingSongRecords);
+                //    continue;
+                //}
 
                 if (!criteria.IsNullOrEmpty())
                 {
