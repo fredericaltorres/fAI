@@ -2,8 +2,6 @@
 1. Explain the 10 best result, than apply the top 10%, but
 1. Explain new filtering and caveat when there are 2 elements
 
-curl.exe -X POST https://ydc-index.io/v1/search -H "X-API-Key: ydc-sk-b80678eeaf1f4cb6-WEtTbUu6FL9SlssZrZpU7y2Dw6eMmFdv-aa129245" -H "Content-Type: application/json" -d "{""query"": ""best practices for scaling microservices architecture in production""}" 
-
 Sad religious people
 In the navy
 In the navy sailor living on board
@@ -68,3 +66,8 @@ cosin distance,
 350-14-41
 
 openai-text-embedding-3-small
+
+
+
+# you.com
+curl.exe -X POST https://ydc-index.io/v1/search -H "X-API-Key: ydc-sk-b80678eeaf1f4cb6-WEtTbUu6FL9SlssZrZpU7y2Dw6eMmFdv-aa129245" -H "Content-Type: application/json" -d "{""query"": ""best practices for scaling microservices architecture in production""}" 
