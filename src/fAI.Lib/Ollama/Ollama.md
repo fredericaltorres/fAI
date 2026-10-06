@@ -4,22 +4,25 @@
 
 ```
 ollama pull nomic-embed-text
+ollama pull granite-embedding:30m
 
 curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/json" -d "{ ""model"": ""nomic-embed-text"", ""prompt"": ""Your text to embed here"" }"
 curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/json" -d "{ ""model"": ""qwen3-embedding:8b"", ""prompt"": ""Your text to embed here"" }"
 
-
-
-
 ollama list
 ollama run nomic-embed-text
 ollama run qwen3-embedding:8b
+ollama run qwen3-embedding:4b "what is the capital of france"
 ollama run qwen3-embedding:0.6b
 ollama run qwen3-embedding:8b
-ollama rm qwen3-embedding:8b
+ollama rm granite-embedding:30m  
 ollama ps
 ollama stop nomic-embed-text
 ollama launch  
+ollama pull qwen2.5:14b
+ollama run qwen2.5:14b "What is the capital of France?"
+ollama pull llama3.2:1b
+ollama run llama3.2:1b "What is the capital of France?"
 
 ollama show nomic-embed-text-v2-moe:latest --modelfile 
 "C:\Users\FredericTorres\.ollama\models\blobs\sha256-a5db3381f2e514d3490a3a31fe70eb1a65e95016c85c6c2c23223b810806594f"

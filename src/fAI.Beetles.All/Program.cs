@@ -25,6 +25,10 @@ fAI.Beetles.All.exe qwen8
 fAI.Beetles.All.exe ollama-nomic
 fAI.Beetles.All.exe ollama-nomic-v2
 
+fAI.Beetles.All.exe ollama.qwen3.06b
+fAI.Beetles.All.exe ollama.qwen3.4b
+fAI.Beetles.All.exe ollama.qwen3.8b
+
 
          */
         const string QWEN3_EMBEDDING_4B_MODEL = "qwen/qwen3-embedding-4b";
@@ -35,10 +39,10 @@ fAI.Beetles.All.exe ollama-nomic-v2
         const string OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL = "ollama/nomic-embed-text";
         const string OLLAMA_NOMIC_EMBEDDING_V2_TEXT_MODEL = "ollama/nomic-embed-text-v2-moe";
         const string OLLAMA_QWEN3_EMBEDDING_8B_MODEL = "ollama/qwen3-embedding:8b";
+        const string OLLAMA_QWEN3_EMBEDDING_4B_MODEL = "ollama/qwen3-embedding:4b";
+        const string OLLAMA_QWEN3_EMBEDDING_06B_MODEL = "ollama/qwen3-embedding:0.6b";
         const string OLLAMA_EMBEDDINGGEMMA_MODEL = "ollama/embeddinggemma";
         const string OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL = "ollama/snowflake-arctic-embed2";
-
-
 
         static string _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
 
@@ -80,6 +84,8 @@ fAI.Beetles.All.exe ollama-nomic-v2
             if (args.Length > 0)
             {
                 var model = args[0].Trim();
+
+
                 if (model == "mistral")
                 {
                     _currentEmbeddingModel = MISTRALAI_EMBEDDING_2312_MODEL;
@@ -100,6 +106,21 @@ fAI.Beetles.All.exe ollama-nomic-v2
                     _currentEmbeddingModel = QWEN3_EMBEDDING_8B_MODEL;
                     JsonInputFilename = @".\Beatles.All.qwen3-embedding-8b.json";
                 }
+                if (model == "ollama.qwen3.8b")
+                {
+                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_8B_MODEL;
+                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-8b.json";
+                }
+                if (model == "ollama.qwen3.4b")
+                {
+                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_4B_MODEL;
+                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-4b.json";
+                }
+                if (model == "ollama.qwen3.06b")
+                {
+                    _currentEmbeddingModel = OLLAMA_QWEN3_EMBEDDING_06B_MODEL;
+                    JsonInputFilename = @".\Beatles.All.ollama.qwen3-embedding-06b.json";
+                }
                 if (model == "ollama-nomic")
                 {
                     _currentEmbeddingModel = OLLAMA_NOMIC_EMBEDDING_TEXT_MODEL;
@@ -115,13 +136,11 @@ fAI.Beetles.All.exe ollama-nomic-v2
                     _currentEmbeddingModel = OPENAI_TEXT_EMBEDDING_3_SMALL_MODEL;
                     JsonInputFilename = @".\Beatles.All.openai-text-embedding-3-small.json";
                 }
-
                 if (model == "gemma")
                 {
                     _currentEmbeddingModel = OLLAMA_EMBEDDINGGEMMA_MODEL;
                     JsonInputFilename = @".\Beatles.All-embeddinggemma.json";
                 }
-
                 if (model == "snowflake-arctic-embed2")
                 {
                     _currentEmbeddingModel = OLLAMA_SNOWFLAKE_ARCTIC_EMBEDDING_2_MODEL;
@@ -134,6 +153,12 @@ fAI.Beetles.All.exe ollama-nomic-v2
             ///WebScrapLyrics();
             //ComputeEmbedding();
             //Environment.Exit(0);
+
+            if(!File.Exists(JsonInputFilename))
+            {
+                WriteInformation($"File {JsonInputFilename} not found. Please run the program with a valid model argument to generate the embeddings.");
+                Environment.Exit(0);
+            }
 
             var embeddingSongRecords = EmbeddingSongRecord.LoadEmbeddingSongRecord(JsonInputFilename);
             var Misery = embeddingSongRecords.First(r => r.Title == "Misery");
