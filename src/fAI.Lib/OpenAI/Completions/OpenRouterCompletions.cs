@@ -15,21 +15,18 @@ namespace fAI
         {
         }
 
-        // https://openrouter.ai/deepseek/deepseek-v4-pro
-        const string __urlLLM = "https://openrouter.ai/api/v1/chat/completions";
-        const string __urlClassifier = "https://openrouter.ai/api/alpha/decisions";
-
-
+        const string __urlLLM           = "https://openrouter.ai/api/v1/chat/completions";
+        const string __urlClassifier    = "https://openrouter.ai/api/alpha/decisions";
 
         public AnthropicErrorCompletionResponse Create(GPTPromptEx p)
         {
             var url = __urlLLM;
             OpenAI.Trace(new { url }, this);
-            //OpenAI.Trace(new { Prompt = p }, this);
-            OpenAI.Trace(new { Body = p.GetPostBody() }, this);
+            var body = p.GetPostBody();
+            OpenAI.Trace(new { BodyLenKb = (body.Length / 1024.0).ToString("0.0"),  BodyWords = new OpenAIEmbeddings().CountWords(body), Body = body }, this);
 
             var sw = Stopwatch.StartNew();
-            var response = InitWebClient().POST(url, p.GetPostBody());
+            var response = InitWebClient().POST(url, body);
             
             sw.Stop();
             OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
