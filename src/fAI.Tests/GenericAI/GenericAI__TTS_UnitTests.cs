@@ -40,6 +40,39 @@ Find root cause.
 
         [Fact()]
         [TestBeforeAfter]
+        public void GenericAISpeech_Create___ElevenLab()
+        {
+            var TTS_TEXT = @"
+[confused] Hello? Are you there? I think I broke it.
+[laughing] Dad no, dad just... [exasperated] okay which button did you press.
+[uncertain] uhh, All of them?
+[disbelief] You pressed all of them?
+[mumbling] Well they were all just sitting there.
+[groaning] Why did you press all of them. [tired] Okay okay just don't touch anything.
+[listening] It's making a noise now.
+[strained] I'm begging you.
+[panicking] It's doing a thing... uh, a whole thing!
+[disbelief] What do you mean it's doing a thing, what thing?
+[squinting] There's a little man walking across the screen.
+[laughing harder] Dad that's just the screensaver.
+[embarrassed] Oh. Right. Yes...
+[exhales] Oh my god. Okay. I'm coming over
+[cheerful] I'll put the kettle on.
+";
+
+            var client = new GenericAI();
+            client.Speech.TTSVoiceInfos.Where(v => v.Model == "elevenlabs/eleven-v4-turbo" || v.Model == "elevenlabs/eleven-v4").ToList().ForEach(request =>
+            {
+                foreach (var testVoice in request.TestsVoices)
+                {
+                    var inputFile = client.Speech.Create(TTS_TEXT, testVoice, request.Model, cost: request.ComputeCost(TTS_TEXT), useOpenAI: !request.OpenRouterSupported);
+                    Assert.True(File.Exists(inputFile));
+                }
+            });
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void GenericAISpeech_Create___fish_audio_s2_1_pro()
         {
             var TTS_TEXT = @"

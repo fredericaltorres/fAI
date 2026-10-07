@@ -53,6 +53,9 @@ namespace fAI
             ///new TTSRequest { PricePerMillionOfChars=20,     Model = "google/gemini-3.1-flash-tts-preview",         Voices = new List<string>() { "Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede", "Callirrhoe", "Autonoe", "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina", "Erinome", "Algenib", "Rasalgethi", "Laomedeia", "Achernar", "Alnilam", "Schedar", "Gacrux", "Pulcherrima", "Achird", "Zubenelgenubi", "Vindemiatrix", "Sadachbia", "Sadaltager", "Sulafat" } },
             ///// Only support output of pcm, slow
             
+            new TTSRequest { PricePerMillionOfChars=40.0f, Model = "elevenlabs/eleven-v4",             Voices = new List<string>() { "george" , "sarah" , "adam" , "alice" , "bella" , "bill" , "brian" , "callum" , "charlie" , "chris" , "daniel" , "eric" , "harry" , "jessica" , "laura" , "liam" , "lily" , "matilda" , "river" , "roger" , "will" }},
+            new TTSRequest { PricePerMillionOfChars=20.0f, Model = "elevenlabs/eleven-v4-turbo",        Voices = new List<string>() { "george" , "sarah" , "adam" , "alice" , "bella" , "bill" , "brian" , "callum" , "charlie" , "chris" , "daniel" , "eric" , "harry" , "jessica" , "laura" , "liam" , "lily" , "matilda" , "river" , "roger" , "will" }},
+
             new TTSRequest { PricePerMillionOfChars=15.15f, Model = "gpt-4o-mini-tts",                  Voices = new List<string>() { "alloy","ash","ballad","coral","echo","fable","nova","onyx","sage","shimmer","verse" }, OpenRouterSupported = false },/* estimated by chat gpt */
 
             new TTSRequest { PricePerMillionOfChars=60,     Model = "minimax/speech-2.8-turbo",         Voices = new List<string>() { "Friendly_Person", "Friendly_Person" } }, // https://docs.fish.audio/features/text-to-speech
