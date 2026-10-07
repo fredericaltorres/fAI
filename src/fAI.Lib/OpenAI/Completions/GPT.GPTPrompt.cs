@@ -83,6 +83,11 @@ namespace fAI
     {
         public bool ContainSystemPrompt => this.Where(m => m.Role == MessageRole.system).Count() > 0;
 
+        public bool ContainTextMessage(string text)
+        {
+            return this.Where(m => m.Content.Where(c => c.Type == GPTMessageContentType.text && c.Text == text).Count() > 0).Count() > 0;
+        }
+
         public string ToJSON()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);

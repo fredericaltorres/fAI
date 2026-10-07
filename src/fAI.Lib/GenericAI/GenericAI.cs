@@ -674,6 +674,12 @@ no code fences wrapping the entire output.
         {
             var sw = Stopwatch.StartNew();
             skillOrSystemPrompt = skillOrSystemPrompt.Template(new { language }, "[", "]");
+
+            if (contents != null && contents.ContainTextMessage(topic))
+            {
+                topic = "";
+            }
+
             var (newText, contents2, usage) = Create(topic, skillOrSystemPrompt, model, contents, skillName: skillName, skillRootFolder: skillRootFolder, secondUserPrompt: questionOrAction);
             contents = contents2;
             sw.Stop();

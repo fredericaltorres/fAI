@@ -89,6 +89,65 @@ hi Alice I wanted to let you know that I review the previous email about your ca
             }
         }
 
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode_Skill()
+        {
+            var text = "What is the capital of France?";
+            var expectedWords = DS.List("paris", "france");
+            var topic = "# Empty Markdown";
+            var skills = "<skill name=\"geography\">\r\n# Professional Geography Expert Skill\r\n\r\nyou are a geography expert. You will answer questions about countries, capitals, and geography in general.\r\n</skill>";
+            var quickFilter = new Regex("openai/gpt-5.6-luna");
+
+            foreach (var model in GenericAI.GetModels(quickFilter))
+            {
+                var client = new GenericAI();
+                // Conversation step 1
+                var result = client.Completions.SkillTopicQuestion(
+                    skillOrSystemPrompt: skills,
+                    topic: topic,     
+                    questionOrAction: text,
+                    language: "English",
+                    model: model.Id
+                    );
+                Assert.True(expectedWords.All(w => result.Text.ToLower().Contains(w)));
+
+                // Conversation step 2
+                var text2 = "What is its population?";
+                result = client.Completions.SkillTopicQuestion(
+                  skillOrSystemPrompt: skills,
+                  topic: topic,
+                  questionOrAction: text2,
+                  language: "English",
+                  model: model.Id,
+                  contents: result.Contents
+                  );
+                Assert.True(DS.List("million", "residents", "2").All(w => result.Text.ToLower().Contains(w)));
+
+                // Conversation step 3
+                var text3 = @"in the last 10 years, is Paris population shrinking? Answer with YES or NO only.";
+                result = client.Completions.SkillTopicQuestion(
+                    skillOrSystemPrompt: skills,
+                    topic: topic,
+                    questionOrAction: text3,
+                    language: "English",
+                    model: model.Id,
+                    contents: result.Contents
+                    );
+                Assert.Contains("yes", result.Text.ToLower());
+            }
+        }
+
+
+
+
+
+
+
+
+
+
         [Fact()]
         [TestBeforeAfter]
         public void ImproveEnglishText_GenericAI_InterfaceForOpenAIAndGoogle_ConversationMode_2()
