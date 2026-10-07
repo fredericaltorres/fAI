@@ -158,29 +158,24 @@ fAI.Beetles.All.exe ollama.qwen3.8b
 
             var topK = 10;
             var embeddingModel = new GenericAI().Embedding.GetModels().FirstOrDefault(m => m.Id == _currentEmbeddingModel);
-            var minimumScoreRate = 0.85f;
+            var minimumScoreRate = 0.90f;
 
             embeddingRecords = embeddingRecords.Select(r => (!r.Id.Contains("Wild Honey Pie") && !r.Id.Contains("Revolution 9") && !r.Id.Contains("Flying")) ? r : null).Where(r => r != null).ToList();
             // ^^^^^^ These 2 songs have no lyrics and affect
 
             while (true)
             {
-                //var minimumScore = embeddingModel.RelevantScore;
                 var minimumScore = -1f;
                 var criteria = Console.ReadLine().Trim();
                 if (criteria == "exit" || criteria == "quit")
                     break;
 
-
-                Console.Clear();
-                WriteBanner(embeddingSongRecords);
-
-                //if (criteria == "cls")
-                //{
-                //    Console.Clear();
-                //    WriteBanner(embeddingSongRecords);
-                //    continue;
-                //}
+                if (criteria == "cls")
+                {
+                    Console.Clear();
+                    WriteBanner(embeddingSongRecords);
+                    continue;
+                }
 
                 if (!criteria.IsNullOrEmpty())
                 {
@@ -196,16 +191,17 @@ fAI.Beetles.All.exe ollama.qwen3.8b
 
                     Console.WriteLine($"\r\nbestScore: {bestScore}, minimumScore: {minimumScore}");
                     Console.WriteLine($"= PHASE 1 ====================");
-
+                    var position = 1;
                     foreach (var r in scoreRankManager.GetEntries())
-                        WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
+                        WriteAnswer($"[{position++:00}]Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
                     Console.WriteLine($"");
                     Console.WriteLine($"= PHASE 2 ====================");
 
                     if (scoreRankManager.Entries.Count > 0)
                     {
+                        position = 1;
                         foreach (var r in scoreRankManager.GetEntriesGapped())
-                            WriteAnswer($"Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
+                            WriteAnswer($"[{position++:00}]Score: {r.Score:0.0000}, Dif: {r.Difference:0.0000}, Id: {GetLastSegment(r.Id)}");
                     }
                     Console.WriteLine($"\r\n");
                 }

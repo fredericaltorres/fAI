@@ -79,11 +79,15 @@ namespace fAI
                 new AIModel { Id = "anthropic/claude-sonnet-4.5",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2025, 9, 29),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
                 new AIModel { Id = "anthropic/claude-sonnet-4.6",       InputTokenPricePer1M = 3.00f,  OutputTokenPricePer1M = 15.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 2, 17) },
                 new AIModel { Id = "anthropic/claude-haiku-4.5",        InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 5.00f,   ContextLength = 200_000,   ReleaseDate = new DateTime(2025, 10, 15) },
+
+                new AIModel { Id = "mistralai/mistral-large-4-0",       InputTokenPricePer1M = 0.68f,  OutputTokenPricePer1M = 2.09f,   ContextLength = 524*1024,   ReleaseDate = new DateTime(2026, 10, 6) },
+
                 new AIModel { Id = "mistralai/mistral-small-2603",      InputTokenPricePer1M = 0.15f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2026, 3, 16) },
-                new AIModel { Id = "mistralai/mistral-medium-3.1",      InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000,   ReleaseDate = new DateTime(2025, 8, 13),  KnowledgeCutoff = new DateTime(2025, 6, 1) },
+                // new AIModel { Id = "mistralai/mistral-medium-3.1",      InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000,   ReleaseDate = new DateTime(2025, 8, 13),  KnowledgeCutoff = new DateTime(2025, 6, 1) },
                 new AIModel { Id = "mistralai/mistral-medium-3-5",      InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 7.50f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2026, 4, 30) },
-                new AIModel { Id = "mistralai/mistral-medium-3",        InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000 },
+                //new AIModel { Id = "mistralai/mistral-medium-3",        InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 131_000 },
                 new AIModel { Id = "mistralai/mistral-large-2512",      InputTokenPricePer1M = 0.50f,  OutputTokenPricePer1M = 1.50f,   ContextLength = 262_000,   ReleaseDate = new DateTime(2025, 12, 1) },
+
                 new AIModel { Id = "x-ai/grok-4.6",                     InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 500_000,   ReleaseDate = new DateTime(2026, 7, 8)  },
                 new AIModel { Id = "x-ai/grok-4.5",                     InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 500_000,   ReleaseDate = new DateTime(2026, 7, 8)  },
                 new AIModel { Id = "x-ai/grok-4.20",                    InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 2_000_000 },

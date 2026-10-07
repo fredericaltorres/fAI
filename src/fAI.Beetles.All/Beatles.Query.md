@@ -21,10 +21,11 @@ Endless love
 Endless love, life time, place where I used to live
 
 IRS, government tax policy
-when you die, register to the irs the money left on your face
-    Now my advice for those who die\nDeclare the pennies on your eyes
+when you die, register the money left on your face
+Now my advice for those who die\nDeclare the pennies on your eyes
 Controle Fiscal
     impot sur la fortune
+investigate, laughing paper, negotiate , situate
 
 Tibetan Book of the Dead
 Timothy Leary
@@ -35,6 +36,7 @@ animals
 anniversary
 chuck berry
 lennon borrowed lyrics from chuck berry's song
+The Chuck berry's song, related to to one beatles' songs
 The Chuck berry's song "You Can't Catch Me", related to to one beatles' songs
 lennon borrowed lyrics from one chuck berry's song and wrote a song for the album "Abbey Road"
 lennon borrowed lyrics from one chuck berry's song and wrote a song for the album "Abbey Road", about gathering people
