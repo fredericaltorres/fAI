@@ -21,14 +21,28 @@ namespace fAI
         public AnthropicErrorCompletionResponse Create(GPTPromptEx p)
         {
             var url = __urlLLM;
+            var OLLMA_TAG = "ollama/";
+            var ollamaMode = false;
+            if (p.Model.StartsWith(OLLMA_TAG))
+            {
+                url = "http://localhost:11434/api/chat";
+                p.Model = p.Model.Replace(OLLMA_TAG, "");
+                ollamaMode = true;
+            }
+
             OpenAI.Trace(new { url }, this);
             var body = p.GetPostBody();
+            if (ollamaMode)
+            {
+                body = p.GetPostBodyOllama();
+            }
+
             OpenAI.Trace(new { BodyLenKb = (body.Length / 1024.0).ToString("0.0"),  BodyWords = new OpenAIEmbeddings().CountWords(body), Body = body }, this);
 
             var sw = Stopwatch.StartNew();
             var response = InitWebClient().POST(url, body);
-            
             sw.Stop();
+
             OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
             if (response.Success)
             {

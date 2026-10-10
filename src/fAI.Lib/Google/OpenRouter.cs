@@ -53,19 +53,24 @@ namespace fAI
 
             var aiModels = new List<AIModel>
             {
+                new AIModel { Id = "ollama/llama3.2:latest",      InputTokenPricePer1M = 0f,  OutputTokenPricePer1M = 0.0f,  ContextLength = 128*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
+
+                new AIModel { Id = "meta-llama/llama-3.1-70b-instruct",      InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 0.40f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
+                new AIModel { Id = "meta-llama/llama-3.3-70b-instruct",      InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.32f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
+                new AIModel { Id = "meta-llama/llama-3.1-8b-instruct",       InputTokenPricePer1M = 0.020f, OutputTokenPricePer1M = 0.04f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
+                new AIModel { Id = "meta-llama/llama-4-maverick",            InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.32f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 12, 6)  },
+
                 new AIModel { Id = "google/gemini-3.1-flash-lite",      InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 1.50f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 7)  },
                 new AIModel { Id = "google/gemini-3.5-flash",           InputTokenPricePer1M = 1.50f,  OutputTokenPricePer1M = 9.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 5, 19),  KnowledgeCutoff = new DateTime(2025, 1, 1) },
                 new AIModel { Id = "google/gemini-3.8-flash",           InputTokenPricePer1M = 0.75f,  OutputTokenPricePer1M = 3.75f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 9, 2),   KnowledgeCutoff = new DateTime(2026, 9, 2) },
                 new AIModel { Id = "meta/muse-spark-1.2",               InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 4.25f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 8, 5),   KnowledgeCutoff = new DateTime(2026, 8, 5) },
                 
                 new AIModel { Id = "openai/gpt-6-astra",                InputTokenPricePer1M = 10.00f, OutputTokenPricePer1M = 50.00f,  ContextLength = 1_100_000, ReleaseDate = new DateTime(2026, 9, 4),  KnowledgeCutoff = new DateTime(2026, 9, 4) },
-                
-                new AIModel { Id = "openai/gpt-5.5",                    InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 24),  KnowledgeCutoff = new DateTime(2025, 12, 1) },
-                new AIModel { Id = "openai/gpt-5-mini",                 InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 400_000,   ReleaseDate = new DateTime(2025, 8, 7),   KnowledgeCutoff = new DateTime(2024, 5, 1) },
+                new AIModel { Id = "openai/gpt-6.1-sol-pro",            InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 10.00f,  ContextLength = 1_100_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 9, 29) },
+                //new AIModel { Id = "openai/gpt-5.5",                    InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 24),  KnowledgeCutoff = new DateTime(2025, 12, 1) },
+                //new AIModel { Id = "openai/gpt-5-mini",                 InputTokenPricePer1M = 0.25f,  OutputTokenPricePer1M = 2.00f,   ContextLength = 400_000,   ReleaseDate = new DateTime(2025, 8, 7),   KnowledgeCutoff = new DateTime(2024, 5, 1) },
                 new AIModel { Id = "openai/gpt-5.6-luna",               InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.60f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
                 new AIModel { Id = "openai/gpt-5.6-terra",              InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 6.00f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
-
-                new AIModel { Id = "openai/gpt-6.1-sol-pro",            InputTokenPricePer1M = 2.00f,  OutputTokenPricePer1M = 10.00f,  ContextLength = 1_100_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 9, 29) },
                 new AIModel { Id = "openai/gpt-5.6-sol",                InputTokenPricePer1M = 5.00f,  OutputTokenPricePer1M = 30.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 9),   KnowledgeCutoff = new DateTime(2026, 2, 1) },
 
                 new AIModel { Id = "anthropic/claude-fable-5",          InputTokenPricePer1M = 10.00f, OutputTokenPricePer1M = 50.00f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 6, 9)  },
@@ -93,13 +98,9 @@ namespace fAI
                 new AIModel { Id = "x-ai/grok-4.20",                    InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 2_000_000 },
                 new AIModel { Id = "x-ai/grok-4.3",                     InputTokenPricePer1M = 1.25f,  OutputTokenPricePer1M = 2.50f,   ContextLength = 1_000_000 },
 
-
                 new AIModel { Id = "deepseek/deepseek-v4.1-flash",      InputTokenPricePer1M = 0.015f, OutputTokenPricePer1M = 0.6f,  ContextLength = 1_050_000, ReleaseDate = new DateTime(2026, 9, 10) },
-
-
                 new AIModel { Id = "deepseek/deepseek-v4-flash",        InputTokenPricePer1M = 0.084f, OutputTokenPricePer1M = 0.168f,  ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
                 new AIModel { Id = "deepseek/deepseek-v4-pro",          InputTokenPricePer1M = 0.435f, OutputTokenPricePer1M = 0.87f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 4, 23) },
-                
                 
                 new AIModel { Id = "thinkingmachines/inkling",          InputTokenPricePer1M = 1.00f,  OutputTokenPricePer1M = 4.05f,   ContextLength = 1_000_000, ReleaseDate = new DateTime(2026, 7, 17) },
                 new AIModel { Id = "moonshotai/kimi-k2.6",              InputTokenPricePer1M = 0.55f,  OutputTokenPricePer1M = 3.20f,   ContextLength = 262_000 },

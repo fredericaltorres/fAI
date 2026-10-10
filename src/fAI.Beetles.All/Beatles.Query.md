@@ -4,28 +4,27 @@
 
 Sad religious people
 In the navy
-In the navy sailor living on board
+In the navy, sailor living on board
 child going away from house
-mother father relationship with adult daugther on a wednesday
-    parenting family issue wednesday
-    parenting family issue wednesday
-    child going away from house
-    daugther mother father relationship in the morning
-    mother father relationship with grown-up daugther
+mother father difficult relationship with adult daugther on a wednesday
+mother father difficult relationship with adult daugther
+    
 In difficult time, somebody come with wise knowledge
+In difficult time, somebody come with wise knowledge, mama
 Somebody who does not belong to any place
+Rootless, Nomad, Expatriate
+
 Getting high with people I Like
 Singing badly,  needing someone and getting high
 
 Endless love
 Endless love, life time, place where I used to live
 
-IRS, government tax policy
-when you die, register the money left on your face
-Now my advice for those who die\nDeclare the pennies on your eyes
+IRS
+when you die, register to the irs the money left on your face
+    Now my advice for those who die\nDeclare the pennies on your eyes
 Controle Fiscal
     impot sur la fortune
-investigate, laughing paper, negotiate , situate
 
 Tibetan Book of the Dead
 Timothy Leary
@@ -35,9 +34,7 @@ animals
     pieuvre
 anniversary
 chuck berry
-lennon borrowed lyrics from chuck berry's song
-The Chuck berry's song, related to to one beatles' songs
-The Chuck berry's song "You Can't Catch Me", related to to one beatles' songs
+one  Chuck berry's song, related to to one beatles' song
 lennon borrowed lyrics from one chuck berry's song and wrote a song for the album "Abbey Road"
 lennon borrowed lyrics from one chuck berry's song and wrote a song for the album "Abbey Road", about gathering people
 

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 //using System.Text.Json.Serialization;
@@ -126,7 +127,22 @@ namespace fAI
                 messages = Messages,
                 response_format = ResponseFormat,
             });
-           
+        }
+        public string GetPostBodyOllama()
+        {
+            var messages = new List<GPTMessage>();
+            messages.AddRange(this.Messages.Select(m => new GPTMessage
+            {
+                Role = m.Role,
+                Content = string.Join("\n", m.Content.Select(c => c.Type == GPTMessageContentType.text ? c.Text : $"[Image: {c.ImageUrl}]"))
+            }));
+
+            return JsonConvert.SerializeObject(new
+            {
+                model = Model,
+                stream = false,
+                messages = messages,
+            });
         }
     }
 

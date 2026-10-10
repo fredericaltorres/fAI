@@ -272,7 +272,6 @@ namespace fAI
             try
             {
                 var (result, updatedContents, usage) = __Create(prompt, systemPrompt, model, contents, skillName, skillRootFolder, imageFileName, secondUserPrompt);
-
                 var m = GenericAI.GetModels().FirstOrDefault(mm => mm.Id == model);
                 var cost = m.ComputeCost(usage.InputTokens, usage.OutputTokens);
                 HttpBase.Trace($"[COST]Model: {model}, Duration: {usage.Duration}, InputTokens: {usage.InputTokens}, OutputTokens: {usage.OutputTokens}, Cost: ${cost:0.0000}, ApiCost: ${usage.ApiCost:0.0000}", this);
@@ -351,7 +350,6 @@ namespace fAI
 
                     return (answerContent.Text, contents, usage);
                 }
-
                 // Google, My own abstraction, but we now use Open Router
                 else if (GoogleAI.GetModels().Select(m => m.Id).Contains(model))
                 {
@@ -371,7 +369,6 @@ namespace fAI
                     var answerContent = r.candidates[0].content;
                     return (r.GetText(), contents, usage);
                 }
-
                 // OpenRouter, My own abstraction, but we now use Open Router
                 else if (OpenRouter.GetModels().Select(m => m.Id).Contains(model))
                 {

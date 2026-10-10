@@ -359,6 +359,32 @@ glycemic control and overall well-being.
 
         [Fact()]
         [TestBeforeAfter]
+        public void GenerateTitle_GenericAI_InterfaceFor_MetaLlama()
+        {
+            Regex quickFilter = new Regex("^meta-llama/.*");
+            foreach (var model in GenericAI.GetModels(quickFilter))
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Id);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model.Id}, Text: {result.Title}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
+        public void GenerateTitle_GenericAI_InterfaceFor_Ollama_Local()
+        {
+            Regex quickFilter = new Regex("^ollama/.*");
+            foreach (var model in GenericAI.GetModels(quickFilter))
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Id);
+                HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model.Id}, Text: {result.Title}", this);
+            }
+        }
+
+        [Fact()]
+        [TestBeforeAfter]
         public void Translate_GenericAI_OpenRouterModels()
         {
             var models = StringUtil.GetRandom(OpenRouter.GetModels().Select(m => m.Id).ToList(), _randomModelCount);
@@ -445,29 +471,21 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             GenericAI.GetModels(_quickFilter).ForEach(model => // _quickFilter
             {
                 AIPromptCache.Instance.Clear();
-                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
+                var client = new GenericAI();
 
                 Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("ajouter un element a faire avec the titre suivant", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("quelle est la couleur du ciel?", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyser, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analysez, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("recommande, en tant que médecin, les problèmes de santé de Karin et définissez un diagnostic.", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Quelle est ma priorité principale ?", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Listez les médecins qui ont diagnostiqué Karen", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Liste les médecins qui ont diagnostiqué Karen", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Lister les médecins qui ont diagnostiqué Karen", model: model.Id));
-
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recherche ce sur quoi Joe travaille aujourd'hui", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Parle-moi du Docteur StrangeLove", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("Le ciel est bleu", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("La terre est basse", model: model.Id));
 
@@ -480,25 +498,18 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             GenericAI.GetModels(_quickFilter).ForEach(model => // _quickFilter
             {
                 AIPromptCache.Instance.Clear();
-                var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
-
+                var client = new GenericAI();
                 Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhrase("Add a to-do item with the following title", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Paint the sky?", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is the color of the sky?", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Recommend as a Medical Doctor, Karin health issue and issue a diagnostic.", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("What is my highest priority?", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("List the doctors whom diagnosticated Karen", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Research what Joe is working on today", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhrase("Tell me about Doctor StrangeLove", model: model.Id));
-
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The sky is blue", model: model.Id));
                 Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhrase("The ground is low", model: model.Id));
-
             });
         }
 
@@ -608,7 +619,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             var client = new GenericAI(); // ApiKey: Environment.GetEnvironmentVariable("GOOGLE_GENERATIVE_AI_API_KEY")
 
             Assert.Equal(GenericAICompletions.PhraseType.Order, client.Completions.DetermineTheTypeOfPhraseClassifier("Add a to-do item with the following title"));
-
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Paint the sky?"));
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("What is the color of the sky?"));
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Analyse as a Medical Doctor, Karin health issue and issue a diagnostic."));
@@ -617,7 +627,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("List the doctors whom diagnosticated Karen"));
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Research what Joe is working on today"));
             Assert.Equal(GenericAICompletions.PhraseType.Question, client.Completions.DetermineTheTypeOfPhraseClassifier("Tell me about Doctor StrangeLove"));
-
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The sky is blue"));
             Assert.Equal(GenericAICompletions.PhraseType.Statement, client.Completions.DetermineTheTypeOfPhraseClassifier("The ground is low"));
         }
@@ -670,7 +679,6 @@ When using C# and the newtonsoft library, what is the name of the attribute to s
                 fixedPhrase = client.Completions.FixPhrase("What you need to do about your car is  RAV4 Car oil change", "English", model: model.Id);
             });
         }
-
 
         const string notes1 = @"
 on January 15th, 2026, I had a meeting with John Smith about the new Salesforce integration project in Paris.

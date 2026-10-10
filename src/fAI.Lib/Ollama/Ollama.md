@@ -12,20 +12,34 @@ curl.exe http://localhost:11434/api/embeddings -H "Content-Type: application/jso
 ollama list
 ollama run nomic-embed-text
 ollama run qwen3-embedding:8b
-ollama run qwen3-embedding:4b "what is the capital of france"
+ollama run qwen3-embedding:4b "what is the capital of france?"
+ollama run deepseek-r1 "what is the capital of france"
+ollama run deepseek-r1 "What is the population of Paris, France?"
+
+curl.exe -X POST -d  "{ ""model"": ""deepseek-r1"",     ""messages"": [{""role"": ""user"", ""content"": ""what is the capital of france?"", ""stream"": false}]}"   "http://localhost:11434/api/chat" 
+curl.exe -X POST -d  "{ ""model"": ""llama3.2:1b"",     ""messages"": [{""role"": ""user"", ""content"": ""what is the capital of france?"", ""stream"": false}]}"   "http://localhost:11434/api/chat" 
+curl.exe -X POST -d  "{ ""model"": ""llama3.2:latest"", ""messages"": [{""role"": ""user"", ""content"": ""what is the capital of france?"", ""stream"": false}]}"   "http://localhost:11434/api/chat" 
+
+meta-llama/
+
+ollama pull llama3.2
+ollama pull deepseek-r1
 ollama run qwen3-embedding:0.6b
 ollama run qwen3-embedding:8b
 ollama rm granite-embedding:30m  
+ollama rm snowflake-arctic-embed2:latest
 ollama ps
 ollama stop nomic-embed-text
 ollama launch  
 ollama pull qwen2.5:14b
+ollama pull mistral-large-4:cloud
 ollama run qwen2.5:14b "What is the capital of France?"
 ollama pull llama3.2:1b
 ollama run llama3.2:1b "What is the capital of France?"
 
 ollama show nomic-embed-text-v2-moe:latest --modelfile 
 "C:\Users\FredericTorres\.ollama\models\blobs\sha256-a5db3381f2e514d3490a3a31fe70eb1a65e95016c85c6c2c23223b810806594f"
+
 
 ```
 
