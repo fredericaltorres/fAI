@@ -18,24 +18,94 @@ namespace fAI
         const string __urlLLM           = "https://openrouter.ai/api/v1/chat/completions";
         const string __urlClassifier    = "https://openrouter.ai/api/alpha/decisions";
 
+        const string OLLMA_TAG = "ollama/";
+
+
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class OllamaMessage
+        {
+            public string role { get; set; }
+            public string content { get; set; }
+        }
+
+        public class OllamaResponse
+        {
+            public string model { get; set; }
+            public DateTime created_at { get; set; }
+            public OllamaMessage message { get; set; }
+            public bool done { get; set; }
+            public string done_reason { get; set; }
+            public long total_duration { get; set; }
+            public int load_duration { get; set; }
+            public int prompt_eval_count { get; set; }
+            public int prompt_eval_cached_count { get; set; }
+            public int prompt_eval_duration { get; set; }
+            public int eval_count { get; set; }
+            public long eval_duration { get; set; }
+
+            public AnthropicUsage Usage { get; set; }
+            public Stopwatch Stopwatch { get; set; }
+
+            public static OllamaResponse FromJson(string text)
+            {
+                return JsonUtils.FromJSON<OllamaResponse>(text);
+            }
+        }
+
+        public AnthropicErrorCompletionResponse CreateLocalOllamaLLM(GPTPromptEx p)
+        {
+            var url = "http://localhost:11434/api/chat";
+            p.Model = p.Model.Replace(OLLMA_TAG, "");
+
+            OpenAI.Trace(new { url }, this);
+            var body = p.GetPostBodyOllama();
+            OpenAI.Trace(new { BodyLenKb = (body.Length / 1024.0).ToString("0.0"), BodyWords = new OpenAIEmbeddings().CountWords(body), Body = body }, this);
+            var sw = Stopwatch.StartNew();
+            var response = InitWebClient().POST(url, body);
+            sw.Stop();
+
+            OpenAI.Trace(new { responseTime = sw.ElapsedMilliseconds / 1000.0, p.Model }, this);
+            if (response.Success)
+            {
+                response.SetText(response.Buffer, response.ContenType);
+                OpenAI.Trace(new { response.Text }, this);
+
+                var r = OllamaResponse.FromJson(response.Text);
+
+                var rr = new AnthropicErrorCompletionResponse();
+                rr.Choices = new List<CompletionChoiceResponse>();
+                rr.Choices.Add(new CompletionChoiceResponse());
+                rr.Choices.First().message = new GPTMessage() {
+                    Role = Enum.TryParse<MessageRole>(r.message.role, out var role) ? role : MessageRole.user,
+                    Content = r.message.content,
+                };
+                rr.Stopwatch = sw;
+                rr.Usage = r.Usage;
+                rr.Usage = new AnthropicUsage();
+                rr.Usage.InputTokens = 0;
+                rr.Usage.OutputTokens = 0;
+                rr.Usage.ApiCost = 0;
+
+                //rr.Content = response.Text;
+                return rr;
+            }
+            else
+            {
+                return new AnthropicErrorCompletionResponse { Exception = OpenAI.Trace(new ChatGPTException($"{response.Exception.Message}. {response.Text}", response.Exception)) };
+            }
+        }
+
         public AnthropicErrorCompletionResponse Create(GPTPromptEx p)
         {
             var url = __urlLLM;
             var OLLMA_TAG = "ollama/";
-            var ollamaMode = false;
             if (p.Model.StartsWith(OLLMA_TAG))
             {
-                url = "http://localhost:11434/api/chat";
-                p.Model = p.Model.Replace(OLLMA_TAG, "");
-                ollamaMode = true;
+                return CreateLocalOllamaLLM(p);
             }
 
             OpenAI.Trace(new { url }, this);
             var body = p.GetPostBody();
-            if (ollamaMode)
-            {
-                body = p.GetPostBodyOllama();
-            }
 
             OpenAI.Trace(new { BodyLenKb = (body.Length / 1024.0).ToString("0.0"),  BodyWords = new OpenAIEmbeddings().CountWords(body), Body = body }, this);
 
