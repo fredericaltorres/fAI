@@ -36,10 +36,10 @@ namespace fAI
             public bool done { get; set; }
             public string done_reason { get; set; }
             public long total_duration { get; set; }
-            public int load_duration { get; set; }
+            public long load_duration { get; set; }
             public int prompt_eval_count { get; set; }
             public int prompt_eval_cached_count { get; set; }
-            public int prompt_eval_duration { get; set; }
+            public long prompt_eval_duration { get; set; }
             public int eval_count { get; set; }
             public long eval_duration { get; set; }
 
@@ -75,7 +75,9 @@ namespace fAI
                 var rr = new AnthropicErrorCompletionResponse();
                 rr.Choices = new List<CompletionChoiceResponse>();
                 rr.Choices.Add(new CompletionChoiceResponse());
-                rr.Choices.First().message = new GPTMessage() {
+                var choice0 = rr.Choices.First();
+                choice0.finish_reason = AnthropicErrorCompletionResponse.FULL_SUCCEES_RETURN_CODE;
+                choice0.message = new GPTMessage() {
                     Role = Enum.TryParse<MessageRole>(r.message.role, out var role) ? role : MessageRole.user,
                     Content = r.message.content,
                 };
@@ -86,7 +88,6 @@ namespace fAI
                 rr.Usage.OutputTokens = 0;
                 rr.Usage.ApiCost = 0;
 
-                //rr.Content = response.Text;
                 return rr;
             }
             else

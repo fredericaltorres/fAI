@@ -375,11 +375,25 @@ glycemic control and overall well-being.
         public void GenerateTitle_GenericAI_InterfaceFor_Ollama_Local()
         {
             Regex quickFilter = new Regex("^ollama/.*");
-            foreach (var model in GenericAI.GetModels(quickFilter))
+            var models = GenericAI.GetModels(quickFilter);
+            foreach (var model in models)
             {
                 var client = new GenericAI();
                 var result = client.Completions.GenerateTitle(text: GlycemicReseachText, language: "English", model: model.Id);
                 HttpBase.Trace($"[GENERATE-TITLE] Duration: {result.Duration:0.00}, Model: {model.Id}, Text: {result.Title}", this);
+            }
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.Translate(text: GlycemicReseachText, language: "English", destinationLanguage: "French", model: model.Id);
+                HttpBase.Trace($"[TRANSLATE] Duration: {result.Duration:00.00}, Model: {model.Id}, destLanguage: {result.TranslatedText}", this);
+            }
+            foreach (var model in models)
+            {
+                var client = new GenericAI();
+                var result = client.Completions.GenerateBulletPoints(4, text: GlycemicReseachText, language: "English", model: model.Id);
+                Assert.NotNull(result.Text);
+                HttpBase.Trace($"[GENERATE-BULLETPOINT] Duration: {result.Duration:00.00}, Model: {model.Id}, Text: {result.Text}", this);
             }
         }
 
