@@ -1,4 +1,5 @@
 
+using Deepgram.Models;
 using fAI;
 using NAudio.Wave;
 using System;
@@ -94,10 +95,11 @@ internal static class Program
 
             while (!cancellation.IsCancellationRequested)
             {
-                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
-
+                //ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                ConsoleKeyInfo key = Console.ReadKey();
                 if (key.Key == ConsoleKey.Escape)
                     break;
+
                 if (key.Key == ConsoleKey.R)
                 {
                     if (!isRecording)
@@ -361,8 +363,6 @@ internal static class Program
 
         string type = typeElement.GetString() ?? "";
 
-        Trace($"Processing server event of type: {type}");
-
         switch (type)
         {
             case "session.created":
@@ -379,16 +379,14 @@ internal static class Program
                 break;
 
             case "response.output_audio_transcript.delta":
-                if (root.TryGetProperty(
-                    "delta", out JsonElement transcriptDelta))
+                if (root.TryGetProperty("delta", out JsonElement transcriptDelta))
                 {
-                    Trace(transcriptDelta.GetString());
+                    Console.Write(transcriptDelta.GetString());
                 }
                 break;
 
             case "response.output_audio.delta":
-                if (root.TryGetProperty(
-                    "delta", out JsonElement audioDelta))
+                if (root.TryGetProperty("delta", out JsonElement audioDelta))
                 {
                     byte[] audio = Convert.FromBase64String(audioDelta.GetString() ?? "");
                     _playbackBuffer?.AddSamples(audio, 0, audio.Length);
@@ -396,11 +394,11 @@ internal static class Program
                 break;
 
             case "response.output_audio_transcript.done":
-                Console.WriteLine();
+                Console.WriteLine("Audio done");
                 break;
 
             case "response.done":
-                Console.WriteLine();
+                Console.WriteLine("response.done");
                 _responseDone.TrySetResult(true);
                 break;
 
