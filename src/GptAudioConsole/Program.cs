@@ -30,12 +30,15 @@ internal static class Program
 
     public static string TraceError(string message, [CallerMemberName] string methodName = "")
     {
-        return Trace("[ERROR]"+message, methodName);
+        return Trace("[ERROR]"+message, true, methodName);
     }
-    public static string Trace(string message,  [CallerMemberName] string methodName = "")
+    public static string Trace(string message, bool toConsole = true, [CallerMemberName] string methodName = "")
     {
         HttpBase.Trace(message, null, methodName);
-        Console.WriteLine(message);
+        if (toConsole)
+        {
+            Console.WriteLine(message);
+        }
         return message; 
     }
 
@@ -167,7 +170,6 @@ internal static class Program
                             int count = Math.Min(chunkSize, audio.Length - offset);
                             byte[] chunk = new byte[count];
                             Buffer.BlockCopy(audio, offset, chunk, 0, count);
-                            Trace($"Sending audio chunk {offset} to {offset + count}, count:{count}");
                             await SendEventAsync(new { type = "input_audio_buffer.append", audio = Convert.ToBase64String(chunk) }, cancellation.Token);
                         }
 
@@ -317,7 +319,6 @@ internal static class Program
         {
             if (_ws.State != WebSocketState.Open)
                 throw new WebSocketException("The WebSocket connection was closed.");
-
             await _ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cancellationToken);
         }
         finally
@@ -355,6 +356,15 @@ internal static class Program
 
     private static void ProcessServerEvent(string json)
     {
+        if (json.Contains(@"""type"": ""response.output_audio.delta""")|| json.Contains(@"""type"": ""response.output_audio.delta"","))
+        {
+            // do nothing
+        }
+        else 
+        { 
+            Trace($"Json: {json}", toConsole: false);
+        }
+        
         using JsonDocument document = JsonDocument.Parse(json);
         JsonElement root = document.RootElement;
 
