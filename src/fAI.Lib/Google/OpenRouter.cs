@@ -53,7 +53,9 @@ namespace fAI
 
             var aiModels = new List<AIModel>
             {
+                // Ollama Local LLM
                 new AIModel { Id = "ollama/llama3.2:latest",      InputTokenPricePer1M = 0f,  OutputTokenPricePer1M = 0.0f,  ContextLength = 128*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
+                new AIModel { Id = "ollama/deepseek-r1:latest",   InputTokenPricePer1M = 0f,  OutputTokenPricePer1M = 0.0f,  ContextLength = 128*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
 
                 new AIModel { Id = "meta-llama/llama-3.1-70b-instruct",      InputTokenPricePer1M = 0.40f,  OutputTokenPricePer1M = 0.40f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 7, 23)  },
                 new AIModel { Id = "meta-llama/llama-3.3-70b-instruct",      InputTokenPricePer1M = 0.10f,  OutputTokenPricePer1M = 0.32f,  ContextLength = 131*1024, ReleaseDate = new DateTime(2024, 7, 23)  },

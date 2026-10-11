@@ -87,6 +87,7 @@ namespace fAI
                 rr.Usage.InputTokens = 0;
                 rr.Usage.OutputTokens = 0;
                 rr.Usage.ApiCost = 0;
+                
 
                 return rr;
             }
