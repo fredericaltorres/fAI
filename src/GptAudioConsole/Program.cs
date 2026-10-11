@@ -1,6 +1,7 @@
 
 using Deepgram.Models;
 using fAI;
+using fAI.OpenAIModel.ImageResponseGpt;
 using NAudio.Wave;
 using System;
 using System.IO;
@@ -14,7 +15,13 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 internal static class Program
 {
-    private const string Model = "gpt-realtime-2";
+
+    //Model Audio input Audio output Text input Text output
+    //gpt-realtime-2.1	$32.00	$64.00	$4.00	$24.00
+    //gpt-realtime-2.1-mini	$10.00	$20.00	$0.60	$2.40
+    private const string Model = "gpt-realtime-2.1";
+    //private const string Model = "gpt-realtime-2.1-mini";
+    
     private const int SampleRate = 24000;
     private const int Channels = 1;
     private const int BitsPerSample = 16;
@@ -356,7 +363,7 @@ internal static class Program
 
     private static void ProcessServerEvent(string json)
     {
-        if (json.Contains(@"""type"": ""response.output_audio.delta""")|| json.Contains(@"""type"": ""response.output_audio.delta"","))
+        if (json.Contains(@"""response.output_audio.delta""") || json.Contains(@"""response.output_audio.delta""") || json.Contains(@"""response.output_audio_transcript.delta"""))
         {
             // do nothing
         }
@@ -380,12 +387,10 @@ internal static class Program
                 break;
 
             case "session.updated":
-                Trace("Session configured.");
                 _sessionUpdated.TrySetResult(true);
                 break;
 
             case "input_audio_buffer.committed":
-                Trace("Audio input committed.");
                 break;
 
             case "response.output_audio_transcript.delta":
@@ -404,11 +409,10 @@ internal static class Program
                 break;
 
             case "response.output_audio_transcript.done":
-                Console.WriteLine("Audio done");
                 break;
 
             case "response.done":
-                Console.WriteLine("response.done");
+                Trace("Response done.");
                 _responseDone.TrySetResult(true);
                 break;
 
