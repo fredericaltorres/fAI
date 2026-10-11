@@ -73,51 +73,10 @@ internal static class Program
             // Start receiving server events before configuring the session.
             Task receiveTask = ReceiveLoopAsync(cancellation.Token);
 
-            _playbackBuffer = new BufferedWaveProvider(new WaveFormat(SampleRate, BitsPerSample, Channels))
-            {
-                BufferDuration = TimeSpan.FromSeconds(30),
-                DiscardOnBufferOverflow = false
-            };
+            InitAudioOut();
 
-            _speaker = new WaveOutEvent();
-            _speaker.Init(_playbackBuffer);
-            _speaker.Play();
-
-            await SendEventAsync(new
-            {
-                type = "conversation.item.create",
-                item = new
-                {
-                    type = "message", role = "user", content = new[] { new { type = "input_text", text = contextData } }
-                }
-            }, cancellation.Token);
-
-            // Configure manual push-to-talk input.
-            await SendEventAsync(new
-            {
-                type = "session.update",
-                session = new
-                {
-                    type = "realtime",
-                    model = Model,
-                    instructions = systemPromptOrSkill,
-                    output_modalities = new[] { "audio" },
-                    audio = new
-                    {
-                        input = new
-                        {
-                            format = new { type = "audio/pcm", rate = SampleRate },
-                            turn_detection = (object?)null // We explicitly commit audio after recording.
-                        },
-                        output = new
-                        {
-                            format = new { type = "audio/pcm", rate = SampleRate },
-                            voice = "marin"
-                        }
-                    }
-                }
-            }, cancellation.Token);
-
+            await SendUserText(contextData, cancellation);
+            await SendUserAudioConfig(systemPromptOrSkill, cancellation);
             await _sessionUpdated.Task.WaitAsync(cancellation.Token);
 
             Console.WriteLine();
@@ -141,10 +100,9 @@ internal static class Program
                     break;
                 if (key.Key == ConsoleKey.R)
                 {
-
                     if (!isRecording)
                     {
-                        // Start a new local recording.
+                        // START A NEW LOCAL RECORDING.
                         recording = new MemoryStream();
                         recordingStopped = NewSignal();
                         microphone = new WaveInEvent
@@ -159,10 +117,7 @@ internal static class Program
 
                         microphone.DataAvailable += (_, e) =>
                         {
-                            lock (activeLock)
-                            {
-                                activeRecording.Write(e.Buffer, 0, e.BytesRecorded);
-                            }
+                            lock (activeLock) { activeRecording.Write(e.Buffer, 0, e.BytesRecorded); }
                         };
 
                         TaskCompletionSource<bool> stoppedSignal = recordingStopped;
@@ -170,21 +125,17 @@ internal static class Program
                         microphone.RecordingStopped += (_, e) =>
                         {
                             if (e.Exception != null)
-                            {
                                 Console.WriteLine($"Microphone error: {e.Exception.Message}");
-                            }
-
                             stoppedSignal.TrySetResult(true);
                         };
 
                         microphone.StartRecording();
                         isRecording = true;
-
                         Console.WriteLine("Recording... Press R to stop.");
                     }
                     else
                     {
-                        // Stop recording before sending anything to OpenAI.
+                        // STOP RECORDING BEFORE SENDING ANYTHING TO OPENAI.
                         isRecording = false;
                         microphone!.StopRecording();
                         await recordingStopped!.Task.WaitAsync(cancellation.Token);
@@ -197,26 +148,24 @@ internal static class Program
                             recording.Dispose();
                             recording = null;
                         }
-                        Console.WriteLine($"Recorded {audio.Length:N0} bytes.");
+                        Trace($"Recorded {audio.Length:N0} bytes.");
                         if (audio.Length == 0)
                         {
-                            Console.WriteLine("No audio was recorded.");
+                            Trace("No audio was recorded.");
                             continue;
                         }
 
-                        Console.WriteLine("Sending audio to OpenAI...");
-                        // Prevent an empty or stale input buffer from
-                        // being included in this turn.
+                        Trace("Sending audio to OpenAI...");
+                        // Prevent an empty or stale input buffer from being included in this turn.
                         await SendEventAsync(new { type = "input_audio_buffer.clear" }, cancellation.Token);
-
-                        // Send the completed recording in manageable chunks.
-                        const int chunkSize = 24 * 1024;
+                        const int chunkSize = 24 * 1024; // Send the completed recording in manageable chunks.
 
                         for (int offset = 0; offset < audio.Length; offset += chunkSize)
                         {
                             int count = Math.Min(chunkSize, audio.Length - offset);
                             byte[] chunk = new byte[count];
                             Buffer.BlockCopy(audio, offset, chunk, 0, count);
+                            Trace($"Sending audio chunk {offset} to {offset + count}, count:{count}");
                             await SendEventAsync(new { type = "input_audio_buffer.append", audio = Convert.ToBase64String(chunk) }, cancellation.Token);
                         }
 
@@ -225,11 +174,8 @@ internal static class Program
                         _responseDone = NewSignal();
                         // Request a spoken response.
                         await SendEventAsync(new { type = "response.create", response = new { output_modalities = new[] { "audio" } } }, cancellation.Token);
-
                         Trace("Waiting for the response...");
-
                         await _responseDone.Task.WaitAsync(cancellation.Token);
-
                         Trace("");
                         Trace("Response complete. Press R to speak again.");
                     }
@@ -301,6 +247,62 @@ internal static class Program
         }
     }
 
+    private static async Task SendUserAudioConfig(string systemPromptOrSkill, CancellationTokenSource cancellation)
+    {
+        // Configure manual push-to-talk input.
+        await SendEventAsync(new
+        {
+            type = "session.update",
+            session = new
+            {
+                type = "realtime",
+                model = Model,
+                instructions = systemPromptOrSkill,
+                output_modalities = new[] { "audio" },
+                audio = new
+                {
+                    input = new
+                    {
+                        format = new { type = "audio/pcm", rate = SampleRate },
+                        turn_detection = (object?)null // We explicitly commit audio after recording.
+                    },
+                    output = new
+                    {
+                        format = new { type = "audio/pcm", rate = SampleRate },
+                        voice = "marin"
+                    }
+                }
+            }
+        }, cancellation.Token);
+    }
+
+    private static async Task SendUserText(string contextData, CancellationTokenSource cancellation)
+    {
+        await SendEventAsync(new
+        {
+            type = "conversation.item.create",
+            item = new
+            {
+                type = "message",
+                role = "user",
+                content = new[] { new { type = "input_text", text = contextData } }
+            }
+        }, cancellation.Token);
+    }
+
+    private static void InitAudioOut()
+    {
+        _playbackBuffer = new BufferedWaveProvider(new WaveFormat(SampleRate, BitsPerSample, Channels))
+        {
+            BufferDuration = TimeSpan.FromSeconds(30),
+            DiscardOnBufferOverflow = false
+        };
+
+        _speaker = new WaveOutEvent();
+        _speaker.Init(_playbackBuffer);
+        _speaker.Play();
+    }
+
     private static async Task SendEventAsync(object value, CancellationToken cancellationToken)
     {
         if (_ws == null || _ws.State != WebSocketState.Open)
@@ -345,8 +347,7 @@ internal static class Program
             if (result.MessageType != WebSocketMessageType.Text)
                 continue;
 
-            ProcessServerEvent(
-                Encoding.UTF8.GetString(message.ToArray()));
+            ProcessServerEvent(Encoding.UTF8.GetString(message.ToArray()));
         }
     }
 
@@ -360,26 +361,28 @@ internal static class Program
 
         string type = typeElement.GetString() ?? "";
 
+        Trace($"Processing server event of type: {type}");
+
         switch (type)
         {
             case "session.created":
-                Console.WriteLine("Realtime session created.");
+                Trace("Realtime session created.");
                 break;
 
             case "session.updated":
-                Console.WriteLine("Session configured.");
+                Trace("Session configured.");
                 _sessionUpdated.TrySetResult(true);
                 break;
 
             case "input_audio_buffer.committed":
-                Console.WriteLine("Audio input committed.");
+                Trace("Audio input committed.");
                 break;
 
             case "response.output_audio_transcript.delta":
                 if (root.TryGetProperty(
                     "delta", out JsonElement transcriptDelta))
                 {
-                    Console.Write(transcriptDelta.GetString());
+                    Trace(transcriptDelta.GetString());
                 }
                 break;
 
@@ -387,11 +390,8 @@ internal static class Program
                 if (root.TryGetProperty(
                     "delta", out JsonElement audioDelta))
                 {
-                    byte[] audio = Convert.FromBase64String(
-                        audioDelta.GetString() ?? "");
-
-                    _playbackBuffer?.AddSamples(
-                        audio, 0, audio.Length);
+                    byte[] audio = Convert.FromBase64String(audioDelta.GetString() ?? "");
+                    _playbackBuffer?.AddSamples(audio, 0, audio.Length);
                 }
                 break;
 
@@ -405,12 +405,8 @@ internal static class Program
                 break;
 
             case "error":
-                Console.WriteLine(
-                    "OpenAI API error: " + root.GetRawText());
-
-                _sessionUpdated.TrySetException(
-                    new InvalidOperationException(root.GetRawText()));
-
+                Trace("OpenAI API error: " + root.GetRawText());
+                _sessionUpdated.TrySetException(new InvalidOperationException(root.GetRawText()));
                 _responseDone.TrySetResult(true);
                 break;
         }
